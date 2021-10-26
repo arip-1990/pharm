@@ -1,0 +1,65 @@
+version: '3.7'
+services:
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: dev/nginx/Dockerfile
+    volumes:
+      - ./:/app
+      - ./docker/dev/nginx/ssl:/etc/nginx/ssl
+    ports:
+      - 80:80
+
+  app-fpm:
+    build:
+      context: ./docker
+      dockerfile: dev/php-fpm/Dockerfile
+    volumes:
+      - ./:/app
+
+  app-cli:
+    build:
+      context: ./docker
+      dockerfile: dev/php-cli/Dockerfile
+    volumes:
+      - ./:/app
+
+  node:
+    build:
+      context: ./docker
+      dockerfile: dev/node/Dockerfile
+    volumes:
+      - ./:/app
+    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn watch"
+    tty: true
+
+  node-cli:
+    build:
+      context: ./docker
+      dockerfile: dev/node/Dockerfile
+    volumes:
+      - ./:/app
+
+  db:
+    image: mariadb:10.5
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: pharm
+    volumes:
+      - dbdata:/var/lib/mysql
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci' ]
+    ports:
+      - 33061:3306
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - 63791:6379
+
+  mailer:
+    image: mailhog/mailhog
+    ports:
+      - 8082:8025
+
+volumes:
+  dbdata:

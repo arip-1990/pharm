@@ -1,0 +1,92 @@
+@import "variables";
+@import "bootstrap";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+@import "~@fortawesome/fontawesome-free/scss/brands";
+@import "~@fortawesome/fontawesome-free/scss/regular";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+
+html,
+body {
+    display: flex;
+    flex-direction: column;
+
+    main {
+        flex: 1;
+    }
+}
+
+a {
+    color: $primary;
+    text-decoration: none;
+}
+
+.product-link {
+    color: #337ab7;
+
+    &:hover {
+        color: #23527c;
+    }
+}
+
+.btn {
+    &-primary {
+        color: #fff;
+
+        &:hover,
+        &:focus,
+        &:active {
+            color: #fff;
+            background-color: #1ca59a;
+            box-shadow: none;
+        }
+    }
+
+    &-outline-primary {
+        &:hover,
+        &:focus,
+        &:active {
+            color: #fff;
+        }
+    }
+}
+
+.alphabet {
+    margin-bottom: 1.5rem;
+
+    a {
+        font-size: 16px;
+        font-weight: 600;
+        padding: 6px;
+
+        &:hover {
+            color: #ffbb34;
+        }
+
+        &.disable{
+            color: #ddd;
+            pointer-events: none;
+        }
+
+        &.active{
+            color: #d3301a;
+        }
+    }
+}
+
+.btn:focus,
+.btn-check:focus + .btn,
+.btn-outline-primary:focus,
+.btn-check:focus + .btn-outline-primary {
+    box-shadow: none;
+}
+
+.btn-outline-primary:focus:not(:hover),
+.btn-outline-primary:active:not(:hover) {
+    color: #27bfc1;
+}
+
+@import "fonts";
+@import "header";
+@import "footer";
+@import "sidebar";
+@import "content";
