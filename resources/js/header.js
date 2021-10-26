@@ -32,8 +32,13 @@ window.addEventListener('click', event => {
 // Фиксированная шапка при прокрутке
 window.addEventListener('scroll', () => {
     const nav = document.querySelector('.fixed-box');
-    if (window.scrollY > nav.offsetHeight)
+    const empty_box = nav.closest('.container').querySelector('.empty-box');
+    if (window.scrollY > nav.offsetHeight) {
         nav.classList.add('fixed');
-    else
+        empty_box.style.display = 'block';
+    }
+    else {
         nav.classList.remove('fixed');
+        empty_box.removeAttribute('style');
+    }
 });

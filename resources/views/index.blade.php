@@ -1,9 +1,9 @@
 @extends('layouts.default')
 
 @section('content')
-    <div class="row mb-4" style="row-gap: 1.5rem">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 g-lg-4">
         @foreach ($products as $product)
-            <div class="col-10 col-sm-6 col-md-4 col-lg-3 offset-1 offset-sm-0">
+            <div class="col-10 offset-1 offset-sm-0">
                 <div class="card product" data-product="{{ $product->id }}">
                     @if ('По рецепту' === $value = $product->getValue(4))
                         <div class="card-mod card-mod__prescription">
@@ -49,7 +49,7 @@
                                 <p class="marker marker__red"><i class="fas fa-map-marker-alt"></i> Нет в наличии</p>
                             @endif
                         </div>
-                        <a class="btn btn-primary cart-add" data-action="add" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
+                        <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
                             Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
                         </a>
                     </div>

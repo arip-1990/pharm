@@ -6,9 +6,9 @@
     <div class="row justify-content-center mb-3" data-product="{{ $product->id }}">
         <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
             @if ($product->photos->count())
-                <img class="w-100" src="{{ url($product->photos->first()->getOriginalFile()) }}" alt="{{ $product->name }}" />
+                <img class="mw-100" src="{{ url($product->photos->first()->getOriginalFile()) }}" alt="{{ $product->name }}" />
             @else
-                <img class="w-100" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
+                <img class="mw-100" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
             @endif
 
             @if (in_array($product->id, session('favorites', [])))
@@ -23,7 +23,7 @@
 
             <div class="row" style="min-height: 50%">
                 <div class="col-12 col-lg-7 col-xxl-8 mb-3 mb-lg-0">
-                    @if (count($product->values))
+                    @if ($product->values()->count())
                         <div style="background: #e6eded;padding: .75rem;">
                             @foreach ($product->values as $value)
                                 @switch ($value->attribute->name)
@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-12 col-lg-5 col-xxl-4 d-flex flex-column justify-content-between">
                     @if ($minPrice)
-                        <h4 class="text-end">Цена: от <span>{{ $minPrice }}</span> р.</h4>
+                        <h4 class="text-end">Цена: от <span>{{ $minPrice }}</span> &#8381;</h4>
 
                         <div class="row align-items-center">
                             <div class="col-6">
@@ -83,7 +83,7 @@
                 <div class="description-item">
                     <h6 class="description-item_title collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $i + 2 }}">{{ $value->attribute->name }}</h6>
                     <div id="collapse-{{ $i + 2 }}" class="collapse" data-bs-parent="#product-desc">
-                        <div class="description-item_body">{!! $value->attribute->type === \App\Entities\Attribute::TYPE_TEXT ? html_entity_decode(implode('<br />', json_decode($value->value, true))) : html_entity_decode($value->value) !!}</div>
+                        <div class="description-item_body">{!! html_entity_decode($value->value) !!}</div>
                     </div>
                 </div>
             @endif
@@ -108,7 +108,7 @@
                         <b class="d-md-none">Время работы: </b>{!! \App\Helper::formatSchedule($offer->store->schedule) !!}
                     </div>
                     <div class="col-12 col-md-2 text-md-center">
-                        <b class="d-md-none">Цена: </b>{{ $offer->price }} р.
+                        <b class="d-md-none">Цена: </b>{{ $offer->price }} &#8381;
                     </div>
                     <div class="col-12 col-md-2 text-md-center">
                         <b class="d-md-none">Количество:</b>

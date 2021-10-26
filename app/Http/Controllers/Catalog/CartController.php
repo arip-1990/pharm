@@ -8,6 +8,7 @@ use App\UseCases\CartService;
 use App\Entities\Offer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -27,9 +28,9 @@ class CartController extends Controller
         return view('catalog.cart', compact('title', 'city', 'items'));
     }
 
-    public function add(string $id): JsonResponse
+    public function add(Request $request, string $id): JsonResponse
     {
-        $this->cartService->add(CartItem::create($id, 1));
+        $this->cartService->add(CartItem::create($id, $request->post('total', 1)));
         return new JsonResponse(null, Response::HTTP_ACCEPTED);
     }
 
@@ -43,7 +44,7 @@ class CartController extends Controller
         $this->cartService->remove($id);
     }
 
-    public function pharmacy(Request $request)
+    public function pharmacy(Request $request): View | RedirectResponse
     {
         $title = $this->title . ' | Выбор аптеки';
         $city = $request->cookie('city', $this->defaultCity);

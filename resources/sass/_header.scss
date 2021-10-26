@@ -62,6 +62,12 @@ header {
         }
     }
 
+    .empty-box {
+        display: none;
+        height: 102px;
+        margin: 1rem 0;
+    }
+
     .logo {
         max-height: 96px;
         margin-top: 3px;

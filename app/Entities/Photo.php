@@ -3,12 +3,14 @@
 namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
  * @property int $type
  * @property string $file
  * @property string $product_id
+ * @property int $sort
  */
 class Photo extends Model
 {
@@ -19,6 +21,12 @@ class Photo extends Model
 
     public $timestamps = false;
     protected $fillable = ['type', 'file'];
+
+    public static function getNextId(): int
+    {
+        $statement = DB::select("show table status like 'photos'");
+        return $statement[0]->Auto_increment;
+    }
 
     public function getOriginalFile(): string
     {

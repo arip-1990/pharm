@@ -4,17 +4,17 @@
 
 @section('content')
     <div class="row">
-        <nav class="col-3">
+        <nav class="col-md-3">
             <ul class="category">
                 @each ('layouts.partials.menu', $categories, 'category')
             </ul>
         </nav>
 
-        <div class="col-9">
+        <div class="col-md-9">
             @if ($pagination->count())
-                <div class="row mb-4" style="row-gap: 1.5rem">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4">
                     @foreach ($pagination as $product)
-                        <div class="col-10 col-sm-6 col-md-4 offset-1 offset-sm-0">
+                        <div class="col-10 offset-1 offset-sm-0">
                             <div class="card product" data-product="{{ $product->id }}">
                                 @if ('По рецепту' === $value = $product->getValue(4))
                                     <div class="card-mod card-mod__prescription">
@@ -66,7 +66,7 @@
                     @endforeach
                 </div>
 
-                {{ $pagination->links('layouts.partials.pagination') }}
+                {{ $pagination->onEachSide(2)->links('layouts.partials.pagination') }}
             @else
                 <h3 class="text-center">Товары отсутствуют</h3>
             @endif

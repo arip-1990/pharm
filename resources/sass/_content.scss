@@ -223,12 +223,13 @@
             display: flex;
             align-items: center;
 
-            &:not(.collapsed)::before {
+            &:not(.collapsed) h5::before {
                 transform: rotate(-180deg);
             }
 
-            &::before {
+            h5::before {
                 content: '\f078';
+                display: inline-block;
                 font-family: "Font Awesome 5 Free";
                 transition: transform .35s ease;
                 margin-right: .5rem;
@@ -389,6 +390,50 @@
     /* Firefox */
     &[type=number] {
         -moz-appearance: textfield;
+    }
+}
+
+.checkout {
+    border-top: 2px solid $primary;
+    border-bottom: 2px solid $primary;
+    padding: 1.5rem 0;
+}
+
+.radio-button {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #999;
+    border-radius: .5rem;
+    padding: 1rem;
+    margin: .25rem 0;
+    cursor: pointer;
+
+    &.active {
+        border: 2px solid #24b5b7;
+
+        .radio-button_pin {
+            border: 6px solid #1f999a;
+        }
+    }
+
+    &_pin {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+    }
+
+    &_text {
+        margin-left: 40px;
+
+        span {
+            display: block;
+            font-size: 14px;
+            line-height: 15px;
+            color: #999;
+            padding-top: .25rem;
+        }
     }
 }
 

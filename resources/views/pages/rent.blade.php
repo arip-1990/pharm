@@ -31,6 +31,6 @@
         </ul>
 
         <h5 class="text-center fw-bold">Ждем Ваших предложений</h5>
-        <p>Просим Вас заполнить форму с характеристиками предлагаемого Вами помещения или написать нам на адрес <a href="mailto:liion83@mail.ru">liion83@mail.ru</a></p>
+        <p>Параметры предлагаемого помещения и условия можете отправить на почту <a href="mailto:call@apteka-05.ru">call@apteka-05.ru</a></p>
     </div>
 @endsection

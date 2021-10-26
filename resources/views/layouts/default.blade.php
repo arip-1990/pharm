@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="auth col-7 text-end">
-                    <span class="phone">+7 (8722) 66-06-05</span>
+                    <span class="phone">+7 (8722) 60-63-66</span>
                     <span class="d-inline-block">
                         @auth
                             <a href="{{ route('profile') }}">Личный кабинет</a> |
@@ -51,6 +51,7 @@
                 </div>
             </div>
 
+            <div class="empty-box"></div>
             <div class="fixed-box">
                 <div class="row container align-items-center p-0 mx-auto">
                     <div class="col-6 col-md-4 col-lg-3 me-auto me-lg-0">
@@ -61,7 +62,7 @@
                     <div class="col-12 col-lg-7 order-3 order-lg-0 mt-3 mt-lg-0">
                         <form class="search" action="{{ route('catalog.search') }}" autocomplete="off">
                             <input type="search" name="q" class="form-control" placeholder="Введите: название препарата, производителя, действующее вещество" />
-                            <button class="btn btn-primary btn-search">Найти</button>
+                            <button type="submit" class="btn btn-primary btn-search">Найти</button>
                         </form>
                     </div>
                     <div class="col-3 col-sm-2 col-lg-1 text-center" style="margin-top: 19px;">

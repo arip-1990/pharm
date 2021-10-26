@@ -30,15 +30,14 @@ window.alertMessage = (message, type = 'danger', target = null) => {
     alert.addEventListener('click', closeFlash);
 }
 
-window.showPrice = context => {
-    const product = context.closest('[data-product]');
+window.showPrice = function () {
+    const product = this.closest('[data-product]');
     const id = product.getAttribute('data-product');
-    console.log(id)
     axios.get('/catalog/get-price', { params: { id } })
         .then(({data}) => {
             const mask = product.querySelector('.price .mask');
             const real = product.querySelector('.price .real');
-            real.innerHTML = `<span style="font-size: 1.1rem">от ${data} руб.</span>`;
+            real.innerHTML = `<span style="font-size: 1.1rem">от ${data} &#8381;</span>`;
             mask.style.display = 'none';
             real.style.display = 'block';
         })

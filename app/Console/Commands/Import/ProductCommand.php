@@ -42,19 +42,18 @@ class ProductCommand extends Command
                 'category_id' => (int)$item->category ?: null,
                 'name' => (string)$item->name,
                 'slug' => SlugService::createSlug(Product::class, 'slug', (string)$item->name),
-                'code' => (int)$item->code,
-                'status' => 1
+                'code' => (int)$item->code
             ];
             $i++;
 
             if ($i >= 1000) {
-                Product::query()->upsert($productFields, 'id', ['category_id', 'name', 'slug', 'code', 'status']);
+                Product::query()->upsert($productFields, 'id', ['category_id', 'name', 'slug', 'code']);
                 $productFields = [];
                 $i = 0;
             }
         }
         if ($i) {
-            Product::query()->upsert($productFields, 'id', ['category_id', 'name', 'slug', 'code', 'status']);
+            Product::query()->upsert($productFields, 'id', ['category_id', 'name', 'slug', 'code']);
             $i = 0;
         }
 

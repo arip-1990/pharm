@@ -7,4 +7,4 @@ require('./auth');
 require('./product')
 
 // Bootstrap
-require('bootstrap/js/src/collapse');
+// require('bootstrap/js/src/collapse');

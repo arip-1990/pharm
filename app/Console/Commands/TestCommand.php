@@ -2,12 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Entities\Category;
 use App\Entities\Photo;
 use App\Entities\Product;
+use App\Entities\Value;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\FileNotFoundException;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as Reader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -20,10 +23,87 @@ class TestCommand extends Command
     protected $signature = 'test {file}';
     protected $description = 'test';
 
+    protected function categoryDepth(Collection $categories): int
+    {
+        $max = 0;
+        foreach ($categories as $category) {
+            $depth = $this->categoryDepth($category->children);
+            if ($depth > $max)
+                $max = $depth;
+        }
+
+        return $max + 1;
+    }
+
     public function handle(): int
     {
 //       $this->storeProducts($this->argument('file'));
-        // $this->export();
+         $this->export();
+
+//        $total = Product::query()->count();
+//        $i = 1;
+//        Product::query()->chunk(1000, function ($products) use ($total, &$i) {
+//            /** @var Product $product */
+//            foreach ($products as $product) {
+//                echo "\033[2KProcessing: " . $i . '/' . $total . "\r";
+//
+//                $found = false;
+//                foreach ($product->photos as $photo) {
+//                    if (Storage::exists($photo->getOriginalFile())) {
+//                        $exp = explode('.', $photo->file);
+//                        $fileName = $product->id . '_' . $photo->id . '.' . strtolower($exp[count($exp) - 1]);
+//                        if ($photo->file !== $fileName) {
+//                            Storage::move($photo->getOriginalFile(), '/images/product/original/' . $fileName);
+//                            $photo->update(['file' => $fileName]);
+//                        }
+//                    }
+//                    else $photo->delete();
+//                }
+//
+//                $product->update();
+
+//                if (!$found) {
+//                    $photos = [];
+//                    $id = Photo::getNextId();
+//
+//                    if ($files = glob("storage/app/images/product/original/$product->id*")) {
+//                        foreach ($files as $file) {
+//                            $exp = explode('/', $file);
+//                            $file = $exp[count($exp) - 1];
+//                            $exp = explode('.', $file);
+//                            $exp = $exp[count($exp) - 1];
+//                            $fileName = $product->id . '_' . $id . '.' . $exp;
+//                            /** @var Photo $photo */
+//                            $photo = new Photo(['type' => Photo::TYPE_PICTURE, 'file' => $fileName]);
+//                            Storage::move("/images/product/original/$file", $photo->getOriginalFile());
+//                            $photos[] = $photo;
+//                            $id++;
+//                        }
+//                    }
+//                    elseif ($files = glob("products/$product->id*")) {
+//                        foreach ($files as $file) {
+//                            $exp = explode('/', $file);
+//                            $file = $exp[count($exp) - 1];
+//                            $exp = explode('.', $file);
+//                            $exp = $exp[count($exp) - 1];
+//                            $fileName = $product->id . '_' . $id . '.' . $exp;
+//                            /** @var Photo $photo */
+//                            $photo = new Photo(['type' => Photo::TYPE_PICTURE, 'file' => $fileName]);
+//                            rename("products/$file", 'storage/app' . $photo->getOriginalFile());
+//                            $photos[] = $photo;
+//                            $id++;
+//                        }
+//                    }
+//
+//                    if ($photos) {
+//                        $product->photos()->saveMany($photos);
+//                        $product->update();
+//                    }
+//                }
+
+//                $i++;
+//            }
+//        });
 
         $this->info(PHP_EOL . 'Загрузка успешно завершена!');
         return 0;
@@ -31,17 +111,26 @@ class TestCommand extends Command
 
     public function export(): void
     {
-        $codes = explode(PHP_EOL, file_get_contents('./product_codes.txt'));
         $data = [];
-        Product::query()->whereIn('code', $codes)->chunk(1000, function (Collection $products) use (&$data) {
+        Product::query()->where('status', true)->chunk(1000, function (Collection $products) use (&$data) {
             /** @var Product $product */
            foreach ($products as $product) {
-               $data[] = [
-                   'code' => $product->code,
-                   'barcode' => $product->barcode,
-                   'vendor' => $product->getValue(1),
-                   'name' => $product->name
-               ];
+               if ($product->photos()->count()) {
+                   $found = false;
+                   foreach ($product->photos as $photo) {
+                       if (!Storage::exists($photo->getOriginalFile()))
+                           $found = true;
+                   }
+
+                  if ($found) {
+                      $data[] = [
+                          'code' => $product->code,
+                          'barcode' => $product->barcode,
+                          'vendor' => $product->getValue(1),
+                          'name' => $product->name
+                      ];
+                  }
+               }
            }
         });
 
@@ -77,7 +166,7 @@ class TestCommand extends Command
 
         $writer = new Xlsx($spreadsheet);
         $writer->setPreCalculateFormulas(false);
-        $writer->save('товары без описания.xlsx');
+        $writer->save('Товары без фото.xlsx');
     }
 
     private function compareBarcode(string $file): void
@@ -195,77 +284,124 @@ class TestCommand extends Command
 
         $errors = [];
         foreach ($sheet->toArray() as $i => $row) {
+            echo "\033[2KЗавершено: " . ($i + 1) . '/' . $cnt . "\r";
             /** @var Product $product */
-            if (is_numeric($row[0]) and $product = Product::query()->where('code', trim($row[0]))->first()) {
-                echo 'Завершено: ' . ($i + 1) . '/' . $cnt . "\r";
-
-//                if ($description = trim($row[9]))
-//                    $product->update(['description' => $description]);
-
-                foreach (explode('|', $row[3]) as $item) {
-                    $exp = explode(':', $item);
-                    if (2 > count($exp) or !trim($exp[0]) or !trim($exp[1]))
-                        continue;
-
-                    switch (trim($exp[0])) {
-                        case 'Взаимодействие':
-                            if ($tmp = $product->values()->where('attribute_id', 47)->first())
-                                $tmp->update(['value' => trim($exp[1])]);
-                            else
-                                $product->values()->create(['attribute_id' => 47, 'value' => trim($exp[1])]);
-                            break;
-                        case 'Действующее вещество':
-                            if ($tmp = $product->values()->where('attribute_id', 3)->first())
-                                $tmp->update(['value' => trim($exp[1])]);
-                            else
-                                $product->values()->create(['attribute_id' => 3, 'value' => trim($exp[1])]);
-                            break;
-                        case 'Лекарственная форма':
-                            if ($tmp = $product->values()->where('attribute_id', 5)->first())
-                                $tmp->update(['value' => trim($exp[1])]);
-                            else
-                                $product->values()->create(['attribute_id' => 5, 'value' => trim($exp[1])]);
-                            break;
-                        case 'Назначение':
-                            if ($tmp = $product->values()->where('attribute_id', 45)->first())
-                                $tmp->update(['value' => trim($exp[1])]);
-                            else
-                                $product->values()->create(['attribute_id' => 45, 'value' => trim($exp[1])]);
-                            break;
-                    }
-                }
-
-               if ($photos = $this->downloadImage(explode('|', $row[3]))) {
-                   Storage::delete($product->photos->map(fn (Photo $photo) => $photo->getOriginalFile()));
-                   $product->photos()->delete();
-                   $product->photos()->saveMany($photos);
-               }
-            }
-            else
+            if (!$product = Product::query()->where('code', trim($row[0]))->first()) {
                 $errors[] = trim($row[0]) . PHP_EOL;
+                continue;
+            }
+
+            echo "\033[2KЗавершено: \033[1;32m" . ($i + 1) . '/' . $cnt . "\033[0m\r";
+
+            if (trim($row[9]))
+                $product->description = trim($row[9]);
+
+            if (trim($row[3])) {
+                $product->values()->where('attribute_id', 1)->delete();
+                $product->values()->create(['attribute_id' => 1, 'value' => trim($row[3])]);
+            }
+
+            if (trim($row[4])) {
+                $product->values()->where('attribute_id', 2)->delete();
+                $product->values()->create(['attribute_id' => 2, 'value' => trim($row[4])]);
+            }
+
+            if (trim($row[5])) {
+                $product->values()->where('attribute_id', 62)->delete();
+                $product->values()->create(['attribute_id' => 62, 'value' => trim($row[5])]);
+            }
+
+            if (trim($row[6])) {
+                $product->values()->where('attribute_id', 3)->delete();
+                $product->values()->create(['attribute_id' => 3, 'value' => trim($row[6])]);
+            }
+
+            if (trim($row[7])) {
+                $product->values()->where('attribute_id', 39)->delete();
+                $product->values()->create(['attribute_id' => 39, 'value' => trim($row[7])]);
+            }
+
+            if (trim($row[8])) {
+                $product->values()->where('attribute_id', 30)->delete();
+                $product->values()->create(['attribute_id' => 30, 'value' => trim($row[8])]);
+            }
+
+//            foreach (explode('|', $row[3]) as $item) {
+//                $tmp = explode('#', $item);
+//                if (2 > count($tmp) or !trim($tmp[0]) or !trim($tmp[1]))
+//                    continue;
+//
+//                switch (trim($tmp[0])) {
+//                    case 'Производитель':
+//                    case 'vendor':
+//                        $product->values()->where('attribute_id', 1)->delete();
+//                        $product->values()->create(['attribute_id' => 1, 'value' => trim($tmp[1])]);
+//                        break;
+//                    case 'country':
+//                        $product->values()->where('attribute_id', 2)->delete();
+//                        $product->values()->create(['attribute_id' => 2, 'value' => trim($tmp[1])]);
+//                        break;
+//                    case 'brand':
+//                        $product->values()->where('attribute_id', 62)->delete();
+//                        $product->values()->create(['attribute_id' => 62, 'value' => trim($tmp[1])]);
+//                        break;
+//                    case 'Состав':
+//                    case 'composition':
+//                        $product->values()->where('attribute_id', 30)->delete();
+//                        $product->values()->create(['attribute_id' => 30, 'value' => trim($tmp[1])]);
+//                        break;
+//                    case 'Описание':
+//                    case 'description':
+//                        $product->description = trim($tmp[1]);
+//                        break;
+//                    case 'Действующее вещество':
+//                    case 'substance':
+//                        $product->values()->where('attribute_id', 3)->delete();
+//                        $product->values()->create(['attribute_id' => 3, 'value' => trim($tmp[1])]);
+//                        break;
+//                    case 'Лекарственная форма':
+//                        $product->values()->where('attribute_id', 5)->delete();
+//                        $product->values()->create(['attribute_id' => 5, 'value' => trim($tmp[1])]);
+//                        break;
+//                    case 'Условия хранения':
+//                        $product->values()->where('attribute_id', 39)->delete();
+//                        $product->values()->create(['attribute_id' => 39, 'value' => trim($tmp[1])]);
+//                }
+//            }
+
+           if ($photos = $this->downloadImage($product->id, explode('|', $row[10]))) {
+               echo "\033[2KЗавершено: \033[1;32m" . ($i + 1) . '/' . $cnt . "\t" . count($photos) . "\033[0m\r";
+               Storage::delete($product->photos->map(fn (Photo $photo) => $photo->getOriginalFile()));
+               $product->photos()->delete();
+               $product->photos()->saveMany($photos);
+           }
+
+           $product->update();
         }
+
         file_put_contents('codes.txt', $errors);
     }
 
     /** @return Photo[] */
-    private function downloadImage(array $urls): array
+    private function downloadImage(string $productId, array $urls): array
     {
         $photos = [];
+        $id = Photo::getNextId();
         try {
             foreach ($urls as $url) {
                 $url = trim($url);
-                if (!$url or false !== stripos($url, 'no-photo'))
+                if (!$url or false !== stripos($url, 'no-photo') or false !== stripos($url, 'no_photo'))
                     continue;
 
                 $exp = explode('.', explode('?', $url)[0]);
                 $exp = $exp[count($exp) - 1];
-                $fileName = time() . '.' . $exp;
+                $fileName = $productId . '_' . $id . '.' . $exp;
                 $file = file_get_contents($url);
                 /** @var Photo $photo */
-                $photo = Photo::query()->make(['type' => Photo::TYPE_PICTURE, 'file' => $fileName]);
+                $photo = new Photo(['type' => Photo::TYPE_PICTURE, 'file' => $fileName]);
                 Storage::put($photo->getOriginalFile(), $file);
                 $photos[] = $photo;
-                sleep(1);
+                $id++;
             }
         }
         catch (\Exception $exception) {

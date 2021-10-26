@@ -24,6 +24,9 @@ const mask = function (event) {
             axios.post(this.action, data)
                 .then(data => location.reload())
                 .catch(error => console.log(error));
+            break;
+        default:
+            this.submit();
     }
 }
 

@@ -47,7 +47,7 @@
                 </form>
             </div>
             <div class="modal-footer justify-content-center">
-                <button class="btn btn-primary" data-toggle="modal" data-target="login">Войти</button>
+                <a href="#" class="text-primary" data-toggle="modal" data-target="login">Войти</a>
             </div>
         </div>
     </div>

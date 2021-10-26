@@ -30,7 +30,7 @@
                         <p>{{ $item->product->getValue(5) /*?? $product->getValue(38)*/ }}</p>
                     </div>
                     <div class="col-6 col-md-2 order-4 order-md-0 text-md-center product_price">
-                        <span>{{ $price ? 'от ' . $price . ' руб.' : 'нет в начилии' }}</span>
+                        <span>{!! $price ? 'от ' . $price . ' &#8381;' : 'нет в начилии' !!}</span>
                     </div>
                     <div class="col-6 col-md-2 order-5 order-md-0">
                         <div class="input-group input-product">
@@ -48,7 +48,7 @@
                     В процессе оформления заказа цена может незначительно измениться в зависимости от выбранной аптеки.<br />
                     Цены на сайте отличаются от цен в аптеках и действуют только при оформлении заказа с помощью сайта.
                 </p>
-                <p class="col-12 col-md-4 text-center text-md-end fs-4 fw-bold">Итого: от <span id="total-price">{{ $total }}</span> руб.</p>
+                <p class="col-12 col-md-4 text-center text-md-end fs-4 fw-bold">Итого: от <span id="total-price">{{ $total }}</span> &#8381;</p>
             </div>
 
             <div class="row align-items-center mt-3">

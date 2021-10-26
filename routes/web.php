@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Catalog\CheckoutController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Pharmacy\PharmacyController;
@@ -61,7 +62,6 @@ Route::group(['prefix' => 'pharmacy', 'as' => 'pharmacy'], function () {
 Route::group(['prefix' => 'cart', 'as' => 'cart'], function () {
     Route::get('/', [CartController::class, 'index']);
     Route::get('/pharmacy', [CartController::class, 'pharmacy'])->name('.pharmacy');
-    Route::get('/checkout/{store}', [CartController::class, 'checkout'])->name('.checkout');
     Route::post('/{id}', [CartController::class, 'add'])->name('.add');
     Route::put('/{id}', [CartController::class, 'change'])->name('.change');
     Route::delete('/{id}', [CartController::class, 'remove'])->name('.delete');
@@ -73,8 +73,16 @@ Route::group(['prefix' => 'favorite', 'as' => 'favorite'], function () {
     Route::delete('/{id}', [FavoriteController::class, 'remove'])->name('.delete');
 });
 
-Route::group(['middleware' => 'auth', 'prefix' => 'profile', 'as' => 'profile'], function () {
-    Route::get('/', [CabinetController::class, 'index']);
-    Route::get('/edit', [CabinetController::class, 'edit'])->name('.edit');
-    Route::put('/edit', [CabinetController::class, 'update'])->name('.update');
+Route::group(['prefix' => 'checkout', 'as' => 'checkout'], function () {
+    Route::get('/{store}', [CheckoutController::class, 'index']);
+});
+
+Route::group(['middleware' => 'auth'], function () {
+
+
+    Route::group(['prefix' => 'profile', 'as' => 'profile'], function () {
+        Route::get('/', [CabinetController::class, 'index']);
+        Route::get('/edit', [CabinetController::class, 'edit'])->name('.edit');
+        Route::put('/edit', [CabinetController::class, 'update'])->name('.update');
+    });
 });

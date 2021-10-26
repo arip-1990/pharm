@@ -27,12 +27,14 @@ const changeCartQuantity = (quantity = null) => {
 }
 
 const cartAdd = function () {
-    const id = this.closest('[data-product]').getAttribute('data-product');
+    const product = this.closest('[data-product]');
+    const id = product.getAttribute('data-product');
+    const total = parseInt(product.querySelector('.input-group .input-number').value);
 
-    axios.post('/cart/' + id)
+    axios.post('/cart/' + id, { total })
         .then(data => {
-            changeCartQuantity(1);
-            this.innerHTML = 'Добавлено';
+            changeCartQuantity(total);
+            product.querySelector("[data-toggle='modal']").innerHTML = 'Добавлено';
         })
         .catch(error => alertMessage('Ошибка!', error));
 }
@@ -69,84 +71,84 @@ const cartModal = function () {
     productModal.querySelector('.price_mask').addEventListener('click', () => showPrice(this));
 }
 
-document.querySelectorAll(".cart-add[data-action='add']").forEach(item => {
+document.querySelectorAll("[data-action='cart-add']").forEach(item => {
    item.addEventListener('click', cartAdd);
 });
-document.querySelectorAll(".cart-remove[data-action='remove']").forEach(item => {
+document.querySelectorAll("[data-action='cart-remove']").forEach(item => {
     item.addEventListener('click', cartRemove);
 });
 
-document.querySelectorAll('[data-product] .input-group .btn').forEach(element => {
-    element.addEventListener('click', function (event) {
-        event.preventDefault();
-
-        const input = this.closest('.input-group').querySelector('input');
-        const type = this.getAttribute('data-type');
-        const productId = this.closest('[data-product]').getAttribute('data-product');
-        const currentVal = parseInt(input.value);
-
-        if (!isNaN(currentVal)) {
-            if(type === 'minus') {
-                if(currentVal > parseInt(input.getAttribute('min'))) {
-                    input.value = String(currentVal - 1);
-                    cartQuantity(productId, currentVal - 1, true);
-                }
-                if(parseInt(input.value) <= parseInt(input.getAttribute('min'))) {
-                    this.setAttribute('disabled', true);
-                }
-            }
-            else if(type === 'plus') {
-                if(currentVal < parseInt(input.getAttribute('max'))) {
-                    input.value = String(currentVal + 1);
-                    cartQuantity(productId, currentVal + 1);
-                }
-                if(parseInt(input.value) >= parseInt(input.getAttribute('max'))) {
-                    this.setAttribute('disabled', true);
-                }
-            }
-        }
-        else {
-            input.value = String(0);
-        }
-
-        input.dispatchEvent(new Event('change'));
-    })
-});
-document.querySelectorAll('[data-product] .input-group .input-number').forEach(element => {
-    element.addEventListener('change', function () {
-        const minValue = parseInt(this.getAttribute('min'));
-        const maxValue = parseInt(this.getAttribute('max'));
-        const currentValue = parseInt(this.value);
-        const productId = this.closest('[data-product]').getAttribute('data-product');
-
-        if (currentValue > minValue)
-            this.closest('.input-group').querySelector('.btn[data-type=minus]').removeAttribute('disabled');
-        if (currentValue < maxValue)
-            this.closest('.input-group').querySelector('.btn[data-type=plus]').removeAttribute('disabled');
-
-        if (currentValue < minValue) {
-            this.value = minValue;
-            cartQuantity(productId, minValue);
-            alertMessage('Количества товара ниже минимума для заказа!');
-        }
-        else if (currentValue > maxValue) {
-            this.value = maxValue;
-            cartQuantity(productId, maxValue, true);
-            alertMessage('Количество превышает допустимое!');
-        }
-    })
-});
-document.querySelectorAll('[data-product] .input-group .input-number').forEach(element => {
-    element.addEventListener('keydown', event => {
-        // Allow: backspace, delete, tab, escape, enter and .       // Allow: Ctrl+A                            // Allow: home, end, left, right
-        if ([46, 8, 9, 27, 13, 190].includes(event.keyCode) || (event.keyCode === 65 && event.ctrlKey === true) || (event.keyCode >= 35 && event.keyCode <= 39))
-            return;
-
-        // Ensure that it is a number and stop the keypress
-        if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105))
-            event.preventDefault();
-    })
-});
+// document.querySelectorAll('[data-product] .input-group .btn').forEach(element => {
+//     element.addEventListener('click', function (event) {
+//         event.preventDefault();
+//
+//         const input = this.closest('.input-group').querySelector('input');
+//         const type = this.getAttribute('data-type');
+//         const productId = this.closest('[data-product]').getAttribute('data-product');
+//         const currentVal = parseInt(input.value);
+//
+//         if (!isNaN(currentVal)) {
+//             if(type === 'minus') {
+//                 if(currentVal > parseInt(input.getAttribute('min'))) {
+//                     input.value = String(currentVal - 1);
+//                     cartQuantity(productId, currentVal - 1, true);
+//                 }
+//                 if(parseInt(input.value) <= parseInt(input.getAttribute('min'))) {
+//                     this.setAttribute('disabled', true);
+//                 }
+//             }
+//             else if(type === 'plus') {
+//                 if(currentVal < parseInt(input.getAttribute('max'))) {
+//                     input.value = String(currentVal + 1);
+//                     cartQuantity(productId, currentVal + 1);
+//                 }
+//                 if(parseInt(input.value) >= parseInt(input.getAttribute('max'))) {
+//                     this.setAttribute('disabled', true);
+//                 }
+//             }
+//         }
+//         else {
+//             input.value = String(0);
+//         }
+//
+//         input.dispatchEvent(new Event('change'));
+//     })
+// });
+// document.querySelectorAll('[data-product] .input-group .input-number').forEach(element => {
+//     element.addEventListener('change', function () {
+//         const minValue = parseInt(this.getAttribute('min'));
+//         const maxValue = parseInt(this.getAttribute('max'));
+//         const currentValue = parseInt(this.value);
+//         const productId = this.closest('[data-product]').getAttribute('data-product');
+//
+//         if (currentValue > minValue)
+//             this.closest('.input-group').querySelector('.btn[data-type=minus]').removeAttribute('disabled');
+//         if (currentValue < maxValue)
+//             this.closest('.input-group').querySelector('.btn[data-type=plus]').removeAttribute('disabled');
+//
+//         if (currentValue < minValue) {
+//             this.value = minValue;
+//             cartQuantity(productId, minValue);
+//             alertMessage('Количества товара ниже минимума для заказа!');
+//         }
+//         else if (currentValue > maxValue) {
+//             this.value = maxValue;
+//             cartQuantity(productId, maxValue, true);
+//             alertMessage('Количество превышает допустимое!');
+//         }
+//     })
+// });
+// document.querySelectorAll('[data-product] .input-group .input-number').forEach(element => {
+//     element.addEventListener('keydown', event => {
+//         // Allow: backspace, delete, tab, escape, enter and .       // Allow: Ctrl+A                            // Allow: home, end, left, right
+//         if ([46, 8, 9, 27, 13, 190].includes(event.keyCode) || (event.keyCode === 65 && event.ctrlKey === true) || (event.keyCode >= 35 && event.keyCode <= 39))
+//             return;
+//
+//         // Ensure that it is a number and stop the keypress
+//         if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105))
+//             event.preventDefault();
+//     })
+// });
 
 document.querySelector("[data-type='product']").addEventListener('newCart', (event) => {
     const modal = event.target;

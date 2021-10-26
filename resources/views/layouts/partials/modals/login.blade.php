@@ -25,7 +25,7 @@
                 </form>
             </div>
             <div class="modal-footer justify-content-center">
-                <button class="btn btn-primary" data-toggle="modal" data-target="register">Зарегистрироваться</button>
+                <a href="#" class="text-primary" data-toggle="modal" data-target="register">Зарегистрироваться</a>
             </div>
         </div>
     </div>
