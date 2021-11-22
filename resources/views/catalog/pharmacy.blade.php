@@ -7,7 +7,7 @@
         <div class="col-6"><span class="border-bottom border-primary">Выбор аптеки</span></div>
         <div class="col-2 text-center">Наличие</div>
 
-        <div class="accordion" id="stores">
+        <div class="accordion">
             @foreach($stores as $store)
                 <div class="store-item">
                     <div class="store-item_title collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $store['store']->id }}">
@@ -25,7 +25,7 @@
                             <a href="{{ route('checkout', ['store'=> $store['store']->id]) }}" class="btn btn-primary">Выбрать аптеку</a>
                         </p>
                     </div>
-                    <div id="collapse-{{ $store['store']->id }}" class="collapse" data-bs-parent="#stores">
+                    <div id="collapse-{{ $store['store']->id }}" class="collapse" data-bs-parent=".accordion">
                         <div class="description-item_body row align-items-center">
                             @foreach($store['products'] as $product)
                                 @if ($product['product']->photos->count())

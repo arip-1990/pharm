@@ -3,11 +3,13 @@
 namespace App\UseCases;
 
 use App\Entities\CartItem;
+use App\Entities\Store;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class CartService
 {
+    private ?Store $store = null;
     private Collection $items;
 
     public function __construct()
@@ -31,21 +33,28 @@ class CartService
         return $this->items;
     }
 
-    public function getAmount(): int
+    public function getAmount(): float
     {
         $this->loadItems();
-        return $this->items->count();
+        $total = 0;
+        foreach ($this->items as $item) $total += $item->getAmount($this->store);
+
+        return $total;
     }
 
-    public function getTotalAmount(): int
+    public function getTotalAmount(): float
     {
         $this->loadItems();
         $total = 0;
         // TODO
-        foreach ($this->items as $item)
-            $total += $item->quantity;
+        foreach ($this->items as $item) $total += $item->getAmount($this->store);
 
         return $total;
+    }
+
+    public function setStore(Store $store): void
+    {
+        $this->store = $store;
     }
 
     public function add(CartItem $item): void

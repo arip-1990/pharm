@@ -397,42 +397,61 @@
     border-top: 2px solid $primary;
     border-bottom: 2px solid $primary;
     padding: 1.5rem 0;
-}
 
-.radio-button {
-    width: 100%;
-    height: 80px;
-    border: 1px solid #999;
-    border-radius: .5rem;
-    padding: 1rem;
-    margin: .25rem 0;
-    cursor: pointer;
+    .radio-button {
+        width: 100%;
+        height: 80px;
+        border: 1px solid #999;
+        border-radius: .5rem;
+        padding: 1rem;
+        margin: .25rem 0;
+        cursor: pointer;
 
-    &.active {
-        border: 2px solid #24b5b7;
-
-        .radio-button_pin {
-            border: 6px solid #1f999a;
+        &:focus-within {
+            border: 2px solid #24b5b7;
         }
-    }
 
-    &_pin {
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        border: 1px solid #ddd;
-        border-radius: 50%;
-    }
+        &.active {
+            border: 2px solid #24b5b7;
+        }
 
-    &_text {
-        margin-left: 40px;
+        &_pin {
+            appearance: none;
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            font: inherit;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            margin: 0;
 
-        span {
-            display: block;
-            font-size: 14px;
-            line-height: 15px;
-            color: #999;
-            padding-top: .25rem;
+            &::before {
+                content: "";
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                border: 6px solid #1f999a;
+                border-radius: 50%;
+                transform: scale(0);
+                transition: 120ms transform ease-in-out;
+            }
+
+            &:checked::before {
+                transform: scale(1);
+            }
+        }
+
+        &_text {
+            margin-left: 40px;
+
+            span {
+                display: block;
+                font-size: 14px;
+                line-height: 15px;
+                color: #999;
+                padding-top: .25rem;
+            }
         }
     }
 }

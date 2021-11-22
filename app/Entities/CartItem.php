@@ -35,6 +35,11 @@ class CartItem extends Model
         $this->quantity = $quantity;
     }
 
+    public function getAmount(?Store $store): float
+    {
+        return $this->quantity * $this->product->getPrice($store);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
