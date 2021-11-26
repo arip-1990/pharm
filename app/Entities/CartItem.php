@@ -35,9 +35,9 @@ class CartItem extends Model
         $this->quantity = $quantity;
     }
 
-    public function getAmount(?Store $store): float
+    public function getAmount(Store $store = null): float
     {
-        return $this->quantity * $this->product->getPrice($store);
+        return round($this->quantity * $this->product->getPrice($store), 2);
     }
 
     public function user(): BelongsTo

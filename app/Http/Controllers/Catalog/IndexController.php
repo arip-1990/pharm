@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Catalog;
 use App\Http\Controllers\Controller;
 use App\Entities\Category;
 use App\Entities\Product;
+use App\UseCases\CartService;
 use App\UseCases\ProductService;
 use App\Entities\Offer;
 use App\Entities\Limit;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IndexController extends Controller
 {
-    public function __construct(private ProductService $productService)
+    public function __construct(private ProductService $productService, private CartService $cartService)
     {
         parent::__construct();
     }
@@ -54,7 +55,9 @@ class IndexController extends Controller
         $categories = $categories->toTree();
         $paginator = $paginator->paginate(12);
 
-        return view('catalog.index', compact('title', 'city', 'paginator', 'categories'));
+        $items = $this->cartService->getItems();
+
+        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'items'));
     }
 
     public function product(Request $request, Product $product): View
@@ -64,10 +67,13 @@ class IndexController extends Controller
 
         $offers = $product->offers()->whereCity($city)->get();
         $minPrice = $offers->first()->price;
-        foreach ($offers as $offer)
+        foreach ($offers as $offer) {
             if ($minPrice > $offer->price) $minPrice = $offer->price;
+        }
 
-        return view('catalog.product', compact('title', 'city', 'product', 'offers', 'minPrice'));
+        $item = $this->cartService->getItem($product->id);
+
+        return view('catalog.product', compact('title', 'city', 'product', 'offers', 'minPrice', 'item'));
     }
 
     public function search(Request $request): View

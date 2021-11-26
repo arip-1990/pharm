@@ -17,11 +17,11 @@ class CartService
         $this->items = new Collection();
     }
 
-    public function getItem(string $id)
+    public function getItem(string $productId)
     {
         $this->loadItems();
         foreach ($this->items as $i => $current) {
-            if ($current->product_id === $id)
+            if ($current->product_id === $productId)
                 return $this->items[$i];
         }
         throw new \DomainException('Товар не найден.');
@@ -31,6 +31,15 @@ class CartService
     {
         $this->loadItems();
         return $this->items;
+    }
+
+    public function getTotal(): int
+    {
+        $this->loadItems();
+        $total = 0;
+        foreach ($this->items as $item) $total += $item->quantity;
+
+        return $total;
     }
 
     public function getAmount(): float
@@ -71,11 +80,11 @@ class CartService
         $this->saveItems();
     }
 
-    public function set(string $id, int $quantity): void
+    public function set(string $productId, int $quantity): void
     {
         $this->loadItems();
         foreach ($this->items as $current) {
-            if ($current->product_id === $id) {
+            if ($current->product_id === $productId) {
                 $current->changeQuantity($quantity);
                 $this->saveItems();
                 return;
@@ -84,11 +93,11 @@ class CartService
         throw new \DomainException('Товар не найден.');
     }
 
-    public function remove(string $id): void
+    public function remove(string $productId): void
     {
         $this->loadItems();
         foreach ($this->items as $i => $current) {
-            if ($current->product_id === $id) {
+            if ($current->product_id === $productId) {
                 unset($this->items[$i]);
                 $this->saveItems();
                 return;

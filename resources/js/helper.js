@@ -9,6 +9,8 @@ window.axios.interceptors.response.use(config => config, error => {
     }
     return Promise.reject(error.response.message);
 });
+
+window._ = require('lodash');
 // if (token)
 //     window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 // else

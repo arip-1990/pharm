@@ -31,17 +31,19 @@ class CartController extends Controller
     public function add(Request $request, string $id): JsonResponse
     {
         $this->cartService->add(CartItem::create($id, $request->post('total', 1)));
-        return new JsonResponse(null, Response::HTTP_ACCEPTED);
+        return new JsonResponse(['total' => $this->cartService->getTotal()], Response::HTTP_ACCEPTED);
     }
 
-    public function change(Request $request, string $id): void
+    public function change(Request $request, string $id): JsonResponse
     {
         $this->cartService->set($id, $request['quantity']);
+        return new JsonResponse(['total' => $this->cartService->getTotal()], Response::HTTP_ACCEPTED);
     }
 
-    public function remove(string $id): void
+    public function remove(string $id): JsonResponse
     {
         $this->cartService->remove($id);
+        return new JsonResponse(['total' => $this->cartService->getTotal()], Response::HTTP_ACCEPTED);
     }
 
     public function pharmacy(Request $request): View | RedirectResponse

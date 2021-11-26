@@ -22,7 +22,7 @@
             <h4 class="text-center">{{ $product->name }}</h4>
 
             <div class="row" style="min-height: 50%">
-                <div class="col-12 col-lg-7 col-xxl-8 mb-3 mb-lg-0">
+                <div class="col-12 col-lg-8 col-xxl-9 mb-3 mb-lg-0">
                     @if ($product->values()->count())
                         <div style="background: #e6eded;padding: .75rem;">
                             @foreach ($product->values as $value)
@@ -43,22 +43,14 @@
                         </div>
                     @endif
                 </div>
-                <div class="col-12 col-lg-5 col-xxl-4 d-flex flex-column justify-content-between">
+                <div class="col-12 col-lg-4 col-xxl-3 d-flex flex-column justify-content-between align-items-end">
                     @if ($minPrice)
                         <h4 class="text-end">Цена: от <span>{{ $minPrice }}</span> &#8381;</h4>
 
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <div class="input-group input-product">
-                                    <button class="btn btn-outline-primary" data-type="minus">-</button>
-                                    <input type="number" class="form-control input-number" min="1" max="{{ $product->getCount() }}" value="1" />
-                                    <button class="btn btn-outline-primary" data-type="plus">+</button>
-                                </div>
-                            </div>
-
-                            <div class="col-6 text-end">
-                                <a class="btn btn-primary btn-lg cart-add" data-action="add">В корзину</a>
-                            </div>
+                        <div class="input-group input-product">
+                            <button class="btn btn-outline-primary" data-type="-">-</button>
+                            <input type="number" class="form-control input-number" min="1" max="{{ $product->getCount() }}" value="{{ $item->quantity }}" />
+                            <button class="btn btn-outline-primary" data-type="+">+</button>
                         </div>
                     @else
                         <h4 class="text-center">Нет в наличии</h4>

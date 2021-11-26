@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Entities\Product;
 use App\Entities\Offer;
+use App\UseCases\CartService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
+    public function __construct(private CartService $cartService)
+    {
+        parent::__construct();
+    }
+
     public function index(Request $request): View
     {
         $title = $this->title;
@@ -23,7 +29,9 @@ class IndexController extends Controller
             ->whereIn('id', $productIds)->get()->pluck('abc');
         $abc = '';
 
-        return view('index', compact('title', 'city', 'abc', 'products', 'alphabet'));
+        $items = $this->cartService->getItems();
+
+        return view('index', compact('title', 'city', 'abc', 'products', 'alphabet', 'items'));
     }
 
     public function setCity(string $city): RedirectResponse

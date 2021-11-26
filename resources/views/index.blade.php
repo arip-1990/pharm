@@ -49,9 +49,13 @@
                                 <p class="marker marker__red"><i class="fas fa-map-marker-alt"></i> Нет в наличии</p>
                             @endif
                         </div>
-                        <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
-                            Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
-                        </a>
+                        @if($items->contains(fn(\App\Entities\CartItem $item) => $item->product_id === $product->id))
+                            <a class="btn btn-primary btn-lg">Добавлено</a>
+                        @else
+                            <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
+                                Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>

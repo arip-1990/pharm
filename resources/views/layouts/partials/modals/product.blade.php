@@ -19,16 +19,16 @@
                     </div>
                     <div class="col-3">
                         <div class="input-group input-group-sm">
-                            <button class="btn btn-outline-primary">-</button>
+                            <button class="btn btn-outline-primary" data-type="-">-</button>
                             <input type="number" class="form-control input-number" min="1" max="1" value="1" />
-                            <button class="btn btn-outline-primary">+</button>
+                            <button class="btn btn-outline-primary" data-type="+">+</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-                <button class="btn btn-outline-secondary" data-dismiss="modal">Отмена</button>
-                <button class="btn btn-primary" data-action="cart-add">Добавить</button>
+                <button class="btn btn-outline-secondary" data-dismiss="modal">Продолжить покупки</button>
+                <a href="{{ route('cart') }}" class="btn btn-primary">Перейти в корзину</a>
             </div>
         </div>
     </div>

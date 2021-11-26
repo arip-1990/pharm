@@ -16,7 +16,7 @@
             </div>
             @php $total = 0; @endphp
             @foreach ($items as $item)
-                @php $total += ($price = $item->product->getPrice() * $item->quantity); @endphp
+                @php $total += $item->getAmount(); @endphp
                 <div class="row align-items-center product" data-product="{{ $item->product->id }}">
                     <div class="col-3 col-md-2 text-center">
                         @if ($item->product->photos()->count())
@@ -30,13 +30,13 @@
                         <p>{{ $item->product->getValue(5) /*?? $product->getValue(38)*/ }}</p>
                     </div>
                     <div class="col-6 col-md-2 order-4 order-md-0 text-md-center product_price">
-                        <span>{!! $price ? 'от ' . $price . ' &#8381;' : 'нет в начилии' !!}</span>
+                        <span>{!! 'от ' . $item->product->getPrice() . ' &#8381;' !!}</span>
                     </div>
                     <div class="col-6 col-md-2 order-5 order-md-0">
                         <div class="input-group input-product">
-                            <button class="btn btn-outline-primary" data-type="minus">-</button>
+                            <button class="btn btn-outline-primary" data-type="-">-</button>
                             <input type="number" class="form-control input-number" min="1" max="{{ $item->product->getCount() }}" value="{{ $item->quantity }}" />
-                            <button class="btn btn-outline-primary" data-type="plus">+</button>
+                            <button class="btn btn-outline-primary" data-type="+">+</button>
                         </div>
                     </div>
                     <span class="col-2 col-md-1 cart-remove" data-action="remove"></span>

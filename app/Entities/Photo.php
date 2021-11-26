@@ -30,7 +30,7 @@ class Photo extends Model
 
     public function getOriginalFile(): string
     {
-        return "/images/product/original/$this->file";
+        return "storage/images/original/" . $this->file;
     }
 
     public function getThumbnailFile(string $type = 'thumb'): string
