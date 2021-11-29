@@ -78,7 +78,7 @@
 
             <p class="ms-3">
                 Ответственное лицо за размещение информации о лекарственных препаратах: Газимагомедов Магомедарип Гасанович +7 (928) 984 44 68
-                <a href="mailto:info@arip.info">info@arip.info</a>
+                <a href="mailto:120x80@arip.info">120x80@arip.info</a>
             </p>
         </div>
 @endsection

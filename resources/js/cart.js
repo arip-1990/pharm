@@ -47,22 +47,6 @@ const cartQuantity = async (id, quantity) => {
     }
 }
 
-const cartModal = function () {
-    const card = this.closest('[data-product]');
-    const id = card.getAttribute('data-product');
-    const productModal = document.querySelector('.product-modal');
-    productModal.querySelector('button.btn-number').setAttribute('data-product', id);
-    productModal.querySelector('input.input-number').setAttribute('data-product', id);
-
-    const name = card.querySelector('.card-title').innerText;
-    const price = card.querySelector('.card-text .price').innerHTML;
-    const img = card.querySelector('.card-img-top').getAttribute('src');
-    productModal.querySelector('img').setAttribute('src', img);
-    productModal.querySelector('span.name').innerText = name;
-    productModal.querySelector('span.price').innerHTML = price;
-    productModal.querySelector('.price_mask').addEventListener('click', () => showPrice(this));
-}
-
 document.querySelectorAll("[data-action='remove']").forEach(item => {
     item.addEventListener('click', async function () {
         const product = this.closest('[data-product]');
@@ -164,8 +148,8 @@ document.querySelectorAll("[data-type='product']").forEach(item => {
     item.addEventListener('newCart', async (event) => {
         const modal = event.target;
         const product = event.detail.product;
-        const title = product.querySelector('.card-title');
-        const btn = product.querySelector("[data-toggle='modal']");
+        const name = product.querySelector('[itemprop=name]');
+        const btn = product.querySelector('[data-toggle=modal]');
 
         try {
             await cartAdd(product.getAttribute('data-product'));
@@ -175,11 +159,11 @@ document.querySelectorAll("[data-type='product']").forEach(item => {
         }
 
         modal.setAttribute('data-product', product.getAttribute('data-product'));
-        modal.querySelector('.name').innerHTML = title.innerHTML;
-        modal.querySelector('.price').innerHTML = product.querySelector('.price').innerHTML;
+        modal.querySelector('.title').innerHTML = name.innerHTML;
+        modal.querySelector('.price').innerHTML = product.querySelector('[itemprop=price]').innerHTML;
         modal.querySelector('.input-group input').setAttribute('max', product.querySelector('[data-max]').getAttribute('data-max'));
-        modal.querySelector('img').setAttribute('alt', title.innerText);
-        modal.querySelector('img').setAttribute('src', product.querySelector('.card-img-top').getAttribute('src'));
+        modal.querySelector('img').setAttribute('alt', name.innerText);
+        modal.querySelector('img').setAttribute('src', product.querySelector('[itemprop=image]').getAttribute('src'));
 
         btn.removeAttribute('data-toggle');
         btn.removeAttribute('data-target');

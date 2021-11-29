@@ -11,7 +11,7 @@
                         <img src="" alt="" style="width: 100%" />
                     </div>
                     <div class="col-7">
-                        <div class="name"></div>
+                        <div class="title"></div>
                         <div class="price">
                             <p class="mask">Показать цену</p>
                             <p class="real"></p>

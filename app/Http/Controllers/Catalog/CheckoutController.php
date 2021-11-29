@@ -6,6 +6,7 @@ use App\Entities\CartItem;
 use App\Entities\Offer;
 use App\Entities\Store;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Catalog\CheckoutRequest;
 use App\UseCases\CartService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -46,5 +47,10 @@ class CheckoutController extends Controller
         $cartService = $this->cartService;
 
         return view('catalog.checkout', compact('title', 'city', 'store', 'cartService'));
+    }
+
+    public function checkout(CheckoutRequest $request): void
+    {
+        dd($request);
     }
 }

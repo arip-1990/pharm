@@ -71,7 +71,11 @@ class IndexController extends Controller
             if ($minPrice > $offer->price) $minPrice = $offer->price;
         }
 
-        $item = $this->cartService->getItem($product->id);
+        $item = null;
+        try {
+            $item = $this->cartService->getItem($product->id);
+        }
+        catch (\DomainException $e) {}
 
         return view('catalog.product', compact('title', 'city', 'product', 'offers', 'minPrice', 'item'));
     }

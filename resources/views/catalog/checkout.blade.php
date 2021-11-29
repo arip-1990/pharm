@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-4 offset-1">
                     <label class="radio-button">
-                        <input type="radio" name="delivery" class="radio-button_pin" checked />
+                        <input type="radio" name="delivery" class="radio-button_pin" value="0" checked />
                         <p class="radio-button_text">Самовывоз<span>Бесплатно</span></p>
                     </label>
                 </div>
@@ -22,7 +22,7 @@
             <div class="row">
                 <div class="col-4 offset-1">
                     <label class="radio-button">
-                        <input type="radio" name="delivery" class="radio-button_pin" />
+                        <input type="radio" name="delivery" class="radio-button_pin" value="0" disabled />
                         <p class="radio-button_text">Доставка<span>Стоимость доставки 150 руб.</span></p>
                     </label>
                 </div>
@@ -35,13 +35,13 @@
             <div class="row">
                 <div class="col-4 offset-1">
                     <label class="radio-button">
-                        <input type="radio" name="payment" class="radio-button_pin" checked />
+                        <input type="radio" name="payment" class="radio-button_pin" value="0" checked />
                         <p class="radio-button_text">Оплата наличными<span>При получении</span></p>
                     </label>
                 </div>
                 <div class="col-4 offset-1">
                     <label class="radio-button">
-                        <input type="radio" name="payment" class="radio-button_pin" />
+                        <input type="radio" name="payment" class="radio-button_pin" value="1" />
                         <p class="radio-button_text">Оплата картой<span><img style="height: 20px" src="/images/payments.png" alt=""></span></p>
                     </label>
                 </div>

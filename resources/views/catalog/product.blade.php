@@ -3,12 +3,12 @@
 @section('banner', '')
 
 @section('content')
-    <div class="row justify-content-center mb-3" data-product="{{ $product->id }}">
+    <div class="row justify-content-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
         <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
             @if ($product->photos->count())
-                <img class="mw-100" src="{{ url($product->photos->first()->getOriginalFile()) }}" alt="{{ $product->name }}" />
+                <img class="mw-100" itemprop="image" src="{{ url($product->photos->first()->getOriginalFile()) }}" alt="{{ $product->name }}" />
             @else
-                <img class="mw-100" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
+                <img class="mw-100" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
             @endif
 
             @if (in_array($product->id, session('favorites', [])))
@@ -19,7 +19,7 @@
         </div>
 
         <div class="col-12 col-lg-9 d-flex flex-column justify-content-around">
-            <h4 class="text-center">{{ $product->name }}</h4>
+            <h4 class="text-center" itemprop="name">{{ $product->name }}</h4>
 
             <div class="row" style="min-height: 50%">
                 <div class="col-12 col-lg-8 col-xxl-9 mb-3 mb-lg-0">
@@ -45,13 +45,22 @@
                 </div>
                 <div class="col-12 col-lg-4 col-xxl-3 d-flex flex-column justify-content-between align-items-end">
                     @if ($minPrice)
-                        <h4 class="text-end">Цена: от <span>{{ $minPrice }}</span> &#8381;</h4>
+                        <h4 class="text-end price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                            <p class="mask">Показать цену</p>
+                            <p class="real" itemprop="price"></p>
+                        </h4>
 
-                        <div class="input-group input-product">
-                            <button class="btn btn-outline-primary" data-type="-">-</button>
-                            <input type="number" class="form-control input-number" min="1" max="{{ $product->getCount() }}" value="{{ $item->quantity }}" />
-                            <button class="btn btn-outline-primary" data-type="+">+</button>
-                        </div>
+                        @if($item)
+                            <div class="input-group input-product">
+                                <button class="btn btn-outline-primary" data-type="-">-</button>
+                                <input type="number" class="form-control input-number" min="1" max="{{ $product->getCount() }}" value="{{ $item->quantity }}" />
+                                <button class="btn btn-outline-primary" data-type="+">+</button>
+                            </div>
+                        @else
+                            <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
+                                Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
+                            </a>
+                        @endif
                     @else
                         <h4 class="text-center">Нет в наличии</h4>
                     @endif
@@ -65,7 +74,7 @@
             <div class="description-item">
                 <h6 class="description-item_title collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-1">Описание</h6>
                 <div id="collapse-1" class="collapse" data-bs-parent="#product-desc">
-                    <div class="description-item_body">{!! str_replace(PHP_EOL, '<br />', html_entity_decode($product->description)) !!}</div>
+                    <div class="description-item_body" itemprop="description">{!! str_replace(PHP_EOL, '<br />', html_entity_decode($product->description)) !!}</div>
                 </div>
             </div>
         @endif

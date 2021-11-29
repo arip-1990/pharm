@@ -1,39 +1,38 @@
-const addFavorite = function () {
+const addFavorite = async function () {
     this.setAttribute('src', '/images/heart.png');
     this.setAttribute('data-action', 'remove');
 
     const fav = document.querySelector('.fav .quantity');
-    let count = Number(fav.innerText);
-    if (!count) count = 0;
-    count++;
-
-    axios.post('/favorite/' + this.closest('[data-product]').getAttribute('data-product'))
-        .then(() => {
-            fav.innerText = count;
-            this.removeEventListener('click', addFavorite);
-            this.addEventListener('click', removeFavorite);
-        })
-        .catch(error => console.error(error));
+    try {
+        const { data } = await axios.post('/favorite/' + this.closest('[data-product]').getAttribute('data-product'));
+        fav.innerText = data.total;
+        this.removeEventListener('click', addFavorite);
+        this.addEventListener('click', removeFavorite);
+    }
+    catch (e) {
+        console.error(e);
+    }
 }
-const removeFavorite = function () {
-    this.setAttribute('src', '/images/fav.png');
-    this.setAttribute('data-action', 'add');
+const removeFavorite = async function () {
+    console.log(this);
 
     const fav = document.querySelector('.fav .quantity');
-    let count = Number(fav.innerText);
-    if(count > 0) count--;
-    else count = 0;
-
     const product = this.closest('[data-product]');
-    axios.delete('/favorite/' + product.getAttribute('data-product'))
-        .then(() => {
-            if (this.classList.contains('favorite-remove'))
-                product.remove();
-            fav.innerText = count;
-            this.removeEventListener('click', removeFavorite);
+    try {
+        const { data } = await axios.delete('/favorite/' + product.getAttribute('data-product'));
+        fav.innerText = data.total;
+        this.removeEventListener('click', removeFavorite);
+        if (this.classList.contains('favorite-remove'))
+            product.remove();
+        else {
+            this.setAttribute('src', '/images/fav.png');
+            this.setAttribute('data-action', 'add');
             this.addEventListener('click', addFavorite);
-        })
-        .catch(error => console.error(error));
+        }
+    }
+    catch (e) {
+        console.error(e);
+    }
 }
 
 document.querySelectorAll(".favorite-toggle[data-action='add']").forEach(item => {

@@ -75,11 +75,10 @@ Route::group(['prefix' => 'favorite', 'as' => 'favorite'], function () {
 
 Route::group(['prefix' => 'checkout', 'as' => 'checkout'], function () {
     Route::get('/{store}', [CheckoutController::class, 'index']);
+    Route::post('/{store}', [CheckoutController::class, 'checkout']);
 });
 
 Route::group(['middleware' => 'auth'], function () {
-
-
     Route::group(['prefix' => 'profile', 'as' => 'profile'], function () {
         Route::get('/', [CabinetController::class, 'index']);
         Route::get('/edit', [CabinetController::class, 'edit'])->name('.edit');

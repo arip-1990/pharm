@@ -51,7 +51,7 @@ class CartController extends Controller
         $title = $this->title . ' | Выбор аптеки';
         $city = $request->cookie('city', $this->defaultCity);
 
-        if(!$total = $this->cartService->getAmount())
+        if(!$total = $this->cartService->getItems()->count())
             return redirect()->route('cart');
 
         $productIds = $this->cartService->getItems()->pluck('product_id');
