@@ -9,9 +9,10 @@ class CreateCartItemsTable extends Migration
     public function up(): void
     {
         Schema::create('cart_items', function (Blueprint $table) {
+            $table->id();
             $table->integer('quantity', false, true);
 
-            $table->primary(['user_id', 'product_id']);
+            $table->unique(['user_id', 'product_id']);
 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('product_id')->constrained()->onDelete('cascade');

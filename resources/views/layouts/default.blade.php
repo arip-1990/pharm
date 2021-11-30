@@ -74,12 +74,7 @@
                     </div>
                     <div class="col-3 col-sm-2 col-lg-1 text-center" style="margin-top: 19px;">
                         <a class="cart" href="{{ route('cart') }}">
-                            @php
-                                $totalQuantity = 0;
-                                foreach (session('cartItems', []) as $item)
-                                    $totalQuantity += $item->quantity;
-                            @endphp
-                            <span class="quantity">{{ $totalQuantity }}</span>
+                            <span class="quantity">{{ $cartItems->count() }}</span>
                             <img src="/images/cart.png" style="height: 30px;">
                             Корзина
                         </a>

@@ -9,10 +9,11 @@ class CreateOffersTable extends Migration
     public function up(): void
     {
         Schema::create('offers', function (Blueprint $table) {
+            $table->id();
             $table->float('price', 8, 2, true)->default(0);
             $table->integer('quantity', false, true)->default(0);
 
-            $table->primary(['store_id', 'product_id']);
+            $table->unique(['store_id', 'product_id']);
 
             $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('product_id')->constrained()->onDelete('cascade');

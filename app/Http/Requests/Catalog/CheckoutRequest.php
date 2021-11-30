@@ -16,7 +16,6 @@ class CheckoutRequest extends FormRequest
         return [
             'delivery' => 'required|digits_between:0,1',
             'payment' => 'required|digits_between:0,1',
-            'rule' => 'required'
         ];
     }
 }

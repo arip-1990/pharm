@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IndexController extends Controller
 {
-    public function __construct(private ProductService $productService, private CartService $cartService)
+    public function __construct(private ProductService $productService)
     {
         parent::__construct();
     }
@@ -54,10 +54,9 @@ class IndexController extends Controller
 
         $categories = $categories->toTree();
         $paginator = $paginator->paginate(12);
+        $cartItems = $this->cartService->getItems();
 
-        $items = $this->cartService->getItems();
-
-        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'items'));
+        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'cartItems'));
     }
 
     public function product(Request $request, Product $product): View
@@ -77,7 +76,9 @@ class IndexController extends Controller
         }
         catch (\DomainException $e) {}
 
-        return view('catalog.product', compact('title', 'city', 'product', 'offers', 'minPrice', 'item'));
+        $cartItems = $this->cartService->getItems();
+
+        return view('catalog.product', compact('title', 'city', 'product', 'offers', 'minPrice', 'item', 'cartItems'));
     }
 
     public function search(Request $request): View
@@ -90,8 +91,9 @@ class IndexController extends Controller
         $paginator = $this->productService->search($query, $city);
         $paginator->appends(['q' => $query]);
         $categories = Category::query()->get()->toTree();
+        $cartItems = $this->cartService->getItems();
 
-        return view('catalog.index', compact('title', 'city', 'paginator', 'categories'));
+        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'cartItems'));
     }
 
     public function getPrice(Request $request): JsonResponse

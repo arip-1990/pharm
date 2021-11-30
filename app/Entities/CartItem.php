@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * @property int $id
  * @property int $quantity
  * @property string $product_id
  *
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CartItem extends Model
 {
     protected $fillable = ['product_id', 'quantity'];
-    public $incrementing = false;
+    public $timestamps = false;
 
     public static function create(string $productId, int $quantity): self
     {

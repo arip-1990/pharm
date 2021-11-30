@@ -23,6 +23,11 @@ class TestCommand extends Command
     protected $signature = 'test {file}';
     protected $description = 'test';
 
+    public function __construct(private SlugService $slugService)
+    {
+        parent::__construct();
+    }
+
     protected function categoryDepth(Collection $categories): int
     {
         $max = 0;
@@ -38,7 +43,14 @@ class TestCommand extends Command
     public function handle(): int
     {
 //       $this->storeProducts($this->argument('file'));
-         $this->export();
+//         $this->export();
+
+        Product::query()->chunk(1000, function (Collection $products) {
+            foreach ($products as $product) {
+                $this->slugService->slug($product);
+                $product->save();
+            }
+        });
 
 //        $total = Product::query()->count();
 //        $i = 1;

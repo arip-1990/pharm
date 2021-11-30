@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * @property int $id
  * @property string $store_id
  * @property string $product_id
  * @property float $price
@@ -21,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Offer extends Model
 {
     public $timestamps = false;
-    public $incrementing = false;
 
     public function edit(float $price, int $quantity): void
     {
@@ -31,7 +31,7 @@ class Offer extends Model
 
     public function isEqualTo(self $offer): bool
     {
-        if ($offer instanceof self and $this->product_id === $offer->product_id)
+        if ($this->product_id === $offer->product_id)
             return true;
         return false;
     }

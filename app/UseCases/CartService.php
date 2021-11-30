@@ -17,7 +17,7 @@ class CartService
         $this->items = new Collection();
     }
 
-    public function getItem(string $productId)
+    public function getItem(string $productId): CartItem
     {
         $this->loadItems();
         foreach ($this->items as $i => $current) {
@@ -64,6 +64,11 @@ class CartService
     public function setStore(Store $store): void
     {
         $this->store = $store;
+    }
+
+    public function getStore(): ?Store
+    {
+        return $this->store;
     }
 
     public function add(CartItem $item): void
@@ -122,8 +127,10 @@ class CartService
 
     private function loadItems(): void
     {
-        if (!$this->items->count())
-            $this->items = Auth::check() ? Auth::user()->cartItems : session('cartItems', new Collection());
+        if (!$this->items->count()) {
+            $this->items = session('cartItems', new Collection());
+            if (Auth::check()) $this->items = $this->items->concat(Auth::user()->cartItems);
+        }
     }
 
     private function saveItems(): void

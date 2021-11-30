@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\UseCases\CartService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -14,11 +15,13 @@ class Controller extends BaseController
 
     protected string $title;
     protected string $defaultCity;
+    protected CartService $cartService;
 
     public function __construct()
     {
         $this->title = env('APP_NAME');
         $this->defaultCity = config('data.city')[0];
+        $this->cartService = new CartService();
     }
 
     public function test(Request $request): void

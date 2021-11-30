@@ -7,14 +7,14 @@ use App\Entities\Offer;
 use App\Entities\Store;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalog\CheckoutRequest;
-use App\UseCases\CartService;
+use App\UseCases\OrderService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class CheckoutController extends Controller
 {
-    public function __construct(private CartService $cartService)
+    public function __construct(private OrderService $orderService)
     {
         parent::__construct();
     }
@@ -25,11 +25,13 @@ class CheckoutController extends Controller
         $city = $request->cookie('city', $this->defaultCity);
         if (!$this->cartService->getItems()->count()) return redirect()->route('cart');
 
+        $this->cartService->setStore($store);
         $productsId = [];
         /** @var CartItem $item */
         foreach ($this->cartService->getItems() as $item)
             $productsId[$item->product_id] = $item->quantity;
 
+        $request->session()->put('oldCart', $this->cartService->getItems());
         $this->cartService->clear();
         /** @var Offer $offer */
         foreach (Offer::query()->where('store_id', $store->id)->whereIn('product_id', array_keys($productsId))->get() as $offer) {
@@ -44,13 +46,18 @@ class CheckoutController extends Controller
             $request->session()->flash('status', 'Заказать рецептурный препарат на сайте, можно только путем самовывоза из аптеки при наличии рецепта, выписанного врачом!');
 
         $this->cartService->setStore($store);
-        $cartService = $this->cartService;
+        $cartItems = $this->cartService->getItems();
 
-        return view('catalog.checkout', compact('title', 'city', 'store', 'cartService'));
+        return view('catalog.checkout', compact('title', 'city', 'store', 'cartItems'));
     }
 
-    public function checkout(CheckoutRequest $request): void
+    public function checkout(CheckoutRequest $request): RedirectResponse
     {
-        dd($request);
+        if ($request->only(['delivery', 'payment']) and $request->filled('rule')) {
+            $order = $this->orderService->checkout($request);
+            dd($order);
+        }
+
+        return back()->with('error', 'Возникла ошибка при оформлении заказа!');
     }
 }

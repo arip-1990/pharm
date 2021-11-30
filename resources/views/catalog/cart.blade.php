@@ -15,7 +15,7 @@
                 <div class="col-1 text-center"></div>
             </div>
             @php $total = 0; @endphp
-            @foreach ($items as $item)
+            @foreach ($cartItems as $item)
                 @php $total += $item->getAmount(); @endphp
                 <div class="row align-items-center product" data-product="{{ $item->product->id }}">
                     <div class="col-3 col-md-2 text-center">
@@ -53,9 +53,15 @@
 
             <div class="row align-items-center mt-3">
                 <div class="col-12 col-md-6 order-md-1 text-center text-md-end">
-                    <a href="{{ route('cart.pharmacy') }}" class="btn btn-primary">
-                        Оформить заказ
-                    </a>
+                    @auth()
+                        <a href="{{ route('cart.pharmacy') }}" class="btn btn-primary">
+                            Оформить заказ
+                        </a>
+                    @else
+                        <a href="{{ route('cart.pharmacy') }}" class="btn btn-primary" data-toggle="modal" data-target="login">
+                            Оформить заказ
+                        </a>
+                    @endauth
                 </div>
 
                 <div class="col-12 col-md-6 text-center text-md-start mt-3 mt-md-0">

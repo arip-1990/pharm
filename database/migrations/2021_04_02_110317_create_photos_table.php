@@ -12,6 +12,7 @@ class CreatePhotosTable extends Migration
             $table->id();
             $table->tinyInteger('type')->default(0);
             $table->string('file');
+            $table->unsignedInteger('sort')->default(0);
 
             $table->unique(['file', 'product_id']);
 

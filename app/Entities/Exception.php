@@ -6,6 +6,7 @@ use App\Exceptions\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * @property int $id
  * @property Order $order
  */
 class Exception extends Model

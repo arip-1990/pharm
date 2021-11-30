@@ -15,8 +15,9 @@ class PharmacyController extends Controller
         $title = $this->title . '| Точки самовывоза';
         $city = $request->cookie('city', $this->defaultCity);
         $paginator = Store::query()->active()->where('address', 'like', $city . '%')->paginate(20);
+        $cartItems = $this->cartService->getItems();
 
-        return view('pharmacy.index', compact('title', 'paginator'));
+        return view('pharmacy.index', compact('title', 'paginator', 'cartItems'));
     }
 
     public function show(Request $request, string $id): View
@@ -26,6 +27,8 @@ class PharmacyController extends Controller
         if(!$store = Store::query()->find($id))
             throw new HttpException(400, 'Информации по аптеке не найдено.');
 
-        return view('pharmacy.show', compact('title', 'store'));
+        $cartItems = $this->cartService->getItems();
+
+        return view('pharmacy.show', compact('title', 'store', 'city', 'cartItems'));
     }
 }

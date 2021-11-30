@@ -2,39 +2,44 @@
 
 namespace App\UseCases;
 
+use App\Entities\CartItem;
+use App\Entities\Offer;
 use App\Entities\Order;
-use Illuminate\Http\Request;
+use App\Entities\OrderItem;
+use App\Http\Requests\Catalog\CheckoutRequest;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class OrderService
 {
-//    public function __construct(private OrderRepository $orderRepository, private OfferRepository $offerRepository) {}
-//
-//    public function checkout(Request $request): Order
-//    {
-//        if ($request->delivery_type === Order::DELIVERY_TYPE_COURIER and $request->payment_type == Order::PAYMENT_TYPE_CASH)
-//            throw new \DomainException('Не возможно оплатить наличными');
-//
-//        $offers = [];
-//        $items = array_map(function (CartItem $item) use (&$offers) {
-//            $offer = $item->getOffer();
-//            $offer->checkout($item->getQuantity());
-//            $offers[] = $offer;
-//
-//            return OrderItem::create(
-//                $offer->product,
-//                $item->getPrice(),
-//                $item->getQuantity()
-//            );
-//        }, $cart->getItems());
-//
-//        $order = Order::create(
-//            $offers[0]->store,
-//            $items,
-//            $cart->getCost()->getTotal(),
-//            $request->payment_type
-//        );
-//
-//        if ($request->delivery_type === Order::DELIVERY_TYPE_COURIER) {
+    public function __construct(private CartService $cartService) {}
+
+    public function checkout(CheckoutRequest $request): Order
+    {
+        if ($request['delivery'] === Order::DELIVERY_TYPE_COURIER and $request['payment'] == Order::PAYMENT_TYPE_CASH)
+            throw new \DomainException('Не возможно оплатить наличными');
+
+        $offers = [];
+        $items = $this->cartService->getItems()->map(function (CartItem $item) use (&$offers) {
+            /** @var Offer $offer */
+            $offer = Offer::query()->where('store_id', $this->cartService->getStore()->id)->where('product_id', $item->product_id)->first();
+            $offer->checkout($item->quantity);
+            $offers[] = $offer;
+
+            return OrderItem::create($item->product_id, $item->getAmount($offer->store), $item->quantity);
+        });
+
+        $order = Order::create(
+            Auth::id(),
+            $this->cartService->getStore()->id,
+            $request['payment'],
+            $request['delivery'],
+            $this->cartService->getTotalAmount()
+        );
+
+        $order->items()->saveMany($items);
+
+//        if ($request['delivery'] === Order::DELIVERY_TYPE_COURIER) {
 //            $order->setDeliveryInfo(Delivery::create(
 //                $request->delivery->city,
 //                [
@@ -47,30 +52,25 @@ class OrderService
 //                $request->delivery->service_to_door
 //            ), $request->delivery_type);
 //        }
-//        if ($user = $this->getUser())
-//            $order->addUser($user);
-//
-//        $this->transaction->wrap(function () use ($order, $offers) {
-//            $this->order_repo->save($order);
-//            foreach ($offers as $offer)
-//                $this->offer_repo->save($offer);
-//        });
-//
-//        foreach ($this->cart->getItems() as $item) {
-//            try {
-//                $newItem = $cart->getItem($item->getId());
-//                $quantity = $item->getQuantity() - $newItem->getQuantity();
-//                $this->cart->remove($item->getId());
-//                if ($quantity > 0)
-//                    $this->cart->add($item->changeQuantity($quantity));
-//            }
-//            catch (\DomainException $exception) {}
-//        }
-//        $cart->clear();
-//
-//        return $order;
-//    }
-//
+
+        $order->save();
+        foreach ($offers as $offer) $offer->save();
+
+        foreach ($request->session()->get('oldCart', new Collection()) as $item) {
+            try {
+                $newItem = $this->cartService->getItem($item->product_id);
+
+                $quantity = $item->quantity - $newItem->quantity;
+                $this->cartService->remove($item->product_id);
+                if ($quantity > 0)
+                    $this->cartService->add($item->changeQuantity($quantity));
+            }
+            catch (\DomainException $exception) {}
+        }
+
+        return $order;
+    }
+
 //    public function paymentSberbank(Order $order, string $redirectUrl): string
 //    {
 //        $curl = curl_init();
@@ -104,10 +104,5 @@ class OrderService
 //        $order->pay($response['orderId']);
 //        $this->order_repo->save($order);
 //        return $response['formUrl'];
-//    }
-//
-//    private function getUser(): ?User
-//    {
-//        return \Yii::$app->user->identity ? User::findOne(\Yii::$app->user->id) : null;
 //    }
 }

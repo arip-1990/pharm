@@ -4,18 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Entities\Product;
 use App\Entities\Offer;
-use App\UseCases\CartService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
-    public function __construct(private CartService $cartService)
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request): View
     {
         $title = $this->title;
@@ -29,9 +23,9 @@ class IndexController extends Controller
             ->whereIn('id', $productIds)->get()->pluck('abc');
         $abc = '';
 
-        $items = $this->cartService->getItems();
+        $cartItems = $this->cartService->getItems();
 
-        return view('index', compact('title', 'city', 'abc', 'products', 'alphabet', 'items'));
+        return view('index', compact('title', 'city', 'abc', 'products', 'alphabet', 'cartItems'));
     }
 
     public function setCity(string $city): RedirectResponse
@@ -52,7 +46,8 @@ class IndexController extends Controller
         else $query = Product::query()->where('name', 'like', $abc . '%');
 
         $paginator = $query->whereIn('id', $productIds)->paginate(30);
+        $cartItems = $this->cartService->getItems();
 
-        return view('alphabet', compact('title', 'abc', 'paginator', 'alphabet'));
+        return view('alphabet', compact('title', 'abc', 'paginator', 'alphabet', 'cartItems'));
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * @property int $id
  * @property int $order_id
  * @property string $product_id
  * @property float $price
@@ -15,9 +16,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class OrderItem extends Model
 {
-    public static function create(float $price, int $quantity): self
+    public static function create(string $productId, float $price, int $quantity): self
     {
         $item = new static();
+        $item->product_id = $productId;
         $item->price = $price;
         $item->quantity = $quantity;
         return $item;

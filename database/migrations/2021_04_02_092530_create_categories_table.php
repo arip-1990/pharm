@@ -9,13 +9,12 @@ class CreateCategoriesTable extends Migration
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->string('name')->index();
             $table->string('slug')->unique();
             $table->unsignedInteger('_lft')->default(0);
             $table->unsignedInteger('_rgt')->default(0);
 
-            $table->primary('id');
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');
         });
     }

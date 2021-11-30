@@ -20,5 +20,14 @@
             @endauth
             <span class="personal-links active">Избранное</span>
             @break
+        @default
+            @auth()
+                <a class="personal-links" href="{{ route('profile') }}">Профиль</a>
+                <a class="personal-links" href="{{ url('/profile/order') }}">Заказы</a>
+            @else
+                <a class="personal-links" href="{{ route('profile') }}" data-toggle="modal" data-target="login">Профиль</a>
+                <a class="personal-links" href="{{ url('/profile/order') }}" data-toggle="modal" data-target="login">Заказы</a>
+            @endauth
+            <a class="personal-links" href="{{ route('favorite') }}">Избранное</a>
     @endswitch
 </nav>

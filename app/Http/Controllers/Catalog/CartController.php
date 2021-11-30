@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Catalog;
 
 use App\Http\Controllers\Controller;
 use App\Entities\CartItem;
-use App\UseCases\CartService;
 use App\Entities\Offer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -14,18 +13,13 @@ use Illuminate\Http\Response;
 
 class CartController extends Controller
 {
-    public function __construct(private CartService $cartService)
-    {
-        parent::__construct();
-    }
-
     public function index(Request $request): View
     {
         $title = $this->title . ' | Состав заказа';
         $city = $request->cookie('city', $this->defaultCity);
-        $items = $this->cartService->getItems();
+        $cartItems = $this->cartService->getItems();
 
-        return view('catalog.cart', compact('title', 'city', 'items'));
+        return view('catalog.cart', compact('title', 'city', 'cartItems'));
     }
 
     public function add(Request $request, string $id): JsonResponse
@@ -87,6 +81,8 @@ class CartController extends Controller
             }
         });
 
-        return view('catalog.pharmacy', compact('title', 'city', 'stores', 'total'));
+        $cartItems = $this->cartService->getItems();
+
+        return view('catalog.pharmacy', compact('title', 'city', 'stores', 'total', 'cartItems'));
     }
 }

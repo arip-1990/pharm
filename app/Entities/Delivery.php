@@ -5,6 +5,7 @@ namespace App\Entities;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @property int $id
  * @property int $order_id
  * @property string $city
  * @property string $street

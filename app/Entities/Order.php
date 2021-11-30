@@ -39,6 +39,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Order extends Model
 {
     use SoftDeletes;
+
     // Тип оплаты
     const PAYMENT_TYPE_CASH = 0;
     const PAYMENT_TYPE_SBERBANK = 1;
@@ -51,6 +52,17 @@ class Order extends Model
     const STATE_WAIT = 0;
     const STATE_ERROR = 1;
     const STATE_SUCCESS = 2;
+
+    public static function create(string $userId, string $storeId, int $paymentType, int $deliveryType, float $cost): self
+    {
+        $item = new static();
+        $item->user_id = $userId;
+        $item->store_id = $storeId;
+        $item->payment_type = $paymentType;
+        $item->delivery_type = $deliveryType;
+        $item->cost = $cost;
+        return $item;
+    }
 
     public function setDeliveryInfo(Delivery $delivery, int $deliveryType = 0): void
     {
