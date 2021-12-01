@@ -92,7 +92,7 @@
                         <ul class="navbar-nav my-lg-0">
                             @switch(\Illuminate\Support\Facades\Route::currentRouteName())
                                 @case('catalog')
-                                    <li class="nav-item">
+                                    <li class="nav-item sale">
                                         <span class="nav-link active">
                                             <i class="fas fa-bars"></i> Наш ассортимент
                                         </span>
@@ -109,7 +109,7 @@
                                     </li>
                                     @break
                                 @case('pharmacy')
-                                    <li class="nav-item">
+                                    <li class="nav-item sale">
                                         <a class="nav-link" href="{{ route('catalog') }}">
                                             <i class="fas fa-bars"></i> Наш ассортимент
                                         </a>
@@ -126,7 +126,7 @@
                                     </li>
                                     @break
                                 @case('deliveryBooking')
-                                    <li class="nav-item">
+                                    <li class="nav-item sale">
                                         <a class="nav-link" href="{{ route('catalog') }}">
                                             <i class="fas fa-bars"></i> Наш ассортимент
                                         </a>
@@ -143,7 +143,7 @@
                                     </li>
                                     @break
                                 @default
-                                    <li class="nav-item">
+                                    <li class="nav-item sale">
                                         <a class="nav-link" href="{{ route('catalog') }}">
                                             <i class="fas fa-bars"></i> Наш ассортимент
                                         </a>

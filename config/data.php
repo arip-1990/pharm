@@ -9,7 +9,7 @@ return [
         'Бабаюрт'
     ],
     'stock' => '6b7f2bb6-7d5e-11ea-80cb-ac1f6bd1d36d',
-    'orderStartNumber' => 100, // стартовый номер заказа для 1c
+    'orderStartNumber' => 0, // стартовый номер заказа для 1c
     'productIds' => [
         '15bb7407-9dad-11e9-968f-005056011715',
         '1e969483-9db1-11e9-968f-005056011715',

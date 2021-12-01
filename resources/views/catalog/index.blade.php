@@ -6,6 +6,12 @@
     <div class="row">
         <nav class="col-md-3">
             <ul class="category">
+                <li>
+                    <a class="text-danger" href="{{ route('catalog', ['category' => 'sale']) }}">
+                        <img src="/images/sale-1.png" alt="">
+                        Распродажа
+                    </a>
+                </li>
                 @each ('layouts.partials.menu', $categories, 'category')
             </ul>
         </nav>

@@ -68,6 +68,24 @@ a {
     }
 }
 
+.sale {
+    position: relative;
+
+    &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: -4px;
+        right: 32px;
+        width: 42px;
+        height: 42px;
+        background-image: url(../images/sale-1.png);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+}
+
 .btn:focus,
 .btn-check:focus + .btn,
 .btn-outline-primary:focus,
