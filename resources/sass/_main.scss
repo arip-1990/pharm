@@ -68,21 +68,32 @@ a {
     }
 }
 
-.sale {
+.nav-item.sale {
     position: relative;
 
     &:after {
-        content: '';
+        content: "";
         display: block;
         position: absolute;
-        top: -4px;
-        right: 32px;
-        width: 42px;
-        height: 42px;
-        background-image: url(../images/sale-1.png);
+        top: -8px;
+        right: 16px;
+        width: 64px;
+        height: 38px;
+        background-image: url(../images/sale.png);
         background-position: center;
         background-repeat: no-repeat;
         background-size: contain;
+    }
+}
+
+.category .sale {
+    border-color: #f00;
+
+    a {
+        font-size: 1.2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: #f00;
     }
 }
 

@@ -6,9 +6,9 @@
     <div class="row">
         <nav class="col-md-3">
             <ul class="category">
-                <li>
-                    <a class="text-danger" href="{{ route('catalog', ['category' => 'sale']) }}">
-                        <img src="/images/sale-1.png" alt="">
+                <li class="sale">
+                    <a href="{{ route('catalog', ['category' => 'sale']) }}">
+                        <img src="/images/sale-icon.png" alt="">
                         Распродажа
                     </a>
                 </li>

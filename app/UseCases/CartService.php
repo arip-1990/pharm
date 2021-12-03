@@ -129,15 +129,21 @@ class CartService
     {
         if (!$this->items->count()) {
             $this->items = session('cartItems', new Collection());
-            if (Auth::check()) $this->items = $this->items->concat(Auth::user()->cartItems);
+            if (Auth::check()) {
+                session()->forget('cartItems');
+                $this->items = $this->items->concat(Auth::user()->cartItems);
+            }
         }
     }
 
     private function saveItems(): void
     {
-        if (Auth::check())
+        if (Auth::check()) {
+            Auth::user()->cartItems()->delete();
             Auth::user()->cartItems()->saveMany($this->items);
-        else
+        }
+        else {
             session(['cartItems' => $this->items]);
+        }
     }
 }

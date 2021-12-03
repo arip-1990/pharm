@@ -45,10 +45,11 @@ class CheckoutController extends Controller
         if ($request->session()->get('prescription', false))
             $request->session()->flash('status', 'Заказать рецептурный препарат на сайте, можно только путем самовывоза из аптеки при наличии рецепта, выписанного врачом!');
 
-        $this->cartService->setStore($store);
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
+        $cartService->setStore($store);
+        $cartItems = $cartService->getItems();
 
-        return view('catalog.checkout', compact('title', 'city', 'store', 'cartItems'));
+        return view('catalog.checkout', compact('title', 'city', 'store', 'cartService', 'cartItems'));
     }
 
     public function checkout(CheckoutRequest $request): RedirectResponse
