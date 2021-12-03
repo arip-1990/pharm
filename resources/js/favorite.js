@@ -1,46 +1,57 @@
-const addFavorite = async function () {
-    this.setAttribute('src', '/images/heart.png');
-    this.setAttribute('data-action', 'remove');
+class Favorite {
+    constructor() {
+        this.favorite = document.querySelector('.fav .quantity');
+        this.elements = [].concat(...document.querySelectorAll('.favorite-toggle'));
 
-    const fav = document.querySelector('.fav .quantity');
-    try {
-        const { data } = await axios.post('/favorite/' + this.closest('[data-product]').getAttribute('data-product'));
-        fav.innerText = data.total;
-        this.removeEventListener('click', addFavorite);
-        this.addEventListener('click', removeFavorite);
-    }
-    catch (e) {
-        console.error(e);
-    }
-}
-const removeFavorite = async function () {
-    console.log(this);
-
-    const fav = document.querySelector('.fav .quantity');
-    const product = this.closest('[data-product]');
-    try {
-        const { data } = await axios.delete('/favorite/' + product.getAttribute('data-product'));
-        fav.innerText = data.total;
-        this.removeEventListener('click', removeFavorite);
-        if (this.classList.contains('favorite-remove'))
-            product.remove();
+        if (this.elements.length) {
+            this.elements.forEach((element) => element.addEventListener('click', () => this.listener(element)));
+        }
         else {
-            this.setAttribute('src', '/images/fav.png');
-            this.setAttribute('data-action', 'add');
-            this.addEventListener('click', addFavorite);
+            this.elements = [].concat(...document.querySelectorAll('.favorite .favorite-remove'));
+            this.elements.forEach((element, index) => element.addEventListener('click', () => {
+                this.removeFavorite(element, true).then(() => this.elements.splice(index, 1));
+            }));
         }
     }
-    catch (e) {
-        console.error(e);
+
+    listener(element) {
+        if (element.getAttribute('data-action') === 'add') {
+            this.addFavorite(element).then(() => {
+                element.setAttribute('src', '/images/heart.png');
+                element.setAttribute('data-action', 'remove');
+            });
+        }
+        else {
+            this.removeFavorite(element).then(() => {
+                element.setAttribute('src', '/images/fav.png');
+                element.setAttribute('data-action', 'add');
+            });
+        }
+    }
+
+    async addFavorite(element) {
+        try {
+            const product = element.closest('[data-product]');
+            const { data } = await axios.post('/favorite/' + product.getAttribute('data-product'));
+            this.favorite.innerText = data.total;
+        }
+        catch (e) {
+            console.error(e);
+        }
+    }
+
+    async removeFavorite(element, removeElement = false) {
+        console.log(element);
+        try {
+            const product = element.closest('[data-product]');
+            const { data } = await axios.delete('/favorite/' + product.getAttribute('data-product'));
+            this.favorite.innerText = data.total;
+            if (removeElement) product.remove();
+        }
+        catch (e) {
+            console.error(e);
+        }
     }
 }
 
-document.querySelectorAll(".favorite-toggle[data-action='add']").forEach(item => {
-    item.addEventListener('click', addFavorite);
-});
-document.querySelectorAll(".favorite-toggle[data-action='remove']").forEach(item => {
-    item.addEventListener('click', removeFavorite);
-});
-document.querySelectorAll(".favorite-remove[data-action='remove']").forEach(item => {
-    item.addEventListener('click', removeFavorite);
-});
+new Favorite();

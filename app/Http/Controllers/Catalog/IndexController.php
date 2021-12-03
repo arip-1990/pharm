@@ -54,9 +54,9 @@ class IndexController extends Controller
 
         $categories = $categories->toTree();
         $paginator = $paginator->paginate(12);
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
 
-        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'cartItems'));
+        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'cartService'));
     }
 
     public function product(Request $request, Product $product): View
@@ -76,9 +76,9 @@ class IndexController extends Controller
         }
         catch (\DomainException $e) {}
 
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
 
-        return view('catalog.product', compact('title', 'city', 'product', 'offers', 'minPrice', 'item', 'cartItems'));
+        return view('catalog.product', compact('title', 'city', 'product', 'offers', 'minPrice', 'item', 'cartService'));
     }
 
     public function search(Request $request): View
@@ -91,9 +91,9 @@ class IndexController extends Controller
         $paginator = $this->productService->search($query, $city);
         $paginator->appends(['q' => $query]);
         $categories = Category::query()->get()->toTree();
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
 
-        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'cartItems'));
+        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'cartService'));
     }
 
     public function getPrice(Request $request): JsonResponse

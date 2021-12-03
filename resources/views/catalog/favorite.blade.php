@@ -25,7 +25,7 @@
                             <div class="col-7 col-md-8">
                                 <a class="favorite_title" href="{{ route('catalog.product', ['product' => $product->slug]) }}">{{ $product->name }}</a>
                             </div>
-                            <span class="col-2 col-md-1 favorite-remove" data-action="remove"></span>
+                            <span class="col-2 col-md-1 favorite-remove"></span>
                         </div>
                     @endforeach
                 </div>

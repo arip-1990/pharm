@@ -26,16 +26,16 @@ class CheckoutController extends Controller
         if (!$this->cartService->getItems()->count()) return redirect()->route('cart');
 
         $this->cartService->setStore($store);
-        $productsId = [];
+        $productIds = [];
         /** @var CartItem $item */
         foreach ($this->cartService->getItems() as $item)
-            $productsId[$item->product_id] = $item->quantity;
+            $productIds[$item->product_id] = $item->quantity;
 
-        $request->session()->put('oldCart', $this->cartService->getItems());
+//        $request->session()->put('oldCartItems', $this->cartService->getItems());
         $this->cartService->clear();
         /** @var Offer $offer */
-        foreach (Offer::query()->where('store_id', $store->id)->whereIn('product_id', array_keys($productsId))->get() as $offer) {
-            $quantity = $productsId[$offer->product_id] < $offer->quantity ? $productsId[$offer->product_id] : $offer->quantity;
+        foreach (Offer::query()->where('store_id', $store->id)->whereIn('product_id', array_keys($productIds))->get() as $offer) {
+            $quantity = min($productIds[$offer->product_id], $offer->quantity);
             $this->cartService->add(CartItem::create($offer->product_id, $quantity));
 
             if (!$request->session()->get('prescription', false))
@@ -46,10 +46,8 @@ class CheckoutController extends Controller
             $request->session()->flash('status', 'Заказать рецептурный препарат на сайте, можно только путем самовывоза из аптеки при наличии рецепта, выписанного врачом!');
 
         $cartService = $this->cartService;
-        $cartService->setStore($store);
-        $cartItems = $cartService->getItems();
 
-        return view('catalog.checkout', compact('title', 'city', 'store', 'cartService', 'cartItems'));
+        return view('catalog.checkout', compact('title', 'city', 'store', 'cartService'));
     }
 
     public function checkout(CheckoutRequest $request): RedirectResponse

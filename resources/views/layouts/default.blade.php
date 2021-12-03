@@ -74,7 +74,7 @@
                     </div>
                     <div class="col-3 col-sm-2 col-lg-1 text-center" style="margin-top: 19px;">
                         <a class="cart" href="{{ route('cart') }}">
-                            <span class="quantity">{{ $cartItems->count() }}</span>
+                            <span class="quantity">{{ $cartService->getTotal() }}</span>
                             <img src="/images/cart.png" style="height: 30px;">
                             Корзина
                         </a>

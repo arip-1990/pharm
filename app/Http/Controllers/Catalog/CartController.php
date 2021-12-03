@@ -17,9 +17,9 @@ class CartController extends Controller
     {
         $title = $this->title . ' | Состав заказа';
         $city = $request->cookie('city', $this->defaultCity);
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
 
-        return view('catalog.cart', compact('title', 'city', 'cartItems'));
+        return view('catalog.cart', compact('title', 'city', 'cartService'));
     }
 
     public function add(Request $request, string $id): JsonResponse
@@ -81,8 +81,8 @@ class CartController extends Controller
             }
         });
 
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
 
-        return view('catalog.pharmacy', compact('title', 'city', 'stores', 'total', 'cartItems'));
+        return view('catalog.pharmacy', compact('title', 'city', 'stores', 'total', 'cartService'));
     }
 }

@@ -47,7 +47,7 @@ const cartQuantity = async (id, quantity) => {
     }
 }
 
-document.querySelectorAll("[data-action='remove']").forEach(item => {
+document.querySelectorAll('.cart .cart-remove').forEach(item => {
     item.addEventListener('click', async function () {
         const product = this.closest('[data-product]');
         try {
