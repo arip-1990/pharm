@@ -16,9 +16,9 @@ class FavoriteController extends Controller
         $title = $this->title;
         $favorites = $request->session()->get('favorites', []);
         $paginator = Product::query()->active()->whereIn('id', $favorites)->paginate(15);
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
 
-        return view('catalog.favorite', compact('title', 'paginator', 'cartItems'));
+        return view('catalog.favorite', compact('title', 'paginator', 'cartService'));
     }
 
     public function add(Request $request, string $id): JsonResponse

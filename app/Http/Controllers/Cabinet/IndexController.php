@@ -17,8 +17,8 @@ class IndexController extends Controller
         $city = $request->cookie('city', $this->defaultCity);
 
         $user = Auth::user();
-        $cartItems = $this->cartService->getItems();
-        return view('cabinet.index', compact('title', 'city', 'user', 'cartItems'));
+        $cartService = $this->cartService;
+        return view('cabinet.index', compact('title', 'city', 'user', 'cartService'));
     }
 
     public function edit(Request $request): View
@@ -27,8 +27,8 @@ class IndexController extends Controller
         $city = $request->cookie('city', $this->defaultCity);
 
         $user = Auth::user();
-        $cartItems = $this->cartService->getItems();
-        return view('cabinet.edit', compact('title', 'city', 'user', 'cartItems'));
+        $cartService = $this->cartService;
+        return view('cabinet.edit', compact('title', 'city', 'user', 'cartService'));
     }
 
     public function update(EditProfileRequest $request): RedirectResponse

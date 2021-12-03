@@ -23,9 +23,9 @@ class IndexController extends Controller
             ->whereIn('id', $productIds)->get()->pluck('abc');
         $abc = '';
 
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
 
-        return view('index', compact('title', 'city', 'abc', 'products', 'alphabet', 'cartItems'));
+        return view('index', compact('title', 'city', 'abc', 'products', 'alphabet', 'cartService'));
     }
 
     public function setCity(string $city): RedirectResponse
@@ -46,8 +46,8 @@ class IndexController extends Controller
         else $query = Product::query()->where('name', 'like', $abc . '%');
 
         $paginator = $query->whereIn('id', $productIds)->paginate(30);
-        $cartItems = $this->cartService->getItems();
+        $cartService = $this->cartService;
 
-        return view('alphabet', compact('title', 'abc', 'paginator', 'alphabet', 'cartItems'));
+        return view('alphabet', compact('title', 'abc', 'paginator', 'alphabet', 'cartService'));
     }
 }

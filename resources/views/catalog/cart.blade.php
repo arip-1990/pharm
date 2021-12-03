@@ -15,8 +15,7 @@
                 <div class="col-1 text-center"></div>
             </div>
             @php $total = 0; @endphp
-            @foreach ($cartItems as $item)
-                @php $total += $item->getAmount(); @endphp
+            @foreach ($cartService->getItems() as $item)
                 <div class="row align-items-center product" data-product="{{ $item->product->id }}">
                     <div class="col-3 col-md-2 text-center">
                         @if ($item->product->photos()->count())
@@ -39,7 +38,7 @@
                             <button class="btn btn-outline-primary" data-type="+">+</button>
                         </div>
                     </div>
-                    <span class="col-2 col-md-1 cart-remove" data-action="remove"></span>
+                    <span class="col-2 col-md-1 cart-remove"></span>
                 </div>
             @endforeach
 
@@ -48,7 +47,7 @@
                     В процессе оформления заказа цена может незначительно измениться в зависимости от выбранной аптеки.<br />
                     Цены на сайте отличаются от цен в аптеках и действуют только при оформлении заказа с помощью сайта.
                 </p>
-                <p class="col-12 col-md-4 text-center text-md-end fs-4 fw-bold">Итого: от <span id="total-price">{{ $total }}</span> &#8381;</p>
+                <p class="col-12 col-md-4 text-center text-md-end fs-4 fw-bold">Итого: от <span id="total-price">{{ $cartService->getAmount() }}</span> &#8381;</p>
             </div>
 
             <div class="row align-items-center mt-3">
