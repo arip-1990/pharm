@@ -1,17 +1,13 @@
 class Favorite {
     constructor() {
         this.favorite = document.querySelector('.fav .quantity');
-        this.elements = [].concat(...document.querySelectorAll('.favorite-toggle'));
 
-        if (this.elements.length) {
-            this.elements.forEach((element) => element.addEventListener('click', () => this.listener(element)));
-        }
-        else {
-            this.elements = [].concat(...document.querySelectorAll('.favorite .favorite-remove'));
-            this.elements.forEach((element, index) => element.addEventListener('click', () => {
-                this.removeFavorite(element, true).then(() => this.elements.splice(index, 1));
-            }));
-        }
+        document.querySelectorAll('.favorite-toggle').forEach((element) => {
+            element.addEventListener('click', () => this.listener(element));
+        });
+        document.querySelectorAll('.favorite .favorite-remove').forEach((element) => {
+            element.addEventListener('click', () => this.removeFavorite(element, true));
+        });
     }
 
     listener(element) {
@@ -41,7 +37,6 @@ class Favorite {
     }
 
     async removeFavorite(element, removeElement = false) {
-        console.log(element);
         try {
             const product = element.closest('[data-product]');
             const { data } = await axios.delete('/favorite/' + product.getAttribute('data-product'));

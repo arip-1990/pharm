@@ -1,3 +1,90 @@
+class Cart {
+    constructor() {
+        this.cart = document.querySelector('.cart .quantity');
+
+        document.querySelectorAll('[data-type=product]').forEach(element => {
+            element.addEventListener('newCart', (e) => this.newCartListener(e, element));
+        });
+    }
+
+    async newCartListener(event, element) {
+        const modal = event.target;
+        const name = element.querySelector('[itemprop=name]');
+        const btn = element.querySelector('[data-toggle=modal]');
+
+        try {
+            await this.add(element.getAttribute('data-product'));
+        }
+        catch (e) {
+            alertMessage(e);
+        }
+
+        modal.setAttribute('data-product', element.getAttribute('data-product'));
+        modal.querySelector('.title').innerHTML = name.innerHTML;
+        modal.querySelector('.price').innerHTML = element.querySelector('[itemprop=price]').innerHTML;
+        modal.querySelector('.input-group input').setAttribute('max', element.querySelector('[data-max]').getAttribute('data-max'));
+        modal.querySelector('img').setAttribute('alt', name.innerText);
+        modal.querySelector('img').setAttribute('src', element.querySelector('[itemprop=image]').getAttribute('src'));
+
+        btn.removeAttribute('data-toggle');
+        btn.removeAttribute('data-target');
+        btn.removeAttribute('data-max');
+        btn.innerHTML = 'Добавлено';
+    }
+
+    changeCartQuantity() {
+        let totalQnt = 0;
+        let totalPrice = 0;
+
+        document.querySelectorAll('.cart > .product').forEach(product => {
+            const qnt = Number(product.querySelector('input').value);
+            const price = parseFloat(product.querySelector('.product_price span').innerText.match(/\d+/)[0]);
+
+            if (!isNaN(qnt)) {
+                totalQnt += qnt;
+                if (!isNaN(price))
+                    totalPrice += (price * qnt);
+            }
+        });
+
+        const total = document.getElementById('total-price');
+        if (total) total.innerText = totalPrice.toString();
+    }
+
+    async add(id, quantity = 1) {
+        try {
+            const { data } = await axios.post(`/cart/${id}`, { total: quantity });
+            document.querySelector('.cart .quantity').innerText = data.total;
+            changeCartQuantity();
+        }
+        catch (e) {
+            return new Error(e);
+        }
+    }
+
+    async remove(id) {
+        try {
+            const { data } = await axios.delete(`/cart/${id}`);
+            document.querySelector('.cart .quantity').innerText = data.total;
+        }
+        catch (e) {
+            return new Error('Ошибка! Не удалось удалить товар из корзины');
+        }
+    }
+
+    async quantity(id, quantity) {
+        try {
+            const { data } = await axios.put(`/cart/${id}`, { quantity });
+            document.querySelector('.cart .quantity').innerText = data.total;
+            changeCartQuantity();
+        }
+        catch (e) {
+            return new Error(e);
+        }
+    }
+}
+
+
 const changeCartQuantity = () => {
     let totalQnt = 0;
     let totalPrice = 0;
@@ -144,30 +231,4 @@ document.querySelectorAll('[data-product] .input-group .input-number').forEach(e
     })
 });
 
-document.querySelectorAll("[data-type='product']").forEach(item => {
-    item.addEventListener('newCart', async (event) => {
-        const modal = event.target;
-        const product = event.detail.product;
-        const name = product.querySelector('[itemprop=name]');
-        const btn = product.querySelector('[data-toggle=modal]');
-
-        try {
-            await cartAdd(product.getAttribute('data-product'));
-        }
-        catch (e) {
-            alertMessage(e);
-        }
-
-        modal.setAttribute('data-product', product.getAttribute('data-product'));
-        modal.querySelector('.title').innerHTML = name.innerHTML;
-        modal.querySelector('.price').innerHTML = product.querySelector('[itemprop=price]').innerHTML;
-        modal.querySelector('.input-group input').setAttribute('max', product.querySelector('[data-max]').getAttribute('data-max'));
-        modal.querySelector('img').setAttribute('alt', name.innerText);
-        modal.querySelector('img').setAttribute('src', product.querySelector('[itemprop=image]').getAttribute('src'));
-
-        btn.removeAttribute('data-toggle');
-        btn.removeAttribute('data-target');
-        btn.removeAttribute('data-max');
-        btn.innerHTML = 'Добавлено';
-    })
-});
+new Cart();
