@@ -37,7 +37,7 @@ const show = event => {
         backdrop.classList.add('show');
         modal.classList.add('show');
         if (target === 'product')
-            modal.dispatchEvent(new CustomEvent('newCart', {detail: {product: event.target.closest('[data-product]')}}));
+            event.target.dispatchEvent(new CustomEvent('newCart'));
     }, 100);
 }
 const close = event => {
@@ -55,10 +55,10 @@ const close = event => {
     backdrop.addEventListener('transitionend', transitionHandler);
 }
 
-document.querySelectorAll("[data-toggle='modal']").forEach(element => {
+document.querySelectorAll('[data-toggle=modal]').forEach(element => {
    element.addEventListener('click', show);
 });
-document.querySelectorAll("[data-dismiss='modal']").forEach(element => {
+document.querySelectorAll('[data-dismiss=modal]').forEach(element => {
     element.addEventListener('click', close);
 });
 

@@ -58,7 +58,7 @@
         </div>
         <div class="col-4 border-start-0 p-4" style="border: 2px solid #f7f7f7;">
             <h4 class="text-center">Ваш заказ</h4>
-            @foreach($cartItems as $item)
+            @foreach($cartService->getItems() as $item)
                 <div class="row">
                     <div class="col-8">
                         {{ $item->product->name }}

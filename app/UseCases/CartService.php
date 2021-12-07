@@ -139,8 +139,8 @@ class CartService
     private function saveItems(): void
     {
         if (Auth::check()) {
-            Auth::user()->cartItems()->delete();
-            Auth::user()->cartItems()->saveMany($this->items);
+            if ($this->items->count()) Auth::user()->cartItems()->saveMany($this->items);
+            else Auth::user()->cartItems()->delete();
         }
         else {
             session(['cartItems' => $this->items]);
