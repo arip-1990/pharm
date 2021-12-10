@@ -35,14 +35,29 @@ class Status
     const STATUS_SENT = 'S'; // Отправлен
     const STATUS_RETURN_BY_COURIER = 'U'; // Возврат от курьера, полный возврат
 
+    // Состояния
+    const STATE_WAIT = 0;
+    const STATE_ERROR = 1;
+    const STATE_SUCCESS = 2;
+
     public string $value;
     public int $state;
     public \DateTimeImmutable $created_at;
 
-    public function __construct(string $value, int $state, \DateTimeImmutable $created_at)
+    public function __construct(string $value, \DateTimeImmutable $created_at)
     {
         $this->value = $value;
-        $this->state = $state;
+        $this->state = self::STATE_WAIT;
         $this->created_at = $created_at;
+    }
+
+    public function changeState(int $state): void
+    {
+        $this->state = $state;
+    }
+
+    public function equal(string $value): bool
+    {
+        return $this->value === $value;
     }
 }

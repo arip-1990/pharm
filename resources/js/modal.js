@@ -27,7 +27,7 @@ const show = event => {
         const fixedBox = document.querySelector('.fixed-box.fixed');
         if (fixedBox) fixedBox.style.paddingRight = '15px';
     }
-    backdrop.style.display = 'block';
+    backdrop.removeAttribute('style');
 
     modal.style.display = 'block';
     modal.removeAttribute('aria-hidden');
@@ -36,8 +36,10 @@ const show = event => {
     setTimeout(() => {
         backdrop.classList.add('show');
         modal.classList.add('show');
-        if (target === 'product')
+        if (target === 'product') {
             event.target.dispatchEvent(new CustomEvent('newCart'));
+            event.target.removeEventListener('click', show);
+        }
     }, 100);
 }
 const close = event => {

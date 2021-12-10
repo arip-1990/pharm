@@ -36,5 +36,40 @@ return [
             '1c.pharm36.ru/pharm36/hs/reserv/orders',
             '1c.pharm36.ru/pharm36/hs/reserv/offers'
         ]
+    ],
+    'pay' => [
+        'sber' => [
+            'prod' => [
+                'prefix_number' => 'order_',
+                'url' => 'https://securepayments.sberbank.ru/payment/rest/register.do',
+                'statusUrl' => 'https://securepayments.sberbank.ru/payment/rest/getOrderStatus.do',
+                'refundUrl' => 'https://securepayments.sberbank.ru/payment/rest/refund.do',
+                'username' => '366express-api',
+                'password' => '9RML$ZMjN@',
+            ],
+            'test' => [
+                'prefix_number' => 'test-order_',
+                'url' => 'https://3dsec.sberbank.ru/payment/rest/register.do',
+                'statusUrl' => 'https://3dsec.sberbank.ru/payment/rest/getOrderStatus.do',
+                'refundUrl' => 'https://3dsec.sberbank.ru/payment/rest/refund.do',
+                'username' => '366express-api',
+                'password' => '366express',
+            ],
+        ],
+    ],
+    'yandex' => [
+        'GeoCoder' => [
+            'apikey' => 'de8de84b-e8b4-46c9-ba10-4cf2911deebf',
+        ],
+        'delivery' => [
+            'contact_name' => 'Аптека',
+            'contact_email' => 'info@120на80.рф',
+            'contact_phone' => '78722606366',
+            'auth_token' => 'AgAAAABGZK83AAVM1bN7yo78ok-7q6tFrMOVk-0',//test -> AgAAAABEqOAQAAVM1daezZh6F05Lu2mamlHRF6I
+            'idempotency_prefix' => 'test',
+            'links' => [
+                'create' => 'https://b2b.taxi.yandex.net/b2b/cargo/integration/v2/claims/create',
+            ],
+        ],
     ]
 ];

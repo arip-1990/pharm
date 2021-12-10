@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Catalog;
 
-use App\Entities\CartItem;
 use App\Entities\Offer;
 use App\Entities\Store;
 use App\Http\Controllers\Controller;
@@ -26,17 +25,11 @@ class CheckoutController extends Controller
         if (!$this->cartService->getItems()->count()) return redirect()->route('cart');
 
         $this->cartService->setStore($store);
-        $productIds = [];
-        /** @var CartItem $item */
-        foreach ($this->cartService->getItems() as $item)
-            $productIds[$item->product_id] = $item->quantity;
-
-//        $request->session()->put('oldCartItems', $this->cartService->getItems());
-        $this->cartService->clear();
+        $request->session()->put('oldCartItems', $this->cartService->getItems());
         /** @var Offer $offer */
-        foreach (Offer::query()->where('store_id', $store->id)->whereIn('product_id', array_keys($productIds))->get() as $offer) {
-            $quantity = min($productIds[$offer->product_id], $offer->quantity);
-            $this->cartService->add(CartItem::create($offer->product_id, $quantity));
+        foreach (Offer::query()->where('store_id', $store->id)->whereIn('product_id', $this->cartService->getItems()->pluck('product_id'))->get() as $offer) {
+            $quantity = min($this->cartService->getItem($offer->product_id)->quantity, $offer->quantity);
+            $this->cartService->set($offer->product_id, $quantity);
 
             if (!$request->session()->get('prescription', false))
                 $request->session()->put('prescription', $offer->product->isPrescription());
@@ -47,14 +40,18 @@ class CheckoutController extends Controller
 
         $cartService = $this->cartService;
 
-        return view('catalog.checkout', compact('title', 'city', 'store', 'cartService'));
+        return view('checkout.index', compact('title', 'city', 'store', 'cartService'));
     }
 
-    public function checkout(CheckoutRequest $request): RedirectResponse
+    public function checkout(CheckoutRequest $request): View | RedirectResponse
     {
         if ($request->only(['delivery', 'payment']) and $request->filled('rule')) {
+            $title = $this->title . ' | Заказ оформлен!';
+            $city = $request->cookie('city', $this->defaultCity);
             $order = $this->orderService->checkout($request);
-            dd($order);
+            $cartService = $this->cartService;
+
+            return view('checkout.finish', compact('title', 'city', 'order', 'cartService'));
         }
 
         return back()->with('error', 'Возникла ошибка при оформлении заказа!');

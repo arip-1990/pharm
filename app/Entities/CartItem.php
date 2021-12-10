@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CartItem extends Model
 {
-    protected $fillable = ['product_id', 'quantity'];
     public $timestamps = false;
 
     public static function create(string $productId, int $quantity): self

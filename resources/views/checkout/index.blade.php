@@ -6,6 +6,7 @@
     <h1 class="text-center">Оформление заказа</h1>
     <form method="post" class="row checkout">
         @csrf
+        <input type="hidden" name="store" value="{{ $store->id }}">
         <div class="col-8 p-4" style="border: 2px solid #f7f7f7;">
             <h4 class="text-center">Способ получения</h4>
             <div class="row">

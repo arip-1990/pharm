@@ -34,13 +34,11 @@ class Cart {
                         if(currentVal > parseInt(input.getAttribute('min'))) {
                             input.value = String(currentVal - 1);
                         }
-                        // this.toggleDisabled(elem, input);
                     }
                     else if(elem.getAttribute('data-type') === '+') {
                         if(currentVal < parseInt(input.getAttribute('max'))) {
                             input.value = String(currentVal + 1);
                         }
-                        // this.toggleDisabled(elem, input);
                     }
                 }
                 else {
@@ -56,11 +54,7 @@ class Cart {
                 const maxValue = parseInt(event.target.getAttribute('max'));
                 const currentValue = parseInt(event.target.value);
                 const productId = event.target.closest('[data-product]').getAttribute('data-product');
-
-                // if (currentValue > minValue)
-                //     event.target.closest('.input-group').querySelector(".btn[data-type='-']").removeAttribute('disabled');
-                // if (currentValue < maxValue)
-                //     event.target.closest('.input-group').querySelector(".btn[data-type='+']").removeAttribute('disabled');
+                this.toggleDisabled(event.target);
 
                 if (currentValue < minValue) {
                     event.target.value = minValue;
@@ -103,11 +97,23 @@ class Cart {
         });
     }
 
-    toggleDisabled(elem, input) {
-        if(elem.getAttribute('data-type') === '-' && parseInt(input.value) <= parseInt(input.getAttribute('min')))
-            elem.setAttribute('disabled', true);
-        else if(elem.getAttribute('data-type') === '+' && parseInt(input.value) >= parseInt(input.getAttribute('max')))
-            elem.setAttribute('disabled', true);
+    toggleDisabled(element) {
+        const product = element.closest('[data-product]');
+        if (product) {
+            const input = product.querySelector('.input-group input');
+            product.querySelectorAll('.input-group .btn[data-type]').forEach(elem => {
+                if (elem.getAttribute('data-type') === '-') {
+                    if (parseInt(input.value) <= parseInt(input.getAttribute('min')))
+                        elem.setAttribute('disabled', '');
+                    else elem.removeAttribute('disabled');
+                }
+                else if (elem.getAttribute('data-type') === '+') {
+                    if (parseInt(input.value) >= parseInt(input.getAttribute('max')))
+                        elem.setAttribute('disabled', '');
+                    else elem.removeAttribute('disabled');
+                }
+            });
+        }
     }
 
     async newCartListener(element) {
@@ -128,11 +134,13 @@ class Cart {
         modal.querySelector('.input-group input').setAttribute('max', product.querySelector('[data-max]').getAttribute('data-max'));
         modal.querySelector('img').setAttribute('alt', name.innerText);
         modal.querySelector('img').setAttribute('src', product.querySelector('[itemprop=image]').getAttribute('src'));
+        modal.querySelectorAll('.input-group .btn[data-type]').forEach(elem => elem.removeAttribute('disabled'));
 
         element.removeAttribute('data-toggle');
         element.removeAttribute('data-target');
         element.removeAttribute('data-max');
         element.innerHTML = 'Добавлено';
+        element
     }
 
     changeCartQuantity() {

@@ -6,6 +6,7 @@ use App\Entities\CartItem;
 use App\Entities\Offer;
 use App\Entities\Order;
 use App\Entities\OrderItem;
+use App\Entities\Store;
 use App\Http\Requests\Catalog\CheckoutRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,7 @@ class OrderService
         if ($request['delivery'] === Order::DELIVERY_TYPE_COURIER and $request['payment'] == Order::PAYMENT_TYPE_CASH)
             throw new \DomainException('Не возможно оплатить наличными');
 
+        $this->cartService->setStore(Store::query()->find($request['store']));
         $offers = [];
         $items = $this->cartService->getItems()->map(function (CartItem $item) use (&$offers) {
             /** @var Offer $offer */
@@ -33,9 +35,10 @@ class OrderService
             Auth::id(),
             $this->cartService->getStore()->id,
             $request['payment'],
+            $this->cartService->getTotalAmount(),
             $request['delivery'],
-            $this->cartService->getTotalAmount()
         );
+        $order->save();
 
         $order->items()->saveMany($items);
 
@@ -53,17 +56,17 @@ class OrderService
 //            ), $request->delivery_type);
 //        }
 
-        $order->save();
         foreach ($offers as $offer) $offer->save();
 
-        foreach ($request->session()->get('oldCart', new Collection()) as $item) {
+        foreach ($request->session()->get('oldCartItems', new Collection()) as $item) {
             try {
                 $newItem = $this->cartService->getItem($item->product_id);
 
                 $quantity = $item->quantity - $newItem->quantity;
-                $this->cartService->remove($item->product_id);
                 if ($quantity > 0)
-                    $this->cartService->add($item->changeQuantity($quantity));
+                    $this->cartService->set($item->product_id, $quantity);
+                else
+                    $this->cartService->remove($item->product_id);
             }
             catch (\DomainException $exception) {}
         }
@@ -71,38 +74,37 @@ class OrderService
         return $order;
     }
 
-//    public function paymentSberbank(Order $order, string $redirectUrl): string
-//    {
-//        $curl = curl_init();
-//        $config = \Yii::$app->params['payments']['sberbank'];
-//        $config = $config[$config['type']];
-//        $url = $config['url'];
-//        $username = $config['username'];
-//        $password = $config['password'];
-//
-//        curl_setopt_array($curl, [
-//            CURLOPT_URL => $url,
-//            CURLOPT_RETURNTRANSFER => true,
-//            CURLOPT_POST => true,
-//            CURLOPT_POSTFIELDS => http_build_query([
-//                'userName'      => $username,
-//                'password'      => $password,
-//                'orderNumber'   => $config['prefix_number'] . $order->id,
-//                'amount'        => $order->getTotalCost() * 100,
-//                'returnUrl'     => $redirectUrl,
-//            ])
-//        ]);
-//
-//        $response = curl_exec($curl);
-//        curl_close($curl);
-//
-//        $response = json_decode($response, true);
-//
-//        if(isset($response['errorCode']))
-//            throw new HttpException(500, 'Не удалось создать форму оплаты. ' . $response['errorMessage']);
-//
-//        $order->pay($response['orderId']);
-//        $this->order_repo->save($order);
-//        return $response['formUrl'];
-//    }
+    public function paymentSberbank(Order $order, string $redirectUrl): string
+    {
+        $curl = curl_init();
+        $config = config('data.pay.sber.test');
+        $url = $config['url'];
+        $username = $config['username'];
+        $password = $config['password'];
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query([
+                'userName'      => $username,
+                'password'      => $password,
+                'orderNumber'   => $config['prefix_number'] . $order->id,
+                'amount'        => $order->getTotalCost() * 100,
+                'returnUrl'     => $redirectUrl,
+            ])
+        ]);
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        $response = json_decode($response, true);
+
+        if(isset($response['errorCode']))
+            throw new \DomainException('Не удалось создать форму оплаты. ' . $response['errorMessage']);
+
+        $order->pay($response['orderId']);
+        $order->save();
+        return $response['formUrl'];
+    }
 }

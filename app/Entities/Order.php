@@ -3,18 +3,20 @@
 namespace App\Entities;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
  * @property int $user_id
  * @property string $store_id
  * @property int $payment_type
- * @property int $delivery_type
+ * @property bool $delivery_type
  * @property float $cost
  * @property string $status
  * @property string|null $note
@@ -29,7 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Store $store
  * @property User $user
  *
- * @property Status[] $statuses
+ * @property Collection<Status> $statuses
  * @property OrderItem[] $items
  * @property Archive[] $archives
  *
@@ -40,6 +42,10 @@ class Order extends Model
 {
     use SoftDeletes;
 
+    protected $casts = [
+        'statuses' => AsCollection::class
+    ];
+
     // Тип оплаты
     const PAYMENT_TYPE_CASH = 0;
     const PAYMENT_TYPE_SBERBANK = 1;
@@ -48,12 +54,7 @@ class Order extends Model
     const DELIVERY_TYPE_PICKUP = 0;
     const DELIVERY_TYPE_COURIER = 1;
 
-    // Состояния
-    const STATE_WAIT = 0;
-    const STATE_ERROR = 1;
-    const STATE_SUCCESS = 2;
-
-    public static function create(string $userId, string $storeId, int $paymentType, int $deliveryType, float $cost): self
+    public static function create(string $userId, string $storeId, int $paymentType, float $cost, bool $deliveryType = false): self
     {
         $item = new static();
         $item->user_id = $userId;
@@ -61,13 +62,13 @@ class Order extends Model
         $item->payment_type = $paymentType;
         $item->delivery_type = $deliveryType;
         $item->cost = $cost;
+        $item->addStatus(Status::STATUS_ACCEPTED);
         return $item;
     }
 
-    public function setDeliveryInfo(Delivery $delivery, int $deliveryType = 0): void
+    public function setDeliveryInfo(Delivery $delivery): void
     {
         $this->delivery = $delivery;
-        $this->delivery_type = $deliveryType;
     }
 
     public function pay(string $sberId = null): void
@@ -78,6 +79,14 @@ class Order extends Model
         if ($sberId) {
             $this->sber_id = $sberId;
             $this->addStatus(Status::STATUS_PAID);
+        }
+        else {
+            $this->statuses->each(function (Status $status) {
+                if ($status->equal(Status::STATUS_PAID)) {
+                    $status->changeState(Status::STATE_SUCCESS);
+                    return false;
+                }
+            });
         }
     }
 
@@ -148,7 +157,9 @@ class Order extends Model
 
     public function isPay(): bool
     {
-        return $this->inStatus(Status::STATUS_PAID);
+        return $this->inStatus(Status::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
+            return $status->equal(Status::STATUS_PAID) and $status->state === Status::STATE_SUCCESS;
+        });
     }
 
     public function isSend(): bool
@@ -203,13 +214,13 @@ class Order extends Model
 
     public function inStatus(string $status): bool
     {
-        return in_array($status, array_column($this->statuses, 'value'));
+        return $this->statuses->pluck('value')->contains($status);
     }
 
-    public function addStatus(string $value, int $state = 0): void
+    public function addStatus(string $value, int $state = Status::STATE_WAIT): void
     {
         $statuses = $this->statuses;
-        $statuses[] = new Status($value, $state, new \DateTimeImmutable());
+        $statuses[] = new Status($value, new \DateTimeImmutable(), $state);
         $this->statuses = $statuses;
         $this->status = $value;
     }
