@@ -75,6 +75,7 @@ Route::group(['prefix' => 'favorite', 'as' => 'favorite'], function () {
 
 Route::group(['prefix' => 'checkout', 'as' => 'checkout'], function () {
     Route::get('/{store}', [CheckoutController::class, 'index']);
+    Route::get('/finish/{order}', [CheckoutController::class, 'finish'])->name('.finish');
     Route::post('/{store}', [CheckoutController::class, 'checkout']);
 });
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Catalog;
 
 use App\Entities\Offer;
+use App\Entities\Order;
 use App\Entities\Store;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalog\CheckoutRequest;
@@ -10,6 +11,7 @@ use App\UseCases\OrderService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class CheckoutController extends Controller
 {
@@ -43,17 +45,41 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('title', 'city', 'store', 'cartService'));
     }
 
-    public function checkout(CheckoutRequest $request): View | RedirectResponse
+    public function checkout(CheckoutRequest $request): RedirectResponse
     {
         if ($request->only(['delivery', 'payment']) and $request->filled('rule')) {
-            $title = $this->title . ' | Заказ оформлен!';
-            $city = $request->cookie('city', $this->defaultCity);
             $order = $this->orderService->checkout($request);
-            $cartService = $this->cartService;
 
-            return view('checkout.finish', compact('title', 'city', 'order', 'cartService'));
+            foreach ($request->session()->get('oldCartItems', new Collection()) as $item) {
+                try {
+                    $newItem = $this->cartService->getItem($item->product_id);
+
+                    $quantity = $item->quantity - $newItem->quantity;
+                    if ($quantity > 0)
+                        $this->cartService->set($item->product_id, $quantity);
+                    else
+                        $this->cartService->remove($item->product_id);
+                }
+                catch (\DomainException $exception) {}
+            }
+
+            if ((int)$request['payment'] === Order::PAYMENT_TYPE_SBERBANK) {
+                $url = $this->orderService->paymentSberbank($order, route('checkout.finish', $order, true));
+                return redirect($url);
+            }
+
+            return redirect()->route('checkout.finish', $order);
         }
 
-        return back()->with('error', 'Возникла ошибка при оформлении заказа!');
+        return back();
+    }
+
+    public function finish(Request $request, Order $order): View
+    {
+        $title = $this->title . ' | Заказ оформлен!';
+        $city = $request->cookie('city', $this->defaultCity);
+        $cartService = $this->cartService;
+
+        return view('checkout.finish', compact('title', 'city', 'order', 'cartService'));
     }
 }

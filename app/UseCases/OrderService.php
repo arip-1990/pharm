@@ -58,26 +58,13 @@ class OrderService
 
         foreach ($offers as $offer) $offer->save();
 
-        foreach ($request->session()->get('oldCartItems', new Collection()) as $item) {
-            try {
-                $newItem = $this->cartService->getItem($item->product_id);
-
-                $quantity = $item->quantity - $newItem->quantity;
-                if ($quantity > 0)
-                    $this->cartService->set($item->product_id, $quantity);
-                else
-                    $this->cartService->remove($item->product_id);
-            }
-            catch (\DomainException $exception) {}
-        }
-
         return $order;
     }
 
     public function paymentSberbank(Order $order, string $redirectUrl): string
     {
         $curl = curl_init();
-        $config = config('data.pay.sber.test');
+        $config = config('data.pay.sber.prod');
         $url = $config['url'];
         $username = $config['username'];
         $password = $config['password'];
