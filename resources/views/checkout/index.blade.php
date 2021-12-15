@@ -53,7 +53,6 @@
                     <div class="form-check">
                         <input class="form-check-input{{ $errors->has('rule') ? ' is-invalid' : '' }}" type="checkbox" name="rule" id="rule">
                         <label class="form-check-label" for="rule">Я согласен(а) с правилами сайта</label>
-                        <small class="text-danger">{{ $errors->first('rule') }}</small>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    @php $city = Illuminate\Support\Facades\Cookie::get('city', config('data.city')[0]) @endphp
+
     <div class="row">
         <nav class="col-md-3">
             <ul class="category">

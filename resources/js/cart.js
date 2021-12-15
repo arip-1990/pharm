@@ -1,7 +1,7 @@
 class Cart {
     constructor() {
         this.cart = document.querySelector('.cart .quantity');
-        this.elements = [].concat(...document.querySelectorAll('.card.product .btn'));
+        this.elements = [].concat(...document.querySelectorAll("[itemtype='https://schema.org/Product'][data-product] .btn"));
     }
 
     listen() {

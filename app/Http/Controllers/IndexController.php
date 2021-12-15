@@ -12,8 +12,7 @@ class IndexController extends Controller
 {
     public function index(Request $request): View
     {
-        $title = $this->title;
-        $city = $request->cookie('city', $this->defaultCity);
+        $city = $request->cookie('city', config('data.city')[0]);
 
         $productIds = Offer::query()->select('product_id')->whereCity($city)
             ->groupBy('product_id')->get()->pluck('product_id');
@@ -25,7 +24,7 @@ class IndexController extends Controller
 
         $cartService = $this->cartService;
 
-        return view('index', compact('title', 'city', 'abc', 'products', 'alphabet', 'cartService'));
+        return view('index', compact('abc', 'products', 'alphabet', 'cartService'));
     }
 
     public function setCity(string $city): RedirectResponse
@@ -35,8 +34,8 @@ class IndexController extends Controller
 
     public function alphabet(Request $request, string $abc): View
     {
-        $title = $this->title . '| Список лекарств по алфавиту';
-        $city = $request->cookie('city', $this->defaultCity);
+        $title = ' | Список лекарств по алфавиту';
+        $city = $request->cookie('city', config('data.city')[0]);
         $productIds = Offer::query()->select('product_id')->whereCity($city)
             ->groupBy('product_id')->get()->pluck('product_id')->toArray();
         $alphabet = Product::query()->selectRaw('SUBSTRING(name, 1, 1) as abc')->distinct('abc')

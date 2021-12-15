@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Catalog;
 use App\Http\Controllers\Controller;
 use App\Entities\Category;
 use App\Entities\Product;
-use App\UseCases\CartService;
 use App\UseCases\ProductService;
 use App\Entities\Offer;
 use App\Entities\Limit;
@@ -26,15 +25,15 @@ class IndexController extends Controller
 
     public function index(Request $request, Category $category = null): View
     {
-        $city = $request->cookie('city', $this->defaultCity);
+        $city = $request->cookie('city', config('data.city')[0]);
         $categoryIds = new Collection();
         if ($category) {
-            $title = $this->title . ' | ' . $category->name;
+            $title = ' | ' . $category->name;
             $categories = $category->descendants;
             $categoryIds->push($category);
         }
         else {
-            $title = $this->title . ' | Категории';
+            $title = ' | Категории';
             $categories = Category::query()->get();
         }
         $categoryIds = $categoryIds->merge($categories)->pluck('id');
@@ -56,13 +55,13 @@ class IndexController extends Controller
         $paginator = $paginator->paginate(12);
         $cartService = $this->cartService;
 
-        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'cartService'));
+        return view('catalog.index', compact('title', 'paginator', 'categories', 'cartService'));
     }
 
     public function product(Request $request, Product $product): View
     {
-        $title = $this->title . ' | ' . $product->name;
-        $city = $request->cookie('city', $this->defaultCity);
+        $title = ' | ' . $product->name;
+        $city = $request->cookie('city', config('data.city')[0]);
 
         $offers = $product->offers()->whereCity($city)->get();
         $minPrice = $offers->first()->price;
@@ -78,13 +77,13 @@ class IndexController extends Controller
 
         $cartService = $this->cartService;
 
-        return view('catalog.product', compact('title', 'city', 'product', 'offers', 'minPrice', 'item', 'cartService'));
+        return view('catalog.product', compact('title', 'product', 'offers', 'minPrice', 'item', 'cartService'));
     }
 
     public function search(Request $request): View
     {
-        $title = $this->title . ' | Поиск';
-        $city = $request->cookie('city', $this->defaultCity);
+        $title = ' | Поиск';
+        $city = $request->cookie('city', config('data.city')[0]);
         if (!$query = $request->query('q'))
             throw new \DomainException('Введите запрос для поиска');
 
@@ -93,7 +92,7 @@ class IndexController extends Controller
         $categories = Category::query()->get()->toTree();
         $cartService = $this->cartService;
 
-        return view('catalog.index', compact('title', 'city', 'paginator', 'categories', 'cartService'));
+        return view('catalog.index', compact('title', 'paginator', 'categories', 'cartService'));
     }
 
     public function getPrice(Request $request): JsonResponse
@@ -125,7 +124,7 @@ class IndexController extends Controller
 
             $limit->save();
 
-            $city = $request->cookie('city', $this->defaultCity);
+            $city = $request->cookie('city', config('data.city')[0]);
             $offer = Offer::query()->whereCity($city)->where('product_id', $request->query('id'))->orderBy('price')->first();
 
             return response()->json($offer->price ?? 0);

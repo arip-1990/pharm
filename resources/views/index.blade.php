@@ -1,6 +1,8 @@
 @extends('layouts.default')
 
 @section('content')
+    @php $city = Illuminate\Support\Facades\Cookie::get('city', config('data.city')[0]) @endphp
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 g-lg-4" itemscope itemtype="https://schema.org/ItemList">
         <link itemprop="url" href="{{ url()->current() }}">
         @foreach ($products as $product)

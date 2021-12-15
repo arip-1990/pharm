@@ -74,41 +74,37 @@ class CartService
     public function add(CartItem $item): void
     {
         $this->loadItems();
-        foreach ($this->items as $current) {
-            if ($current->product_id === $item->product_id) {
-                $current->plus($item->quantity);
-                $this->saveItems();
-                return;
-            }
+        try {
+            $current = $this->getItem($item->product_id);
+            $current->plus($item->quantity);
+            $this->saveItems();
         }
-        $this->items->add($item);
-        $this->saveItems();
+        catch (\DomainException $e) {
+            $this->items->add($item);
+            $this->saveItems();
+        }
     }
 
     public function set(string $productId, int $quantity): void
     {
         $this->loadItems();
-        foreach ($this->items as $current) {
-            if ($current->product_id === $productId) {
-                $current->changeQuantity($quantity);
-                $this->saveItems();
-                return;
-            }
-        }
-        throw new \DomainException('Товар не найден.');
+        $current = $this->getItem($productId);
+        $current->changeQuantity($quantity);
+        $this->saveItems();
+    }
+
+    public function setItems(Collection $items): void
+    {
+        $this->loadItems();
+        $this->items = $items;
+        $this->saveItems();
     }
 
     public function remove(string $productId): void
     {
         $this->loadItems();
-        foreach ($this->items as $i => $current) {
-            if ($current->product_id === $productId) {
-                unset($this->items[$i]);
-                $this->saveItems();
-                return;
-            }
-        }
-        throw new \DomainException('Товар не найден.');
+        $this->items = $this->items->filter(fn(CartItem $item) => $item->product_id !== $productId);
+        $this->saveItems();
     }
 
     public function clear(): void
@@ -129,23 +125,19 @@ class CartService
     {
         if (!$this->items->count()) {
             $this->items = session('cartItems', new Collection());
-            if (Auth::check()) {
-                session()->forget('cartItems');
+            if (Auth::check())
                 $this->items = $this->items->concat(Auth::user()->cartItems);
-            }
         }
     }
 
     private function saveItems(): void
     {
         if (Auth::check()) {
-            if ($this->items->count()) {
+            session()->forget('cartItems');
+            if ($this->items->count())
                 Auth::user()->cartItems()->saveMany($this->items);
-            }
-            else {
-                session()->forget('cartItems');
+            else
                 Auth::user()->cartItems()->delete();
-            }
         }
         else {
             session(['cartItems' => $this->items]);

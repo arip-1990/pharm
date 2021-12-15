@@ -6,29 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Cabinet\EditProfileRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): View
     {
-        $title = $this->title . ' | ' . 'Профиль';
-        $city = $request->cookie('city', $this->defaultCity);
+        $title = ' | ' . 'Профиль';
 
         $user = Auth::user();
         $cartService = $this->cartService;
-        return view('cabinet.index', compact('title', 'city', 'user', 'cartService'));
+        return view('cabinet.index', compact('title', 'user', 'cartService'));
     }
 
-    public function edit(Request $request): View
+    public function edit(): View
     {
-        $title = $this->title . ' | ' . 'Изменить данные';
-        $city = $request->cookie('city', $this->defaultCity);
+        $title = ' | Изменить данные';
 
         $user = Auth::user();
         $cartService = $this->cartService;
-        return view('cabinet.edit', compact('title', 'city', 'user', 'cartService'));
+        return view('cabinet.edit', compact('title', 'user', 'cartService'));
     }
 
     public function update(EditProfileRequest $request): RedirectResponse

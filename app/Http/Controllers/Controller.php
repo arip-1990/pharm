@@ -13,14 +13,10 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected string $title;
-    protected string $defaultCity;
     protected CartService $cartService;
 
     public function __construct()
     {
-        $this->title = env('APP_NAME');
-        $this->defaultCity = config('data.city')[0];
         $this->cartService = new CartService();
     }
 

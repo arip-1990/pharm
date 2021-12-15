@@ -25,7 +25,7 @@
                     </div>
                     <div class="col-12 col-lg-2 d-flex justify-content-between position-relative">
                         <div class="{{ $store->delivery ? 'store-delivery_icon' : '' }}"></div>
-                        <a href="{{ route('pharmacy.show', ['id' => $store->id]) }}" class="btn btn-sm btn-primary">Посмотреть</a>
+                        <a href="{{ route('pharmacy.show', ['store' => $store]) }}" class="btn btn-sm btn-primary">Посмотреть</a>
                     </div>
                 </div>
 

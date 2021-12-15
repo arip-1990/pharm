@@ -56,7 +56,7 @@ Route::group(['prefix' => 'catalog', 'as' => 'catalog'], function () {
 
 Route::group(['prefix' => 'pharmacy', 'as' => 'pharmacy'], function () {
     Route::get('/', [PharmacyController::class, 'index']);
-    Route::get('/{id}', [PharmacyController::class, 'show'])->name('.show');
+    Route::get('/{store}', [PharmacyController::class, 'show'])->name('.show');
 });
 
 Route::group(['prefix' => 'cart', 'as' => 'cart'], function () {

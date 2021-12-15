@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ $title ?? getenv('APP_NAME') }}</title>
+        <title>{{ getenv('APP_NAME') . ($title ?? '') }}</title>
         @yield('meta')
 
         <link href="{{ mix('/css/app.css') }}" rel="stylesheet">

@@ -13,12 +13,11 @@ class FavoriteController extends Controller
 {
     public function index(Request $request): View
     {
-        $title = $this->title;
         $favorites = $request->session()->get('favorites', []);
         $paginator = Product::query()->active()->whereIn('id', $favorites)->paginate(15);
         $cartService = $this->cartService;
 
-        return view('catalog.favorite', compact('title', 'paginator', 'cartService'));
+        return view('catalog.favorite', compact('paginator', 'cartService'));
     }
 
     public function add(Request $request, string $id): JsonResponse

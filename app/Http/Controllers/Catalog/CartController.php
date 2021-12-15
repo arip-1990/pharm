@@ -13,13 +13,12 @@ use Illuminate\Http\Response;
 
 class CartController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): View
     {
-        $title = $this->title . ' | Состав заказа';
-        $city = $request->cookie('city', $this->defaultCity);
+        $title = ' | Состав заказа';
         $cartService = $this->cartService;
 
-        return view('catalog.cart', compact('title', 'city', 'cartService'));
+        return view('catalog.cart', compact('title', 'cartService'));
     }
 
     public function add(Request $request, string $id): JsonResponse
@@ -42,8 +41,8 @@ class CartController extends Controller
 
     public function pharmacy(Request $request): View | RedirectResponse
     {
-        $title = $this->title . ' | Выбор аптеки';
-        $city = $request->cookie('city', $this->defaultCity);
+        $title = ' | Выбор аптеки';
+        $city = $request->cookie('city', config('data.city')[0]);
 
         if(!$total = $this->cartService->getItems()->count())
             return redirect()->route('cart');
@@ -83,6 +82,6 @@ class CartController extends Controller
 
         $cartService = $this->cartService;
 
-        return view('catalog.pharmacy', compact('title', 'city', 'stores', 'total', 'cartService'));
+        return view('catalog.pharmacy', compact('title', 'stores', 'total', 'cartService'));
     }
 }
