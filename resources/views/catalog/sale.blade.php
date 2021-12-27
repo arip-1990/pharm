@@ -3,26 +3,28 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('catalogSale') }}
+
     @php $city = Illuminate\Support\Facades\Cookie::get('city', config('data.city')[0]) @endphp
 
     <div class="row">
         <nav class="col-md-3">
             <ul class="category">
                 <li class="sale">
-                    <a href="{{ route('catalog', ['category' => 'sale']) }}">
+                    <span>
                         <img src="/images/sale-icon.png" alt="">
                         Распродажа
-                    </a>
+                    </span>
                 </li>
-                @each ('layouts.partials.menu', $categories, 'category')
+                @each ('layouts.partials.menu', \App\Entities\Category::query()->get()->toTree(), 'category')
             </ul>
         </nav>
 
         <div class="col-md-9">
-            @if ($pagination->count())
+            @if ($paginator->count())
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4" itemscope itemtype="https://schema.org/ItemList">
                     <link itemprop="url" href="{{ url()->current() }}">
-                    @foreach ($pagination as $product)
+                    @foreach ($paginator as $product)
                         <div class="col-10 offset-1 offset-sm-0">
                             <div class="card product" itemprop="itemListElement" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
                                 @if ('По рецепту' === $value = $product->getValue(4))
@@ -81,7 +83,7 @@
                     @endforeach
                 </div>
 
-                {{ $pagination->onEachSide(2)->links('layouts.partials.pagination') }}
+                {{ $paginator->onEachSide(2)->links('layouts.partials.pagination') }}
             @else
                 <h3 class="text-center">Товары отсутствуют</h3>
             @endif

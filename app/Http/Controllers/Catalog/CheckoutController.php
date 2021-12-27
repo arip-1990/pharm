@@ -8,7 +8,7 @@ use App\Entities\Order;
 use App\Entities\Store;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalog\CheckoutRequest;
-use App\UseCases\OrderService;
+use App\UseCases\Order\CheckoutService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 
 class CheckoutController extends Controller
 {
-    public function __construct(private OrderService $orderService)
+    public function __construct(private CheckoutService $orderService)
     {
         parent::__construct();
     }
@@ -69,10 +69,8 @@ class CheckoutController extends Controller
             }
         }
 
-        if ((int)$request['payment'] === Order::PAYMENT_TYPE_SBERBANK) {
-            $url = $this->orderService->paymentSberbank($order, route('checkout.finish', $order, true));
-            return redirect($url);
-        }
+        if ((int)$request['payment'] === Order::PAYMENT_TYPE_SBERBANK)
+            return redirect($this->orderService->paymentSberbank($order, route('checkout.finish', $order, true)));
 
         return redirect()->route('checkout.finish', $order);
     }
@@ -81,6 +79,9 @@ class CheckoutController extends Controller
     {
         $title = ' | Заказ оформлен!';
         $cartService = $this->cartService;
+
+        $order->sent();
+        $order->save();
 
         return view('checkout.finish', compact('title', 'order', 'cartService'));
     }

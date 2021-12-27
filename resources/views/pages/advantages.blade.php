@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('advantage') }}
+
     <h3 class="text-center">Преимущества наших аптек</h3>
 
     <div class="page" style="background-color: transparent">

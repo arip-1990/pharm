@@ -3,18 +3,20 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('catalog', $category) }}
+
     @php $city = Illuminate\Support\Facades\Cookie::get('city', config('data.city')[0]) @endphp
 
     <div class="row">
         <nav class="col-md-3">
             <ul class="category">
                 <li class="sale">
-                    <a href="{{ route('catalog', ['category' => 'sale']) }}">
+                    <a href="{{ route('catalog.sale') }}">
                         <img src="/images/sale-icon.png" alt="">
                         Распродажа
                     </a>
                 </li>
-                @each ('layouts.partials.menu', $categories, 'category')
+                @each ('layouts.partials.menu', $category ? $category->descendants->toTree() : \App\Entities\Category::query()->get()->toTree(), 'category')
             </ul>
         </nav>
 

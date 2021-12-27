@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('processingPersonalData') }}
+
     <h3 class="text-center">Обработка персональных данных</h3>
 
     <div class="page">

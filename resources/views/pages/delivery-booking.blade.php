@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('deliveryBooking') }}
+
     <h3 class="text-center">Доставка / Бронирование</h3>
 
     <div class="page">

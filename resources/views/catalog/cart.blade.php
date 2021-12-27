@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('cart') }}
+
     <div class="row">
         <h3>Состав заказа</h3>
 

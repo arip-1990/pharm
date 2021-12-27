@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('checkout') }}
+
     <h1 class="text-center">Оформление заказа</h1>
     <form method="post" class="row checkout">
         @csrf

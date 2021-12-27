@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('pharmacyShow', $store) }}
+
     <div class="row page">
         <div class="col-12 col-md-6">
             <div id="map" style="width: 100%; height: 400px"></div>

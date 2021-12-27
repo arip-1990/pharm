@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('orderPayment') }}
+
     <div class="page">
         <h6 class="text-center fw-bold">Способы оплаты при получении заказа в аптеке:</h6>
         <p><span class="fw-bold">Наличными.</span> Оплата осуществляется непосредственно на кассе аптеки в момент выдачи заказа;</p>

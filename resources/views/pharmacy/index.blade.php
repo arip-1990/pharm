@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('pharmacy') }}
+
     <h3 class="text-center">Точки самовывоза</h3>
 
     <div class="page">

@@ -1,16 +1,44 @@
 <?php
 
-namespace App\UseCases;
+namespace App\UseCases\Catalog;
 
 use App\Entities\Attribute;
+use App\Entities\Category;
+use App\Entities\Offer;
 use App\Entities\Product;
 use App\Entities\Value;
-use App\Entities\Offer;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
+use function dd;
 
 class ProductService
 {
+    public function getProductsByCity(string $city, Category $category = null): Paginator
+    {
+        $categoryIds = new Collection();
+        if ($category) {
+            $categories = $category->descendants;
+            $categoryIds->push($category);
+        }
+        else {
+            $categories = Category::query()->get();
+        }
+
+        $productIds = Offer::query()->select('product_id')->whereCity($city)
+            ->groupBy('product_id')->get()->pluck('product_id');
+
+        return Product::query()->whereIn('id', $productIds)
+            ->whereIn('category_id', $categoryIds->merge($categories)->pluck('id'))->paginate(12);
+    }
+
+    public function getSalesByCity(string $city): Paginator
+    {
+        $productIds = Offer::query()->select('product_id')->whereCity($city)
+            ->groupBy('product_id')->get()->pluck('product_id');
+
+        return Product::query()->whereIn('id', $productIds)->paginate(12);
+    }
+
     public function search(string $text, string $city): Paginator
     {
         $productIds = Offer::query()->select('product_id')->whereCity($city)

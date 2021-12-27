@@ -86,17 +86,6 @@ a {
     }
 }
 
-.category .sale {
-    border-color: #f00;
-
-    a {
-        font-size: 1.2rem;
-        font-weight: bold;
-        letter-spacing: 2px;
-        color: #f00;
-    }
-}
-
 .btn:focus,
 .btn-check:focus + .btn,
 .btn-outline-primary:focus,
@@ -107,4 +96,8 @@ a {
 .btn-outline-primary:focus:not(:hover),
 .btn-outline-primary:active:not(:hover) {
     color: #27bfc1;
+}
+
+.modal-open {
+    overflow: hidden;
 }

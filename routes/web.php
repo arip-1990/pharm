@@ -48,6 +48,7 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'catalog', 'as' => 'catalog'], function () {
+    Route::get('/sale', [CatalogController::class, 'sale'])->name('.sale');
     Route::get('/search', [CatalogController::class, 'search'])->name('.search');
     Route::get('/product/{product}', [CatalogController::class, 'product'])->name('.product');
     Route::get('/get-price', [CatalogController::class, 'getPrice']);

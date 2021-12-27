@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('privacyPolicy') }}
+
     <h3 class="text-center">Политика конфиденциальности</h3>
 
     <div class="page">

@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('rulesRemotely') }}
+
     <div class="page">
         <p class="text-center fw-bold">Правила торговли лекарственными препаратами дистанционным способом.</p>
         <p>

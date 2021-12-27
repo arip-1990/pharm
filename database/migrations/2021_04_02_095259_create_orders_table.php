@@ -10,9 +10,9 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('payment_type')->default(0);
-            $table->boolean('delivery_type')->default(false);
-            $table->float('cost', 8, 2, true);
+            $table->tinyInteger('payment_type', unsigned: true)->default(0);
+            $table->tinyInteger('delivery_type', unsigned: true)->default(0);
+            $table->float('cost', unsigned: true);
             $table->string('status');
             $table->json('statuses')->default('[]');
             $table->text('note')->nullable();

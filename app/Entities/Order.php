@@ -2,6 +2,8 @@
 
 namespace App\Entities;
 
+use App\Jobs\OrderPay;
+use App\Jobs\OrderSend;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +18,7 @@ use Illuminate\Support\Collection;
  * @property int $user_id
  * @property string $store_id
  * @property int $payment_type
- * @property bool $delivery_type
+ * @property int $delivery_type
  * @property float $cost
  * @property string $status
  * @property string|null $note
@@ -79,14 +81,15 @@ class Order extends Model
         if ($sberId) {
             $this->sber_id = $sberId;
             $this->addStatus(Status::STATUS_PAID);
+            dispatch(new OrderPay($this));
         }
         else {
-            $this->statuses->each(function (Status $status) {
+            foreach ($this->statuses as $status) {
                 if ($status->equal(Status::STATUS_PAID)) {
                     $status->changeState(Status::STATE_SUCCESS);
-                    return false;
+                    break;
                 }
-            });
+            }
         }
     }
 
@@ -96,6 +99,7 @@ class Order extends Model
             throw new \DomainException('Заказ уже отправлен.');
 
         $this->addStatus(Status::STATUS_SENT_IN_1C);
+        dispatch(new OrderSend($this));
     }
 
     public function confirm(): void
@@ -139,7 +143,7 @@ class Order extends Model
         $this->addStatus(Status::STATUS_FULL_REFUND);
     }
 
-    public function getTotalCost(): int
+    public function getTotalCost(): float
     {
         if ($this->delivery_type === self::DELIVERY_TYPE_COURIER)
             return $this->cost + Delivery::DELIVERY_PRICE;
@@ -220,9 +224,21 @@ class Order extends Model
     public function addStatus(string $value, int $state = Status::STATE_WAIT): void
     {
         $statuses = $this->statuses;
-        $statuses[] = new Status($value, new \DateTimeImmutable(), $state);
+        $status = new Status($value, new \DateTimeImmutable());
+        $status->changeState($state);
+        $statuses[] = $status;
         $this->statuses = $statuses;
         $this->status = $value;
+    }
+
+    public function changeStatusState(int $state): void
+    {
+        foreach ($this->statuses as $status) {
+            if ($status->equal($this->status)) {
+                $status->changeState($state);
+                break;
+            }
+        }
     }
 
     ##########################
@@ -252,7 +268,7 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function lastException(): self
+    public function lastException(): ?self
     {
         return $this->exceptions()->orderBy('id', SORT_DESC)->first();
     }

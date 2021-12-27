@@ -19,7 +19,8 @@
     > li {
         border: 1px solid $primary;
 
-        a > img {
+        a > img,
+        span > img {
             height: 50px;
             padding-right: .75rem;
         }
@@ -56,9 +57,8 @@
         color: $primary;
         list-style: none;
         background-color: #fdfdfd;
-        padding: 5px 10px;
+        padding: 0;
         margin: 5px 0;
-        cursor: pointer;
 
         &:hover {
             background-color: $primary;
@@ -79,6 +79,20 @@
             color: $primary;
             font-weight: normal;
             text-decoration: none;
+            padding: 5px 10px;
+        }
+    }
+
+    .sale {
+        border-color: #f00;
+
+        a, span {
+            display: inline-block;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #f00;
+            padding: 5px 10px;
         }
     }
 }

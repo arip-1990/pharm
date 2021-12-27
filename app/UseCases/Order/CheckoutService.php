@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UseCases;
+namespace App\UseCases\Order;
 
 use App\Entities\CartItem;
 use App\Entities\Offer;
@@ -8,10 +8,11 @@ use App\Entities\Order;
 use App\Entities\OrderItem;
 use App\Entities\Store;
 use App\Http\Requests\Catalog\CheckoutRequest;
-use Illuminate\Support\Collection;
+use App\UseCases\CartService;
 use Illuminate\Support\Facades\Auth;
+use function config;
 
-class OrderService
+class CheckoutService
 {
     public function __construct(private CartService $cartService) {}
 

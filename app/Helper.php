@@ -79,4 +79,36 @@ class Helper
 
         return $tmp;
     }
+
+    public static function getCoordinates(string $geoCode): array
+    {
+        $apiKey = config('data.yandex.GeoCoder.apikey');
+        if(empty($apiKey))
+            throw new \Exception('Не задан api ключ для GeoCoder');
+
+        $data = [
+            'apikey'    => $apiKey,
+            'format'    => 'json',
+            'geocode'   => $geoCode,
+        ];
+        $url = 'https://geocode-maps.yandex.ru/1.x?';
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url . http_build_query($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $json = json_decode($response, true);
+        if(!isset($json['response']))
+            throw new \Exception('Не удалось получить ответ от GeoCoder');
+
+        $coordinates = $json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'];
+        $coordinates = explode(' ', $coordinates);
+        $lon = $coordinates[0];// долгота
+        $lat = $coordinates[1];// широта
+
+        return ['lon' => (float)$lon, 'lat' => (float)$lat];
+    }
 }

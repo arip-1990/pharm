@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('return') }}
+
     <h3 class="text-center">Условия возврата</h3>
 
     <div class="page">

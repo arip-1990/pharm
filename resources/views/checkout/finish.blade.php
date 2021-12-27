@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('checkout') }}
+
     <h1 class="text-center">Спасибо, заказ №{{ $order->id + config('data.orderStartNumber') }} оформлен!</h1>
 
     <div>

@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Catalog;
 
-use App\Http\Controllers\Controller;
 use App\Entities\Category;
-use App\Entities\Product;
-use App\UseCases\ProductService;
-use App\Entities\Offer;
 use App\Entities\Limit;
+use App\Entities\Offer;
+use App\Entities\Product;
+use App\Http\Controllers\Controller;
+use App\UseCases\Catalog\ProductService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,23 +25,8 @@ class IndexController extends Controller
     public function index(Request $request, Category $category = null): View
     {
         $city = $request->cookie('city', config('data.city')[0]);
-        $categoryIds = new Collection();
-        if ($category) {
-            $title = ' | ' . $category->name;
-            $categories = $category->descendants;
-            $categoryIds->push($category);
-        }
-        else {
-            $title = ' | Категории';
-            $categories = Category::query()->get();
-        }
-        $categoryIds = $categoryIds->merge($categories)->pluck('id');
-        $productIds = Offer::query()->select('product_id')->whereCity($city)
-            ->groupBy('product_id')->get()->pluck('product_id');
-
-        $paginator = Product::query()
-            ->whereIn('id', $productIds)
-            ->whereIn('category_id', $categoryIds);
+        if ($category) $title = ' | ' . $category->name;
+        else $title = ' | Категории';
 
 //        if ($request['attrs']) {
 //            $paginator->with(['values' => function (Builder $query) use ($request) {
@@ -51,11 +35,20 @@ class IndexController extends Controller
 //        }
 //        $filters = $this->productService->getFilters($productIds);
 
-        $categories = $categories->toTree();
-        $paginator = $paginator->paginate(12);
+        $paginator = $this->productService->getProductsByCity($city, $category);
         $cartService = $this->cartService;
 
-        return view('catalog.index', compact('title', 'paginator', 'categories', 'cartService'));
+        return view('catalog.index', compact('title', 'paginator', 'category', 'cartService'));
+    }
+
+    public function sale(Request $request): View
+    {
+        $title = ' | Распродажа';
+        $city = $request->cookie('city', config('data.city')[0]);
+        $paginator = $this->productService->getSalesByCity($city);
+        $cartService = $this->cartService;
+
+        return view('catalog.sale', compact('title', 'paginator', 'cartService'));
     }
 
     public function product(Request $request, Product $product): View

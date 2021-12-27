@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('cartPharmacy') }}
+
     <div class="row">
         <div class="col-6"><span class="border-bottom border-primary">Выбор аптеки</span></div>
         <div class="col-2 text-center">Наличие</div>

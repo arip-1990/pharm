@@ -16,7 +16,6 @@ class CreateOrder extends Mailable
     public function build(): self
     {
         return $this->subject('Оформление заказа в ' . env('APP_NAME'))
-            ->view('order.create.order_html')
-            ->text('order.create.order_text');
+            ->view('emails.order.create');
     }
 }
