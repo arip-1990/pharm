@@ -3,10 +3,9 @@ services:
   traefik:
     image: traefik:2.6
     command: --providers.docker=true --providers.docker.exposedByDefault=false
-      --entryPoints.http.address=:80 --api.insecure
+      --entryPoints.http.address=:80
     ports:
       - "80:80"
-      - "8080:8080"
     networks:
       - traefik-public
     volumes:

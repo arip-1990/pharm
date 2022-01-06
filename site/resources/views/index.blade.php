@@ -25,9 +25,9 @@
                         </div>
                     @endif
                     @if ($product->photos->count())
-                        <img class="card-img-top mt-2 image" itemprop="image" src="{{ url($product->photos()->first()->getOriginalFile()) }}" alt="{{ $product->name }}" />
+                        <img class="mt-2" itemprop="image" src="{{ url($product->photos()->first()->getOriginalFile()) }}" alt="{{ $product->name }}" />
                     @else
-                        <img class="card-img-top mt-2 image" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
+                        <img class="mt-2" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
                     @endif
                     @if (in_array($product->id, session('favorites', [])))
                         <img alt="" src="/images/heart.png" class="favorite-toggle" data-action="remove">

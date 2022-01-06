@@ -30,7 +30,7 @@ site-clear:
 site-init: site-permissions site-composer-install site-wait-db site-migrations site-node-install
 
 site-permissions:
-	docker run --rm -v ${PWD}/site:/app -w /app alpine chmod 777 storage bootstrap/cache
+	docker run --rm -v ${PWD}/site:/app -w /app alpine chmod 777 -R storage bootstrap/cache
 
 site-composer-install:
 	docker-compose run --rm site-php-cli composer install

@@ -37,6 +37,24 @@ class ProductRepository
         
         $total = $query->count();
         $products = $query->skip(($current - 1) * $pageSize)->take($pageSize)->get()->map(function (Product $product) {
+            $attributes = [];
+            foreach($product->values as $value) {
+                $attributes[] = [
+                    'attrubuteName' => $value->attribute->name,
+                    'attrubuteType' => $value->attribute->type,
+                    'value' => $value->value,
+                ];
+            }
+
+            $photos = [];
+            foreach($product->photos as $photo) {
+                $photos[] = [
+                    'id' => $photo->id,
+                    'url' => url($photo->getOriginalFile())
+                ];
+            }
+            if (!count($photos)) $photos[] = ['id' => null, 'url' => url(Photo::DEFAULT_FILE)];
+
             return [
                 'id' => $product->id,
                 'slug' => $product->slug,
@@ -47,10 +65,11 @@ class ProductRepository
                 'name' => $product->name,
                 'code' => $product->code,
                 'barcode' => $product->barcode,
-                'photo' => url($product->photos()->first()?->getOriginalFile() ?? Photo::DEFAULT_FILE),
+                'photos' => $photos,
                 'description' => $product->description,
                 'status' => $product->status ? 'Активен' : 'Не активен',
                 'marked' => $product->marked,
+                'attributes' => $attributes,
                 'createdAt' => $product->created_at,
                 'updatedAt' => $product->updated_at,
             ];
