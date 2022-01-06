@@ -1,0 +1,121 @@
+version: "3.9"
+services:
+  cron:
+    image: crazymax/swarm-cronjob:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      LOG_LEVEL: info
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
+
+  panel:
+    image: ${REGISTRY}/pharm-panel:${IMAGE_TAG}
+    networks:
+      - traefik-public
+      - default
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.panel.rule=Host(`panel.pharm.test`)
+        - traefik.http.services.panel.loadBalancer.server.port=80
+        - traefik.http.routers.panel.middlewares=secure-headers
+        - traefik.http.routers.panel.entryPoints=https
+        - traefik.http.routers.panel.tls=true
+        - traefik.http.routers.panel.tls.certResolver=letsEncrypt
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+
+  site:
+    image: ${REGISTRY}/pharm-site:${IMAGE_TAG}
+    networks:
+      - traefik-public
+      - default
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.site.rule=Host(`pharm.test`) ||
+          Host(`www.pharm.test`)
+        - traefik.http.services.site.loadBalancer.server.port=80
+        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
+        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
+        - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
+        - traefik.http.routers.site.middlewares=site-redirect,secure-headers
+        - traefik.http.routers.site.entryPoints=https
+        - traefik.http.routers.site.tls=true
+        - traefik.http.routers.site.tls.certResolver=letsEncrypt
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 5s
+
+  site-php-fpm:
+    image: ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 5s
+
+  site-migration:
+    image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
+    command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate
+      --no-interaction'
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 120s
+
+  db-postgres:
+    image: postgres:14.1-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+    volumes:
+      - db-postgres:/var/lib/postgresql/data
+    deploy:
+      placement:
+        constraints: [ node.labels.db == db ]
+      endpoint_mode: dnsrr
+
+  db-postgres-backup:
+    image: ${REGISTRY}/pharm-db-postgres-backup:${IMAGE_TAG}
+    environment:
+      BACKUP_NAME: pharm-postgres
+      POSTGRES_HOST: db-postgres
+      POSTGRES_USERNAME: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+      AWS_ACCESS_KEY_ID: storage_app
+      AWS_SECRET_ACCESS_KEY: storage_secret
+      AWS_DEFAULT_REGION: region
+      S3_ENDPOINT: http://backup-storage:9000
+      S3_BUCKET: backup
+    command: sh -c 'wait-for-it db-postgres:5432 -t 60 && backup'
+    deploy:
+      labels:
+        - swarm.cronjob.enable=true
+        - swarm.cronjob.schedule=0 * * * *
+        - swarm.cronjob.skip-running=true
+      replicas: 0
+      restart_policy:
+        condition: none
+
+volumes:
+  db-postgres:
+
+    null
+networks:
+  traefik-public:
+    external: true
