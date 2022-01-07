@@ -49,6 +49,24 @@ Breadcrumbs::for('rulesRemotely', function (BreadcrumbTrail $trail) {
     $trail->push('Правила дистанционной торговли ЛС', route('rulesRemotely'));
 });
 
+// Cabinet
+Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Профиль', route('profile'));
+});
+Breadcrumbs::for('order', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Заказы', route('order'));
+});
+Breadcrumbs::for('orderShow', function (BreadcrumbTrail $trail, \App\Entities\Order $order) {
+    $trail->parent('order');
+    $trail->push('Заказ №' . $order->id, route('order.show', $order));
+});
+Breadcrumbs::for('favorite', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Избранное', route('favorite'));
+});
+
 // Pharmacy
 Breadcrumbs::for('pharmacy', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
@@ -71,12 +89,6 @@ Breadcrumbs::for('cartPharmacy', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('checkout', function (BreadcrumbTrail $trail) {
     $trail->parent('cartPharmacy');
     $trail->push('Оформление заказа');
-});
-
-// Favorite
-Breadcrumbs::for('favorite', function (BreadcrumbTrail $trail) {
-    $trail->parent('home');
-    $trail->push('Избранное', route('favorite'));
 });
 
 // Catalog

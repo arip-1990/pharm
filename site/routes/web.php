@@ -86,10 +86,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [CabinetController::class, 'index']);
         Route::get('/edit', [CabinetController::class, 'edit'])->name('.edit');
         Route::put('/edit', [CabinetController::class, 'update'])->name('.update');
+    });
 
-        Route::group(['prefix' => 'order', 'as' => '.order'], function () {
-            Route::get('/', [OrderController::class, 'index']);
-            Route::get('/{order}', [OrderController::class, 'show'])->name('.show');
-        });
+    Route::group(['prefix' => 'order', 'as' => 'order'], function () {
+        Route::get('/', [OrderController::class, 'index']);
+        Route::get('/{order}', [OrderController::class, 'show'])->name('.show');
     });
 });

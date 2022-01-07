@@ -9,7 +9,7 @@ header {
         justify-content: space-between;
         width: 315px;
         height: 120px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.20);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
         z-index: 10;
         background: #fff;
         border-radius: 4px;
@@ -25,7 +25,7 @@ header {
         .phone {
             font-size: 1rem;
             font-weight: bold;
-            margin-right: .5rem;
+            margin-right: 0.5rem;
         }
     }
 
@@ -34,7 +34,7 @@ header {
         font-size: 16px;
 
         .dropdown-toggle {
-            margin-left: .5rem;
+            margin-left: 0.5rem;
         }
 
         .dropdown-menu {
@@ -56,7 +56,7 @@ header {
             top: 0;
             left: 0;
             width: 100%;
-            box-shadow: 0 1px 6px rgba(0, 0, 0, .5);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
             margin: 0;
             z-index: 100;
         }
@@ -77,16 +77,16 @@ header {
     .fav,
     .cart {
         position: relative;
-        font-size: .9rem;
+        font-size: 0.9rem;
         color: #000;
 
-        .quantity{
+        .quantity {
             position: absolute;
             top: -16px;
             right: 6px;
             width: 24px;
             height: 24px;
-            font-size: .9rem;
+            font-size: 0.9rem;
             line-height: 20px;
             color: #fff;
             border: 2px solid #fff;
@@ -110,7 +110,7 @@ header {
             background-color: #e6eded;
             border: 2px solid $primary;
             border-radius: 50px;
-            padding: .5rem 1rem;
+            padding: 0.5rem 1rem;
 
             &:active,
             &:hover,
@@ -138,7 +138,7 @@ header {
     .navbar {
         &-primary {
             background-color: $primary;
-            border-radius: .25rem;
+            border-radius: 0.25rem;
 
             .navbar-toggler {
                 font-size: 28px;
@@ -150,7 +150,7 @@ header {
             .navbar-nav {
                 width: 100%;
                 justify-content: space-between;
-                margin: .5rem 0;
+                margin: 0.5rem 0;
             }
 
             .nav-item {
@@ -165,6 +165,7 @@ header {
                 .nav-link {
                     position: relative;
                     color: #fff;
+                    font-size: 1.1rem;
                     padding: 0;
 
                     &.active,
@@ -205,7 +206,7 @@ header {
         }
 
         .navbar-primary .nav-item .nav-link:after {
-            content: '';
+            content: "";
             position: absolute;
             right: 0;
             height: 100%;

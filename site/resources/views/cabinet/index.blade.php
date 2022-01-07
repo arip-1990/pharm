@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('profile') }}
+
     <div class="row">
         <aside class="col-3 sidebar">
             @include('layouts.partials.sidebar')

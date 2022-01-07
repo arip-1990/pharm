@@ -3,6 +3,8 @@
 @section('banner', '')
 
 @section('content')
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('order') }}
+
     <div class="row">
         <aside class="col-3 sidebar">
             @include('layouts.partials.sidebar')
@@ -15,7 +17,7 @@
                     <ul class="list-group list-group-flush">
                         @foreach($orders as $order)
                             <li class="list-group-item">
-                                <h6 style="margin: 0"><a href="{{ route('profile.order.show', $order) }}">Заказ №{{ $order->id }}</a></h6>
+                                <h6 style="margin: 0"><a href="{{ route('order.show', $order) }}">Заказ №{{ $order->id }}</a></h6>
                                 <span class="text-secondary">Сумма заказа: {{ $order->getTotalCost() }}&#8381;</span>
                             </li>
                         @endforeach

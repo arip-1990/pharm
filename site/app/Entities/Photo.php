@@ -40,6 +40,6 @@ class Photo extends Model
             default => 'thumb'
         };
 
-        return "/images/product/thumbnail/$type" . '_' . $this->file;
+        return "storage/images/thumb/$type" . '_' . $this->file;
     }
 }

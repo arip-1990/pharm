@@ -25,8 +25,8 @@
                     <div class="col-12 col-md-3 col-lg-2 text-center text-md-end">
                         {{ \App\Helper::formatPhone($store->phone) }}
                     </div>
-                    <div class="col-12 col-lg-2 d-flex justify-content-between position-relative">
-                        <div class="{{ $store->delivery ? 'store-delivery_icon' : '' }}"></div>
+                    <div class="col-12 col-lg-2 d-flex justify-content-end position-relative">
+                        <!-- div class="{{ $store->delivery ? 'store-delivery_icon' : '' }}"></div -->
                         <a href="{{ route('pharmacy.show', ['store' => $store]) }}" class="btn btn-sm btn-primary">Посмотреть</a>
                     </div>
                 </div>
