@@ -1,30 +1,23 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Listeners\Order;
 
 use App\Entities\Exception;
-use App\Entities\Order;
 use App\Entities\Status;
+use App\Events\Order\OrderSend;
 use App\Mail\Order\CreateOrder;
 use App\UseCases\Order\GenerateDataService;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
-class OrderSend implements ShouldQueue
+class OrderSendListener implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public function __construct(private Order $order) {}
-
-    public function handle(): void
+    public function handle(OrderSend $event): void
     {
-        $order_number = config('data.orderStartNumber') + $this->order->id;
+        $order = $event->order;
+        $order_number = config('data.orderStartNumber') + $order->id;
 
         try {
             $response = simplexml_load_string($this->getSendInfo());
@@ -36,24 +29,17 @@ class OrderSend implements ShouldQueue
             }
 
             if(isset($response->success->order_id)) {
-                $this->order->changeStatusState(Status::STATE_SUCCESS);
+                $order->changeStatusState(Status::STATE_SUCCESS);
 
-                Mail::to(Auth::user())->send(new CreateOrder($this->order));
-
-//            try {
-//                $this->mailer->send($order);
-//            }
-//            catch (\Exception $e) {
-//                OrderException::create($order->id, 'email', $e->getMessage())->save();
-//            }
+                Mail::to(Auth::user())->send(new CreateOrder($order));
             }
         }
         catch (\Exception $e) {
-            $this->order->changeStatusState(Status::STATE_ERROR);
-            Exception::create($this->order->id, '1c', $e->getMessage())->save();
+            $order->changeStatusState(Status::STATE_ERROR);
+            Exception::create($order->id, '1c', $e->getMessage())->save();
         }
         finally {
-            $this->order->save();
+            $order->save();
         }
     }
 

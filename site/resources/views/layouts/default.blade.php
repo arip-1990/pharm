@@ -67,16 +67,22 @@
                     </div>
                     <div class="col-3 col-sm-2 col-lg-1 text-center" style="margin-top: 19px;">
                         <a class="fav" href="{{ route('favorite') }}">
-                            <span class="quantity">{{ count(session('favorites', [])) }}</span>
-                            <img src="/images/heart.png" style="height: 30px;">
-                            Избранное
+                            <span style="display: inline-block; position: relative;">
+                                <span class="quantity">{{ count(session('favorites', [])) }}</span>
+                                <img src="/images/heart.png" style="height: 30px;">
+                            </span>
+                            <br />
+                            <span>Избранное</span>
                         </a>
                     </div>
                     <div class="col-3 col-sm-2 col-lg-1 text-center" style="margin-top: 19px;">
                         <a class="cart" href="{{ route('cart') }}">
-                            <span class="quantity">{{ $cartService->getTotal() }}</span>
-                            <img src="/images/cart.png" style="height: 30px;">
-                            Корзина
+                            <span style="display: inline-block; position: relative;">
+                                <span class="quantity">{{ $cartService->getTotal() }}</span>
+                                <img src="/images/cart.png" style="height: 30px;">
+                            </span>
+                            <br />
+                            <span>Корзина</span>
                         </a>
                     </div>
                 </div>

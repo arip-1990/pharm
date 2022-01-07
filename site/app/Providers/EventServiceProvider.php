@@ -2,6 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\Order\OrderPay;
+use App\Events\Order\OrderPayFullRefund;
+use App\Events\Order\OrderPayPartlyRefund;
+use App\Events\Order\OrderSend;
+use App\Listeners\Order\OrderPayFullRefundListener;
+use App\Listeners\Order\OrderPayListener;
+use App\Listeners\Order\OrderPayPartlyRefundListener;
+use App\Listeners\Order\OrderSendListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +26,18 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        OrderSend::class => [
+            OrderSendListener::class,
+        ],
+        OrderPay::class => [
+            OrderPayListener::class,
+        ],
+        OrderPayFullRefund::class => [
+            OrderPayFullRefundListener::class,
+        ],
+        OrderPayPartlyRefund::class => [
+            OrderPayPartlyRefundListener::class,
+        ]
     ];
 
     /**

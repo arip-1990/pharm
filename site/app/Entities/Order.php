@@ -2,8 +2,10 @@
 
 namespace App\Entities;
 
-use App\Jobs\OrderPay;
-use App\Jobs\OrderSend;
+use App\Events\Order\OrderPay;
+use App\Events\Order\OrderPayFullRefund;
+use App\Events\Order\OrderPayPartlyRefund;
+use App\Events\Order\OrderSend;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -50,7 +52,7 @@ class Order extends Model
 
     // Тип оплаты
     const PAYMENT_TYPE_CASH = 0;
-    const PAYMENT_TYPE_SBERBANK = 1;
+    const PAYMENT_TYPE_SBER = 1;
 
     // Способ получения
     const DELIVERY_TYPE_PICKUP = 0;
@@ -81,7 +83,7 @@ class Order extends Model
         if ($sberId) {
             $this->sber_id = $sberId;
             $this->addStatus(Status::STATUS_PAID);
-            dispatch(new OrderPay($this));
+            OrderPay::dispatch($this);
         }
         else {
             foreach ($this->statuses as $status) {
@@ -99,7 +101,7 @@ class Order extends Model
             throw new \DomainException('Заказ уже отправлен.');
 
         $this->addStatus(Status::STATUS_SENT_IN_1C);
-        dispatch(new OrderSend($this));
+        OrderSend::dispatch($this);
     }
 
     public function confirm(): void
@@ -133,6 +135,7 @@ class Order extends Model
             throw new \DomainException('Заказ уже возмещен.');
 
         $this->addStatus(Status::STATUS_PARTLY_REFUND);
+        OrderPayPartlyRefund::dispatch($this);
     }
 
     public function fullRefund(): void
@@ -141,6 +144,7 @@ class Order extends Model
             throw new \DomainException('Заказ уже возмещен.');
 
         $this->addStatus(Status::STATUS_FULL_REFUND);
+        OrderPayFullRefund::dispatch($this);
     }
 
     public function getTotalCost(): float

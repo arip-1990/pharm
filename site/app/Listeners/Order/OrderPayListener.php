@@ -1,56 +1,50 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Listeners\Order;
 
 use App\Entities\Exception;
 use App\Entities\Order;
 use App\Entities\Status;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use App\Events\Order\OrderPay;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
-class OrderPay implements ShouldQueue
+class OrderPayListener implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public function __construct(private Order $order) {}
-
-    public function handle(): void
+    public function handle(OrderPay $event): void
     {
-        if ($this->order->status !== Status::STATUS_PAID or $this->order->payment_type !== Order::PAYMENT_TYPE_SBERBANK) {
+        $order = $event->order;
+        if ($order->status !== Status::STATUS_PAID or $order->payment_type !== Order::PAYMENT_TYPE_SBER) {
             $message = 'Не ожидает оплаты.';
-            $this->order->changeStatusState(Status::STATE_ERROR);
-            $this->order->save();
-            Exception::create($this->order->id, 'sber', $message)->save();
+            $order->changeStatusState(Status::STATE_ERROR);
+            $order->save();
+            Exception::create($order->id, 'sber', $message)->save();
             return;
         }
 
-        if(!$this->order->sber_id) {
+        if(!$order->sber_id) {
             $message = 'Нет идентификатора сбербанка.';
-            $this->order->changeStatusState(Status::STATE_ERROR);
-            $this->order->save();
-            Exception::create($this->order->id, 'sber', $message)->save();
+            $order->changeStatusState(Status::STATE_ERROR);
+            $order->save();
+            Exception::create($order->id, 'sber', $message)->save();
             return;
         }
 
         $orderInfo = $this->getOrderInfo();
         if($orderInfo['ErrorCode'] != 0)
-            $this->order->changeStatusState(Status::STATE_ERROR);
+            $order->changeStatusState(Status::STATE_ERROR);
         elseif($orderInfo['OrderStatus'] == Status::SBERBANK_ORDER_AUTH_REJECTED or $orderInfo['OrderStatus'] == Status::SBERBANK_ORDER_AUTH_CANCELLED)
-            $this->order->changeStatusState(Status::STATE_ERROR);
-        elseif($this->order->getTotalCost() != $orderInfo['Amount'] / 100)
-            $this->order->changeStatusState(Status::STATE_ERROR);
+            $order->changeStatusState(Status::STATE_ERROR);
+        elseif($order->getTotalCost() != $orderInfo['Amount'] / 100)
+            $order->changeStatusState(Status::STATE_ERROR);
         elseif($orderInfo['OrderStatus'] == Status::SBERBANK_ORDER_AUTH_DEPOSIT) {
-            $this->order->changeStatusState(Status::STATE_SUCCESS);
-            $this->order->sent();
+            $order->changeStatusState(Status::STATE_SUCCESS);
+            $order->sent();
         }
         else
             throw new \DomainException('Не получен ответ от сбербанка');
 
-        $this->order->save();
+        $order->save();
     }
 
     private function getOrderInfo(): array

@@ -57,9 +57,9 @@
                             @endif
 
                             @if($cartService->getItems()->contains(fn(\App\Entities\CartItem $item) => $item->product_id === $product->id))
-                                <a class="btn btn-primary btn-lg">Добавлено</a>
+                                <a class="btn btn-primary">Добавлено</a>
                             @else
-                                <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
+                                <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
                                     Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
                                 </a>
                             @endif
