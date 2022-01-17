@@ -80,7 +80,7 @@ build-site:
 	docker --log-level=debug build --pull --file=site/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-site:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG} site
-	docker --log-level=debug build --pull --file=site/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-site-postgres-backup:${IMAGE_TAG} site/docker/common
+	docker --log-level=debug build --pull --file=site/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} site/docker/common
 
 try-build:
 	REGISTRY=localhost IMAGE_TAG=0 make build
@@ -94,7 +94,7 @@ push-site:
 	docker push ${REGISTRY}/pharm-site:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
-	docker push ${REGISTRY}/pharm-site-postgres-backup:${IMAGE_TAG}
+	docker push ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
 
 deploy:
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'docker network create --driver=overlay traefik-public || true'

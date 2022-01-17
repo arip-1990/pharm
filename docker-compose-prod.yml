@@ -19,7 +19,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.panel.rule=Host(`panel.pharm.test`)
+        - traefik.http.routers.panel.rule=Host(`panel.120на80.рф`)
         - traefik.http.services.panel.loadBalancer.server.port=80
         - traefik.http.routers.panel.middlewares=secure-headers
         - traefik.http.routers.panel.entryPoints=https
@@ -40,11 +40,11 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.site.rule=Host(`pharm.test`) ||
-          Host(`www.pharm.test`)
+        - traefik.http.routers.site.rule=Host(`120на80.рф`) ||
+          Host(`www.120на80.рф`)
         - traefik.http.services.site.loadBalancer.server.port=80
-        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
-        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
+        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.120на80.рф/(.*)$$
+        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}120на80.рф/$${2}
         - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
         - traefik.http.routers.site.middlewares=site-redirect,secure-headers
         - traefik.http.routers.site.entryPoints=https
@@ -89,10 +89,10 @@ services:
         constraints: [ node.labels.db == db ]
       endpoint_mode: dnsrr
 
-  db-postgres-backup:
-    image: ${REGISTRY}/pharm-db-postgres-backup:${IMAGE_TAG}
+  db-backup:
+    image: ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
     environment:
-      BACKUP_NAME: pharm-postgres
+      BACKUP_NAME: pharm-db
       POSTGRES_HOST: db-postgres
       POSTGRES_USERNAME: app
       POSTGRES_PASSWORD: secret
