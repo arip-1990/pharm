@@ -162,6 +162,24 @@ header {
           content: none;
         }
 
+        &.sale {
+          position: relative;
+
+          &:after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: -8px;
+            right: 16px;
+            width: 64px;
+            height: 38px;
+            background-image: url(../images/sale.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+          }
+        }
+
         .nav-link {
           position: relative;
           color: #fff;

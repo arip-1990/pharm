@@ -26,7 +26,7 @@ services:
         - traefik.http.routers.panel.tls=true
         - traefik.http.routers.panel.tls.certResolver=letsEncrypt
       mode: replicated
-      replicas: 2
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 10s
@@ -40,8 +40,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.site.rule=Host(`120на80.рф`) ||
-          Host(`www.120на80.рф`)
+        - traefik.http.routers.site.rule=Host(`120на80.рф`) || Host(`www.120на80.рф`)
         - traefik.http.services.site.loadBalancer.server.port=80
         - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.120на80.рф/(.*)$$
         - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}120на80.рф/$${2}
@@ -51,7 +50,7 @@ services:
         - traefik.http.routers.site.tls=true
         - traefik.http.routers.site.tls.certResolver=letsEncrypt
       mode: replicated
-      replicas: 2
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 5s
@@ -60,15 +59,14 @@ services:
     image: ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 5s
 
   site-migration:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
-    command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate
-      --no-interaction'
+    command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate --no-interaction'
     deploy:
       restart_policy:
         condition: on-failure
@@ -92,7 +90,7 @@ services:
   db-backup:
     image: ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
     environment:
-      BACKUP_NAME: pharm-db
+      BACKUP_NAME: pharm-postgres
       POSTGRES_HOST: db-postgres
       POSTGRES_USERNAME: app
       POSTGRES_PASSWORD: secret
@@ -115,7 +113,6 @@ services:
 volumes:
   db-postgres:
 
-    null
 networks:
   traefik-public:
     external: true

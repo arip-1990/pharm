@@ -79,24 +79,6 @@ a {
     }
 }
 
-.nav-item.sale {
-    position: relative;
-
-    &:after {
-        content: "";
-        display: block;
-        position: absolute;
-        top: -8px;
-        right: 16px;
-        width: 64px;
-        height: 38px;
-        background-image: url(../images/sale.png);
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-    }
-}
-
 .btn:focus,
 .btn-check:focus + .btn,
 .btn-outline-primary:focus,
