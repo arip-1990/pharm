@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class indexController extends Controller
+class IndexController extends Controller
 {
     public function __construct(private StatisticRepository $statisticRepository) {}
 

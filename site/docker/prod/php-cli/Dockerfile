@@ -12,7 +12,7 @@ WORKDIR /app
 
 COPY ./composer.json ./composer.lock ./
 
-RUN composer install --no-dev --prefer-dist --no-progress --no-suggest --optimize-autoloader \
+RUN composer install --no-dev --no-scripts --prefer-dist --no-progress --no-suggest --optimize-autoloader \
     && rm -rf /root/.composer/cache
 
 ### CLI ###
@@ -37,5 +37,7 @@ WORKDIR /app
 
 COPY --from=builder /app ./
 COPY ./ ./
+
+RUN php -r "copy('.env.prod', '.env');" && php artisan key:generate --ansi
 
 USER app

@@ -7,7 +7,7 @@ up: docker-up
 down: docker-down
 restart: down up
 
-update-deps: site-composer-update panel-yarn-upgrade restart
+update-deps: site-composer-update site-node-upgrade panel-yarn-upgrade restart
 
 docker-up:
 	docker-compose up -d
@@ -80,10 +80,16 @@ build-site:
 	docker --log-level=debug build --pull --file=site/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-site:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG} site
-	docker --log-level=debug build --pull --file=site/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-site-postgres-backup:${IMAGE_TAG} site/docker/common
+	docker --log-level=debug build --pull --file=site/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} site/docker/common
 
 try-build:
 	REGISTRY=localhost IMAGE_TAG=0 make build
+
+testing-init:
+	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml up -d
+	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml run --rm site-php-cli wait-for-it db-postgres:5432 -t 60
+	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml run --rm site-php-cli php artisan migrate --no-interaction
+	sleep 15
 
 push: push-panel push-site
 
@@ -94,7 +100,7 @@ push-site:
 	docker push ${REGISTRY}/pharm-site:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
-	docker push ${REGISTRY}/pharm-site-postgres-backup:${IMAGE_TAG}
+	docker push ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
 
 deploy:
 	ssh -o StrictHostKeyChecking=no deploy@${HOST} -p ${PORT} 'docker network create --driver=overlay traefik-public || true'

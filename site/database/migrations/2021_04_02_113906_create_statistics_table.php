@@ -14,7 +14,7 @@ class CreateStatisticsTable extends Migration
             $table->string('city')->nullable();
             $table->string('os');
             $table->string('browser');
-            $table->string('screen');
+            $table->string('screen')->nullable();
             $table->string('referrer')->nullable();
             $table->timestamps();
 
