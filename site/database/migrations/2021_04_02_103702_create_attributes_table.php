@@ -12,7 +12,7 @@ class CreateAttributesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('type');
-            $table->string('default');
+            $table->string('default')->nullable();
             $table->boolean('required')->default(false);
             $table->json('variants')->default('[]');
 

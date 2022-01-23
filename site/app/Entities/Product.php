@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $code
  * @property string|null $barcode
  * @property string|null $description
- * @property bool $status
+ * @property int $status
  * @property bool $marked
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -113,12 +113,9 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function addPhoto(string $file): void
+    public function addPhoto(): void
     {
-        $this->photos()->create([
-            'type' => Photo::TYPE_PICTURE,
-            'file' => $file
-        ]);
+        $this->photos()->create(['type' => Photo::TYPE_PICTURE]);
     }
 
     public function photos(): HasMany
@@ -126,12 +123,9 @@ class Product extends Model
         return $this->hasMany(Photo::class)->where('type', Photo::TYPE_PICTURE);
     }
 
-    public function addCertificate(string $file): void
+    public function addCertificate(): void
     {
-        $this->certificates()->create([
-            'type' => Photo::TYPE_CERTIFICATE,
-            'file' => $file
-        ]);
+        $this->certificates()->create(['type' => Photo::TYPE_CERTIFICATE]);
     }
 
     public function certificates(): HasMany

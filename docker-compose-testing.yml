@@ -46,6 +46,8 @@ services:
 
   site-php-fpm:
     image: ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
+    volumes:
+      - uploads:/app/site/storage/app/public
 
   site-php-cli:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
@@ -56,12 +58,18 @@ services:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: app
+    volumes:
+      - db-postgres:/var/lib/postgresql/data
 
   mailer:
     image: mailhog/mailhog
 
   redis:
     image: redis:6.2-alpine
+
+volumes:
+  db-postgres:
+  uploads:
 
 networks:
   traefik-public:

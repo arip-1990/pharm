@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $category_id
  * @property string $name
  * @property string $type
- * @property string $default
+ * @property string|null $default
  * @property boolean $required
  * @property array $variants
  */

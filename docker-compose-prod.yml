@@ -57,6 +57,8 @@ services:
 
   site-php-fpm:
     image: ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
+    volumes:
+      - uploads:/app/site/storage/app/public
     deploy:
       mode: replicated
       replicas: 1
@@ -66,7 +68,7 @@ services:
 
   site-migration:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
-    command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate --no-interaction'
+    command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate --force'
     deploy:
       restart_policy:
         condition: on-failure
@@ -112,6 +114,7 @@ services:
 
 volumes:
   db-postgres:
+  uploads:
 
 networks:
   traefik-public:

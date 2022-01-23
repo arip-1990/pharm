@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 /**
  * @property int $id
  * @property int $type
- * @property string $file
  * @property string $product_id
  * @property int $sort
  */
@@ -20,7 +19,7 @@ class Photo extends Model
     const TYPE_CERTIFICATE = 1;
 
     public $timestamps = false;
-    protected $fillable = ['type', 'file'];
+    protected $fillable = ['type'];
 
     public static function getNextId(): int
     {
@@ -30,7 +29,7 @@ class Photo extends Model
 
     public function getOriginalFile(): string
     {
-        return "storage/images/original/" . $this->file;
+        return "storage/images/original/{$this->product_id}/" . $this->id;
     }
 
     public function getThumbnailFile(string $type = 'thumb'): string
@@ -40,6 +39,6 @@ class Photo extends Model
             default => 'thumb'
         };
 
-        return "storage/images/thumb/$type" . '_' . $this->file;
+        return "storage/images/thumb/{$this->product_id}/$type" . '_' . $this->id;
     }
 }

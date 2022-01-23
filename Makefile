@@ -42,7 +42,7 @@ site-wait-db:
 	docker-compose run --rm site-php-cli wait-for-it db-postgres:5432 -t 30
 
 site-migrations:
-	docker-compose run --rm site-php-cli php artisan migrate --no-interaction
+	docker-compose run --rm site-php-cli php artisan migrate --force
 
 site-backup:
 	docker-compose run --rm site-postgres-backup
@@ -88,7 +88,7 @@ try-build:
 testing-init:
 	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml up -d
 	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml run --rm site-php-cli wait-for-it db-postgres:5432 -t 60
-	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml run --rm site-php-cli php artisan migrate --no-interaction
+	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml run --rm site-php-cli php artisan migrate --force
 	sleep 15
 
 push: push-panel push-site
