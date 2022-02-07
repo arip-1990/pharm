@@ -1,6 +1,15 @@
 import IMask from "imask";
-const loginMask = IMask(document.getElementById('login'), {mask: '+{7} (000) 000-00-00'});
-const phoneMask = IMask(document.getElementById('phone'), {mask: '+{7} (000) 000-00-00'});
+
+function replacer () {
+  if (this.value.length === 1 && !this.value.startsWith('+')) {
+    this.value = '7' + this.value.replace(/^[78]/, '');
+  }
+}
+document.getElementById('login').addEventListener('input', replacer);
+document.getElementById('phone').addEventListener('input', replacer);
+
+const loginMask = IMask(document.getElementById('login'), {mask: '+0 (000) 000-00-00'});
+const phoneMask = IMask(document.getElementById('phone'), {mask: '+0 (000) 000-00-00'});
 
 const mask = function (event) {
     event.preventDefault();

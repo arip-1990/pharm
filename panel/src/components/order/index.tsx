@@ -29,7 +29,7 @@ const columns = [
     dataIndex: "status",
   },
   {
-    title: "Дата создания",
+    title: "Дата",
     dataIndex: "createdAt",
     sorter: true,
   },
@@ -84,7 +84,7 @@ const Order: React.FC = () => {
               deliveryType={item.deliveryType}
             />
           ),
-          createdAt: item.createdAt.format("HH:mm DD.MM.YYYY[г.]"),
+          createdAt: item.createdAt.format("DD.MM.YYYY[г.]"),
         }))}
         onChange={handleChange}
         pagination={{

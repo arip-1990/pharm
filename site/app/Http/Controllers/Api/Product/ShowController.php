@@ -24,7 +24,7 @@ class ShowController extends Controller
         foreach($product->photos as $photo) {
             $photos[] = [
                 'id' => $photo->id,
-                'url' => url($photo->getOriginalFile())
+                'url' => $photo->getUrl()
             ];
         }
         if (!count($photos)) $photos[] = ['id' => null, 'url' => url(Photo::DEFAULT_FILE)];
@@ -42,7 +42,7 @@ class ShowController extends Controller
             'barcode' => $product->barcode,
             'photos' => $photos,
             'description' => $product->description,
-            'status' => $product->status ? 'Активен' : 'Не активен',
+            'status' => $product->status,
             'marked' => $product->marked,
             'attributes' => $attributes,
             'createdAt' => $product->created_at,

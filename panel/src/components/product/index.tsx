@@ -103,7 +103,7 @@ const Product: React.FC = () => {
       ...getColumnSearchProps("barcode"),
     },
     {
-      title: "Имя",
+      title: "Название",
       dataIndex: "name",
       sorter: true,
       ...getColumnSearchProps("name"),

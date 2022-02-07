@@ -21,7 +21,7 @@ export interface IProduct {
         url: string;
     }[];
     description: string | null;
-    status: string;
+    status: boolean;
     marked: boolean;
     attributes: IAttribute[];
     createdAt: moment.Moment;

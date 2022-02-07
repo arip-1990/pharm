@@ -1,10 +1,10 @@
 import React from "react";
-import { Card, Col, Row, Image } from "antd";
-import { productApi } from "../../services/ProductService";
-import { Table } from "..";
 import { useParams } from "react-router-dom";
-
-const generalColumns = [{ dataIndex: "key" }, { dataIndex: "value" }];
+import { Card, Col, Row, Image, Space } from "antd";
+import { productApi } from "../../services/ProductService";
+import { ViewBase } from "./ViewBase";
+import { ViewDescription } from "./ViewDescription";
+import { IProduct } from "../../models/IProduct";
 
 const View: React.FC = () => {
   const { slug } = useParams();
@@ -20,33 +20,10 @@ const View: React.FC = () => {
         <Col span={12}>
           <Row gutter={[32, 32]}>
             <Col span={24}>
-              <Card title="Общий">
-                <Table
-                  size="small"
-                  showHeader={false}
-                  columns={generalColumns}
-                  loading={fetchLoading}
-                  data={[
-                    { key: "Код", value: product?.code },
-                    { key: "Штрих-код", value: product?.barcode },
-                    { key: "Название", value: product?.name },
-                    { key: "Категория", value: product?.category?.name },
-                    {
-                      key: "Статус",
-                      value: product?.status ? "Активен" : "Не активен",
-                    },
-                  ]}
-                />
-              </Card>
+              <ViewBase loading={fetchLoading} product={product} />
             </Col>
             <Col span={24}>
-              <Card title="Описание">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: product?.description || "",
-                  }}
-                />
-              </Card>
+              <ViewDescription loading={fetchLoading} />
             </Col>
           </Row>
         </Col>
@@ -54,38 +31,7 @@ const View: React.FC = () => {
           <Row gutter={[32, 32]}>
             <Col span={24}>
               <Card title="Аттрибуты">
-                <Table
-                  size="small"
-                  showHeader={false}
-                  columns={generalColumns}
-                  loading={fetchLoading}
-                  data={product?.attributes
-                    .filter((item) => item.attrubuteType === "string")
-                    .map((item) => ({
-                      key: item.attrubuteName,
-                      value: item.value,
-                    }))}
-                />
-              </Card>
-            </Col>
-            <Col span={24}>
-              <Card title="Дополнительные аттрибуты">
-                <Table
-                  size="small"
-                  showHeader={false}
-                  columns={generalColumns}
-                  loading={fetchLoading}
-                  data={product?.attributes
-                    .filter((item) => item.attrubuteType === "text")
-                    .map((item) => ({
-                      key: item.attrubuteName,
-                      value: (
-                        <span
-                          dangerouslySetInnerHTML={{ __html: item.value }}
-                        />
-                      ),
-                    }))}
-                />
+                {/* <Table loading={fetchLoading} type='attribute' item={product} /> */}
               </Card>
             </Col>
           </Row>
@@ -94,11 +40,13 @@ const View: React.FC = () => {
         <Col span={24}>
           <Card title="Отографии">
             <Image.PreviewGroup>
-              {product?.photos
-                .filter((item) => !!item.id)
-                .map((item) => (
-                  <Image width={200} src={item.url} />
+              <Space>
+                {product?.photos
+                  .filter((item) => !!item.id)
+                  .map((item) => (
+                    <Image key={item.id} width={200} src={item.url} />
                 ))}
+              </Space>
             </Image.PreviewGroup>
           </Card>
         </Col>

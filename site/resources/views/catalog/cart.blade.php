@@ -21,7 +21,7 @@
                 <div class="row align-items-center product" data-product="{{ $item->product->id }}">
                     <div class="col-3 col-md-2 text-center">
                         @if ($item->product->photos()->count())
-                            <img alt="" src="{{ $item->product->photos[0]->getOriginalFile() }}">
+                            <img alt="" src="{{ $item->product->photos()->first()->getUrl() }}">
                         @else
                             <img alt="" src="{{ App\Entities\Photo::DEFAULT_FILE }}">
                         @endif

@@ -31,7 +31,7 @@
                         <div class="description-item_body row align-items-center">
                             @foreach($store['products'] as $product)
                                 @if ($product['product']->photos->count())
-                                    <img class="col-1" src="{{ url($product['product']->photos->first()->getOriginalFile()) }}" alt="{{ $product['product']->name }}" />
+                                    <img class="col-1" src="{{ url($product['product']->photos()->first()->getUrl()) }}" alt="{{ $product['product']->name }}" />
                                 @else
                                     <img class="col-1" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product['product']->name }}" />
                                 @endif

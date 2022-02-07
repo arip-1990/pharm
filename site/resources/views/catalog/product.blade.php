@@ -8,7 +8,7 @@
     <div class="row justify-content-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
         <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
             @if ($product->photos->count())
-                <img class="mw-100" itemprop="image" src="{{ url($product->photos->first()->getOriginalFile()) }}" alt="{{ $product->name }}" />
+                <img class="mw-100" itemprop="image" src="{{ $product->photos()->first()->getUrl() }}" alt="{{ $product->name }}" />
             @else
                 <img class="mw-100" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
             @endif

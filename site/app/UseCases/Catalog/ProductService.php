@@ -49,10 +49,10 @@ class ProductService
         })->paginate(15);
     }
 
-    public function getNamesBySearch(string $text): array
+    public function getNamesBySearch(string $text, int $limit = 10): array
     {
         return Product::query()->where('name', 'like', $text . '%')
-            ->orWhere('name', 'like', '%' . $text . '%')->get();
+            ->orWhere('name', 'like', '%' . $text . '%')->limit($limit)->get();
     }
 
     public function getFilters(Collection $productIds): array

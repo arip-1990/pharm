@@ -15,7 +15,7 @@ class CreateStatisticsTable extends Migration
             $table->string('os');
             $table->string('browser');
             $table->string('screen')->nullable();
-            $table->string('referrer')->nullable();
+            $table->text('referrer')->nullable();
             $table->timestamps();
 
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');

@@ -57,7 +57,7 @@ class IndexController extends Controller
         $city = $request->cookie('city', config('data.city')[0]);
 
         $offers = $product->offers()->whereCity($city)->get();
-        $minPrice = $offers->first()->price;
+        $minPrice = $offers->first()?->price ?? 0;
         foreach ($offers as $offer) {
             if ($minPrice > $offer->price) $minPrice = $offer->price;
         }

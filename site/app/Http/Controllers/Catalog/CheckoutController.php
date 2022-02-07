@@ -27,7 +27,6 @@ class CheckoutController extends Controller
         if (!$this->cartService->getItems()->count()) return redirect()->route('cart');
 
         $this->cartService->setStore($store);
-        $request->session()->put('oldCartItems', $this->cartService->getItems());
         $items = new Collection();
         /** @var Offer $offer */
         foreach (Offer::query()->where('store_id', $store->id)->whereIn('product_id', $this->cartService->getItems()->pluck('product_id'))->get() as $offer) {
@@ -55,21 +54,7 @@ class CheckoutController extends Controller
     {
         $order = $this->orderService->checkout($request);
 
-        foreach ($request->session()->get('oldCartItems', new Collection()) as $item) {
-            try {
-                $newItem = $this->cartService->getItem($item->product_id);
-                $quantity = $item->quantity - $newItem->quantity;
-                if ($quantity > 0)
-                    $this->cartService->set($item->product_id, $quantity);
-                else
-                    $this->cartService->remove($item->product_id);
-            }
-            catch (\DomainException $e) {
-                $this->cartService->add(CartItem::create($item->product_id, $item->quantity));
-            }
-        }
-
-        if ((int)$request['payment'] === Order::PAYMENT_TYPE_SBERBANK)
+        if ((int)$request['payment'] === Order::PAYMENT_TYPE_SBER)
             return redirect($this->orderService->paymentSberbank($order, route('checkout.finish', $order, true)));
 
         return redirect()->route('checkout.finish', $order);

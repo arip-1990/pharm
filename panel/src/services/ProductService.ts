@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { axiosBaseQuery } from '../services/api';
 import moment from 'moment';
 import { IPagination } from '../models/IPagination';
 import { IProduct } from '../models/IProduct';
@@ -6,10 +7,8 @@ import { IProduct } from '../models/IProduct';
 
 export const productApi = createApi({
     reducerPath: 'productApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: 'http://pharm.test/api',
-        credentials: "include"
-    }),
+    baseQuery: axiosBaseQuery(),
+    tagTypes: ['IProduct'],
     endpoints: (builder) => ({
         fetchProducts: builder.query<IPagination<IProduct>, {
             pagination: {current: number, pageSize: number},
@@ -54,8 +53,25 @@ export const productApi = createApi({
             query: (slug) => ({
                 url: '/product/' + slug
             }),
+            providesTags: ['IProduct'],
+        }),
+        updateProduct: builder.mutation<void, {slug: string, data: any}>({
+            query: (args) => ({
+              url: `/product/${args.slug}`,
+              method: 'put',
+              data: args.data
+            }),
+            invalidatesTags: ['IProduct'],
+        }),
+        updateDescriptionProduct: builder.mutation<void, {slug: string, data: any}>({
+            query: (args) => ({
+              url: `/product/description/${args.slug}`,
+              method: 'put',
+              data: args.data
+            }),
+            invalidatesTags: ['IProduct'],
         }),
     }),
 });
 
-export const { useFetchProductsQuery, useFetchProductQuery } = productApi;
+export const { useFetchProductsQuery, useFetchProductQuery, useUpdateProductMutation, useUpdateDescriptionProductMutation } = productApi;

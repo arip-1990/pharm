@@ -9,6 +9,7 @@ use App\Entities\OrderItem;
 use App\Entities\Store;
 use App\Http\Requests\Catalog\CheckoutRequest;
 use App\UseCases\CartService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use function config;
 
@@ -22,12 +23,12 @@ class CheckoutService
             throw new \DomainException('Не возможно оплатить наличными');
 
         $this->cartService->setStore(Store::query()->find($request['store']));
-        $offers = [];
+        $offers = new Collection();
         $items = $this->cartService->getItems()->map(function (CartItem $item) use (&$offers) {
             /** @var Offer $offer */
             $offer = Offer::query()->where('store_id', $this->cartService->getStore()->id)->where('product_id', $item->product_id)->first();
-            $offer->checkout($item->quantity);
-            $offers[] = $offer;
+//            $offer->checkout($item->quantity);
+            $offers->add($offer);
 
             return OrderItem::create($item->product_id, $item->getAmount($offer->store), $item->quantity);
         });
@@ -57,7 +58,7 @@ class CheckoutService
 //            ), $request->delivery_type);
 //        }
 
-        foreach ($offers as $offer) $offer->save();
+        $offers->each(fn(Offer $offer) => $offer->save());
 
         return $order;
     }

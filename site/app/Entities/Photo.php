@@ -4,6 +4,7 @@ namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -19,26 +20,32 @@ class Photo extends Model
     const TYPE_CERTIFICATE = 1;
 
     public $timestamps = false;
-    protected $fillable = ['type'];
+    protected $fillable = ['type', 'product_id', 'sort'];
 
-    public static function getNextId(): int
+    public function getUrl(): ?string
     {
-        $statement = DB::select("show table status like 'photos'");
-        return $statement[0]->Auto_increment;
+        return $this->getFilePath() ? Storage::url($this->getFilePath()) : null;
     }
 
-    public function getOriginalFile(): string
+    public function getFilePath(): ?string
     {
-        return "storage/images/original/{$this->product_id}/" . $this->id;
+        $files = Storage::files("images/original/{$this->product_id}");
+        foreach ($files as $file) {
+            $exp = explode('/', $file);
+            if ($this->id == explode('.', array_pop($exp))[0])
+                return $file;
+        }
+        return $files ? $files[0] : null;
     }
 
-    public function getThumbnailFile(string $type = 'thumb'): string
+    public function getThumbFilePath(string $type = 'thumb'): ?string
     {
         $type = match ($type) {
             'cart' => 'cart',
             default => 'thumb'
         };
+        $files = glob("storage/images/original/{$this->product_id}/{$type}_{$this->id}");
 
-        return "storage/images/thumb/{$this->product_id}/$type" . '_' . $this->id;
+        return $files ? $files[0] : null;
     }
 }

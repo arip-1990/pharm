@@ -2,6 +2,8 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { Sanctum } from "react-sanctum";
+import { ConfigProvider } from 'antd';
+import ruRU from 'antd/lib/locale/ru_RU';
 import moment from "moment";
 import "moment/locale/ru";
 
@@ -25,7 +27,9 @@ ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <Sanctum config={sanctumConfig}>
-        <App />
+        <ConfigProvider locale={ruRU}>
+          <App />
+        </ConfigProvider>
       </Sanctum>
     </BrowserRouter>
   </Provider>,

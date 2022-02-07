@@ -24,19 +24,15 @@
                         <label for="newPassword" class="form-label">Пароль</label>
                         <input type="password" name="password" class="form-control" id="newPassword" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="passwordConfirm" class="form-label">Повторите пароль</label>
-                        <input type="password" name="password_confirmation" class="form-control" id="passwordConfirm" required>
-                    </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="news">
-                        <label class="form-check-label" for="news">
+                        <label class="form-check-label" for="news" style="font-size: .85rem">
                             Да, я соглашаюсь получать новости и информацию об акциях
                         </label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="rule" required>
-                        <label class="form-check-label" for="rule">
+                        <label class="form-check-label" for="rule" style="font-size: .85rem">
                             Я согласен с правилами сайта
                         </label>
                     </div>

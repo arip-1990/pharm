@@ -37,77 +37,42 @@ class TestCommand extends Command
 //       $this->storeProducts($this->argument('file'));
 //         $this->export();
 
-        Product::withTrashed()->chunk(1000, function (Collection $products) {
-            foreach ($products as $product) {
-                $this->slugService->slug($product);
-                $product->save();
-            }
-        });
+       $total = Product::withTrashed()->count();
+       $i = 1;
+       $id = 1;
+       Product::withTrashed()->chunk(1000, function ($products) use ($total, &$id, &$i) {
+           /** @var Product $product */
+           foreach ($products as $product) {
+               echo "\033[2KProcessing: " . $i . '/' . $total . "\r";
 
-//        $total = Product::query()->count();
-//        $i = 1;
-//        Product::query()->chunk(1000, function ($products) use ($total, &$i) {
-//            /** @var Product $product */
-//            foreach ($products as $product) {
-//                echo "\033[2KProcessing: " . $i . '/' . $total . "\r";
-//
-//                $found = false;
-//                foreach ($product->photos as $photo) {
-//                    if (Storage::exists($photo->getOriginalFile())) {
-//                        $exp = explode('.', $photo->file);
-//                        $fileName = $product->id . '_' . $photo->id . '.' . strtolower($exp[count($exp) - 1]);
-//                        if ($photo->file !== $fileName) {
-//                            Storage::move($photo->getOriginalFile(), '/images/product/original/' . $fileName);
-//                            $photo->update(['file' => $fileName]);
-//                        }
-//                    }
-//                    else $photo->delete();
-//                }
-//
-//                $product->update();
+                $photos = [];
+                if ($files = glob("storage/app/public/images/original/$product->id*")) {
+                    foreach ($files as $file) {
+                        if (is_dir($file)) continue;
 
-//                if (!$found) {
-//                    $photos = [];
-//                    $id = Photo::getNextId();
-//
-//                    if ($files = glob("storage/app/images/product/original/$product->id*")) {
-//                        foreach ($files as $file) {
-//                            $exp = explode('/', $file);
-//                            $file = $exp[count($exp) - 1];
-//                            $exp = explode('.', $file);
-//                            $exp = $exp[count($exp) - 1];
-//                            $fileName = $product->id . '_' . $id . '.' . $exp;
-//                            /** @var Photo $photo */
-//                            $photo = new Photo(['type' => Photo::TYPE_PICTURE, 'file' => $fileName]);
-//                            Storage::move("/images/product/original/$file", $photo->getOriginalFile());
-//                            $photos[] = $photo;
-//                            $id++;
-//                        }
-//                    }
-//                    elseif ($files = glob("products/$product->id*")) {
-//                        foreach ($files as $file) {
-//                            $exp = explode('/', $file);
-//                            $file = $exp[count($exp) - 1];
-//                            $exp = explode('.', $file);
-//                            $exp = $exp[count($exp) - 1];
-//                            $fileName = $product->id . '_' . $id . '.' . $exp;
-//                            /** @var Photo $photo */
-//                            $photo = new Photo(['type' => Photo::TYPE_PICTURE, 'file' => $fileName]);
-//                            rename("products/$file", 'storage/app' . $photo->getOriginalFile());
-//                            $photos[] = $photo;
-//                            $id++;
-//                        }
-//                    }
-//
-//                    if ($photos) {
-//                        $product->photos()->saveMany($photos);
-//                        $product->update();
-//                    }
-//                }
+                        $exp = explode('/', $file);
+                        $exp = explode('.', array_pop($exp));
+                        $exp = array_pop($exp);
 
-//                $i++;
-//            }
-//        });
+                        if (!file_exists("storage/app/public/images/original/{$product->id}"))
+                            mkdir("storage/app/public/images/original/{$product->id}", recursive: true);
+
+                        /** @var Photo $photo */
+                        $photo = new Photo();
+                        rename($file, "storage/app/public/images/original/{$product->id}/{$id}.{$exp}");
+                        $photos[] = $photo;
+                        $id++;
+                    }
+
+                    if ($photos) {
+                        $product->photos()->saveMany($photos);
+                        $product->update();
+                    }
+                }
+
+               $i++;
+           }
+       });
 
         $this->info(PHP_EOL . 'Загрузка успешно завершена!');
         return 0;

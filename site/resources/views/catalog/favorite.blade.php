@@ -19,7 +19,7 @@
                         <div class="row favorite" data-product="{{ $product->id }}">
                             <div class="col-3 col-md-3">
                                 @if ($product->photos()->count())
-                                    <img alt="" src="{{ $product->photos[0]->getOriginalFile() }}" style="height: 120px;width: 120px;">
+                                    <img alt="" src="{{ $product->photos()->first()->getUrl() }}" style="height: 120px;width: 120px;">
                                 @else
                                     <img alt="" src="{{ App\Entities\Photo::DEFAULT_FILE }}" style="height: 120px;width: 120px;">
                                 @endif
