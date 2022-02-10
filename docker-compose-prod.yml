@@ -19,7 +19,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.panel.rule=Host(`panel.120на80.рф`)
+        - traefik.http.routers.panel.rule=Host(`panel.аптека-05.рф`)
         - traefik.http.services.panel.loadBalancer.server.port=80
         - traefik.http.routers.panel.middlewares=secure-headers
         - traefik.http.routers.panel.entryPoints=https
@@ -40,10 +40,10 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.site.rule=Host(`120на80.рф`) || Host(`www.120на80.рф`)
+        - traefik.http.routers.site.rule=Host(`аптека-05.рф`) || Host(`www.аптека-05.рф`)
         - traefik.http.services.site.loadBalancer.server.port=80
-        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.120на80.рф/(.*)$$
-        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}120на80.рф/$${2}
+        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.аптека-05.рф/(.*)$$
+        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}аптека-05.рф/$${2}
         - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
         - traefik.http.routers.site.middlewares=site-redirect,secure-headers
         - traefik.http.routers.site.entryPoints=https
