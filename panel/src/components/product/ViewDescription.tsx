@@ -4,7 +4,7 @@ import { EditOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { IProduct } from "../../models/IProduct";
 import { ICategory } from "../../models/ICategory";
 import { productApi } from "../../services/ProductService";
-import { EditorState } from 'draft-js';
+import { EditorState, convertFromHTML, ContentState } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -16,10 +16,15 @@ interface PropsType {
 
 const ViewDescription: React.FC<PropsType> = ({ product, loading }) => {
     const [edit, setEdit] = React.useState<boolean>(false);
-    const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
+    const [editorState, setEditorState] = React.useState(() => {
+        const blocksFromHTML = convertFromHTML(product?.description || '');
+        const contentState = ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap);
+
+        return EditorState.createWithContent(contentState);
+    });
     const [updateProduct, {isLoading: updateLoading}] = productApi.useUpdateDescriptionProductMutation();
 
-    const options = ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'link', 'embedded', 'emoji', 'remove', 'history'];
+    const options = ['inline', 'blockType', 'list', 'textAlign', 'link', 'embedded', 'emoji', 'history'];
 
     const getCategoryTree: any = (categories: ICategory[]) => categories?.map(item => ({
         title: item.name,
@@ -28,7 +33,7 @@ const ViewDescription: React.FC<PropsType> = ({ product, loading }) => {
     }));
 
     const handleSave = () => {
-        const data = convertToHTML(editorState.getCurrentContent());
+        const data = {description: convertToHTML(editorState.getCurrentContent())};
         console.log(data);
         if (product) updateProduct({ slug: product.slug, data });
         setEdit(false);
@@ -37,8 +42,6 @@ const ViewDescription: React.FC<PropsType> = ({ product, loading }) => {
     const handleReset = () => {
         setEdit(false);
     }
-
-    console.log(product?.description);
 
     return (
         <Card

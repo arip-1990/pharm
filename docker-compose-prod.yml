@@ -58,7 +58,7 @@ services:
   site-php-fpm:
     image: ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
     volumes:
-      - uploads:/app/site/storage/app/public
+      - uploads:/app/storage/app/public
     deploy:
       mode: replicated
       replicas: 1

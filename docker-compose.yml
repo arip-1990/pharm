@@ -65,6 +65,7 @@ services:
       dockerfile: dev/php-fpm/Dockerfile
     volumes:
       - ./site:/app
+      - uploads:/app/storage/app/public
 
   site-php-cli:
     build:
@@ -123,6 +124,7 @@ services:
 
 volumes:
   db-postgres:
+  uploads:
 
 networks:
   traefik-public:

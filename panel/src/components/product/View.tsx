@@ -4,6 +4,7 @@ import { Card, Col, Row, Image, Space } from "antd";
 import { productApi } from "../../services/ProductService";
 import { ViewBase } from "./ViewBase";
 import { ViewDescription } from "./ViewDescription";
+import { ViewAttributes } from "./ViewAttributes";
 import { IProduct } from "../../models/IProduct";
 
 const View: React.FC = () => {
@@ -23,16 +24,14 @@ const View: React.FC = () => {
               <ViewBase loading={fetchLoading} product={product} />
             </Col>
             <Col span={24}>
-              <ViewDescription loading={fetchLoading} />
+              <ViewDescription loading={fetchLoading} product={product} />
             </Col>
           </Row>
         </Col>
         <Col span={12}>
           <Row gutter={[32, 32]}>
             <Col span={24}>
-              <Card title="Аттрибуты">
-                {/* <Table loading={fetchLoading} type='attribute' item={product} /> */}
-              </Card>
+              <ViewAttributes loading={fetchLoading} product={product} />
             </Col>
           </Row>
         </Col>
