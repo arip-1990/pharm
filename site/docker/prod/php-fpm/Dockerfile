@@ -34,8 +34,7 @@ WORKDIR /app
 COPY --from=builder /app ./
 COPY ./ ./
 
-RUN chown www-data:www-data ./storage ./bootstrap/cache -R \
-    && php -r "copy('.env.prod', '.env');" && php artisan key:generate --ansi
+RUN chown www-data:www-data ./storage ./bootstrap/cache -R && php artisan key:generate --ansi
 
 HEALTHCHECK --interval=5s --timeout=3s --start-period=1s \
     CMD REDIRECT_STATUS=true SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET \

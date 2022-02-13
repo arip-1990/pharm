@@ -38,6 +38,6 @@ WORKDIR /app
 COPY --from=builder /app ./
 COPY ./ ./
 
-RUN php -r "copy('.env.prod', '.env');" && php artisan key:generate --ansi
+RUN php artisan key:generate --ansi
 
 USER app

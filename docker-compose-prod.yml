@@ -1,11 +1,31 @@
 version: "3.9"
 services:
+  traefik:
+    image: traefik:2.6
+    command:
+      --providers.docker=true
+      --providers.docker.exposedByDefault=false
+      --providers.docker.swarmmode
+      --entryPoints.http.address=:80
+    ports:
+      - "80:80"
+    networks:
+      - traefik-public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
+  
   cron:
     image: crazymax/swarm-cronjob:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       LOG_LEVEL: info
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       placement:
         constraints: [ node.role == manager ]
@@ -19,12 +39,9 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.panel.rule=Host(`panel.аптека-05.рф`)
-        - traefik.http.services.panel.loadBalancer.server.port=80
-        - traefik.http.routers.panel.middlewares=secure-headers
-        - traefik.http.routers.panel.entryPoints=https
-        - traefik.http.routers.panel.tls=true
-        - traefik.http.routers.panel.tls.certResolver=letsEncrypt
+        - traefik.http.routers.api.rule=Host(`panel.xn--05-6kcay4a7ay.xn--p1ai`)
+        - traefik.http.routers.api.entryPoints=http
+        - traefik.http.services.api.loadBalancer.server.port=80
       mode: replicated
       replicas: 1
       update_config:
@@ -40,15 +57,13 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.site.rule=Host(`аптека-05.рф`) || Host(`www.аптека-05.рф`)
-        - traefik.http.services.site.loadBalancer.server.port=80
-        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.аптека-05.рф/(.*)$$
-        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}аптека-05.рф/$${2}
-        - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
-        - traefik.http.routers.site.middlewares=site-redirect,secure-headers
-        - traefik.http.routers.site.entryPoints=https
-        - traefik.http.routers.site.tls=true
-        - traefik.http.routers.site.tls.certResolver=letsEncrypt
+        - traefik.http.routers.frontend.rule=Host(`xn--05-6kcay4a7ay.xn--p1ai`) || Host(`www.xn--05-6kcay4a7ay.xn--p1ai`)
+        - traefik.http.routers.frontend.entryPoints=http
+        - traefik.http.services.frontend.loadBalancer.server.port=80
+        - traefik.http.middlewares.frontend-redirect.redirectRegex.regex=^(https?://)www.xn--05-6kcay4a7ay.xn--p1ai/(.*)$$
+        - traefik.http.middlewares.frontend-redirect.redirectRegex.replacement=$${1}xn--05-6kcay4a7ay.xn--p1ai/$${2}
+        - traefik.http.middlewares.frontend-redirect.redirectRegex.permanent=true
+        - traefik.http.routers.frontend.middlewares=frontend-redirect
       mode: replicated
       replicas: 1
       update_config:
@@ -57,6 +72,31 @@ services:
 
   site-php-fpm:
     image: ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: https://аптека05.рф
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      DB_CONNECTION: pgsql
+      DB_HOST: db-postgres
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: ${DB_PASSWORD}
+      BROADCAST_DRIVER: redis
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      SESSION_LIFETIME: 120
+      SESSION_DOMAIN: '.аптека05.рф'
+      SANCTUM_STATEFUL_DOMAINS: '*.аптека05.рф'
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      MAIL_HOST: smtp.yandex.ru
+      MAIL_PORT: 465
+      MAIL_USERNAME: info@120на80.рф
+      MAIL_PASSWORD: info12345
+      MAIL_FROM_ADDRESS: info@120на80.рф
+      MAIL_FROM_NAME: ${APP_NAME}
     volumes:
       - uploads:/app/storage/app/public
     deploy:
@@ -68,6 +108,31 @@ services:
 
   site-migration:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: https://аптека05.рф
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      DB_CONNECTION: pgsql
+      DB_HOST: db-postgres
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: ${DB_PASSWORD}
+      BROADCAST_DRIVER: redis
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      SESSION_LIFETIME: 120
+      SESSION_DOMAIN: '.аптека05.рф'
+      SANCTUM_STATEFUL_DOMAINS: '*.аптека05.рф'
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      MAIL_HOST: smtp.yandex.ru
+      MAIL_PORT: 465
+      MAIL_USERNAME: info@120на80.рф
+      MAIL_PASSWORD: info12345
+      MAIL_FROM_ADDRESS: info@120на80.рф
+      MAIL_FROM_NAME: ${APP_NAME}
     command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate --force'
     deploy:
       restart_policy:
@@ -80,13 +145,13 @@ services:
     image: postgres:14.1-alpine
     environment:
       POSTGRES_USER: app
-      POSTGRES_PASSWORD: secret
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: app
     volumes:
       - db-postgres:/var/lib/postgresql/data
     deploy:
       placement:
-        constraints: [ node.labels.db == db ]
+        constraints: [ node.role == manager ]
       endpoint_mode: dnsrr
 
   db-backup:
@@ -95,7 +160,7 @@ services:
       BACKUP_NAME: pharm-postgres
       POSTGRES_HOST: db-postgres
       POSTGRES_USERNAME: app
-      POSTGRES_PASSWORD: secret
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: app
       AWS_ACCESS_KEY_ID: storage_app
       AWS_SECRET_ACCESS_KEY: storage_secret
@@ -111,6 +176,12 @@ services:
       replicas: 0
       restart_policy:
         condition: none
+  
+  redis:
+    image: redis:6.2-alpine
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
 
 volumes:
   db-postgres:

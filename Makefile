@@ -112,8 +112,5 @@ deploy:
 
 	ssh -o StrictHostKeyChecking=no arip@${HOST} 'cd pharm_${BUILD_NUMBER} && docker stack deploy --compose-file docker-compose.yml pharm --with-registry-auth --prune'
 
-deploy-clean:
-	rm -f docker-compose-prod-env.yml
-
 rollback:
 	ssh -o StrictHostKeyChecking=no arip@${HOST} 'cd pharm_${BUILD_NUMBER} && docker stack deploy --compose-file docker-compose.yml pharm --with-registry-auth --prune'
