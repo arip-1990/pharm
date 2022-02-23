@@ -17,17 +17,11 @@ interface PropsType {
 
 const Sidebar: React.FC<PropsType> = ({ theme, collapsed, switchTheme }) => {
   return (
-    <Layout.Sider
-      width={256}
-      theme={theme}
-      trigger={null}
-      collapsible
-      collapsed={collapsed}
-    >
+    <Layout.Sider theme={theme} trigger={null} collapsible collapsed={collapsed}>
       <div className="brand">
         <span className="logo" />
       </div>
-      <Menu theme={theme} mode="inline" defaultSelectedKeys={["stats"]}>
+      <Menu mode="inline" defaultSelectedKeys={["stats"]}>
         <Menu.Item key="stats" icon={<DashboardOutlined />}>
           <Link to="/">Статистика</Link>
         </Menu.Item>
@@ -38,7 +32,7 @@ const Sidebar: React.FC<PropsType> = ({ theme, collapsed, switchTheme }) => {
           <Link to="product">Товары</Link>
         </Menu.Item>
       </Menu>
-      {!collapsed ? (
+      {/* {!collapsed ? (
         <div className="switch-theme">
           <span>
             <BulbOutlined /> Темная тема
@@ -49,7 +43,7 @@ const Sidebar: React.FC<PropsType> = ({ theme, collapsed, switchTheme }) => {
             onClick={(checked) => switchTheme(checked ? "dark" : "light")}
           />
         </div>
-      ) : null}
+      ) : null} */}
     </Layout.Sider>
   );
 };

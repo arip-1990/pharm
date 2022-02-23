@@ -71,7 +71,15 @@ export const productApi = createApi({
             }),
             invalidatesTags: ['IProduct'],
         }),
+        updateAttributesProduct: builder.mutation<void, {slug: string, data: any}>({
+            query: (args) => ({
+              url: `/product/attributes/${args.slug}`,
+              method: 'put',
+              data: args.data
+            }),
+            invalidatesTags: ['IProduct'],
+        }),
     }),
 });
 
-export const { useFetchProductsQuery, useFetchProductQuery, useUpdateProductMutation, useUpdateDescriptionProductMutation } = productApi;
+export const { useFetchProductsQuery, useFetchProductQuery, useUpdateProductMutation, useUpdateDescriptionProductMutation, useUpdateAttributesProductMutation } = productApi;

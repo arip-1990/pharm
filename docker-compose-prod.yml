@@ -1,47 +1,35 @@
 version: "3.9"
 services:
-  traefik:
-    image: traefik:2.6
-    command:
-      --providers.docker=true
-      --providers.docker.exposedByDefault=false
-      --providers.docker.swarmmode
-      --entryPoints.http.address=:80
-    ports:
-      - "80:80"
-    networks:
-      - traefik-public
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-    deploy:
-      placement:
-        constraints: [ node.role == manager ]
-  
   cron:
     image: crazymax/swarm-cronjob:latest
-    environment:
-      LOG_LEVEL: info
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      LOG_LEVEL: info
     deploy:
       placement:
         constraints: [ node.role == manager ]
 
+    gateway:
+      image: ${REGISTRY}/auction-gateway:${IMAGE_TAG}
+      volumes:
+        - /etc/letsencrypt:/etc/letsencrypt:ro
+        - /var/www/html:/var/www/html:ro
+      ports:
+        - "80:80"
+        - "443:443"
+      deploy:
+        mode: replicated
+        replicas: 2
+        update_config:
+          parallelism: 1
+          delay: 10s
+        placement:
+          constraints: [ node.role == manager ]
+
   panel:
     image: ${REGISTRY}/pharm-panel:${IMAGE_TAG}
-    networks:
-      - traefik-public
-      - default
     deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.http.routers.api.rule=Host(`panel.xn--05-6kcay4a7ay.xn--p1ai`)
-        - traefik.http.routers.api.entryPoints=http
-        - traefik.http.services.api.loadBalancer.server.port=80
       mode: replicated
       replicas: 1
       update_config:
@@ -50,20 +38,7 @@ services:
 
   site:
     image: ${REGISTRY}/pharm-site:${IMAGE_TAG}
-    networks:
-      - traefik-public
-      - default
     deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.http.routers.frontend.rule=Host(`xn--05-6kcay4a7ay.xn--p1ai`) || Host(`www.xn--05-6kcay4a7ay.xn--p1ai`)
-        - traefik.http.routers.frontend.entryPoints=http
-        - traefik.http.services.frontend.loadBalancer.server.port=80
-        - traefik.http.middlewares.frontend-redirect.redirectRegex.regex=^(https?://)www.xn--05-6kcay4a7ay.xn--p1ai/(.*)$$
-        - traefik.http.middlewares.frontend-redirect.redirectRegex.replacement=$${1}xn--05-6kcay4a7ay.xn--p1ai/$${2}
-        - traefik.http.middlewares.frontend-redirect.redirectRegex.permanent=true
-        - traefik.http.routers.frontend.middlewares=frontend-redirect
       mode: replicated
       replicas: 1
       update_config:
@@ -186,7 +161,3 @@ services:
 volumes:
   db-postgres:
   uploads:
-
-networks:
-  traefik-public:
-    external: true

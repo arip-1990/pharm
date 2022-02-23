@@ -77,12 +77,11 @@ class CartService
         try {
             $current = $this->getItem($item->product_id);
             $current->plus($item->quantity);
-            $this->saveItems();
         }
         catch (\DomainException $e) {
-            $this->items->add($item);
-            $this->saveItems();
+            $this->items->push($item);
         }
+        $this->saveItems();
     }
 
     public function set(string $productId, int $quantity): void
@@ -125,6 +124,7 @@ class CartService
     {
         if (!$this->items->count()) {
             $this->items = session('cartItems', new Collection());
+
             if (Auth::check())
                 $this->items = $this->items->concat(Auth::user()->cartItems);
         }
@@ -134,10 +134,18 @@ class CartService
     {
         if (Auth::check()) {
             session()->forget('cartItems');
-            if ($this->items->count())
+
+            if ($this->items->count()) {
+                Auth::user()->cartItems()->each(function (CartItem $item) {
+                    if (!$this->items->pluck('id')->contains($item->id)) {
+                        $item->delete();
+                    }
+                });
                 Auth::user()->cartItems()->saveMany($this->items);
-            else
+            }
+            else {
                 Auth::user()->cartItems()->delete();
+            }
         }
         else {
             session(['cartItems' => $this->items]);

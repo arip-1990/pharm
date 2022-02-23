@@ -16,11 +16,11 @@ import "./sass/index.scss";
 moment.locale("ru");
 
 const sanctumConfig = {
-  apiUrl: "http://pharm.test",
+  apiUrl: "https://pharm.test",
   csrfCookieRoute: "sanctum/csrf-cookie",
-  signInRoute: "api/login",
-  signOutRoute: "api/logout",
-  userObjectRoute: "api/user",
+  signInRoute: "api/v1/login",
+  signOutRoute: "api/v1/logout",
+  userObjectRoute: "api/v1/user",
 };
 
 ReactDOM.render(

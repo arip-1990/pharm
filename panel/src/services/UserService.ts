@@ -1,16 +1,14 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { axiosBaseQuery } from '../services/api';
 import { IUser } from '../models/IUser';
 
 
 export const userApi = createApi({
   reducerPath: 'userApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://pharm.test/api',
-    credentials: "include"
-  }),
+  baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
     fetchUser: builder.query<IUser[], void>({
-      query: () => '/user'
+      query: () => ({url: '/user'})
     }),
   }),
 });

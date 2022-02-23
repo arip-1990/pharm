@@ -24,7 +24,7 @@ const ViewDescription: React.FC<PropsType> = ({ product, loading }) => {
     });
     const [updateProduct, {isLoading: updateLoading}] = productApi.useUpdateDescriptionProductMutation();
 
-    const options = ['inline', 'blockType', 'list', 'textAlign', 'link', 'embedded', 'emoji', 'history'];
+    const options = ['inline', 'blockType', 'list', 'link', 'embedded', 'emoji'];
 
     const getCategoryTree: any = (categories: ICategory[]) => categories?.map(item => ({
         title: item.name,
@@ -34,7 +34,6 @@ const ViewDescription: React.FC<PropsType> = ({ product, loading }) => {
 
     const handleSave = () => {
         const data = {description: convertToHTML(editorState.getCurrentContent())};
-        console.log(data);
         if (product) updateProduct({ slug: product.slug, data });
         setEdit(false);
     }

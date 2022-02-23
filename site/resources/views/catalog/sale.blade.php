@@ -43,11 +43,13 @@
                                         <div class="card-mod_text">Доставка</div>
                                     </div>
                                 @endif
-                                @if ($product->photos->count())
-                                    <img class="card-img-top mt-2" itemprop="image" src="{{ url($product->photos->first()->getOriginalFile()) }}" alt="{{ $product->name }}" />
-                                @else
-                                    <img class="card-img-top mt-2" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
-                                @endif
+                                <div class="card_img">
+                                    @if ($product->photos->count())
+                                        <img class="mt-2" itemprop="image" src="{{ $product->photos()->first()->getUrl() }}" alt="{{ $product->name }}" />
+                                    @else
+                                        <img class="mt-2" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
+                                    @endif
+                                </div>
                                 @if (in_array($product->id, session('favorites', [])))
                                     <img alt="" src="/images/heart.png" class="favorite-toggle" data-action="remove">
                                 @else

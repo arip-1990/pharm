@@ -3,7 +3,6 @@
 namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -24,18 +23,18 @@ class Photo extends Model
 
     public function getUrl(): ?string
     {
-        return $this->getFilePath() ? Storage::url($this->getFilePath()) : null;
+        $file = $this->getFilePath();
+        return $file ? Storage::url($file) : null;
     }
 
     public function getFilePath(): ?string
     {
-        $files = Storage::files("images/original/{$this->product_id}");
-        foreach ($files as $file) {
+        foreach (Storage::files("images/original/{$this->product_id}") as $file) {
             $exp = explode('/', $file);
-            if ($this->id == explode('.', array_pop($exp))[0])
+            if ((string)$this->id === explode('.', array_pop($exp))[0])
                 return $file;
         }
-        return $files ? $files[0] : null;
+        return null;
     }
 
     public function getThumbFilePath(string $type = 'thumb'): ?string
@@ -44,8 +43,12 @@ class Photo extends Model
             'cart' => 'cart',
             default => 'thumb'
         };
-        $files = glob("storage/images/original/{$this->product_id}/{$type}_{$this->id}");
 
-        return $files ? $files[0] : null;
+        foreach (Storage::files("images/original/{$this->product_id}") as $file) {
+            $exp = explode('/', $file);
+            if ("{$type}_{$this->id}" === explode('.', array_pop($exp))[0])
+                return $file;
+        }
+        return null;
     }
 }

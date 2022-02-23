@@ -1,13 +1,13 @@
 init: init-ci site-node-ready panel-ready
 init-ci: docker-down-clear \
-	site-clear panel-clear \
+	site-clear api-clear panel-clear \
 	docker-pull docker-build docker-up \
-	site-init panel-init
+	site-init api-init panel-init
 up: docker-up
 down: docker-down
 restart: down up
 
-update-deps: site-composer-update site-node-upgrade panel-yarn-upgrade restart
+update-deps: site-composer-update site-node-upgrade api-composer-update panel-yarn-upgrade restart
 
 docker-up:
 	docker-compose up -d
@@ -57,6 +57,33 @@ site-node-ready:
 	docker run --rm -v ${PWD}/site:/app -w /app alpine touch .ready
 
 
+api-init: api-permissions api-composer-install api-wait-db# api-migrations api-fixtures
+
+api-clear:
+	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf var/cache/* var/log/*'
+
+api-permissions:
+	docker run --rm -v ${PWD}/api:/app -w /app alpine chmod 777 var/cache var/log
+
+api-composer-install:
+	docker-compose run --rm api-php-cli composer install
+
+api-composer-update:
+	docker-compose run --rm api-php-cli composer update
+
+api-wait-db:
+	docker-compose run --rm api-php-cli wait-for-it db-postgres:5432 -t 30
+
+api-migrations:
+	docker-compose run --rm api-php-cli composer app migrations:migrate -- --no-interaction
+
+api-fixtures:
+	docker-compose run --rm api-php-cli composer app fixtures:load
+
+api-backup:
+	docker-compose run --rm db-postgres-backup
+
+
 panel-clear:
 	docker run --rm -v ${PWD}/panel:/app -w /app alpine sh -c 'rm -rf .ready build'
 
@@ -103,7 +130,6 @@ push-site:
 	docker push ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
 
 deploy:
-	ssh -o StrictHostKeyChecking=no arip@${HOST} 'docker network create --driver=overlay traefik-public || true'
 	ssh -o StrictHostKeyChecking=no arip@${HOST} 'rm -rf pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER}'
 
 	envsubst < docker-compose-prod.yml > docker-compose-prod-env.yml

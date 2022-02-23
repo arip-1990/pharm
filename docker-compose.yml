@@ -1,30 +1,37 @@
 version: '3.9'
 services:
-  traefik:
-    image: traefik:2.6
-    command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80
+  gateway:
+    build:
+      context: gateway/docker
+      dockerfile: dev/nginx/Dockerfile
     ports:
       - "80:80"
-    networks:
-      - traefik-public
+      - "443:443"
+  
+  api:
+    build:
+      context: api/docker
+      dockerfile: dev/nginx/Dockerfile
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
+      - ./api:/app
+  
+  api-php-fpm:
+    build:
+      context: api/docker
+      dockerfile: dev/php-fpm/Dockerfile
+    volumes:
+      - ./api:/app
+
+  api-php-cli:
+    build:
+      context: api/docker
+      dockerfile: dev/php-cli/Dockerfile
+    volumes:
+      - ./api:/app
 
   panel:
     build:
       context: panel/docker/dev/nginx
-    networks:
-      - traefik-public
-      - default
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.http.routers.panel.rule=Host(`panel.pharm.test`)
-      - traefik.http.routers.panel.entryPoints=http
-      - traefik.http.services.panel.loadBalancer.server.port=80
 
   panel-node:
     build:
@@ -45,19 +52,7 @@ services:
       dockerfile: dev/nginx/Dockerfile
     volumes:
       - ./site:/app
-    networks:
-      - traefik-public
-      - default
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.http.routers.site.rule=Host(`pharm.test`) || Host(`www.pharm.test`)
-      - traefik.http.routers.site.entryPoints=http
-      - traefik.http.services.site.loadBalancer.server.port=80
-      - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
-      - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
-      - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
-      - traefik.http.routers.site.middlewares=site-redirect
+      - uploads:/app/storage/app/public
 
   site-php-fpm:
     build:
@@ -100,32 +95,10 @@ services:
 
   mailer:
     image: mailhog/mailhog
-    networks:
-      - traefik-public
-      - default
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.http.routers.mailer.rule=Host(`mailer.pharm.test`)
-      - traefik.http.routers.mailer.entryPoints=http
-      - traefik.http.services.mailer.loadBalancer.server.port=8025
 
   redis:
     image: redis:6.2-alpine
-    networks:
-      - traefik-public
-      - default
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.http.routers.redis.rule=Host(`redis.pharm.test`)
-      - traefik.http.routers.redis.entryPoints=http
-      - traefik.http.services.redis.loadBalancer.server.port=6379
 
 volumes:
   db-postgres:
   uploads:
-
-networks:
-  traefik-public:
-    name: traefik-public

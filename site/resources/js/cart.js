@@ -140,7 +140,6 @@ class Cart {
         element.removeAttribute('data-target');
         element.removeAttribute('data-max');
         element.innerHTML = 'Добавлено';
-        element
     }
 
     changeCartQuantity() {
@@ -166,7 +165,7 @@ class Cart {
         try {
             const { data } = await axios.post(`/cart/${id}`, { total: quantity });
             document.querySelector('.cart .quantity').innerText = data.total;
-            changeCartQuantity();
+            this.changeCartQuantity();
         }
         catch (e) {
             return new Error(e);
@@ -187,7 +186,7 @@ class Cart {
         try {
             const { data } = await axios.put(`/cart/${id}`, { quantity });
             document.querySelector('.cart .quantity').innerText = data.total;
-            changeCartQuantity();
+            this.changeCartQuantity();
         }
         catch (e) {
             return new Error(e);

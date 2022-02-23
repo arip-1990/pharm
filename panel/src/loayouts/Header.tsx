@@ -6,7 +6,6 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import { SiderTheme } from "antd/lib/layout/Sider";
-import classnames from "classnames";
 import { useSanctum } from "react-sanctum";
 
 interface PropsType {
@@ -17,20 +16,23 @@ interface PropsType {
 
 const Header: React.FC<PropsType> = ({ theme, collapsed, onCollapsed }) => {
   const { user, signOut } = useSanctum();
+  const [currentMenu, setCurrentMenu] = React.useState<string>('');
+
+  const handleClickMenu = (e: any) => {
+    setCurrentMenu(e.key);
+    if (e.key === 'logout') signOut();
+  }
 
   return (
-    <Layout.Header
-      className={classnames(theme, {
-        "ant-layout-header-collapsed": collapsed,
-      })}
-    >
+    <Layout.Header>
       {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
         className: "trigger",
         onClick: onCollapsed,
       })}
-      <Menu theme={theme} mode="horizontal">
-        <Menu.SubMenu key="SubMenu" title={user.name}>
-          <Menu.Item key="logout" onClick={signOut}>
+
+      <Menu theme={theme} style={{lineHeight: '64px'}} onClick={handleClickMenu} selectedKeys={[currentMenu]} mode='horizontal'>
+        <Menu.SubMenu key='profile' title={user.name}>
+          <Menu.Item key='logout'>
             <LogoutOutlined /> Выход
           </Menu.Item>
         </Menu.SubMenu>

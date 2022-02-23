@@ -11,7 +11,7 @@ use App\Http\Requests\Catalog\CheckoutRequest;
 use App\UseCases\CartService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use function config;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
@@ -23,16 +23,6 @@ class CheckoutService
             throw new \DomainException('Не возможно оплатить наличными');
 
         $this->cartService->setStore(Store::query()->find($request['store']));
-        $offers = new Collection();
-        $items = $this->cartService->getItems()->map(function (CartItem $item) use (&$offers) {
-            /** @var Offer $offer */
-            $offer = Offer::query()->where('store_id', $this->cartService->getStore()->id)->where('product_id', $item->product_id)->first();
-//            $offer->checkout($item->quantity);
-            $offers->add($offer);
-
-            return OrderItem::create($item->product_id, $item->getAmount($offer->store), $item->quantity);
-        });
-
         $order = Order::create(
             Auth::id(),
             $this->cartService->getStore()->id,
@@ -40,9 +30,21 @@ class CheckoutService
             $this->cartService->getTotalAmount(),
             $request['delivery'],
         );
-        $order->save();
 
-        $order->items()->saveMany($items);
+        DB::transaction(function () use ($order) {
+            $offers = new Collection();
+            $items = $this->cartService->getItems()->map(function (CartItem $item) use (&$offers) {
+                /** @var Offer $offer */
+                $offer = Offer::query()->where('store_id', $this->cartService->getStore()->id)->where('product_id', $item->product_id)->first();
+                $offer->checkout($item->quantity);
+                $offers->add($offer);
+
+                return OrderItem::create($item->product_id, $item->getAmount($offer->store), $item->quantity);
+            });
+
+            $order->save();
+
+            $order->items()->saveMany($items);
 
 //        if ($request['delivery'] === Order::DELIVERY_TYPE_COURIER) {
 //            $order->setDeliveryInfo(Delivery::create(
@@ -58,7 +60,9 @@ class CheckoutService
 //            ), $request->delivery_type);
 //        }
 
-        $offers->each(fn(Offer $offer) => $offer->save());
+            $offers->each(fn(Offer $offer) => $offer->save());
+            $this->cartService->clear();
+        });
 
         return $order;
     }

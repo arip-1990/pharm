@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Input, Form, Space, InputNumber } from 'antd';
+import { Card, Input, Form, Space } from 'antd';
 import { EditOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Editor, EditorState, convertFromHTML, ContentState } from 'draft-js';
 import { convertToHTML } from 'draft-convert';
@@ -12,22 +12,25 @@ interface PropsType {
     loading: boolean;
 }
 
-const CustomEditor: React.FC<{value: string}> = ({value}) => {
+const CustomEditor: React.FC<{value?: string, onChange?: (value: string) => void}> = ({value, onChange}) => {
     const [editorState, setEditorState] = React.useState(() => {
-        const blocksFromHTML = convertFromHTML(value);
+        const blocksFromHTML = convertFromHTML(value || '');
         const contentState = ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap);
 
         return EditorState.createWithContent(contentState);
     });
 
-    console.log(value);
+    const handleChange = (value: EditorState) => {
+        setEditorState(value);
+        onChange && onChange(convertToHTML(editorState.getCurrentContent()));
+    }
 
-    return <Editor editorState={editorState} onChange={setEditorState} />;
+    return <Editor editorState={editorState} onChange={handleChange} />;
 }
 
 const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
     const [edit, setEdit] = React.useState<boolean>(false);
-    const [updateProduct, {isLoading: updateLoading}] = productApi.useUpdateProductMutation();
+    const [updateProduct, {isLoading: updateLoading}] = productApi.useUpdateAttributesProductMutation();
     const [form] = Form.useForm();
 
     const generalColumns = [
@@ -43,17 +46,17 @@ const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
                         // case 'number':
                         //     return <Form.Item style={{margin: 0}} name={record.key} initialValue={item}><InputNumber /></Form.Item>;
                         case 'text':
-                            return <Form.Item style={{margin: 0}} name={record.key}><CustomEditor value={item} /></Form.Item>;
+                            return <Form.Item style={{margin: 0}} name={record.key} initialValue={item}><CustomEditor /></Form.Item>;
                     }
                 }
-                return item;
+                return record.type === 'text' ? <div dangerouslySetInnerHTML={{__html: item || ''}} /> : item;
             }
         }
     ];
 
     const handleSave = async () => {
         let data = await form.validateFields();
-        // if (product) updateProduct({slug: product.slug, data});
+        if (product) updateProduct({slug: product.slug, data});
         setEdit(false);
     }
 

@@ -5,7 +5,7 @@ import { productApi } from "../../services/ProductService";
 import { ViewBase } from "./ViewBase";
 import { ViewDescription } from "./ViewDescription";
 import { ViewAttributes } from "./ViewAttributes";
-import { IProduct } from "../../models/IProduct";
+import { Upload } from "../Upload";
 
 const View: React.FC = () => {
   const { slug } = useParams();
@@ -38,6 +38,7 @@ const View: React.FC = () => {
 
         <Col span={24}>
           <Card title="Отографии">
+            <Upload slug={product?.slug || ''} />
             <Image.PreviewGroup>
               <Space>
                 {product?.photos

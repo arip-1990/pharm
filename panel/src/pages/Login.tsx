@@ -24,7 +24,7 @@ const Login: React.FC = () => {
   }
 
   return (
-    <Layout>
+    <Layout style={{minHeight: '100vh'}}>
       <Row style={{margin: 'auto'}}>
     <Card title="Вход" bordered={false} style={{ width: 300 }}>
     <Form

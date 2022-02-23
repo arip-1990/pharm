@@ -14,21 +14,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/edit-order', [Api\Order\EditController::class, 'handle'])->middleware('auth.basic.once');
+Route::post('/edit-order', [Api\V1\Order\EditController::class, 'handle'])->middleware('auth.basic.once');
 
-Route::post('/login', [Api\Auth\LoginController::class, 'handle']);
+Route::prefix('v1')->group(function () {
+    Route::post('/login', [Api\V1\Auth\LoginController::class, 'handle']);
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::post('/logout', [Api\Auth\LogoutController::class, 'handle']);
-    Route::get('/user', [Api\User\IndexController::class, 'handle']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [Api\V1\Auth\LogoutController::class, 'handle']);
+        Route::get('/user', [Api\V1\User\IndexController::class, 'handle']);
 
-    Route::group(['prefix' => 'product'], function () {
-        Route::get('/', [Api\Product\IndexController::class, 'handle']);
-        Route::get('/{product}', [Api\Product\ShowController::class, 'handle']);
-        Route::put('/description/{product}', [Api\Product\UpdateDescriptionController::class, 'handle']);
-        Route::put('/{product}', [Api\Product\UpdateController::class, 'handle']);
+        Route::prefix('product')->group(function () {
+            Route::get('/', [Api\V1\Product\IndexController::class, 'handle']);
+            Route::get('/{product}', [Api\V1\Product\ShowController::class, 'handle']);
+            Route::put('/attributes/{product}', [Api\V1\Product\UpdateAttributesController::class, 'handle']);
+            Route::put('/description/{product}', [Api\V1\Product\UpdateDescriptionController::class, 'handle']);
+            Route::put('/{product}', [Api\V1\Product\UpdateController::class, 'handle']);
+            Route::post('/upload/{product}', [Api\V1\Product\UploadController::class, 'handle']);
+        });
+        Route::get('/category', [Api\V1\Category\IndexController::class, 'handle']);
+        Route::get('/order', [Api\V1\Order\IndexController::class, 'handle']);
+        Route::get('/statistic', [Api\V1\Statistic\IndexController::class, 'handle']);
     });
-    Route::get('/category', [Api\Category\IndexController::class, 'handle']);
-    Route::get('/order', [Api\Order\IndexController::class, 'handle']);
-    Route::get('/statistic', [Api\Statistic\IndexController::class, 'handle']);
 });

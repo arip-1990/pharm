@@ -1,15 +1,13 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import moment from 'moment';
+import { axiosBaseQuery } from '../services/api';
 import { IPagination } from '../models/IPagination';
 import { IStatistic } from '../models/IStatistic';
 
 
 export const statisticApi = createApi({
     reducerPath: 'statisticApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: 'http://pharm.test/api',
-        credentials: "include"
-    }),
+    baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
         fetchStatistics: builder.query<IPagination<IStatistic>, {
             pagination: {current: number, pageSize: number},

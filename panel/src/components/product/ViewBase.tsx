@@ -38,7 +38,7 @@ const ViewBase: React.FC<PropsType> = ({product, loading}) => {
                         case 'Статус':
                             return <Form.Item style={{margin: 0}} name='status' initialValue={item === 'Активен'} valuePropName="checked"><Switch /></Form.Item>;
                         case 'Категория':
-                            return <Form.Item style={{margin: 0}} name='category' initialValue={item.id}><TreeSelect treeLine={{showLeafIcon: false}} treeData={getCategoryTree(categories)} /></Form.Item>;
+                            return <Form.Item style={{margin: 0}} name='category' initialValue={item?.id}><TreeSelect treeLine={{showLeafIcon: false}} treeData={getCategoryTree(categories)} /></Form.Item>;
                     }
                 }
                 return record.key === 'Категория' ? item?.name : item;

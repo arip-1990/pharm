@@ -56,7 +56,7 @@ const Statistic: React.FC = () => {
         city: item.city,
         os: item.os,
         browser: item.browser,
-        createdAt: item.createdAt.format('hh:mm DD.MM.YYYY[г.]'),
+        createdAt: item.createdAt.format('DD.MM.YYYY[г.]'),
         diff: moment.duration(item.updatedAt.diff(item.createdAt)).humanize()
       }))}
       onChange={handleChange}

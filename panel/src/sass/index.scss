@@ -1,5 +1,5 @@
+@import "custom";
 @import "header";
-
-.ant-layout {
-  min-height: 100vh;
-}
+@import "sider";
+@import "main";
+@import "footer";

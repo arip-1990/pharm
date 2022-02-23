@@ -1,13 +1,11 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { axiosBaseQuery } from '../services/api';
 import { ICategory } from '../models/ICategory';
 
 
 export const categoryApi = createApi({
     reducerPath: 'categoryApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: 'http://pharm.test/api',
-        credentials: "include"
-    }),
+    baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
         fetchCategories: builder.query<ICategory[], void>({
             query: () => ({

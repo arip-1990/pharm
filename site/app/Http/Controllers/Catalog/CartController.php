@@ -23,7 +23,7 @@ class CartController extends Controller
 
     public function add(Request $request, string $id): JsonResponse
     {
-        $this->cartService->add(CartItem::create($id, $request->post('total', 1)));
+        $this->cartService->add(new CartItem(['product_id' => $id, 'quantity' => $request->post('total', 1)]));
         return new JsonResponse(['total' => $this->cartService->getTotal()], Response::HTTP_ACCEPTED);
     }
 

@@ -1,15 +1,13 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import moment from 'moment';
+import { axiosBaseQuery } from '../services/api';
 import { IOrder } from '../models/IOrder';
 import { IPagination } from '../models/IPagination';
 
 
 export const orderApi = createApi({
     reducerPath: 'orderApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: 'http://pharm.test/api',
-        credentials: "include"
-    }),
+    baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
         fetchOrders: builder.query<IPagination<IOrder>, {
             pagination: {current: number, pageSize: number},

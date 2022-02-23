@@ -41,8 +41,8 @@ Route::get('/rent', [PageController::class, 'rent'])->name('rent');
 Route::get('/return', [PageController::class, 'return'])->name('return');
 Route::get('/rules-remotely', [PageController::class, 'rulesRemotely'])->name('rulesRemotely');
 
-Route::group(['prefix' => 'auth'], function () {
-    Route::get('/login', fn () => redirect()->route('home'));
+Route::prefix('auth')->group(function () {
+    Route::get('/login', fn() => back());
     Route::post('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::post('/register', [RegisterController::class, 'register'])->name('register');
@@ -81,7 +81,7 @@ Route::group(['prefix' => 'checkout', 'as' => 'checkout'], function () {
     Route::post('/{store}', [CheckoutController::class, 'checkout']);
 });
 
-Route::group(['middleware' => 'auth'], function () {
+Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'profile', 'as' => 'profile'], function () {
         Route::get('/', [CabinetController::class, 'index']);
         Route::get('/edit', [CabinetController::class, 'edit'])->name('.edit');
