@@ -10,15 +10,16 @@ class CreateArchivesTable extends Migration
     {
         Schema::create('archives', function (Blueprint $table) {
             $table->id();
-            $table->float('price', 8, 2, true);
-            $table->integer('quantity', false, true);
+            $table->integer('order_id', unsigned: true);
+            $table->integer('code', unsigned: true);
+            $table->string('name');
+            $table->float('price', unsigned: true);
+            $table->smallInteger('quantity', unsigned: true);
             $table->timestamps();
 
-            $table->unique(['order_id', 'product_id']);
+            $table->unique(['order_id', 'code']);
 
-            $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
-            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('store_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

@@ -1,7 +1,7 @@
 import { BaseQueryFn } from '@reduxjs/toolkit/query';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 
-export const API_URL = 'https://pharm.test/api/v1';
+export const API_URL = process.env.API_URL || 'http://pharm.test';
 
 export const axiosBaseQuery = (): BaseQueryFn<
 {
@@ -16,7 +16,7 @@ unknown,
 unknown
 > => async ({ url, method, headers, data, params, onProgress }) => {
     try {
-        const result = await axios({ url: API_URL + url, method, headers, data, params, onUploadProgress: onProgress, withCredentials: true })
+        const result = await axios({ url: `${API_URL}/api/v1${url}`, method, headers, data, params, onUploadProgress: onProgress, withCredentials: true })
         return { data: result.data }
     } catch (axiosError) {
         let err = axiosError as AxiosError

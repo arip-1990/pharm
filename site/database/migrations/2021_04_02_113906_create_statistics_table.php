@@ -10,10 +10,10 @@ class CreateStatisticsTable extends Migration
     {
         Schema::create('statistics', function (Blueprint $table) {
             $table->id();
-            $table->string('ip');
-            $table->string('city')->nullable();
+            $table->ipAddress('ip');
             $table->string('os');
             $table->string('browser');
+            $table->string('city')->nullable();
             $table->string('screen')->nullable();
             $table->text('referrer')->nullable();
             $table->timestamps();

@@ -20,12 +20,12 @@ class CategoryCommand extends Command
             $i = 0;
             foreach ($data->categories->category as $item) {
                 $attr = $item->attributes();
-                $slug = SlugService::createSlug(Category::class, 'slug', (string)$item->name);
+                $slug = SlugService::createSlug(Category::class, 'slug', (string)$item);
                 if (!$slug) continue;
 
-                $dblCount = Category::query()->where('slug', 'similar to', "^" . $slug . "-[0-9]{1,2}$|^" . $slug . "$")->count();
+                $dblCount = Category::query()->where('slug', 'similar to', "{$slug}(-[0-9]{1,2})?")->count();
                 foreach ($categoryFields as $field) {
-                    if (preg_match("/^" . $slug . "-[0-9]{1,2}$|^" . $slug . "$/", $field['slug']))
+                    if (preg_match("/^{$slug}(-[0-9]{1,2})?$/", $field['slug']))
                         $dblCount++;
                 }
 
@@ -33,7 +33,7 @@ class CategoryCommand extends Command
                     'id' => (int)$attr->id,
                     'name' => (string)$item,
                     'slug' => $dblCount ? ($slug . '-' . ++$dblCount) : $slug,
-                    'parent_id' => (int)$attr->parentId ?? null
+                    'parent_id' => (int)$attr->parentId ?: null
                 ];
                 $i++;
 

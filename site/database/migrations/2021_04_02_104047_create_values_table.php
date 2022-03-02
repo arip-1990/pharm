@@ -13,6 +13,7 @@ class CreateValuesTable extends Migration
             $table->text('value');
 
             $table->unique(['attribute_id', 'product_id']);
+
             $table->foreignId('attribute_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
         });

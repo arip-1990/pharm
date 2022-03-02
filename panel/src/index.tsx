@@ -6,6 +6,7 @@ import { ConfigProvider } from 'antd';
 import ruRU from 'antd/lib/locale/ru_RU';
 import moment from "moment";
 import "moment/locale/ru";
+import { API_URL } from "./services/api";
 
 import { store } from "./store";
 import App from "./App";
@@ -15,8 +16,10 @@ import "./sass/index.scss";
 
 moment.locale("ru");
 
+console.log(process.env);
+
 const sanctumConfig = {
-  apiUrl: "https://pharm.test",
+  apiUrl: API_URL,
   csrfCookieRoute: "sanctum/csrf-cookie",
   signInRoute: "api/v1/login",
   signOutRoute: "api/v1/logout",

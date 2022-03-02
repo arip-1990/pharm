@@ -13,7 +13,7 @@ class CreateOrdersTable extends Migration
             $table->tinyInteger('payment_type', unsigned: true)->default(0);
             $table->tinyInteger('delivery_type', unsigned: true)->default(0);
             $table->float('cost', unsigned: true);
-            $table->string('status');
+            $table->string('status', 2);
             $table->json('statuses')->default('[]');
             $table->text('note')->nullable();
             $table->text('cancel_reason')->nullable();

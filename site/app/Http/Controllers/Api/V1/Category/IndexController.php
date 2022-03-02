@@ -10,13 +10,6 @@ class IndexController extends Controller
 {
     public function handle(): JsonResponse
     {
-        try {
-            $categories = Category::query()->get()->toTree();
-        }
-        catch (\Exception $exception) {
-            return response()->json($exception->getMessage(), 500);
-        }
-
-        return response()->json($categories);
+        return response()->json(Category::query()->get());
     }
 }

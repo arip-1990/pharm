@@ -18,8 +18,8 @@ class CreateStoresTable extends Migration
             $table->decimal('lat', 10, 7)->nullable();
             $table->json('schedule')->default('[]');
             $table->text('route')->nullable();
-            $table->boolean('status')->default(false);
             $table->boolean('delivery')->default(false);
+            $table->boolean('status')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

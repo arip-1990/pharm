@@ -20,7 +20,7 @@ class UploadController extends Controller
 
                 $image = $request->file('file');
                 if (!Storage::exists("images/original/{$product->id}"))
-                    Storage::makeDirectory("images/original/{$product->id}");
+                    mkdir(Storage::path("images/original/{$product->id}"), recursive: true);
 
                 $image->storeAs("images/original/{$product->id}", $photo->id . '.' . $image->getClientOriginalExtension());
             }

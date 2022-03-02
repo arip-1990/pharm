@@ -25,13 +25,15 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.client.rule=Host(`client.localhost`)
+      - traefik.http.routers.client.rule=Host(`client.pharm.test`)
       - traefik.http.routers.client.entryPoints=http
       - traefik.http.services.frontend.loadBalancer.server.port=80
 
   client-node:
     build:
       context: client/docker/dev/node
+    environment:
+      API_URL: http://pharm.test
     volumes:
       - ./client:/app
     command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn dev"
@@ -51,13 +53,15 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.panel.rule=Host(`panel.localhost`)
+      - traefik.http.routers.panel.rule=Host(`panel.pharm.test`)
       - traefik.http.routers.panel.entryPoints=http
       - traefik.http.services.panel.loadBalancer.server.port=80
 
   panel-node:
     build:
       context: panel/docker/dev/node
+    environment:
+      API_URL: http://pharm.test
     volumes:
       - ./panel:/app
     command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn start"
@@ -81,11 +85,11 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.site.rule=Host(`localhost`) || Host(`www.localhost`)
+      - traefik.http.routers.site.rule=Host(`pharm.test`) || Host(`www.pharm.test`)
       - traefik.http.routers.site.entryPoints=http
       - traefik.http.services.site.loadBalancer.server.port=80
-      - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.localhost/(.*)$$
-      - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}localhost/$${2}
+      - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
+      - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
       - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
       - traefik.http.routers.site.middlewares=site-redirect
 
@@ -93,6 +97,32 @@ services:
     build:
       context: site/docker
       dockerfile: dev/php-fpm/Dockerfile
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: http://pharm.test
+      APP_ENV: local
+      APP_DEBUG: true
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      DB_CONNECTION: pgsql
+      DB_HOST: db-postgres
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: secret
+      BROADCAST_DRIVER: redis
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      SESSION_LIFETIME: 120
+      SESSION_DOMAIN: '.pharm.test'
+      SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
+      CORS_ORIGIN: http://panel.pharm.test
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      MAIL_HOST: mailer
+      MAIL_FROM_ADDRESS: info@pharm.test
+      MAIL_FROM_NAME: Сеть аптек 120/80
+      FILESYSTEM_DRIVER: public
     volumes:
       - ./site:/app
       - uploads:/app/storage/app/public
@@ -101,6 +131,31 @@ services:
     build:
       context: site/docker
       dockerfile: dev/php-cli/Dockerfile
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: http://pharm.test
+      APP_ENV: local
+      APP_DEBUG: true
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      DB_CONNECTION: pgsql
+      DB_HOST: db-postgres
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: secret
+      BROADCAST_DRIVER: redis
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      SESSION_LIFETIME: 120
+      SESSION_DOMAIN: '.pharm.test'
+      SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      MAIL_HOST: mailer
+      MAIL_FROM_ADDRESS: info@pharm.test
+      MAIL_FROM_NAME: Сеть аптек 120/80
+      FILESYSTEM_DRIVER: public
     volumes:
       - ./site:/app
 
@@ -136,7 +191,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.mailer.rule=Host(`mailer.localhost`)
+      - traefik.http.routers.mailer.rule=Host(`mailer.pharm.test`)
       - traefik.http.routers.mailer.entryPoints=http
       - traefik.http.services.mailer.loadBalancer.server.port=8085
 
@@ -148,7 +203,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.redis.rule=Host(`redis.localhost`)
+      - traefik.http.routers.redis.rule=Host(`redis.pharm.test`)
       - traefik.http.routers.redis.entryPoints=http
       - traefik.http.services.redis.loadBalancer.server.port=6379
 

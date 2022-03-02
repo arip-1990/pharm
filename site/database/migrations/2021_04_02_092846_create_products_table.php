@@ -12,11 +12,11 @@ class CreateProductsTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->integer('code', false, true)->unique();
+            $table->integer('code', unsigned: true)->unique();
             $table->string('barcode')->nullable();
             $table->text('description')->nullable();
-            $table->boolean('status')->default(false);
             $table->boolean('marked')->default(false);
+            $table->boolean('status')->default(false);
             $table->timestamps();
             $table->softDeletes();
 

@@ -8,16 +8,16 @@ class CreateDeliveriesTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('deliveries', function (Blueprint $table) {
+        Schema::create('order_deliveries', function (Blueprint $table) {
             $table->id('order_id');
             $table->string('city');
             $table->string('street');
             $table->string('house');
-            $table->string('entrance');
-            $table->tinyInteger('floor');
-            $table->string('apartment');
+            $table->smallInteger('entrance', unsigned: true);
+            $table->smallInteger('floor', unsigned: true);
+            $table->smallInteger('apartment', unsigned: true);
             $table->boolean('service_to_door')->default(false);
-            $table->float('delivery_price', 8, 2, true);
+            $table->float('delivery_price', unsigned: true);
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
         });
@@ -25,6 +25,6 @@ class CreateDeliveriesTable extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('deliveries');
+        Schema::dropIfExists('order_deliveries');
     }
 }

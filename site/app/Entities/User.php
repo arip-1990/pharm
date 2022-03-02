@@ -47,6 +47,8 @@ class User extends Authenticatable
     const STATUS_INACTIVE = 1;
     const STATUS_ACTIVE = 2;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = ['name', 'email', 'phone', 'password', 'status', 'role'];
     protected $hidden = ['password', 'remember_token'];
 

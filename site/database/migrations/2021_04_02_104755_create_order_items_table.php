@@ -10,8 +10,8 @@ class CreateOrderItemsTable extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->float('price', 8, 2, true);
-            $table->integer('quantity', false, true);
+            $table->float('price', unsigned: true);
+            $table->smallInteger('quantity', unsigned: true);
 
             $table->unique(['order_id', 'product_id']);
 

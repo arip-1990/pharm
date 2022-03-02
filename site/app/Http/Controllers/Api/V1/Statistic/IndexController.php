@@ -13,7 +13,6 @@ class IndexController extends Controller
     public function handle(Request $request): ResourceCollection
     {
         $query = Statistic::query();
-
         if ($request->get('orderField'))
             $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
 

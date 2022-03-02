@@ -10,8 +10,8 @@ class CreateOffersTable extends Migration
     {
         Schema::create('offers', function (Blueprint $table) {
             $table->id();
-            $table->float('price', 8, 2, true)->default(0);
-            $table->integer('quantity', false, true)->default(0);
+            $table->float('price', unsigned: true)->default(0);
+            $table->integer('quantity', unsigned: true)->default(0);
 
             $table->unique(['store_id', 'product_id']);
 

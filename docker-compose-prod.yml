@@ -179,6 +179,11 @@ services:
       POSTGRES_DB: app
     volumes:
       - db-postgres:/var/lib/postgresql/data
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
     deploy:
       placement:
         constraints: [ node.role == manager ]

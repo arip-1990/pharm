@@ -23,9 +23,9 @@ class ProductCommand extends Command
                 $slug = SlugService::createSlug(Product::class, 'slug', (string)$item->name);
                 if (!$slug) continue;
 
-                $dblCount = Product::query()->where('slug', 'similar to', "^" . $slug . "-[0-9]{1,2}$|^" . $slug . "$")->count();
+                $dblCount = Product::query()->where('slug', 'similar to', "{$slug}(-[0-9]{1,2})?")->count();
                 foreach ($productFields as $field) {
-                    if (preg_match("/^" . $slug . "-[0-9]{1,2}$|^" . $slug . "$/", $field['slug']))
+                    if (preg_match("/^{$slug}(-[0-9]{1,2})?$/", $field['slug']))
                         $dblCount++;
                 }
 

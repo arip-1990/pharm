@@ -10,8 +10,8 @@ class CreateLimitsTable extends Migration
     {
         Schema::create('limits', function (Blueprint $table) {
             $table->string('ip')->primary();
-            $table->tinyInteger('limit', false, true);
-            $table->integer('requests', false, true)->default(0);
+            $table->smallInteger('limit', unsigned: true);
+            $table->smallInteger('requests', unsigned: true)->default(0);
             $table->timestamp('last_request')->nullable();
             $table->timestamp('expires')->nullable();
 
