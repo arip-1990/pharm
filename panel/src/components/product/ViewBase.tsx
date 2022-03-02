@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Input, Switch, TreeSelect, Form, Space } from 'antd';
+import { Card, Input, Switch, TreeSelect, Form, Space, Tag } from 'antd';
 import { EditOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Table } from "..";
 import { IProduct } from "../../models/IProduct";
@@ -36,12 +36,12 @@ const ViewBase: React.FC<PropsType> = ({product, loading}) => {
                         case 'Название':
                             return <Form.Item style={{margin: 0}} name='name' initialValue={item}><Input /></Form.Item>;
                         case 'Статус':
-                            return <Form.Item style={{margin: 0}} name='status' initialValue={item === 'Активен'} valuePropName="checked"><Switch /></Form.Item>;
+                            return <Form.Item style={{margin: 0}} name='status' initialValue={item} valuePropName="checked"><Switch /></Form.Item>;
                         case 'Категория':
                             return <Form.Item style={{margin: 0}} name='category' initialValue={item?.id}><TreeSelect treeLine={{showLeafIcon: false}} treeData={getCategoryTree(categories)} /></Form.Item>;
                     }
                 }
-                return record.key === 'Категория' ? item?.name : item;
+                return record.key === 'Категория' ? item?.name : record.key === 'Статус' ? (item ? <Tag color="green">Активен</Tag> : <Tag color="red">Не активен</Tag>) : item;
             }
         }
     ];
@@ -78,7 +78,7 @@ const ViewBase: React.FC<PropsType> = ({product, loading}) => {
                         { key: "Категория", value: product?.category },
                         {
                             key: "Статус",
-                            value: product?.status ? "Активен" : "Не активен",
+                            value: product?.status,
                         },
                     ]}
                 />

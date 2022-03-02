@@ -1,8 +1,8 @@
-init: init-ci site-node-ready panel-ready
+init: init-ci site-node-ready client-ready panel-ready
 init-ci: docker-down-clear \
-	site-clear api-clear panel-clear \
+	site-clear client-clear panel-clear \
 	docker-pull docker-build docker-up \
-	site-init api-init panel-init
+	site-init client-init panel-init
 up: docker-up
 down: docker-down
 restart: down up
@@ -57,31 +57,19 @@ site-node-ready:
 	docker run --rm -v ${PWD}/site:/app -w /app alpine touch .ready
 
 
-api-init: api-permissions api-composer-install api-wait-db# api-migrations api-fixtures
+client-clear:
+	docker run --rm -v ${PWD}/client:/app -w /app alpine sh -c 'rm -rf .ready build'
 
-api-clear:
-	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf var/cache/* var/log/*'
+client-init: client-yarn-install
 
-api-permissions:
-	docker run --rm -v ${PWD}/api:/app -w /app alpine chmod 777 var/cache var/log
+client-yarn-install:
+	docker-compose run --rm client-node-cli yarn install
 
-api-composer-install:
-	docker-compose run --rm api-php-cli composer install
+client-yarn-upgrade:
+	docker-compose run --rm client-node-cli yarn upgrade
 
-api-composer-update:
-	docker-compose run --rm api-php-cli composer update
-
-api-wait-db:
-	docker-compose run --rm api-php-cli wait-for-it db-postgres:5432 -t 30
-
-api-migrations:
-	docker-compose run --rm api-php-cli composer app migrations:migrate -- --no-interaction
-
-api-fixtures:
-	docker-compose run --rm api-php-cli composer app fixtures:load
-
-api-backup:
-	docker-compose run --rm db-postgres-backup
+client-ready:
+	docker run --rm -v ${PWD}/client:/app -w /app alpine touch .ready
 
 
 panel-clear:
@@ -108,15 +96,6 @@ build-site:
 	docker --log-level=debug build --pull --file=site/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} site/docker/common
-
-try-build:
-	REGISTRY=localhost IMAGE_TAG=0 make build
-
-testing-init:
-	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml up -d
-	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml run --rm site-php-cli wait-for-it db-postgres:5432 -t 60
-	COMPOSE_PROJECT_NAME=testing docker-compose -f docker-compose-testing.yml run --rm site-php-cli php artisan migrate --force
-	sleep 15
 
 push: push-panel push-site
 

@@ -4,6 +4,7 @@ namespace App\Console\Commands\Import;
 
 use App\Entities\Category;
 use Carbon\Carbon;
+use Cviebrock\EloquentSluggable\Services\SlugService;
 
 class CategoryCommand extends Command
 {
@@ -15,18 +16,35 @@ class CategoryCommand extends Command
         try {
             $data = $this->getData();
             Category::query()->delete();
+            $categoryFields = [];
+            $i = 0;
             foreach ($data->categories->category as $item) {
                 $attr = $item->attributes();
-                $node = Category::create([
-                    'id' => (int)$attr->id,
-                    'name' => (string)$item
-                ]);
+                $slug = SlugService::createSlug(Category::class, 'slug', (string)$item->name);
+                if (!$slug) continue;
 
-                if ((int)$attr->parentId) {
-                    $parent = Category::query()->find((int)$attr->parentId);
-                    $parent->appendNode($node);
+                $dblCount = Category::query()->where('slug', 'similar to', "^" . $slug . "-[0-9]{1,2}$|^" . $slug . "$")->count();
+                foreach ($categoryFields as $field) {
+                    if (preg_match("/^" . $slug . "-[0-9]{1,2}$|^" . $slug . "$/", $field['slug']))
+                        $dblCount++;
+                }
+
+                $categoryFields[] = [
+                    'id' => (int)$attr->id,
+                    'name' => (string)$item,
+                    'slug' => $dblCount ? ($slug . '-' . ++$dblCount) : $slug,
+                    'parent_id' => (int)$attr->parentId ?? null
+                ];
+                $i++;
+
+                if ($i >= 1000) {
+                    Category::query()->upsert($categoryFields, 'id', ['name', 'slug', 'parent_id']);
+                    $categoryFields = [];
+                    $i = 0;
                 }
             }
+
+            if ($i) Category::query()->upsert($categoryFields, 'id', ['name', 'slug', 'parent_id']);
         }
         catch (\RuntimeException $e) {
             $this->error($e->getMessage());

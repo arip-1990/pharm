@@ -30,9 +30,15 @@ Route::prefix('v1')->group(function () {
             Route::put('/description/{product}', [Api\V1\Product\UpdateDescriptionController::class, 'handle']);
             Route::put('/{product}', [Api\V1\Product\UpdateController::class, 'handle']);
             Route::post('/upload/{product}', [Api\V1\Product\UploadController::class, 'handle']);
+            Route::delete('/upload/{photo}', [Api\V1\Product\DeletePhotoController::class, 'handle']);
         });
+
+        Route::prefix('order')->group(function () {
+            Route::get('/', [Api\V1\Order\IndexController::class, 'handle']);
+            Route::get('/{order}', [Api\V1\Order\ShowController::class, 'handle']);
+        });
+
         Route::get('/category', [Api\V1\Category\IndexController::class, 'handle']);
-        Route::get('/order', [Api\V1\Order\IndexController::class, 'handle']);
         Route::get('/statistic', [Api\V1\Statistic\IndexController::class, 'handle']);
     });
 });

@@ -2,24 +2,21 @@
 
 namespace App\Http\Controllers\Api\V1\Statistic;
 
-use App\Repositories\StatisticRepository;
-use Illuminate\Http\JsonResponse;
+use App\Entities\Statistic;
+use App\Http\Resources\StatisticResource;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controller;
 
 class IndexController extends Controller
 {
-    public function __construct(private StatisticRepository $statisticRepository) {}
-
-    public function handle(Request $request): JsonResponse
+    public function handle(Request $request): ResourceCollection
     {
-        try {
-            $statistics = $this->statisticRepository->getAll($request);
-        }
-        catch (\Exception $exception) {
-            return response()->json($exception->getMessage(), 500);
-        }
+        $query = Statistic::query();
 
-        return response()->json($statistics);
+        if ($request->get('orderField'))
+            $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
+
+        return StatisticResource::collection($query->paginate($request->get('pageSize', 10)));
     }
 }

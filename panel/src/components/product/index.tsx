@@ -1,12 +1,14 @@
 import React from "react";
-import { Card, TablePaginationConfig, Input, Space, Button, Image } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Card, TablePaginationConfig, Input, Space, Button, Image, Tag } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { useSessionStorage } from "react-use-storage";
 import { productApi } from "../../services/ProductService";
 import { Table } from "..";
-import { Link } from "react-router-dom";
-import { IProduct } from "../../models/IProduct";
+import { SortOrder } from "antd/lib/table/interface";
 
 const Product: React.FC = () => {
+  const [value, setValue] = useSessionStorage<{filters: any[], order: any}>('filter', {filters: [], order: {}});
   const [search, setSeach] = React.useState<{ column: string; text: string }>();
   const [filters, setFilters] = React.useState<
     { field: string; value: string }[]
@@ -23,6 +25,7 @@ const Product: React.FC = () => {
     data: products,
     isLoading: fetchLoading,
   } = productApi.useFetchProductsQuery({ pagination, search, filters, order });
+  const navigate = useNavigate();
 
   const getColumnSearchProps = (dataIndex: string) => ({
     filterDropdown: ({
@@ -87,29 +90,30 @@ const Product: React.FC = () => {
           value: "off",
         },
       ],
+      defaultFilteredValue: value?.filters.filter(item => item.field === 'photo').map(item => item.value),
       filterMultiple: false,
-      render: (url: string) => <Image width={120} src={url} />,
+      render: (url: string) => <Image preview={false} width={120} src={url} />,
     },
     {
       title: "Код товара",
       dataIndex: "code",
       sorter: true,
+      defaultSortOrder: value?.order.field === 'code' ? (value.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       ...getColumnSearchProps("code"),
     },
     {
       title: "Штрих-код",
       dataIndex: "barcode",
       sorter: true,
+      defaultSortOrder: value?.order.field === 'barcode' ? (value.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       ...getColumnSearchProps("barcode"),
     },
     {
       title: "Название",
       dataIndex: "name",
       sorter: true,
+      defaultSortOrder: value?.order.field === 'name' ? (value.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       ...getColumnSearchProps("name"),
-      render: (product: IProduct) => (
-        <Link to={product.slug}>{product.name}</Link>
-      ),
     },
     {
       title: "Категория",
@@ -125,6 +129,8 @@ const Product: React.FC = () => {
           value: "off",
         },
       ],
+      defaultFilteredValue: value?.filters.filter(item => item.field === 'category').map(item => item.value),
+      defaultSortOrder: value?.order.field === 'category' ? (value.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       filterMultiple: false,
     },
     {
@@ -140,10 +146,20 @@ const Product: React.FC = () => {
           value: "off",
         },
       ],
+      defaultFilteredValue: value?.filters.filter(item => item.field === 'status').map(item => item.value),
       filterMultiple: false,
       sorter: true,
+      defaultSortOrder: value?.order.field === 'status' ? (value.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+      render: (status: boolean) => status ? <Tag color="green">Активен</Tag> : <Tag color="red">Не активен</Tag>
     },
   ];
+
+  React.useEffect(() => {
+    if (value) {
+      setFilters(value.filters);
+      setOrder(value.order);
+    }
+  }, []);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -164,21 +180,35 @@ const Product: React.FC = () => {
     filter: any,
     sorter: any
   ) => {
-    const tmp: any = [];
-    for (const [key, value] of Object.entries<string[] | null>(filter)) {
-      if (value) tmp.push({ field: key, value: value.pop() });
+    if (filter) {
+      const tmp: any = [];
+      for (const [key, value] of Object.entries<string[] | null>(filter)) {
+        if (value?.length) tmp.push({ field: key, value: value.pop() });
+      }
+      setFilters(tmp);
+      setValue({
+        filters: tmp,
+        order: {
+          field: sorter.column ? sorter.field : null,
+          direction: sorter.column
+            ? sorter.order.substring(0, sorter.order.length - 3)
+            : value.order.direction,
+        }
+      });
     }
-    setFilters(tmp);
-    setOrder((item) => ({
-      field: sorter.column ? sorter.field : null,
-      direction: sorter.column
-        ? sorter.order.substring(0, sorter.order.length - 3)
-        : item.direction,
-    }));
-    setPagination((item) => ({
-      current: pag.current || item.current,
-      pageSize: pag.pageSize || item.pageSize,
-    }));
+
+    if (sorter) {
+      setOrder((item) => ({
+        field: sorter.column ? sorter.field : null,
+        direction: sorter.column
+          ? sorter.order.substring(0, sorter.order.length - 3)
+          : item.direction,
+      }));
+      setPagination((item) => ({
+        current: pag.current || item.current,
+        pageSize: pag.pageSize || item.pageSize,
+      }));
+    }
   };
 
   return (
@@ -187,20 +217,23 @@ const Product: React.FC = () => {
         columns={columns}
         loading={fetchLoading}
         data={products?.data.map((item) => ({
-          key: item.id,
+          key: item.slug,
           photo: item.photos[0].url,
           code: item.code,
           barcode: item.barcode,
-          name: item,
+          name: item.name,
           category: item.category?.name,
           status: item.status,
         }))}
         onChange={handleChange}
         pagination={{
-          current: products?.current || pagination.current,
-          total: products?.total || 0,
-          pageSize: products?.pageSize || pagination.pageSize,
+          current: products?.meta.current_page || pagination.current,
+          total: products?.meta.total || 0,
+          pageSize: products?.meta.per_page || pagination.pageSize,
         }}
+        onRow={(record) => ({
+          onClick: () => navigate(`/product/${record.key}`)
+        })}
       />
     </Card>
   );

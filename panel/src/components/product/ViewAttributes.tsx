@@ -33,7 +33,7 @@ const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
     const [updateProduct, {isLoading: updateLoading}] = productApi.useUpdateAttributesProductMutation();
     const [form] = Form.useForm();
 
-    const generalColumns = [
+    const columns = [
         { dataIndex: "key", width: 136 },
         { dataIndex: "type", colSpan: 0, render: () => undefined },
         {
@@ -78,7 +78,7 @@ const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
                 <Table
                     size="small"
                     showHeader={false}
-                    columns={generalColumns}
+                    columns={columns}
                     data={product?.attributes.map(item => ({
                         key: item.attrubuteName,
                         type: item.attrubuteType,

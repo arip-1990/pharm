@@ -79,7 +79,32 @@ export const productApi = createApi({
             }),
             invalidatesTags: ['IProduct'],
         }),
+        addPhotoProduct: builder.mutation<void, {slug: string, data: FormData, onProgress: (event: any) => void}>({
+            query: (args) => ({
+              url: `/product/upload/${args.slug}`,
+              headers: { "content-type": "multipart/form-data" },
+              method: 'post',
+              data: args.data,
+              onProgress: args.onProgress
+            }),
+            invalidatesTags: ['IProduct'],
+        }),
+        deletePhotoProduct: builder.mutation<void, number>({
+            query: (id) => ({
+              url: `/product/upload/${id}`,
+              method: 'delete',
+            }),
+            invalidatesTags: ['IProduct'],
+        }),
     }),
 });
 
-export const { useFetchProductsQuery, useFetchProductQuery, useUpdateProductMutation, useUpdateDescriptionProductMutation, useUpdateAttributesProductMutation } = productApi;
+export const {
+    useFetchProductsQuery,
+    useFetchProductQuery,
+    useUpdateProductMutation,
+    useUpdateDescriptionProductMutation,
+    useUpdateAttributesProductMutation,
+    useAddPhotoProductMutation,
+    useDeletePhotoProductMutation
+} = productApi;

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, Table, TablePaginationConfig } from "antd";
 import { orderApi } from "../../services/OrderService";
 import StatusStep from "./StatusStep";
@@ -48,6 +49,7 @@ const Order: React.FC = () => {
     data: orders,
     isLoading: fetchLoading,
   } = orderApi.useFetchOrdersQuery({ pagination, order });
+  const navigate = useNavigate();
 
   const handleChange = (
     pag: TablePaginationConfig,
@@ -88,10 +90,13 @@ const Order: React.FC = () => {
         }))}
         onChange={handleChange}
         pagination={{
-          current: orders?.current || pagination.current,
-          total: orders?.total || 0,
-          pageSize: orders?.pageSize || pagination.pageSize,
+          current: orders?.meta.current_page || pagination.current,
+          total: orders?.meta.total || 0,
+          pageSize: orders?.meta.per_page || pagination.pageSize,
         }}
+        onRow={(record) => ({
+          onClick: () => navigate(`/order/${record.id}`)
+        })}
       />
     </Card>
   );

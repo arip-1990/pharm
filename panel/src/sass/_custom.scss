@@ -22,3 +22,22 @@
     }
   }
 }
+
+.media {
+  position: relative;
+  display: inline-block;
+
+  &:hover .anticon-close-circle {
+    display: inline-block;
+  }
+
+  .anticon-close-circle {
+    display: none;
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    font-size: 1.5rem;
+    color: #dc4234;
+    z-index: 99;
+  }
+}

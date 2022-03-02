@@ -1,37 +1,59 @@
 version: '3.9'
 services:
-  gateway:
-    build:
-      context: gateway/docker
-      dockerfile: dev/nginx/Dockerfile
+  traefik:
+    image: traefik:2.6
+    command:
+      --providers.docker=true
+      --providers.docker.exposedByDefault=false
+      --entryPoints.http.address=:80
     ports:
       - "80:80"
-      - "443:443"
-  
-  api:
-    build:
-      context: api/docker
-      dockerfile: dev/nginx/Dockerfile
+    networks:
+      - traefik-public
     volumes:
-      - ./api:/app
-  
-  api-php-fpm:
-    build:
-      context: api/docker
-      dockerfile: dev/php-fpm/Dockerfile
-    volumes:
-      - ./api:/app
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
 
-  api-php-cli:
+  client:
     build:
-      context: api/docker
-      dockerfile: dev/php-cli/Dockerfile
-    volumes:
-      - ./api:/app
+      context: client/docker/dev/nginx
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.client.rule=Host(`client.localhost`)
+      - traefik.http.routers.client.entryPoints=http
+      - traefik.http.services.frontend.loadBalancer.server.port=80
 
+  client-node:
+    build:
+      context: client/docker/dev/node
+    volumes:
+      - ./client:/app
+    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn dev"
+
+  client-node-cli:
+    build:
+      context: client/docker/dev/node
+    volumes:
+      - ./client:/app
+  
   panel:
     build:
       context: panel/docker/dev/nginx
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.panel.rule=Host(`panel.localhost`)
+      - traefik.http.routers.panel.entryPoints=http
+      - traefik.http.services.panel.loadBalancer.server.port=80
 
   panel-node:
     build:
@@ -53,6 +75,19 @@ services:
     volumes:
       - ./site:/app
       - uploads:/app/storage/app/public
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.site.rule=Host(`localhost`) || Host(`www.localhost`)
+      - traefik.http.routers.site.entryPoints=http
+      - traefik.http.services.site.loadBalancer.server.port=80
+      - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.localhost/(.*)$$
+      - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}localhost/$${2}
+      - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
+      - traefik.http.routers.site.middlewares=site-redirect
 
   site-php-fpm:
     build:
@@ -95,10 +130,32 @@ services:
 
   mailer:
     image: mailhog/mailhog
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.mailer.rule=Host(`mailer.localhost`)
+      - traefik.http.routers.mailer.entryPoints=http
+      - traefik.http.services.mailer.loadBalancer.server.port=8085
 
   redis:
     image: redis:6.2-alpine
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.redis.rule=Host(`redis.localhost`)
+      - traefik.http.routers.redis.entryPoints=http
+      - traefik.http.services.redis.loadBalancer.server.port=6379
 
 volumes:
   db-postgres:
   uploads:
+
+networks:
+  traefik-public:
+    name: traefik-public

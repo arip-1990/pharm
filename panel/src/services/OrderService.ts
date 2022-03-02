@@ -39,7 +39,18 @@ export const orderApi = createApi({
                 }))
             }),
         }),
+        fetchOrder: builder.query<IOrder, number>({
+            query: (id) => ({
+                url: '/order/' + id
+            }),
+            transformResponse: (response: IOrder) => ({
+                ...response,
+                createdAt: moment(response.createdAt),
+                updatedAt: moment(response.updatedAt),
+                statuses: response.statuses.map(status => ({...status, createdAt: moment(status.createdAt)}))
+            }),
+        }),
     }),
 });
 
-export const { useFetchOrdersQuery } = orderApi;
+export const { useFetchOrdersQuery, useFetchOrderQuery } = orderApi;

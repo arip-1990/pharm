@@ -7,25 +7,29 @@ use App\Entities\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 class UploadController extends Controller
 {
     public function handle(Product $product, Request $request): JsonResponse
     {
         if($request->hasFile('file') and $request->file('file')->isValid()) {
-            $photo = new Photo(['product_id' => $product->id]);
+            try {
+                $photo = new Photo(['product_id' => $product->id]);
+                $photo->save();
 
-            $image = $request->file('file');
-            if (!file_exists(storage_path("app/public/images/original/{$product->id}")))
-                mkdir(storage_path("app/public/images/original/{$product->id}"), recursive: true);
+                $image = $request->file('file');
+                if (!Storage::exists("images/original/{$product->id}"))
+                    Storage::makeDirectory("images/original/{$product->id}");
 
-            $image->storeAs("images/original/{$product->id}", $photo->id . '.' . $image->getClientOriginalExtension());
-//            Image::make($image)->save(storage_path("images/original/{$product->id}") . $photo->id . '.' . $image->getClientOriginalExtension());
-
-            $photo->save();
+                $image->storeAs("images/original/{$product->id}", $photo->id . '.' . $image->getClientOriginalExtension());
+            }
+            catch (\Exception $e) {
+                $photo->delete();
+                return new JsonResponse($e->getMessage());
+            }
         }
 
-        return response()->json();
+        return new JsonResponse();
     }
 }

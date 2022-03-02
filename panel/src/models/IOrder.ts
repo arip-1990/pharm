@@ -6,11 +6,19 @@ export interface IStatus {
     createdAt: moment.Moment;
 }
 
+export interface IItem {
+    product: {id: string, name: string};
+    price: number;
+    quantity: number;
+}
+
 export interface IOrder {
     id: number;
+    otherId: number;
     cost: number;
     paymentType: number;
     deliveryType: number;
+    deliveryAddress: string;
     status: string;
     note: string | null;
     cancel_reason: string | null;
@@ -25,4 +33,5 @@ export interface IOrder {
         name: string;
     };
     statuses: IStatus[];
+    items: IItem[];
 }

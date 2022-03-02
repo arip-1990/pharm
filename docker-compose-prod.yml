@@ -10,26 +10,64 @@ services:
       placement:
         constraints: [ node.role == manager ]
 
-    gateway:
-      image: ${REGISTRY}/auction-gateway:${IMAGE_TAG}
-      volumes:
-        - /etc/letsencrypt:/etc/letsencrypt:ro
-        - /var/www/html:/var/www/html:ro
-      ports:
-        - "80:80"
-        - "443:443"
-      deploy:
-        mode: replicated
-        replicas: 2
-        update_config:
-          parallelism: 1
-          delay: 10s
-        placement:
-          constraints: [ node.role == manager ]
+  traefik:
+    image: traefik:2.6
+    command:
+      --providers.docker=true
+      --providers.docker.watch=true
+      --providers.docker.swarmMode=true
+      --providers.docker.exposedByDefault=false
+      --entryPoints.http.address=:80
+      --entryPoints.https.address=:443
+      --certificatesResolvers.letsEncrypt.acme.httpChallenge=true
+      --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http
+      --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info
+      --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    networks:
+      - traefik-public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-public-certs:/certs
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)
+        - traefik.http.routers.http-catchall.entryPoints=http
+        - traefik.http.routers.http-catchall.middlewares=redirect-to-https
+        - traefik.http.services.http-catchall.loadBalancer.server.port=80
+        - traefik.http.middlewares.redirect-to-https.redirectScheme.scheme=https
+        - traefik.http.middlewares.redirect-to-https.redirectScheme.permanent=true
+        - traefik.http.middlewares.secure-headers.headers.sslRedirect=true
+        - traefik.http.middlewares.secure-headers.headers.stsSeconds=31536000
+        - traefik.http.middlewares.secure-headers.headers.contentSecurityPolicy=block-all-mixed-content
+      placement:
+        constraints: [ node.role == manager ]
 
   panel:
     image: ${REGISTRY}/pharm-panel:${IMAGE_TAG}
+    networks:
+      - traefik-public
+      - default
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.panel.rule=Host(`panel.xn--05-6kcay4a7ay.xn--p1ai`)
+        - traefik.http.services.panel.loadBalancer.server.port=80
+        - traefik.http.routers.panel.middlewares=secure-headers
+        - traefik.http.routers.panel.entryPoints=https
+        - traefik.http.routers.panel.tls=true
+        - traefik.http.routers.panel.tls.certResolver=letsEncrypt
       mode: replicated
       replicas: 1
       update_config:
@@ -38,7 +76,24 @@ services:
 
   site:
     image: ${REGISTRY}/pharm-site:${IMAGE_TAG}
+    networks:
+      - traefik-public
+      - default
+    volumes:
+      - uploads:/app/storage/app/public
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.site.rule=Host(`xn--05-6kcay4a7ay.xn--p1ai`) || Host(`www.xn--05-6kcay4a7ay.xn--p1ai`)
+        - traefik.http.services.site.loadBalancer.server.port=80
+        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.xn--05-6kcay4a7ay.xn--p1ai/(.*)$$
+        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}xn--05-6kcay4a7ay.xn--p1ai/$${2}
+        - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
+        - traefik.http.routers.site.middlewares=site-redirect,secure-headers
+        - traefik.http.routers.site.entryPoints=https
+        - traefik.http.routers.site.tls=true
+        - traefik.http.routers.site.tls.certResolver=letsEncrypt
       mode: replicated
       replicas: 1
       update_config:
@@ -69,9 +124,9 @@ services:
       MAIL_HOST: smtp.yandex.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120на80.рф
-      MAIL_PASSWORD: info12345
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120на80.рф
-      MAIL_FROM_NAME: ${APP_NAME}
+      MAIL_FROM_NAME: Сеть аптек 120/80
     volumes:
       - uploads:/app/storage/app/public
     deploy:
@@ -105,9 +160,9 @@ services:
       MAIL_HOST: smtp.yandex.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120на80.рф
-      MAIL_PASSWORD: info12345
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120на80.рф
-      MAIL_FROM_NAME: ${APP_NAME}
+      MAIL_FROM_NAME: Сеть аптек 120/80
     command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate --force'
     deploy:
       restart_policy:
@@ -129,24 +184,36 @@ services:
         constraints: [ node.role == manager ]
       endpoint_mode: dnsrr
 
-  db-backup:
-    image: ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
-    environment:
-      BACKUP_NAME: pharm-postgres
-      POSTGRES_HOST: db-postgres
-      POSTGRES_USERNAME: app
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: app
-      AWS_ACCESS_KEY_ID: storage_app
-      AWS_SECRET_ACCESS_KEY: storage_secret
-      AWS_DEFAULT_REGION: region
-      S3_ENDPOINT: http://backup-storage:9000
-      S3_BUCKET: backup
-    command: sh -c 'wait-for-it db-postgres:5432 -t 60 && backup'
+  # db-backup:
+  #   image: ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
+  #   environment:
+  #     BACKUP_NAME: pharm-postgres
+  #     POSTGRES_HOST: db-postgres
+  #     POSTGRES_USERNAME: app
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_DB: app
+  #     AWS_ACCESS_KEY_ID: storage_app
+  #     AWS_SECRET_ACCESS_KEY: storage_secret
+  #     AWS_DEFAULT_REGION: region
+  #     S3_ENDPOINT: http://backup-storage:9000
+  #     S3_BUCKET: backup
+  #   command: sh -c 'wait-for-it db-postgres:5432 -t 60 && backup'
+  #   deploy:
+  #     labels:
+  #       - swarm.cronjob.enable=true
+  #       - swarm.cronjob.schedule=0 * * * *
+  #       - swarm.cronjob.skip-running=true
+  #     replicas: 0
+  #     restart_policy:
+  #       condition: none
+  
+  cheduler:
+    image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
+    command: sh -c 'php artisan schedule:run >> /dev/null 2>&1'
     deploy:
       labels:
         - swarm.cronjob.enable=true
-        - swarm.cronjob.schedule=0 * * * *
+        - swarm.cronjob.schedule=* * * * *
         - swarm.cronjob.skip-running=true
       replicas: 0
       restart_policy:
@@ -161,3 +228,8 @@ services:
 volumes:
   db-postgres:
   uploads:
+  traefik-public-certs:
+
+networks:
+  traefik-public:
+    name: traefik-public

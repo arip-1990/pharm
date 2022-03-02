@@ -9,7 +9,6 @@ use App\Entities\Product;
 use App\Entities\Value;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
-use function dd;
 
 class ProductService
 {
@@ -17,7 +16,7 @@ class ProductService
     {
         $categoryIds = new Collection();
         if ($category) {
-            $categories = $category->descendants;
+            $categories = $category->children;
             $categoryIds->push($category);
         }
         else {

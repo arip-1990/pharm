@@ -15,7 +15,7 @@ class CreateLimitsTable extends Migration
             $table->timestamp('last_request')->nullable();
             $table->timestamp('expires')->nullable();
 
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('cascade');
         });
     }
 

@@ -33,7 +33,10 @@ class CheckoutController extends Controller
             $item = $this->cartService->getItem($offer->product_id);
             $quantity = min($item->quantity, $offer->quantity);
             if ($quantity > 0)
-                $items->add(CartItem::create($offer->product_id, $quantity));
+                $items->add(new CartItem([
+                    'product_id' => $offer->product_id,
+                    'quantity' => $quantity
+                ]));
 
             if (!$request->session()->get('prescription', false))
                 $request->session()->put('prescription', $offer->product->isPrescription());

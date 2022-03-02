@@ -97,8 +97,8 @@ Breadcrumbs::for('catalog', function (BreadcrumbTrail $trail, \App\Entities\Cate
     $trail->push('Наш ассортимент', route('catalog'));
 
     if ($category) {
-        foreach ($category->ancestors as $ancestor)
-            $trail->push($ancestor->name, route('catalog', $ancestor));
+        foreach ($category->children as $child)
+            $trail->push($child->name, route('catalog', $child));
         $trail->push($category->name, route('catalog', $category));
     }
 });

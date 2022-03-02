@@ -61,9 +61,9 @@ const Statistic: React.FC = () => {
       }))}
       onChange={handleChange}
       pagination={{
-        current: statistics?.current || pagination.current,
-        total: statistics?.total || 0,
-        pageSize: statistics?.pageSize || pagination.pageSize
+        current: statistics?.meta.current_page || pagination.current,
+        total: statistics?.meta.total || 0,
+        pageSize: statistics?.meta.per_page || pagination.pageSize
       }}
     />
     </Card>

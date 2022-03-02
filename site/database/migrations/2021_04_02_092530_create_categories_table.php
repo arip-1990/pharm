@@ -12,8 +12,6 @@ class CreateCategoriesTable extends Migration
             $table->id();
             $table->string('name')->index();
             $table->string('slug')->unique();
-            $table->unsignedInteger('_lft')->default(0);
-            $table->unsignedInteger('_rgt')->default(0);
 
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');
         });

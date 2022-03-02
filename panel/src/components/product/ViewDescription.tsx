@@ -22,7 +22,7 @@ const ViewDescription: React.FC<PropsType> = ({ product, loading }) => {
 
         return EditorState.createWithContent(contentState);
     });
-    const [updateProduct, {isLoading: updateLoading}] = productApi.useUpdateDescriptionProductMutation();
+    const [updateProduct] = productApi.useUpdateDescriptionProductMutation();
 
     const options = ['inline', 'blockType', 'list', 'link', 'embedded', 'emoji'];
 

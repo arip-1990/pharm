@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Card, Col, Row, Image, Space } from "antd";
+import { Card, Col, Row } from "antd";
 import { productApi } from "../../services/ProductService";
 import { ViewBase } from "./ViewBase";
 import { ViewDescription } from "./ViewDescription";
@@ -38,16 +38,7 @@ const View: React.FC = () => {
 
         <Col span={24}>
           <Card title="Отографии">
-            <Upload slug={product?.slug || ''} />
-            <Image.PreviewGroup>
-              <Space>
-                {product?.photos
-                  .filter((item) => !!item.id)
-                  .map((item) => (
-                    <Image key={item.id} width={200} src={item.url} />
-                ))}
-              </Space>
-            </Image.PreviewGroup>
+            <Upload slug={product?.slug || ''} photos={product?.photos || []} />
           </Card>
         </Col>
       </Row>

@@ -18,7 +18,7 @@ class CreateStatisticsTable extends Migration
             $table->text('referrer')->nullable();
             $table->timestamps();
 
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

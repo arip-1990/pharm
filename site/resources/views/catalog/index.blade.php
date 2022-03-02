@@ -16,7 +16,7 @@
                         Распродажа
                     </a>
                 </li>
-                @each ('layouts.partials.menu', $category ? $category->descendants->toTree() : \App\Entities\Category::query()->get()->toTree(), 'category')
+                @each ('layouts.partials.menu', $category ? $category->children : \App\Entities\Category::query()->where('parent_id', null)->get(), 'category')
             </ul>
         </nav>
 

@@ -2,11 +2,10 @@
 
 namespace App\Entities;
 
-use Cviebrock\EloquentSluggable\Services\SlugService;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Kalnoy\Nestedset\NodeTrait;
 
 /**
  * @property int $id
@@ -20,22 +19,11 @@ use Kalnoy\Nestedset\NodeTrait;
  */
 class Category extends Model
 {
-    use NodeTrait, Sluggable {
-        NodeTrait::replicate as replicateNode;
-        Sluggable::replicate as replicateSlug;
-    }
+    use Sluggable;
 
     public $timestamps = false;
     public $incrementing = false;
-    protected $fillable = ['id', 'name', 'slug'];
-
-    public function replicate(array $except = null)
-    {
-        $instance = $this->replicateNode($except);
-        (new SlugService())->slug($instance, true);
-
-        return $instance;
-    }
+    protected $fillable = ['id', 'name', 'slug', 'parent_id'];
 
     public function sluggable(): array
     {
@@ -46,20 +34,9 @@ class Category extends Model
         ];
     }
 
-    public function edit(string $name, int $parentId = null): void
-    {
-        $this->name = $name;
-        $this->parent_id = $parentId;
-    }
-
     public function getRouteKeyName(): string
     {
         return 'slug';
-    }
-
-    public function getPath(): string
-    {
-        return implode('/', array_merge($this->ancestors()->defaultOrder()->pluck('slug')->toArray(), [$this->slug]));
     }
 
     public function parentAttributes(): array
@@ -70,6 +47,16 @@ class Category extends Model
     public function allAttributes(): array
     {
         return array_merge($this->parentAttributes(), $this->attributes()->orderBy('sort')->getModels());
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class);
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class);
     }
 
     public function attributes(): HasMany
