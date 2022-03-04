@@ -1,14 +1,14 @@
 <li>
     <a href="{{ route('catalog', ['category' => $category->slug]) }}">
-        @if (!$category->parent)
+        @if ($category->isRoot())
             <img src="/images/category/cat_{{ $category->id }}.png" alt="">
         @endif
         {{ $category->name }}
     </a>
-    @if ($category->children()->count())
+    @if ($category->descendants()->count())
         <div class="overlay">
             <ul>
-                @foreach ($category->children as $category)
+                @foreach ($category->descendants as $category)
                     @include('layouts.partials.menu', $category)
                 @endforeach
             </ul>

@@ -34,7 +34,11 @@ class OrderResource extends JsonResource
                 'createdAt' => $status['created_at']
             ]),
             'items' => $this->items->map(fn(OrderItem $item) => [
-                'product' => ['id' => $item->product->id, 'name' => $item->product->name],
+                'product' => [
+                    'id' => $item->product->id,
+                    'name' => $item->product->name,
+                    'slug' => $item->product->slug
+                ],
                 'price' => $item->price,
                 'quantity' => $item->quantity
             ])

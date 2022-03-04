@@ -4,6 +4,7 @@ namespace App\Entities;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -29,8 +30,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property Order[] $orders
- * @property CartItem[] $cartItems
+ * @property Collection<Order> $orders
+ * @property Collection<CartItem> $cartItems
  * @property Limit $priceLimit
  */
 class User extends Authenticatable
@@ -130,7 +131,7 @@ class User extends Authenticatable
 
     public function orders(): HasMany
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class)->orderByDesc('id');
     }
 
     public function cartItems(): HasMany

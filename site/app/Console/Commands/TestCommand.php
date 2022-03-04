@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Entities\OrderItem;
 use App\Entities\Photo;
 use App\Entities\Product;
+use App\Entities\ProductStatistic;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
@@ -37,42 +39,42 @@ class TestCommand extends Command
 //       $this->storeProducts($this->argument('file'));
 //         $this->export();
 
-       $total = Product::withTrashed()->count();
-       $i = 1;
-       $id = 1;
-       Product::withTrashed()->chunk(1000, function ($products) use ($total, &$id, &$i) {
-           /** @var Product $product */
-           foreach ($products as $product) {
-               echo "\033[2KProcessing: " . $i . '/' . $total . "\r";
-
-                $photos = [];
-                if ($files = glob("storage/app/public/images/original/$product->id*")) {
-                    foreach ($files as $file) {
-                        if (is_dir($file)) continue;
-
-                        $exp = explode('/', $file);
-                        $exp = explode('.', array_pop($exp));
-                        $exp = array_pop($exp);
-
-                        if (!file_exists("storage/app/public/images/original/{$product->id}"))
-                            mkdir("storage/app/public/images/original/{$product->id}", recursive: true);
-
-                        /** @var Photo $photo */
-                        $photo = new Photo();
-                        rename($file, "storage/app/public/images/original/{$product->id}/{$id}.{$exp}");
-                        $photos[] = $photo;
-                        $id++;
-                    }
-
-                    if ($photos) {
-                        $product->photos()->saveMany($photos);
-                        $product->update();
-                    }
-                }
-
-               $i++;
-           }
-       });
+//       $total = Product::withTrashed()->count();
+//       $i = 1;
+//       $id = 1;
+//       Product::withTrashed()->chunk(1000, function ($products) use ($total, &$id, &$i) {
+//           /** @var Product $product */
+//           foreach ($products as $product) {
+//               echo "\033[2KProcessing: " . $i . '/' . $total . "\r";
+//
+//                $photos = [];
+//                if ($files = glob("storage/app/public/images/original/$product->id*")) {
+//                    foreach ($files as $file) {
+//                        if (is_dir($file)) continue;
+//
+//                        $exp = explode('/', $file);
+//                        $exp = explode('.', array_pop($exp));
+//                        $exp = array_pop($exp);
+//
+//                        if (!file_exists("storage/app/public/images/original/{$product->id}"))
+//                            mkdir("storage/app/public/images/original/{$product->id}", recursive: true);
+//
+//                        /** @var Photo $photo */
+//                        $photo = new Photo();
+//                        rename($file, "storage/app/public/images/original/{$product->id}/{$id}.{$exp}");
+//                        $photos[] = $photo;
+//                        $id++;
+//                    }
+//
+//                    if ($photos) {
+//                        $product->photos()->saveMany($photos);
+//                        $product->update();
+//                    }
+//                }
+//
+//               $i++;
+//           }
+//       });
 
         $this->info(PHP_EOL . 'Загрузка успешно завершена!');
         return 0;

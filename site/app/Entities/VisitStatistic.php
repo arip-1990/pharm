@@ -19,19 +19,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property User $user
  */
-class Statistic extends Model
+class VisitStatistic extends Model
 {
-    public static function create(string $ip, string $os, string $browser, string $screen = '', string $city = null, string $referrer = null): self
-    {
-        $statistic = new static();
-        $statistic->ip = $ip;
-        $statistic->city = $city;
-        $statistic->os = $os;
-        $statistic->browser = $browser;
-        $statistic->screen = $screen;
-        $statistic->referrer = $referrer;
-        return $statistic;
-    }
+    protected $fillable = ['ip', 'os', 'browser', 'screen', 'city', 'referrer'];
 
     public function user(): BelongsTo
     {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Catalog;
 use App\Entities\CartItem;
 use App\Entities\Offer;
 use App\Entities\Order;
+use App\Entities\ProductStatistic;
 use App\Entities\Store;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalog\CheckoutRequest;
@@ -67,6 +68,15 @@ class CheckoutController extends Controller
     {
         $title = ' | Заказ оформлен!';
         $cartService = $this->cartService;
+
+        try {
+            foreach ($order->items as $item) {
+                $statistic = ProductStatistic::query()->find($item->product_id);
+                if ($statistic) $statistic->increment('orders', $item->quantity);
+                else ProductStatistic::query()->create(['id' => $item->product_id, 'orders' => $item->quantity]);
+            }
+        }
+        catch (\Exception $e) {}
 
         $order->sent();
         $order->save();

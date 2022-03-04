@@ -10,8 +10,6 @@ class IndexController extends Controller
 {
     public function handle(): JsonResponse
     {
-        $user = Auth::user();
-
-        return response()->json($user);
+        return new JsonResponse(Auth::user());
     }
 }

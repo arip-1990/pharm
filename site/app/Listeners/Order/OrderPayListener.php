@@ -30,7 +30,7 @@ class OrderPayListener implements ShouldQueue
             return;
         }
 
-        $orderInfo = $this->getOrderInfo();
+        $orderInfo = $this->getOrderInfo($order);
         if($orderInfo['ErrorCode'] != 0)
             $order->changeStatusState(Status::STATE_ERROR);
         elseif($orderInfo['OrderStatus'] == Status::SBERBANK_ORDER_AUTH_REJECTED or $orderInfo['OrderStatus'] == Status::SBERBANK_ORDER_AUTH_CANCELLED)
@@ -47,7 +47,7 @@ class OrderPayListener implements ShouldQueue
         $order->save();
     }
 
-    private function getOrderInfo(): array
+    private function getOrderInfo(Order $order): array
     {
         $config = config('data.pay.sber.prod');
         $url = $config['statusUrl'];
@@ -62,7 +62,7 @@ class OrderPayListener implements ShouldQueue
             CURLOPT_POSTFIELDS => http_build_query([
                 'userName'      => $username,
                 'password'      => $password,
-                'orderId'       => $this->order->sber_id
+                'orderId'       => $order->sber_id
             ])
         ]);
 

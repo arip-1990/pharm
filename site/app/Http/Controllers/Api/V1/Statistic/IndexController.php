@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Statistic;
 
-use App\Entities\Statistic;
+use App\Entities\VisitStatistic;
 use App\Http\Resources\StatisticResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -12,7 +12,7 @@ class IndexController extends Controller
 {
     public function handle(Request $request): ResourceCollection
     {
-        $query = Statistic::query();
+        $query = VisitStatistic::query();
         if ($request->get('orderField'))
             $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
 

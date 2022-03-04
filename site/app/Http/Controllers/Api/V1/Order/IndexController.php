@@ -24,6 +24,7 @@ class IndexController extends Controller
             else
                 $query->orderBy($field, $request->get('orderDirection'));
         }
+        else $query->orderByDesc('id');
 
         $orders = $query->paginate($request->get('pageSize', 10));
 

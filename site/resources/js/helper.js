@@ -39,7 +39,7 @@ window.showPrice = function () {
         .then(({data}) => {
             const mask = product.querySelector('.price .mask');
             const real = product.querySelector('.price .real');
-            real.innerHTML = `<span style="font-size: 1.1rem">от ${data} &#8381;</span>`;
+            real.innerHTML = `<span>от ${data} &#8381;</span>`;
             mask.style.display = 'none';
             real.style.display = 'block';
         })

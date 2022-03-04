@@ -16,8 +16,6 @@ import "./sass/index.scss";
 
 moment.locale("ru");
 
-console.log(process.env);
-
 const sanctumConfig = {
   apiUrl: API_URL,
   csrfCookieRoute: "sanctum/csrf-cookie",

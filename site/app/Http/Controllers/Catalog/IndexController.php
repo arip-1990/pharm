@@ -6,6 +6,7 @@ use App\Entities\Category;
 use App\Entities\Limit;
 use App\Entities\Offer;
 use App\Entities\Product;
+use App\Entities\ProductStatistic;
 use App\Http\Controllers\Controller;
 use App\UseCases\Catalog\ProductService;
 use Carbon\Carbon;
@@ -65,6 +66,8 @@ class IndexController extends Controller
         $item = null;
         try {
             $item = $this->cartService->getItem($product->id);
+            if ($product->statistic) $product->statistic()->increment('views');
+            else ProductStatistic::query()->create(['id' => $product->id, 'views' => 1]);
         }
         catch (\DomainException $e) {}
 

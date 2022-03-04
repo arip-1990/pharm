@@ -5,9 +5,11 @@ namespace App\Entities;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -25,10 +27,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon|null $deleted_at
  *
  * @property Category|null $category
- * @property Photo[] $photos
- * @property Photo[] $certificates
- * @property Offer[] $offers
- * @property Value[] $values
+ * @property Collection<Photo> $photos
+ * @property Collection<Photo> $certificates
+ * @property Collection<Offer> $offers
+ * @property Collection<Value> $values
+ * @property ProductStatistic|null $statistic
  */
 class Product extends Model
 {
@@ -162,5 +165,10 @@ class Product extends Model
     public function offers(): HasMany
     {
         return $this->hasMany(Offer::class)->where('quantity', '>', 0)->orderBy('price');
+    }
+
+    public function statistic(): HasOne
+    {
+        return $this->hasOne(ProductStatistic::class, 'id');
     }
 }

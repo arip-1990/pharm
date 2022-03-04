@@ -47,6 +47,8 @@ services:
   panel:
     build:
       context: panel/docker/dev/nginx
+    environment:
+      API_URL: http://pharm.test
     networks:
       - traefik-public
       - default
@@ -158,6 +160,7 @@ services:
       FILESYSTEM_DRIVER: public
     volumes:
       - ./site:/app
+      - uploads:/app/storage/app/public
 
   site-node:
     build:

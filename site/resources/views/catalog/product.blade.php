@@ -7,11 +7,15 @@
 
     <div class="row justify-content-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
         <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
-            @if ($product->photos->count())
-                <img class="mw-100" itemprop="image" src="{{ $product->photos()->first()->getUrl() }}" alt="{{ $product->name }}" />
-            @else
+            @forelse($product->photos as $photo)
+                @if($loop->first)
+                    <img class="mw-100" style="cursor: zoom-in" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
+                @else
+                    <img class="mw-100" style="display: none; cursor: zoom-in" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
+                @endif
+            @empty
                 <img class="mw-100" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
-            @endif
+            @endforelse
 
             @if (in_array($product->id, session('favorites', [])))
                 <img alt="" src="/images/heart.png" style="left: 1.5rem" class="favorite-toggle" data-action="remove">
@@ -25,7 +29,7 @@
 
             <div class="row" style="min-height: 50%">
                 <div class="col-12 col-lg-8 col-xxl-9 mb-3 mb-lg-0">
-                    @if ($product->values()->count())
+                    @if ($product->values->count())
                         <div style="background: #e6eded;padding: .75rem;">
                             @foreach ($product->values as $value)
                                 @switch ($value->attribute->name)
@@ -127,4 +131,6 @@
             @endif
         @endforeach
     @endif
+
+    @include('layouts.partials.carousel')
 @endsection

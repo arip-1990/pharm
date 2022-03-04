@@ -92,15 +92,15 @@ Breadcrumbs::for('checkout', function (BreadcrumbTrail $trail) {
 });
 
 // Catalog
+Breadcrumbs::for('category', function (BreadcrumbTrail $trail, \App\Entities\Category $category) {
+    if ($category->parent) $trail->parent('category', $category->parent);
+    $trail->push($category->name, route('catalog', $category));
+});
 Breadcrumbs::for('catalog', function (BreadcrumbTrail $trail, \App\Entities\Category $category = null) {
     $trail->parent('home');
     $trail->push('Наш ассортимент', route('catalog'));
 
-    if ($category) {
-        foreach ($category->children as $child)
-            $trail->push($child->name, route('catalog', $child));
-        $trail->push($category->name, route('catalog', $category));
-    }
+    if ($category) $trail->parent('category', $category);
 });
 Breadcrumbs::for('catalogProduct', function (BreadcrumbTrail $trail, \App\Entities\Product $product) {
     $trail->parent('catalog', $product->category);

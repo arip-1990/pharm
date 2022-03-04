@@ -43,10 +43,10 @@ class OrderDeliveryListener implements ShouldQueue
         }
     }
 
-    private function getDeliveryInfo(int $order_id, string $data): array
+    private function getDeliveryInfo(int $orderId, string $data): array
     {
         $config = config('data.yandex.delivery');
-        $query = ['request_id' => $config['idempotency_prefix'] . $order_id];
+        $query = ['request_id' => $config['idempotency_prefix'] . $orderId];
         $headers = ['Authorization: Bearer '.$config['auth_token'], 'Accept-Language: ru'];
 
         $ch = curl_init();

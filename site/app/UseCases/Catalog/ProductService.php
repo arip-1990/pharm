@@ -16,11 +16,11 @@ class ProductService
     {
         $categoryIds = new Collection();
         if ($category) {
-            $categories = $category->children;
+            $categories = $category->descendants;
             $categoryIds->push($category);
         }
         else {
-            $categories = Category::query()->get();
+            $categories = Category::all();
         }
 
         $productIds = Offer::query()->select('product_id')->whereCity($city)

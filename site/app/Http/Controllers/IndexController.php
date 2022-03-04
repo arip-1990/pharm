@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Entities\Product;
 use App\Entities\Offer;
+use App\Entities\ProductStatistic;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -14,10 +16,14 @@ class IndexController extends Controller
     {
         $city = $request->cookie('city', config('data.city')[0]);
 
+        /** @var Collection<string> $productIds */
         $productIds = Offer::query()->select('product_id')->whereCity($city)
             ->groupBy('product_id')->get()->pluck('product_id');
 
-        $products = Product::query()->findMany(config('data.productIds'));
+        $popularIds = ProductStatistic::query()->select('id')->whereIn('id', $productIds)
+            ->orderByDesc('orders')->orderByDesc('views')->take(12)->get()->pluck('id');
+
+        $products = Product::query()->findMany($popularIds);
         $alphabet = Product::query()->selectRaw('SUBSTRING(name, 1, 1) as abc')->distinct('abc')
             ->whereIn('id', $productIds)->get()->pluck('abc');
         $abc = '';

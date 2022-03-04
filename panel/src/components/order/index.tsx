@@ -21,13 +21,9 @@ const columns = [
     sorter: true,
   },
   {
-    title: "Сумма заказа",
-    dataIndex: "cost",
-    render: (cost: number) => <span>{cost}&#8381;</span>,
-  },
-  {
     title: "Статус",
     dataIndex: "status",
+    width: 640
   },
   {
     title: "Дата",
@@ -78,9 +74,9 @@ const Order: React.FC = () => {
           id: item.id,
           user: item.user.name,
           store: item.store.name,
-          cost: item.cost,
           status: (
             <StatusStep
+              full
               statuses={item.statuses}
               paymentType={item.paymentType}
               deliveryType={item.deliveryType}

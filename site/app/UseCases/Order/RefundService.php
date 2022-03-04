@@ -38,7 +38,13 @@ class RefundService
     public function fullRefund(Order $order): void
     {
         foreach ($order->items as $item) {
-            $archive = Archive::create($order, $item->product, $item->price, $item->quantity);
+            $archive = new Archive([
+                'order_id' => $order->id,
+                'code' => $item->product->code,
+                'name' => $item->product->name,
+                'price' => $item->price,
+                'quantity' => $item->quantity
+            ]);
             $archive->save();
         }
 

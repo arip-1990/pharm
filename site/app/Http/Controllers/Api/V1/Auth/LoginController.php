@@ -16,6 +16,6 @@ class LoginController extends Controller
 
         Auth::user()->createToken($request->header('User-Agent'));
 
-        return response()->json();
+        return new JsonResponse();
     }
 }

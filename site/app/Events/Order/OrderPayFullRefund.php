@@ -14,9 +14,9 @@ use Illuminate\Queue\SerializesModels;
 class OrderPayFullRefund
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
-    public function __construct(Order $order) {}
-    
+
+    public function __construct(public Order $order) {}
+
     public function broadcastOn(): Channel | array
     {
         return new PrivateChannel('order');

@@ -3,6 +3,7 @@
 namespace App\Listeners\Order;
 
 use App\Entities\Exception;
+use App\Entities\Order;
 use App\Entities\Status;
 use App\Events\Order\OrderSend;
 use App\Mail\Order\CreateOrder;
@@ -20,7 +21,7 @@ class OrderSendListener implements ShouldQueue
         $order_number = config('data.orderStartNumber') + $order->id;
 
         try {
-            $response = simplexml_load_string($this->getSendInfo());
+            $response = simplexml_load_string($this->getSendInfo($order));
 
             if(isset($response->errors->error->code)) {
                 $message = 'Номер заказа: ' . $order_number . '. Код ошибки: ' . $response->errors->error->code . '.';
@@ -43,9 +44,9 @@ class OrderSendListener implements ShouldQueue
         }
     }
 
-    private function getSendInfo(): string
+    private function getSendInfo(Order $order): string
     {
-        $service = new GenerateDataService($this->order);
+        $service = new GenerateDataService($order);
         $config = config('data.1c');
         $ch = curl_init();
         curl_setopt_array($ch, [

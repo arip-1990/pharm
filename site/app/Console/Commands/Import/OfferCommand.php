@@ -73,12 +73,13 @@ class OfferCommand extends Command
     {
         $data = $this->getData(3);
         Offer::query()->truncate();
-        Product::query()->where('status', true)->update(['status' => false]);
+        Product::query()->update(['status' => false]);
         $fields = [];
         $productIds = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
             if (!$product = Product::query()->find((string)$item->code)) continue;
+
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
             $fields[] = [

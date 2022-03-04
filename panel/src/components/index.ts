@@ -4,3 +4,4 @@ export {default as OrderView} from './order/View';
 export {default as Product} from './product';
 export {default as ProductView} from './product/View';
 export {default as Table} from './table';
+export {default as Editor} from './Editor';

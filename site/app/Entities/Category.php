@@ -2,10 +2,11 @@
 
 namespace App\Entities;
 
+use Cviebrock\EloquentSluggable\Services\SlugService;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Kalnoy\Nestedset\NodeTrait;
 
 /**
  * @property int $id
@@ -19,11 +20,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Category extends Model
 {
-    use Sluggable;
+    use Sluggable, NodeTrait {
+        NodeTrait::replicate as replicateNode;
+        Sluggable::replicate as replicateSlug;
+    }
+
+    public function replicate(array $except = null)
+    {
+        $instance = $this->replicateNode($except);
+        (new SlugService())->slug($instance, true);
+
+        return $instance;
+    }
 
     public $timestamps = false;
     public $incrementing = false;
-    protected $fillable = ['id', 'name', 'slug', 'parent_id'];
+    protected $fillable = ['id', 'name', 'parent_id'];
 
     public function sluggable(): array
     {
@@ -47,16 +59,6 @@ class Category extends Model
     public function allAttributes(): array
     {
         return array_merge($this->parentAttributes(), $this->attributes()->orderBy('sort')->getModels());
-    }
-
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(self::class, 'parent_id');
-    }
-
-    public function children(): HasMany
-    {
-        return $this->hasMany(self::class, 'parent_id');
     }
 
     public function attributes(): HasMany

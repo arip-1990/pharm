@@ -15,7 +15,7 @@ export default () => {
 
   React.useEffect(() => {
     if (authenticated === false) navigate('/login');
-    else if (authenticated === true) navigate('/');
+    else if (authenticated === true) navigate(location.pathname, {state: location.state});
   }, [authenticated]);
   
   return (

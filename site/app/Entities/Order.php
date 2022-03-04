@@ -8,12 +8,12 @@ use App\Events\Order\OrderPayPartlyRefund;
 use App\Events\Order\OrderSend;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -36,11 +36,11 @@ use Illuminate\Support\Collection;
  * @property User $user
  *
  * @property Collection<Status> $statuses
- * @property OrderItem[] $items
- * @property Archive[] $archives
+ * @property Collection<OrderItem> $items
+ * @property Collection<Archive> $archives
  *
  * @property Exception $lastException
- * @property Exception[] $exceptions
+ * @property Collection<Exception> $exceptions
  */
 class Order extends Model
 {

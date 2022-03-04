@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Card, Col, Row, Table } from "antd";
 import { useFetchOrderQuery } from "../../services/OrderService";
 import StatusStep from './StatusStep';
@@ -55,8 +55,9 @@ const View: React.FC = () => {
               loading={fetchLoading}
               pagination={false}
               columns={itemColumns}
-              dataSource={order?.items.map(item => ({
-                name: item.product.name,
+              dataSource={order?.items.map((item, i) => ({
+                key: i + 1,
+                name: <Link to={`/product/${item.product.slug}`}>{item.product.name}</Link>,
                 quantity: item.quantity,
                 price: item.price,
                 total: item.quantity * item.price

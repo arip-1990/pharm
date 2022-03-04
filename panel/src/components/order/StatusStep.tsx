@@ -1,6 +1,7 @@
 import React from 'react';
-import { Steps, Typography } from 'antd';
+import { Typography } from 'antd';
 import { IStatus } from '../../models/IOrder';
+import classnames from 'classnames';
 
 interface PropsType {
   statuses: IStatus[];
@@ -10,23 +11,29 @@ interface PropsType {
 }
 
 const StatusStep: React.FC<PropsType> = ({statuses, paymentType, deliveryType, full}) => {
+  const checkStatus = (status: string) => (
+    statuses.some(item => item.value === status && item.state === 2)
+    ? 'active' : statuses.some(item => item.value === status && item.state === 1)
+    ? 'error' : ''
+  );
+
   const getFull = () => (
-    <Steps size={full ? 'default' : 'small'} current={1}>
-      <Steps.Step key={1} description='Заказ принят' />
-      {paymentType ? <Steps.Step key={2} description='Оплата картой' /> : null}
-      <Steps.Step key={3} description='Отправка email' />
-      <Steps.Step key={4} description='Отправка в 1с' />
-      <Steps.Step key={5} description='Заказ собран' />
+    <ul className={classnames('progressbar', {delivery: !!deliveryType, sber: !deliveryType && paymentType})}>
+      <li className='active'>Заказ принят</li>
+      {paymentType ? <li className={checkStatus('P')}>Оплата картой</li> : null}
+      <li className={checkStatus('J')}>Отправка email</li>
+      <li className={checkStatus('I')}>Отправка в 1с</li>
+      <li className={checkStatus('H')}>Заказ собран</li>
       {deliveryType ? <>
-        <Steps.Step key={6} description='Вызов доставки' />
-        <Steps.Step key={7} description='Заказ получен в аптеке' />
+        <li className={checkStatus('G')}>Вызов доставки</li>
+        <li className={checkStatus('S')}>Заказ получен в аптеке</li>
       </> : null}
-      <Steps.Step key={8} description='Заказ получен клиентом' />
-    </Steps>
+      <li className={checkStatus('F')}>Заказ получен клиентом</li>
+    </ul>
   );
 
   const getDefault = () => {
-    let status = <Typography.Text type="success">Заказ принят</Typography.Text>;;
+    let status = <Typography.Text type="success">Заказ принят</Typography.Text>;
     statuses.forEach(item => {
       switch (item?.value) {
         case 'P':

@@ -16,7 +16,7 @@
                         Распродажа
                     </span>
                 </li>
-                @each ('layouts.partials.menu', \App\Entities\Category::query()->get()->toTree(), 'category')
+                @each ('layouts.partials.menu', \App\Entities\Category::all()->toTree(), 'category')
             </ul>
         </nav>
 

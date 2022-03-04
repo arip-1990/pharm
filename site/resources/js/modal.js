@@ -23,9 +23,9 @@ const show = event => {
 
   document.body.classList.add('modal-open');
   if (document.body.offsetHeight > window.innerHeight) {
-    document.body.style.paddingRight = '15px';
+    document.body.style.paddingRight = '17px';
     const fixedBox = document.querySelector('.fixed-box.fixed');
-    if (fixedBox) fixedBox.style.paddingRight = '15px';
+    if (fixedBox) fixedBox.style.paddingRight = '17px';
   }
   backdrop.removeAttribute('style');
 

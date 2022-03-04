@@ -9,39 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property int $order_id
- * @property string $product_id
- * @property string $store_id
+ * @property int $code
+ * @property string $name
  * @property float $price
  * @property int $quantity
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
- * @property Order $order
- * @property Product $product
- * @property Store $store
+ * @property ?Store $store
  */
 class Archive extends Model
 {
-    public static function create(Order $order, Product $product, float $price, int $quantity): self
-    {
-        $item = new static();
-        $item->order_id = $order->id;
-        $item->product_id = $product->id;
-        $item->store_id = $order->store_id;
-        $item->price = $price;
-        $item->quantity = $quantity;
-        return $item;
-    }
-
-    public function order(): BelongsTo
-    {
-        return $this->belongsTo(Order::class);
-    }
-
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
-    }
+    protected $fillable = ['order_id', 'code', 'name', 'price', 'quantity'];
 
     public function store(): BelongsTo
     {

@@ -117,8 +117,9 @@ services:
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
       SESSION_LIFETIME: 120
-      SESSION_DOMAIN: '.аптека05.рф'
-      SANCTUM_STATEFUL_DOMAINS: '*.аптека05.рф'
+      SESSION_DOMAIN: '.xn--05-6kcay4a7ay.xn--p1ai'
+      SANCTUM_STATEFUL_DOMAINS: '*.xn--05-6kcay4a7ay.xn--p1ai'
+      CORS_ORIGIN: https://panel.xn--05-6kcay4a7ay.xn--p1ai
       REDIS_HOST: redis
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.yandex.ru
@@ -153,8 +154,6 @@ services:
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
       SESSION_LIFETIME: 120
-      SESSION_DOMAIN: '.аптека05.рф'
-      SANCTUM_STATEFUL_DOMAINS: '*.аптека05.рф'
       REDIS_HOST: redis
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.yandex.ru

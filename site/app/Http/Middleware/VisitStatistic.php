@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 
 use Closure;
 
-class Statistic
+class VisitStatistic
 {
     public function handle(Request $request, Closure $next)
     {
-        (new \App\Services\Statistic($request))->handle();
+        (new \App\Services\VisitStatistic($request))->handle();
         return $next($request);
     }
 }
