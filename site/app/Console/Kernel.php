@@ -18,26 +18,21 @@ class Kernel extends ConsoleKernel
 
     /**
      * Define the application's command schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
      */
-    protected function schedule(Schedule $schedule)
+    protected function schedule(Schedule $schedule): void
     {
         $schedule->command('import:category')->daily();
         $schedule->command('import:store')->dailyAt('0:15');
         $schedule->command('import:product')->dailyAt('0:30');
-        $schedule->command('import:offer')->dailyAt('2:00');
+        $schedule->command('import:offer')->dailyAt('1:00');
         $schedule->command('import:offer change')->everyMinute();
         $schedule->command('import:offer stock')->everyMinute();
     }
 
     /**
      * Register the commands for the application.
-     *
-     * @return void
      */
-    protected function commands()
+    protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
 

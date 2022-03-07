@@ -1,30 +1,20 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, TablePaginationConfig, Input, Space, Button, Image, Tag } from "antd";
+import { Card, TablePaginationConfig, Input, Space, Button, Image, Tag, Row, Col } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useSessionStorage } from "react-use-storage";
-import { productApi } from "../../services/ProductService";
+import { useFetchProductsQuery } from "../../services/ProductService";
 import { Table } from "..";
 import { SortOrder } from "antd/lib/table/interface";
 
 const Product: React.FC = () => {
   const [value, setValue] = useSessionStorage<{filters: any[], order: any}>('filter', {filters: [], order: {}});
   const [search, setSeach] = React.useState<{ column: string; text: string }>();
-  const [filters, setFilters] = React.useState<
-    { field: string; value: string }[]
-  >([]);
-  const [order, setOrder] = React.useState<{
-    field: string | null;
-    direction: string;
-  }>({ field: null, direction: "asc" });
-  const [pagination, setPagination] = React.useState({
-    current: 1,
-    pageSize: 10,
-  });
-  const {
-    data: products,
-    isLoading: fetchLoading,
-  } = productApi.useFetchProductsQuery({ pagination, search, filters, order });
+  const [filters, setFilters] = React.useState<{ field: string; value: string }[]>([]);
+  const [order, setOrder] = React.useState({ field: null, direction: "asc" });
+  const [pagination, setPagination] = React.useState({current: 1, pageSize: 10});
+  const {data: products, isLoading: fetchLoading} = useFetchProductsQuery({ pagination, search, filters, order });
+  const [searchValue, setSearchValue] = React.useState<string>();
   const navigate = useNavigate();
 
   const getColumnSearchProps = (dataIndex: string) => ({
@@ -38,9 +28,10 @@ const Product: React.FC = () => {
         <Input
           placeholder={`Поиск ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) =>
+          onChange={e => {
+            setSearchValue(e.target.value ? e.target.value : undefined);
             setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
+          }}
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{ marginBottom: 8, display: "block" }}
         />
@@ -167,7 +158,7 @@ const Product: React.FC = () => {
     dataIndex: string
   ) => {
     confirm();
-    setSeach({ text: selectedKeys[0], column: dataIndex });
+    searchValue && setSeach({ text: searchValue, column: dataIndex });
   };
 
   const handleReset = (clearFilters: () => void) => {
@@ -212,30 +203,37 @@ const Product: React.FC = () => {
   };
 
   return (
-    <Card title="Товары">
-      <Table
-        columns={columns}
-        loading={fetchLoading}
-        data={products?.data.map((item) => ({
-          key: item.slug,
-          photo: item.photos[0].url,
-          code: item.code,
-          barcode: item.barcode,
-          name: item.name,
-          category: item.category?.name,
-          status: item.status,
-        }))}
-        onChange={handleChange}
-        pagination={{
-          current: products?.meta.current_page || pagination.current,
-          total: products?.meta.total || 0,
-          pageSize: products?.meta.per_page || pagination.pageSize,
-        }}
-        onRow={(record) => ({
-          onClick: () => navigate(`/product/${record.key}`)
-        })}
-      />
-    </Card>
+    <Row gutter={[16, 16]}>
+      <Col span={24}>
+        <h2>Товары</h2>
+      </Col>
+      <Col span={24}>
+        <Card title={`Всего ${products?.meta.total || 0} записи`}>
+          <Table
+            columns={columns}
+            loading={fetchLoading}
+            data={products?.data.map((item) => ({
+              key: item.slug,
+              photo: item.photos[0].url,
+              code: item.code,
+              barcode: item.barcode,
+              name: item.name,
+              category: item.category?.name,
+              status: item.status,
+            }))}
+            onChange={handleChange}
+            pagination={{
+              current: products?.meta.current_page || pagination.current,
+              total: products?.meta.total || 0,
+              pageSize: products?.meta.per_page || pagination.pageSize,
+            }}
+            onRow={(record) => ({
+              onClick: () => navigate(`/product/${record.key}`)
+            })}
+          />
+        </Card>
+      </Col>  
+    </Row>
   );
 };
 

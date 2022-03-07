@@ -22,8 +22,12 @@ class IndexController extends Controller
         if ($category = $request->get('category'))
             $category === 'on' ? $query->whereNotNull('category_id') : $query->whereNull('category_id');
 
-        if ($request->get('searchColumn'))
-            $query->where($request->get('searchColumn'), 'like', $request->get('searchText') . '%');
+        if ($request->get('searchColumn')) {
+            if ($request->get('searchColumn') === 'name')
+                $query->whereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$request->get('searchText')]);
+            else
+                $query->where($request->get('searchColumn'), 'like', $request->get('searchText') . '%');
+        }
 
         $field = $request->get('orderField');
         if ($field) {

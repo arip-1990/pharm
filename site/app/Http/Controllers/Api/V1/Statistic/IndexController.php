@@ -15,7 +15,10 @@ class IndexController extends Controller
         $query = VisitStatistic::query();
         if ($request->get('orderField'))
             $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
+        else
+            $query->orderByDesc('created_at');
 
         return StatisticResource::collection($query->paginate($request->get('pageSize', 10)));
     }
 }
+

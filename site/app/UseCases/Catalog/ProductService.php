@@ -9,6 +9,7 @@ use App\Entities\Product;
 use App\Entities\Value;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
 
 class ProductService
 {
@@ -36,16 +37,6 @@ class ProductService
             ->groupBy('product_id')->get()->pluck('product_id');
 
         return Product::query()->whereIn('id', $productIds)->paginate(12);
-    }
-
-    public function search(string $text, string $city): Paginator
-    {
-        $productIds = Offer::query()->select('product_id')->whereCity($city)
-            ->groupBy('product_id')->get()->pluck('product_id');
-
-        return Product::query()->whereIn('id', $productIds)->where(function($query) use ($text) {
-            $query->where('name', 'like', $text . '%')->orWhere('name', 'like', '%' . $text . '%');
-        })->paginate(15);
     }
 
     public function getNamesBySearch(string $text, int $limit = 10): array

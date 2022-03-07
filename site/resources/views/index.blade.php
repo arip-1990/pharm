@@ -50,7 +50,9 @@
                                 </p>
                                 <div class="price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                                     <p class="mask">Показать цену</p>
-                                    <p class="real" itemprop="price"></p>
+                                    <p class="real" itemprop="price">
+                                        от <span style="font-weight: 600"></span> &#8381;
+                                    </p>
                                 </div>
                             @else
                                 <p class="marker marker__red"><i class="fas fa-map-marker-alt"></i> Нет в наличии</p>

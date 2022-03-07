@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\UseCases\Catalog\ProductService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -80,15 +81,18 @@ class IndexController extends Controller
     {
         $title = ' | Поиск';
         $city = $request->cookie('city', config('data.city')[0]);
-        if (!$query = $request->query('q'))
+        if (!$searchText = $request->query('q'))
             throw new \DomainException('Введите запрос для поиска');
+        $productIds = Offer::query()->select('product_id')->whereCity($city)->groupBy('product_id')->get()->pluck('product_id');
 
-        $paginator = $this->productService->search($query, $city);
-        $paginator->appends(['q' => $query]);
-        $categories = Category::query()->get()->toTree();
+        $paginator = Product::query()->active()->whereIn('id', $productIds)->where(function(Builder $query) use ($searchText) {
+            $query->whereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$searchText]);
+        })->paginate(15);
+
+        $paginator->appends(['q' => $searchText]);
         $cartService = $this->cartService;
 
-        return view('catalog.index', compact('title', 'paginator', 'categories', 'cartService'));
+        return view('catalog.index', compact('title', 'paginator', 'cartService'));
     }
 
     public function getPrice(Request $request): JsonResponse

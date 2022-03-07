@@ -3,7 +3,7 @@
 @section('banner', '')
 
 @section('content')
-    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('catalog', $category) }}
+    {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('catalog', $category ?? null) }}
 
     @php $city = Illuminate\Support\Facades\Cookie::get('city', config('data.city')[0]) @endphp
 
@@ -16,11 +16,11 @@
                         Распродажа
                     </a>
                 </li>
-                @each ('layouts.partials.menu', $category ? $category->descendants : \App\Entities\Category::all()->toTree(), 'category')
+                @each ('layouts.partials.menu', isset($category) ? $category->children : \App\Entities\Category::query()->where('parent_id', null)->get(), 'category')
             </ul>
         </nav>
 
-        <div class="col-md-9">
+        <div class="col-md-9 mt-3 mt-md-0">
             @if ($paginator->count())
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4" itemscope itemtype="https://schema.org/ItemList">
                     <link itemprop="url" href="{{ url()->current() }}">
@@ -66,7 +66,9 @@
                                             <p class="marker"><i class="fas fa-map-marker-alt"></i> {{ "В наличии в $count " . ($count === 1 ? 'аптеке' : 'аптеках') }}</p>
                                             <div class="price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                                                 <p class="mask">Показать цену</p>
-                                                <p class="real" itemprop="price"></p>
+                                                <p class="real" itemprop="price">
+                                                    от <span style="font-weight: 600"></span> &#8381;
+                                                </p>
                                             </div>
                                         @else
                                             <p class="marker marker__red"><i class="fas fa-map-marker-alt"></i> Нет в наличии</p>

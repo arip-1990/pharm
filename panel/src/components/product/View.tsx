@@ -15,34 +15,36 @@ const View: React.FC = () => {
   } = productApi.useFetchProductQuery(slug || "", { skip: !slug });
 
   return (
-    <>
-      <h1>{product?.name}</h1>
-      <Row gutter={[32, 32]}>
-        <Col span={12}>
-          <Row gutter={[32, 32]}>
-            <Col span={24}>
-              <ViewBase loading={fetchLoading} product={product} />
-            </Col>
-            <Col span={24}>
-              <ViewDescription loading={fetchLoading} product={product} />
-            </Col>
-          </Row>
-        </Col>
-        <Col span={12}>
-          <Row gutter={[32, 32]}>
-            <Col span={24}>
-              <ViewAttributes loading={fetchLoading} product={product} />
-            </Col>
-          </Row>
-        </Col>
+    <Row gutter={[32, 32]}>
+      <Col span={24}>
+        <h2 style={{margin: 0}}>{product?.name}</h2>
+      </Col>
 
-        <Col span={24}>
-          <Card title="Отографии">
-            <Upload slug={product?.slug || ''} photos={product?.photos || []} />
-          </Card>
-        </Col>
-      </Row>
-    </>
+      <Col span={12}>
+        <Row gutter={[32, 32]}>
+          <Col span={24}>
+            <ViewBase loading={fetchLoading} product={product} />
+          </Col>
+          <Col span={24}>
+            <ViewDescription loading={fetchLoading} product={product} />
+          </Col>
+        </Row>
+      </Col>
+
+      <Col span={12}>
+        <Row gutter={[32, 32]}>
+          <Col span={24}>
+            <ViewAttributes loading={fetchLoading} product={product} />
+          </Col>
+        </Row>
+      </Col>
+
+      <Col span={24}>
+        <Card title="Отографии">
+          <Upload slug={product?.slug || ''} photos={product?.photos || []} />
+        </Card>
+      </Col>
+    </Row>
   );
 };
 

@@ -90,7 +90,7 @@
 
             <div class="row">
                 <nav class="navbar navbar-expand-md navbar-primary">
-                    <button class="navbar-toggler" type="button" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false">
                         <i class="fas fa-bars"></i>
                     </button>
 
@@ -98,68 +98,68 @@
                         <ul class="navbar-nav my-lg-0">
                             @switch(\Illuminate\Support\Facades\Route::currentRouteName())
                                 @case('catalog')
-                                    <li class="nav-item sale">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0 sale">
                                         <span class="nav-link active">
                                             <i class="fas fa-bars"></i> Наш ассортимент
                                         </span>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0">
                                         <a class="nav-link" href="{{ route('pharmacy') }}">
                                             <i class="far fa-hospital"></i> Аптеки
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0">
                                         <a class="nav-link" href="{{ route('deliveryBooking') }}">
                                             <i class="fas fa-ambulance"></i> Доставка/бронирование
                                         </a>
                                     </li>
                                     @break
                                 @case('pharmacy')
-                                    <li class="nav-item sale">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0 sale">
                                         <a class="nav-link" href="{{ route('catalog') }}">
                                             <i class="fas fa-bars"></i> Наш ассортимент
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0">
                                         <span class="nav-link active">
                                             <i class="far fa-hospital"></i> Аптеки
                                         </span>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0">
                                         <a class="nav-link" href="{{ route('deliveryBooking') }}">
                                             <i class="fas fa-ambulance"></i> Доставка/бронирование
                                         </a>
                                     </li>
                                     @break
                                 @case('deliveryBooking')
-                                    <li class="nav-item sale">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0 sale">
                                         <a class="nav-link" href="{{ route('catalog') }}">
                                             <i class="fas fa-bars"></i> Наш ассортимент
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0">
                                         <a class="nav-link" href="{{ route('pharmacy') }}">
                                             <i class="far fa-hospital"></i> Аптеки
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0">
                                         <span class="nav-link active">
                                             <i class="fas fa-ambulance"></i> Доставка/бронирование
                                         </span>
                                     </li>
                                     @break
                                 @default
-                                    <li class="nav-item sale">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0 sale">
                                         <a class="nav-link" href="{{ route('catalog') }}">
                                             <i class="fas fa-bars"></i> Наш ассортимент
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0">
                                         <a class="nav-link" href="{{ route('pharmacy') }}">
                                             <i class="far fa-hospital"></i> Аптеки
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li class="nav-item text-start text-md-center p-2 p-md-0">
                                         <a class="nav-link" href="{{ route('deliveryBooking') }}">
                                             <i class="fas fa-ambulance"></i> Доставка/бронирование
                                         </a>

@@ -112,6 +112,7 @@ services:
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
+      FILESYSTEM_DRIVER: public
       BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
@@ -140,28 +141,11 @@ services:
   site-migration:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
     environment:
-      APP_NAME: Сеть аптек 120/80
-      APP_URL: https://аптека05.рф
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
       DB_CONNECTION: pgsql
       DB_HOST: db-postgres
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
-      BROADCAST_DRIVER: redis
-      CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      SESSION_DRIVER: redis
-      SESSION_LIFETIME: 120
-      REDIS_HOST: redis
-      REDIS_CLIENT: predis
-      MAIL_HOST: smtp.yandex.ru
-      MAIL_PORT: 465
-      MAIL_USERNAME: info@120на80.рф
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120на80.рф
-      MAIL_FROM_NAME: Сеть аптек 120/80
     command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate --force'
     deploy:
       restart_policy:

@@ -24,8 +24,8 @@
             @endif
         </div>
 
-        <div class="col-12 col-lg-9 d-flex flex-column justify-content-around">
-            <h4 class="text-center" itemprop="name">{{ $product->name }}</h4>
+        <div class="col-12 col-lg-9 d-flex flex-column">
+            <h3 class="text-center mb-3" itemprop="name">{{ $product->name }}</h3>
 
             <div class="row" style="min-height: 50%">
                 <div class="col-12 col-lg-8 col-xxl-9 mb-3 mb-lg-0">
@@ -49,12 +49,13 @@
                         </div>
                     @endif
                 </div>
-                <div class="col-12 col-lg-4 col-xxl-3 d-flex flex-column justify-content-between align-items-end">
+                <div class="col-12 col-lg-4 col-xxl-3 d-flex flex-column justify-content-evenly align-items-end">
                     @if ($minPrice)
-                        <h4 class="text-end price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                            <p class="mask">Показать цену</p>
-                            <p class="real" itemprop="price"></p>
-                        </h4>
+                        <h5 class="price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                            <p itemprop="price">
+                                Цена: от <span style="font-size: 1.75rem; font-weight: 600">{{ $minPrice }}</span> &#8381;
+                            </p>
+                        </h5>
 
                         @if($item)
                             <div class="input-group input-product">
@@ -109,13 +110,14 @@
             @if ($offer->store)
                 <div class="row align-items-center border-top p-2 m-0">
                     <div class="col-12 col-md-5">
-                        <b>{{ $offer->store->name }}</b>
+                        <span style="font-weight: 600">{{ $offer->store->name }}</span>
                     </div>
                     <div class="col-12 col-md-3 text-md-center">
                         <b class="d-md-none">Время работы: </b>{!! \App\Helper::formatSchedule($offer->store->schedule) !!}
                     </div>
                     <div class="col-12 col-md-2 text-md-center">
-                        <b class="d-md-none">Цена: </b>{{ $offer->price }} &#8381;
+                        <b class="d-md-none">Цена: </b>
+                        <span style="font-size: 1.25rem; font-weight: 600">{{ $offer->price }}</span> &#8381;
                     </div>
                     <div class="col-12 col-md-2 text-md-center">
                         <b class="d-md-none">Количество:</b>

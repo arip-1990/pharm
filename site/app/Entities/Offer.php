@@ -69,7 +69,7 @@ class Offer extends Model
                 return $clause;
             })
             ->each(function($clause, $index) use ($query) {
-                $query->where($clause, null, null, $index === 0 ? 'and' : 'or');
+                $query->where($clause, boolean: $index === 0 ? 'and' : 'or');
             });
 
         return $query;

@@ -39,6 +39,8 @@ class TestCommand extends Command
 //       $this->storeProducts($this->argument('file'));
 //         $this->export();
 
+        echo config('app.env') . PHP_EOL;
+
 //       $total = Product::withTrashed()->count();
 //       $i = 1;
 //       $id = 1;

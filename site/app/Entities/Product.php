@@ -43,7 +43,7 @@ class Product extends Model
     public string $abc = '';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['name', 'slug', 'category_id', 'barcode', 'description', 'status'];
+    protected $fillable = ['id', 'name', 'code', 'category_id', 'barcode', 'description', 'status', 'marked'];
 
     public function sluggable(): array
     {
@@ -101,9 +101,9 @@ class Product extends Model
         return false;
     }
 
-    public function scopeActive(Builder $query): Builder
+    protected function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE);
+        return $query->where('status', self::STATUS_ACTIVE)->where('name', 'not like', '*%');
     }
 
     public function changeCategory(int $categoryId): void

@@ -9,18 +9,14 @@ const Login: React.FC = () => {
   const { signIn } = useSanctum();
   const navigate = useNavigate();
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = (values: any) => {
     setLoading(true);
-    try {
-      await signIn(values.email, values.password, values.remember);
-      navigate('/');
-    }
-    catch (e: any) {
-      message.error(e.response.data.message);
-    }
-    finally {
+    signIn(values.email, values.password, values.remember)
+    .then(() => navigate('/'))
+    .catch((error) => {
+      message.error(error.response.data.message);
       setLoading(false);
-    }
+    });
   }
 
   return (

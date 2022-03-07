@@ -19,7 +19,7 @@ const Layout: React.FC = () => {
       <BaseLayout className="content-layout">
         <Header theme={theme} collapsed={collapsed} onCollapsed={toggleCollapsed} />
 
-        <BaseLayout.Content style={{margin: '24px 16px', padding: 24, minHeight: 280}}><Outlet /></BaseLayout.Content>
+        <BaseLayout.Content style={{minHeight: 280, padding: '1rem 2rem'}}><Outlet /></BaseLayout.Content>
 
         <BaseLayout.Footer>ООО «Социальная аптека» ©{moment().format('YYYY')}</BaseLayout.Footer>
       </BaseLayout>

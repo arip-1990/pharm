@@ -24,7 +24,7 @@ class Photo extends Model
     public function getUrl(): ?string
     {
         $file = $this->getFilePath();
-        return $file ? Storage::url($file) : null;
+        return $file ? url("storage/$file", secure: false) : null;
     }
 
     public function getFilePath(): ?string

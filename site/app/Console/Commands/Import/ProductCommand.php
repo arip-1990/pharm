@@ -23,30 +23,44 @@ class ProductCommand extends Command
                 $slug = SlugService::createSlug(Product::class, 'slug', (string)$item->name);
                 if (!$slug) continue;
 
-                $dblCount = Product::query()->where('slug', 'similar to', "{$slug}(-[0-9]{1,2})?")->count();
                 foreach ($productFields as $field) {
-                    if (preg_match("/^{$slug}(-[0-9]{1,2})?$/", $field['slug']))
-                        $dblCount++;
+                    if ($field['slug'] === $slug) {
+                        if (preg_match("/^.*? (\d+)$/", (string)$item->name, $matches)) {
+                            $slug = preg_replace("/^(.*?-{$matches[1][0]})-\d{1,2}$/", "$1", $slug);
+                            if (preg_match("/^.*?-{$matches[1][0]}-(\d{1,2})$/", $slug, $matches))
+                                $slug .= ('-' . ($matches[1][0] + 1));
+                            else
+                                $slug .= '-2';
+                        }
+                        else {
+                            $slug = preg_replace("/^(.*?)(-\d{1,2})?$/", "$1", $slug);
+                            if (preg_match("/^.*?-(\d{1,2})$/", $slug, $matches))
+                                $slug .= ('-' . ($matches[1][0] + 1));
+                            else
+                                $slug .= '-2';
+                        }
+                    }
                 }
 
                 $productFields[] = [
                     'id' => (string)$item->uuid,
                     'category_id' => (int)$item->category ?: null,
                     'name' => (string)$item->name,
-                    'slug' => $dblCount ? ($slug . '-' . ++$dblCount) : $slug,
-                    'code' => (int)$item->code
+                    'slug' => $slug,
+                    'code' => (int)$item->code,
+                    'marked' => (string)$item->is_marked === 'true'
                 ];
                 $i++;
 
                 if ($i >= 1000) {
-                    Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'slug']);
+                    Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked']);
                     $productFields = [];
                     $i = 0;
                 }
             }
 
             if ($i) {
-                Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'slug']);
+                Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked']);
                 $i = 0;
             }
 
