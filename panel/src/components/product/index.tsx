@@ -208,7 +208,7 @@ const Product: React.FC = () => {
         <h2>Товары</h2>
       </Col>
       <Col span={24}>
-        <Card title={`Всего ${products?.meta.total || 0} записи`}>
+        <Card title={`Всего ${products?.meta.total.toLocaleString('ru') || 0} записи`}>
           <Table
             columns={columns}
             loading={fetchLoading}

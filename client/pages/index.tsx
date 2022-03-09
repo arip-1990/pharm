@@ -3,34 +3,36 @@ import { Row, Col, Card } from 'react-bootstrap';
 import Layout from '../components/layout';
 import { IProduct } from '../models/IProduct';
 import { useEffect, useState } from 'react';
-import axios from '../services/api';
+import axios from 'axios';
 
 interface PropsType {
     data: IProduct[];
 }
 
 const Home = ({data}: PropsType) => {
-    const [products, setProducts] = useState<IProduct[]>([]);
+    // const [products, setProducts] = useState<IProduct[]>([]);
 
-    useEffect(() => {
-        const fetcPRoducts = async () => {
-            try {
-                const { data } = await axios.get<IProduct[]>('/product/popular');
-                setProducts(data);
-            }
-            catch (error: any) {
-                console.log(error);
-            }
-        }
-        fetcPRoducts();
-    }, []);
+    // useEffect(() => {
+    //     const fetcPRoducts = async () => {
+    //         try {
+    //             const { data } = await axios.get<IProduct[]>('/product/popular');
+    //             setProducts(data);
+    //         }
+    //         catch (error: any) {
+    //             console.log(error);
+    //         }
+    //     }
+    //     fetcPRoducts();
+    // }, []);
+
+    console.log(data);
 
   return (
     <Layout>
       <Row xs={{cols: 1}} sm={{cols: 2}} md={{cols: 3}} lg={{cols: 4}} className="g-3 g-lg-4" itemScope itemType="https://schema.org/ItemList">
         <link itemProp="url" href="{{ url()->current() }}" />
-        { products.map(item => (
-            <Col xs={{span: 10, offset: 1}} sm={{span: 10, offset: 0}}>
+        { data.map(item => (
+            <Col key={item.id} xs={{span: 10, offset: 1}} sm={{span: 10, offset: 0}}>
                 <Card  className="product" itemProp="itemListElement" itemScope itemType="https://schema.org/Product">
                     {/* @if ('По рецепту' === $value = $product->getValue(4))
                         <div className="card-mod card-mod__prescription">
@@ -96,13 +98,8 @@ const Home = ({data}: PropsType) => {
 }
 
 export async function getServerSideProps() {
-    try {
-        const { data } = await axios.get<IProduct[]>('/product/popular');
-        console.log(data);
-    }
-    catch (error) {
-        console.log(error);
-    }
+    const { data } = await axios.get('http://pharm.test/api/v1/product/popular');
+    console.log(data);
 
     return { props: { data: [] } };
 }

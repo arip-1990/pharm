@@ -118,7 +118,7 @@ services:
       SESSION_LIFETIME: 120
       SESSION_DOMAIN: '.pharm.test'
       SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
-      CORS_ORIGIN: http://panel.pharm.test
+      CORS_ORIGIN: 'http://panel.pharm.test|http://client.pharm.test'
       REDIS_HOST: redis
       REDIS_CLIENT: predis
       MAIL_HOST: mailer

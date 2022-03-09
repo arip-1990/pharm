@@ -36,11 +36,11 @@ const View: React.FC = () => {
             columns={baseColumns}
             dataSource={order && [
               {key: 'Номер заказа в 1c', value: order.otherId},
-              {key: 'Время заказа', value: order.createdAt.format('DD.MM.YYYY[г.] HH:mm')},
+              {key: 'Время заказа', value: order.createdAt.format('LLL')},
               {key: 'Статус', value: <StatusStep full statuses={order.statuses} paymentType={order.paymentType} deliveryType={order.deliveryType} />},
               {key: 'Тип оплаты / Тип доставки', value: (order.paymentType ? 'Оплата картой' : 'Наличными') + ' / ' + (order.deliveryType ? 'Доставка' : 'Самовывоз')},
               {key: 'Адрес доставки', value: order.deliveryAddress},
-              {key: 'Сумма заказа', value: <span>{order.cost}&#8381;</span>},
+              {key: 'Сумма заказа', value: <span>{(order.cost * 1).toLocaleString('ru')}&#8381;</span>},
               {key: 'Аптека', value: order.store.name},
               {key: 'Оплачено', value: order.statuses.some(item => item.value === 'P' && item.state === 2)},
               {key: 'Заказчик', value: order.user.name},
@@ -61,8 +61,8 @@ const View: React.FC = () => {
               key: i + 1,
               name: <Link to={`/product/${item.product.slug}`}>{item.product.name}</Link>,
               quantity: item.quantity,
-              price: item.price,
-              total: item.quantity * item.price
+              price: (item.price * 1).toLocaleString('ru'),
+              total: (item.quantity * item.price).toLocaleString('ru')
             }))}
           />
         </Card>

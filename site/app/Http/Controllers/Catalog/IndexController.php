@@ -47,6 +47,7 @@ class IndexController extends Controller
     {
         $title = ' | Распродажа';
         $city = $request->cookie('city', config('data.city')[0]);
+
         $paginator = $this->productService->getSalesByCity($city);
         $cartService = $this->cartService;
 

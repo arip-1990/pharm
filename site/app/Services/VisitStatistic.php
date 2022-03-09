@@ -27,36 +27,37 @@ class VisitStatistic
                 $statistic = \App\Entities\VisitStatistic::query()->find($this->request->session()->get('static_id'));
                 if (!$statistic->city) {
                     $response = $dadata->iplocate($ip);
-                    $statistic->city = $response['unrestricted_value'];
+                    $statistic->city = $response['unrestricted_value'] ?? null;
                 }
                 $statistic->updated_at = new \DateTimeImmutable();
                 if (!$statistic->user and Auth::user())
                     $statistic->user()->associate(Auth::user());
                 $statistic->save();
-            } elseif ($this->request->session()->has('static_created')) {
-                $created = $this->request->session()->get('static_created');
+            }
+            elseif ($this->request->session()->has('static_created')) {
+                $created = $this->request->session()->pull('static_created');
                 if ($created->diff(new \DateTimeImmutable())->format('s')) {
                     $os = $dd->getOs();
                     $os = $os['name'] . ' ' . $os['platform'];
                     $browser = $dd->getClient();
                     $browser = $browser['name'] . ' ' . $browser['version'];
                     $response = $dadata->iplocate($ip);
-                    $city = $response['unrestricted_value'];
                     $statistic = new \App\Entities\VisitStatistic([
                         'ip' => $ip,
                         'os' => $os,
                         'browser' => $browser,
-                        'city' => $city,
+                        'city' => $response['unrestricted_value'] ?? null,
                         'referer' => $this->request->header('referer')
                     ]);
                     $statistic->created_at = $created;
                     if (Auth::user())
                         $statistic->user()->associate(Auth::user());
                     $statistic->save();
-                    $this->request->session()->now('static_id', $statistic->id);
+                    $this->request->session()->put('static_id', $statistic->id);
                 }
-            } else {
-                $this->request->session()->now('static_created', new \DateTimeImmutable());
+            }
+            else {
+                $this->request->session()->put('static_created', new \DateTimeImmutable());
             }
         }
     }

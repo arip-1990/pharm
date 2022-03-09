@@ -4,13 +4,13 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 
-use Closure;
-
 class VisitStatistic
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
-        (new \App\Services\VisitStatistic($request))->handle();
+        if ($request->getSchemeAndHttpHost() === env('APP_URL') and $request->ip() !== '78.142.233.153')
+            (new \App\Services\VisitStatistic($request))->handle();
+
         return $next($request);
     }
 }

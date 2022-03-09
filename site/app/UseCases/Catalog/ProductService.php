@@ -36,7 +36,7 @@ class ProductService
         $productIds = Offer::query()->select('product_id')->whereCity($city)
             ->groupBy('product_id')->get()->pluck('product_id');
 
-        return Product::query()->whereIn('id', $productIds)->paginate(12);
+        return Product::query()->whereIn('id', [])->paginate(12);
     }
 
     public function getNamesBySearch(string $text, int $limit = 10): array
