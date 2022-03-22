@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Entities\Category;
+use App\Models\Category;
 use Carbon\Carbon;
 
 class CategoryCommand extends Command

@@ -14,14 +14,14 @@
             <div class="card">
                 <div class="card-header">Избранное</div>
                 <div class="card-body">
-                    <?php /** @var App\Entities\Product $product */ ?>
+                    <?php /** @var App\Models\Product $product */ ?>
                     @foreach ($paginator as $product)
                         <div class="row favorite" data-product="{{ $product->id }}">
                             <div class="col-3 col-md-3">
                                 @if ($product->photos()->count())
                                     <img alt="" src="{{ $product->photos()->first()->getUrl() }}" style="height: 120px;width: 120px;">
                                 @else
-                                    <img alt="" src="{{ App\Entities\Photo::DEFAULT_FILE }}" style="height: 120px;width: 120px;">
+                                    <img alt="" src="{{ App\Models\Photo::DEFAULT_FILE }}" style="height: 120px;width: 120px;">
                                 @endif
                             </div>
                             <div class="col-7 col-md-8">

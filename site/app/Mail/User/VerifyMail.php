@@ -2,7 +2,7 @@
 
 namespace App\Mail\User;
 
-use App\Entities\User;
+use App\Models\User;
 use Illuminate\Mail\Mailable;
 
 class VerifyMail extends Mailable

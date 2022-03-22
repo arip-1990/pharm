@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Entities\User;
+use App\Models\User;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 class IPFilter

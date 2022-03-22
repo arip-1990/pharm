@@ -2,7 +2,7 @@
 
 namespace App\Events\Order;
 
-use App\Entities\Order;
+use App\Models\Order;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -14,9 +14,9 @@ use Illuminate\Queue\SerializesModels;
 class OrderPayPartlyRefund
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     public function __construct(public Order $order) {}
-    
+
     public function broadcastOn(): Channel | array
     {
         return new PrivateChannel('order');

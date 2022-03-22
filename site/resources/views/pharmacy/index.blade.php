@@ -13,7 +13,7 @@
                 $mapInfo = [];
                 $cordinates = [];
             @endphp
-            <?php /** @var App\Entities\Store $store */ ?>
+            <?php /** @var App\Models\Store $store */ ?>
             @foreach ($paginator as $store)
                 <div class="row address">
                     <div class="col-12 col-md-5 text-center text-md-start">

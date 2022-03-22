@@ -2,7 +2,7 @@
 
 namespace App\Events\Order;
 
-use App\Entities\Order;
+use App\Models\Order;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;

@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Entities\Photo;
-use App\Entities\Value;
+use App\Models\Photo;
+use App\Models\Value;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Order;
 
-use App\Entities\Order;
+use App\Models\Order;
 use App\Http\Resources\OrderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;

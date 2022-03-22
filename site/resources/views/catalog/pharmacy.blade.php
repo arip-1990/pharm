@@ -33,7 +33,7 @@
                                 @if ($product['product']->photos->count())
                                     <img class="col-1" src="{{ url($product['product']->photos()->first()->getUrl()) }}" alt="{{ $product['product']->name }}" />
                                 @else
-                                    <img class="col-1" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product['product']->name }}" />
+                                    <img class="col-1" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product['product']->name }}" />
                                 @endif
                                 <div class="col-6">{{ $product['product']->name }}</div>
                                 <div class="col-2 text-center">{{ $product['price'] }} &#8381; x {{ $product['quantity'] }}</div>

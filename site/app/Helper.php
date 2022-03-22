@@ -2,7 +2,7 @@
 
 namespace App;
 
-use \App\Entities\Status;
+use \App\Models\Status;
 
 class Helper
 {

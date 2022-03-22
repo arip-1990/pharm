@@ -2,11 +2,11 @@
 
 namespace App\UseCases\Order;
 
-use App\Entities\CartItem;
-use App\Entities\Offer;
-use App\Entities\Order;
-use App\Entities\OrderItem;
-use App\Entities\Store;
+use App\Models\CartItem;
+use App\Models\Offer;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Store;
 use App\Http\Requests\Catalog\CheckoutRequest;
 use App\UseCases\CartService;
 use Illuminate\Support\Collection;

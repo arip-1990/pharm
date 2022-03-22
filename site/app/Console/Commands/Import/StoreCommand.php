@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Entities\Store;
+use App\Models\Store;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 
 class StoreCommand extends Command

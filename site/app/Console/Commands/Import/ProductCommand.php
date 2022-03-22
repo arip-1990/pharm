@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Entities\Product;
-use App\Entities\Value;
+use App\Models\Product;
+use App\Models\Value;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 

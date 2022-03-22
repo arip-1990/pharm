@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entities;
+namespace App\Models;
 
 use App\Exceptions\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

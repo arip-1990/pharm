@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Product;
 
-use App\Entities\Photo;
+use App\Models\Photo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;

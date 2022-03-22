@@ -2,8 +2,8 @@
 
 namespace App\UseCases\Order;
 
-use App\Entities\Archive;
-use App\Entities\Order;
+use App\Models\Archive;
+use App\Models\Order;
 
 class RefundService
 {

@@ -21,8 +21,8 @@ export default () => {
   return (
     <React.Suspense fallback={<Loader />}>
       <Routes>
-          {authenticated ? privateRoute()  : <Route path='/login' element={<Login />} />}
-        </Routes>
+        {authenticated ? privateRoute()  : <Route path='/login' element={<Login />} />}
+      </Routes>
     </React.Suspense>
   );
 };

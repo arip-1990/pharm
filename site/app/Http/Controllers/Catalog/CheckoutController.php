@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Catalog;
 
-use App\Entities\CartItem;
-use App\Entities\Offer;
-use App\Entities\Order;
-use App\Entities\ProductStatistic;
-use App\Entities\Store;
+use App\Models\CartItem;
+use App\Models\Offer;
+use App\Models\Order;
+use App\Models\ProductStatistic;
+use App\Models\Store;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalog\CheckoutRequest;
 use App\UseCases\Order\CheckoutService;

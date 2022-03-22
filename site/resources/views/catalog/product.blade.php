@@ -14,7 +14,7 @@
                     <img class="mw-100" style="display: none; cursor: zoom-in" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
                 @endif
             @empty
-                <img class="mw-100" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
+                <img class="mw-100" itemprop="image" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
             @endforelse
 
             @if (in_array($product->id, session('favorites', [])))

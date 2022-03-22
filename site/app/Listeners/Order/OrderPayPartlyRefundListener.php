@@ -2,8 +2,8 @@
 
 namespace App\Listeners\Order;
 
-use App\Entities\Exception;
-use App\Entities\Status;
+use App\Models\Exception;
+use App\Models\Status;
 use App\Events\Order\OrderPayPartlyRefund;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;

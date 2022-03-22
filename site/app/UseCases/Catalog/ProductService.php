@@ -2,11 +2,11 @@
 
 namespace App\UseCases\Catalog;
 
-use App\Entities\Attribute;
-use App\Entities\Category;
-use App\Entities\Offer;
-use App\Entities\Product;
-use App\Entities\Value;
+use App\Models\Attribute;
+use App\Models\Category;
+use App\Models\Offer;
+use App\Models\Product;
+use App\Models\Value;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;

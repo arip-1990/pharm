@@ -2,7 +2,7 @@
 
 namespace App\UseCases\Order;
 
-use App\Entities\Order;
+use App\Models\Order;
 use App\Helper;
 
 class GenerateDataService

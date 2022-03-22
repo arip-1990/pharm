@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Product;
 
-use App\Entities\Product;
+use App\Models\Product;
 use App\Http\Requests\Api\Product\BaseRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;

@@ -2,9 +2,9 @@
 
 namespace App\Listeners\Order;
 
-use App\Entities\Exception;
-use App\Entities\Order;
-use App\Entities\Status;
+use App\Models\Exception;
+use App\Models\Order;
+use App\Models\Status;
 use App\Events\Order\OrderPay;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;

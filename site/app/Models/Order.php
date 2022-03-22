@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entities;
+namespace App\Models;
 
 use App\Events\Order\OrderPay;
 use App\Events\Order\OrderPayFullRefund;

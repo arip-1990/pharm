@@ -19,22 +19,22 @@
             @php $total = 0; @endphp
             @foreach ($cartService->getItems() as $item)
                 <div class="row align-items-center product" data-product="{{ $item->product->id }}">
-                    <div class="col-3 col-md-2 text-center">
+                    <div class="col-10 col-sm-3 offset-1 offset-sm-0 col-md-2 text-center">
                         @if ($item->product->photos()->count())
-                            <img alt="" src="{{ $item->product->photos()->first()->getUrl() }}">
+                            <img alt="" style="width: 100%" src="{{ $item->product->photos()->first()->getUrl() }}">
                         @else
-                            <img alt="" src="{{ App\Entities\Photo::DEFAULT_FILE }}">
+                            <img alt="" style="width: 100%" src="{{ App\Models\Photo::DEFAULT_FILE }}">
                         @endif
                     </div>
-                    <div class="col-7 col-md-5 product_title">
+                    <div class="col-10 col-sm-7 col-md-5 product_title">
                         <p><a href="{{ route('catalog.product', ['product' => $item->product->slug]) }}">{{ $item->product->name }}</a></p>
                         <p>{{ $item->product->getValue(5) /*?? $product->getValue(38)*/ }}</p>
                     </div>
-                    <div class="col-6 col-md-2 order-4 order-md-0 text-md-center product_price">
+                    <div class="col-5 col-sm-6 col-md-2 offset-1 offset-sm-0 order-4 order-md-0 text-md-center product_price">
                         <span>{!! 'от ' . $item->product->getPrice() . ' &#8381;' !!}</span>
                     </div>
-                    <div class="col-6 col-md-2 order-5 order-md-0">
-                        <div class="input-group input-product">
+                    <div class="col-5 col-sm-6 col-md-2 order-5 order-md-0">
+                        <div class="input-group input-product" style="margin-left: auto">
                             <button class="btn btn-outline-primary" data-type="-">-</button>
                             <input type="number" class="form-control input-number" min="1" max="{{ $item->product->getCount() }}" value="{{ $item->quantity }}" />
                             <button class="btn btn-outline-primary" data-type="+">+</button>
@@ -53,7 +53,7 @@
             </div>
 
             <div class="row align-items-center mt-3">
-                <div class="col-12 col-md-6 order-md-1 text-center text-md-end">
+                <div class="col-12 col-sm-6 order-sm-1 text-center text-md-end">
                     @auth()
                         <a href="{{ route('cart.pharmacy') }}" class="btn btn-primary">
                             Оформить заказ
@@ -65,7 +65,7 @@
                     @endauth
                 </div>
 
-                <div class="col-12 col-md-6 text-center text-md-start mt-3 mt-md-0">
+                <div class="col-12 col-sm-6 text-center text-md-start mt-3 mt-md-0">
                     <a href="{{ url('/catalog') }}" class="btn btn-outline-primary">Вернуться к покупкам</a>
                 </div>
             </div>

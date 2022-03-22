@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Entities\Product;
-use App\Entities\Offer;
+use App\Models\Product;
+use App\Models\Offer;
 
 class OfferCommand extends Command
 {

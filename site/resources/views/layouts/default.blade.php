@@ -173,8 +173,11 @@
 
         <section class="container-fluid">
             @section('banner')
-                <div class="row">
-                    <img src="/images/banner.jpg" alt="banner">
+                <div class="row d-none d-md-block">
+                    <img src="/images/banner.png" alt="banner">
+                </div>
+                <div class="row d-md-none">
+                    <img src="/images/banner-mobile.png" alt="banner">
                 </div>
             @show
         </section>

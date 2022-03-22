@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Product;
 
-use App\Entities\Product;
+use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Statistic;
 
-use App\Entities\VisitStatistic;
+use App\Models\VisitStatistic;
 use App\Http\Resources\StatisticResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;

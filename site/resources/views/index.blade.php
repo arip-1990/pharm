@@ -28,7 +28,7 @@
                         @if ($product->photos->count())
                             <img class="mt-2" itemprop="image" src="{{ $product->photos()->first()->getUrl() }}" alt="{{ $product->name }}" />
                         @else
-                            <img class="mt-2" itemprop="image" src="{{ url(\App\Entities\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
+                            <img class="mt-2" itemprop="image" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
                         @endif
                     </div>
                     @if (in_array($product->id, session('favorites', [])))
@@ -58,7 +58,7 @@
                                 <p class="marker marker__red"><i class="fas fa-map-marker-alt"></i> Нет в наличии</p>
                             @endif
 
-                            @if($cartService->getItems()->contains(fn(\App\Entities\CartItem $item) => $item->product_id === $product->id))
+                            @if($cartService->getItems()->contains(fn(\App\Models\CartItem $item) => $item->product_id === $product->id))
                                 <a class="btn btn-primary">Добавлено</a>
                             @else
                                 <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">

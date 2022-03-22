@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Catalog;
 
-use App\Entities\Category;
-use App\Entities\Limit;
-use App\Entities\Offer;
-use App\Entities\Product;
-use App\Entities\ProductStatistic;
+use App\Models\Category;
+use App\Models\Limit;
+use App\Models\Offer;
+use App\Models\Product;
+use App\Models\ProductStatistic;
 use App\Http\Controllers\Controller;
 use App\UseCases\Catalog\ProductService;
 use Carbon\Carbon;

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Entities\Category;
-use App\Entities\Product;
-use App\Entities\Offer;
-use App\Entities\ProductStatistic;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Offer;
+use App\Models\ProductStatistic;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

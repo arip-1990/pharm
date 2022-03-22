@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Pharmacy;
 
 use App\Http\Controllers\Controller;
-use App\Entities\Store;
+use App\Models\Store;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 

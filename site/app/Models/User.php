@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entities;
+namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,6 +14,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @property string $id
@@ -50,7 +51,7 @@ class User extends Authenticatable
 
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['name', 'email', 'phone', 'password', 'status', 'role'];
+    protected $fillable = ['id', 'name', 'email', 'phone', 'password', 'status', 'role'];
     protected $hidden = ['password', 'remember_token'];
 
     public static function rolesList(): array
@@ -67,6 +68,7 @@ class User extends Authenticatable
     public static function new(string $name, string $email): self
     {
         return static::create([
+            'id' => Uuid::uuid4()->toString(),
             'name' => $name,
             'email' => $email,
             'password' => Hash::make(Str::random()),
@@ -78,6 +80,7 @@ class User extends Authenticatable
     public static function register(string $name, string $email, string $phone, string $password): self
     {
         return static::create([
+            'id' => Uuid::uuid4()->toString(),
             'name' => $name,
             'email' => $email,
             'phone' => $phone,

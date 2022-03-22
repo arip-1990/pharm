@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Cabinet;
 
-use App\Entities\Order;
+use App\Models\Order;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Cabinet\EditProfileRequest;
 use Illuminate\Contracts\View\View;

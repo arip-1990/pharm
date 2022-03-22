@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Catalog;
 
 use App\Http\Controllers\Controller;
-use App\Entities\CartItem;
-use App\Entities\Offer;
+use App\Models\CartItem;
+use App\Models\Offer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;

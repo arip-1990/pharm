@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1\Order;
 
-use App\Entities\Order;
-use App\Entities\Status;
+use App\Models\Order;
+use App\Models\Status;
 use App\UseCases\Order\RefundService;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;

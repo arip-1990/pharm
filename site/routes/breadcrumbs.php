@@ -58,7 +58,7 @@ Breadcrumbs::for('order', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Заказы', route('order'));
 });
-Breadcrumbs::for('orderShow', function (BreadcrumbTrail $trail, \App\Entities\Order $order) {
+Breadcrumbs::for('orderShow', function (BreadcrumbTrail $trail, \App\Models\Order $order) {
     $trail->parent('order');
     $trail->push('Заказ №' . $order->id, route('order.show', $order));
 });
@@ -72,7 +72,7 @@ Breadcrumbs::for('pharmacy', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Точки самовывоза', route('pharmacy'));
 });
-Breadcrumbs::for('pharmacyShow', function (BreadcrumbTrail $trail, \App\Entities\Store $store) {
+Breadcrumbs::for('pharmacyShow', function (BreadcrumbTrail $trail, \App\Models\Store $store) {
     $trail->parent('pharmacy');
     $trail->push($store->name, route('pharmacy.show', $store));
 });
@@ -92,17 +92,17 @@ Breadcrumbs::for('checkout', function (BreadcrumbTrail $trail) {
 });
 
 // Catalog
-Breadcrumbs::for('category', function (BreadcrumbTrail $trail, \App\Entities\Category $category) {
+Breadcrumbs::for('category', function (BreadcrumbTrail $trail, \App\Models\Category $category) {
     if ($category->parent) $trail->parent('category', $category->parent);
     $trail->push($category->name, route('catalog', $category));
 });
-Breadcrumbs::for('catalog', function (BreadcrumbTrail $trail, \App\Entities\Category $category = null) {
+Breadcrumbs::for('catalog', function (BreadcrumbTrail $trail, \App\Models\Category $category = null) {
     $trail->parent('home');
     $trail->push('Наш ассортимент', route('catalog'));
 
     if ($category) $trail->parent('category', $category);
 });
-Breadcrumbs::for('catalogProduct', function (BreadcrumbTrail $trail, \App\Entities\Product $product) {
+Breadcrumbs::for('catalogProduct', function (BreadcrumbTrail $trail, \App\Models\Product $product) {
     $trail->parent('catalog', $product->category);
     $trail->push($product->name, route('catalog.product', $product));
 });

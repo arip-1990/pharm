@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Entities\OrderItem;
-use App\Entities\Photo;
-use App\Entities\Product;
-use App\Entities\ProductStatistic;
+use App\Models\OrderItem;
+use App\Models\Photo;
+use App\Models\Product;
+use App\Models\ProductStatistic;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;

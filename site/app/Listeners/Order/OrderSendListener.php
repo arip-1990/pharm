@@ -2,9 +2,9 @@
 
 namespace App\Listeners\Order;
 
-use App\Entities\Exception;
-use App\Entities\Order;
-use App\Entities\Status;
+use App\Models\Exception;
+use App\Models\Order;
+use App\Models\Status;
 use App\Events\Order\OrderSend;
 use App\Mail\Order\CreateOrder;
 use App\UseCases\Order\GenerateDataService;

@@ -23,8 +23,8 @@ class VisitStatistic
         if (!$dd->isBot()) {
             $dadata = new DadataClient(config('data.dadata_api.token'), config('data.dadata_api.secret'));
             if ($this->request->session()->has('static_id')) {
-                /** @var \App\Entities\VisitStatistic $statistic */
-                $statistic = \App\Entities\VisitStatistic::query()->find($this->request->session()->get('static_id'));
+                /** @var \App\Models\VisitStatistic $statistic */
+                $statistic = \App\Models\VisitStatistic::query()->find($this->request->session()->get('static_id'));
                 if (!$statistic->city) {
                     $response = $dadata->iplocate($ip);
                     $statistic->city = $response['unrestricted_value'] ?? null;
@@ -42,7 +42,7 @@ class VisitStatistic
                     $browser = $dd->getClient();
                     $browser = $browser['name'] . ' ' . $browser['version'];
                     $response = $dadata->iplocate($ip);
-                    $statistic = new \App\Entities\VisitStatistic([
+                    $statistic = new \App\Models\VisitStatistic([
                         'ip' => $ip,
                         'os' => $os,
                         'browser' => $browser,

@@ -197,7 +197,29 @@ services:
   
   cheduler:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
-    command: sh -c 'php artisan schedule:run >> /dev/null 2>&1'
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: https://аптека05.рф
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      DB_CONNECTION: pgsql
+      DB_HOST: db-postgres
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: ${DB_PASSWORD}
+      FILESYSTEM_DRIVER: public
+      BROADCAST_DRIVER: redis
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      MAIL_HOST: smtp.yandex.ru
+      MAIL_PORT: 465
+      MAIL_USERNAME: info@120на80.рф
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM_ADDRESS: info@120на80.рф
+      MAIL_FROM_NAME: Сеть аптек 120/80
+    command: sh -c 'php artisan schedule:run'
     deploy:
       labels:
         - swarm.cronjob.enable=true
