@@ -5,6 +5,10 @@
 @section('content')
     {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('cart') }}
 
+    <div class="alert alert-danger" role="alert">
+        В связи с повышенным спросом мы вынуждены ввести временное ограничение продажи лекарственных средств «НЕ БОЛЕЕ 2 УП В ОДНИ РУКИ»
+    </div>
+
     <div class="row">
         <h3>Состав заказа</h3>
 
@@ -36,7 +40,7 @@
                     <div class="col-5 col-sm-6 col-md-2 order-5 order-md-0">
                         <div class="input-group input-product" style="margin-left: auto">
                             <button class="btn btn-outline-primary" data-type="-">-</button>
-                            <input type="number" class="form-control input-number" min="1" max="{{ $item->product->getCount() }}" value="{{ $item->quantity }}" />
+                            <input type="number" class="form-control input-number" min="1" max="{{ $item->product->category->isParent('Лекарственные средства') ? $item->product->getQuantity(2) : $item->product->getQuantity() }}" value="{{ $item->quantity }}" />
                             <button class="btn btn-outline-primary" data-type="+">+</button>
                         </div>
                     </div>

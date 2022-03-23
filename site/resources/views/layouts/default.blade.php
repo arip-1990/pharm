@@ -34,7 +34,8 @@
                 </div>
 
                 <div class="auth col-7 text-end">
-                    <span class="phone">+7 (8722) 606-366</span>
+                    <a class="phone d-md-none" href="tel:+78722606366">+7 (8722) 606-366</a>
+                    <span class="phone d-none d-md-inline">+7 (8722) 606-366</span>
                     <span class="d-inline-block">
                         @auth
                             <a href="{{ route('profile') }}">Личный кабинет</a> |
@@ -200,7 +201,7 @@
                     <img class="logo" src="/images/logo_min.svg" alt="logo">
                     <div class="info-phone text-center">
                         <h5>Единая справочная сети</h5>
-                        <p>+7 (8722) 606-366</p>
+                        <p style="font-size: 1.5rem; margin-bottom: 0.5rem">+7 (8722) 606-366</p>
                         <p class="times">ежедневно с 9:00 до 21:00</p>
                     </div>
                 </div>

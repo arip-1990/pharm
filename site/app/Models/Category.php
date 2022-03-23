@@ -65,4 +65,9 @@ class Category extends Model
     {
         return $this->hasMany(Attribute::class);
     }
+
+    public function isParent(string $name): bool
+    {
+        return $this->ancestors->contains('name', $name);
+    }
 }

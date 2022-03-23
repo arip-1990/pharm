@@ -150,16 +150,17 @@ class Product extends Model
         return $this->hasMany(Value::class);
     }
 
-    public function getCount(): int
+    public function getQuantity(int $max = null): int
     {
         /** @var Offer $offer */
-        $offer = $this->offers()->orderBy('quantity', 'desc')->first();
-        return $offer ? $offer->quantity : 0;
+        $offer = $this->hasMany(Offer::class)->where('quantity', '>', 0)->orderBy('quantity', 'desc')->first();
+        $quantity = $offer->quantity ?? 0;
+        return $max ? min($quantity, $max) : $quantity;
     }
 
     public function getCountByCity(string $city): int
     {
-        return $this->offers()->whereCity($city)->count();
+        return $this->hasMany(Offer::class)->where('quantity', '>', 0)->whereCity($city)->count();
     }
 
     public function offers(): HasMany

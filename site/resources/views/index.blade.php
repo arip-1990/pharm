@@ -3,6 +3,10 @@
 @section('content')
     @php $city = Illuminate\Support\Facades\Cookie::get('city', config('data.city')[0]) @endphp
 
+    <div class="alert alert-danger" role="alert">
+        В связи с повышенным спросом мы вынуждены ввести временное ограничение продажи лекарственных средств «НЕ БОЛЕЕ 2 УП В ОДНИ РУКИ»
+    </div>
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 g-lg-4" itemscope itemtype="https://schema.org/ItemList">
         <link itemprop="url" href="{{ url()->current() }}">
         @foreach ($products as $product)
@@ -61,7 +65,7 @@
                             @if($cartService->getItems()->contains(fn(\App\Models\CartItem $item) => $item->product_id === $product->id))
                                 <a class="btn btn-primary">Добавлено</a>
                             @else
-                                <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
+                                <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->category->isParent('Лекарственные средства') ? $product->getQuantity(2) : $product->getQuantity() }}">
                                     Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
                                 </a>
                             @endif

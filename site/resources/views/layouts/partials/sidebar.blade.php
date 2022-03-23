@@ -1,4 +1,4 @@
-<nav class="nav left-nav">
+<nav class="nav left-nav px-4">
     @switch(\Illuminate\Support\Facades\Route::currentRouteName())
         @case('profile')
             <span class="personal-links active">Профиль</span>

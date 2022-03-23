@@ -174,7 +174,7 @@
 .favorite-toggle {
   position: absolute;
   top: 1rem;
-  left: 1rem;
+  left: -1rem;
   height: 28px;
   cursor: pointer;
 }
@@ -268,11 +268,20 @@
 }
 
 .page {
+  text-align: justify;
   background: #f2f2f2;
   border-top: 2px solid #27bfc1;
   border-bottom: 2px solid #27bfc1;
-  padding: 2rem;
+  padding: 2rem 5.5rem;
   margin: 0;
+
+  p {
+    text-indent: 2.5rem;
+  }
+
+  .contacts p {
+    text-indent: unset;
+  }
 
   .address {
     align-items: center;
@@ -325,14 +334,17 @@
     background: #fff;
     border: 2px solid #009577;
     padding: 20px;
-    margin: 3rem auto;
+    margin: 1rem auto;
     box-sizing: border-box;
 
     .delivery-item {
       display: flex;
       align-items: center;
-      border-bottom: 2px solid #f4f4f4;
       padding-bottom: 1rem;
+
+      &:not(:last-child) {
+        border-bottom: 2px solid #f4f4f4;
+      }
     }
 
     img {
@@ -488,5 +500,11 @@
         max-height: 200px;
       }
     }
+  }
+}
+
+@media (min-width: 576px) {
+  .favorite-toggle {
+    left: 1.5rem;
   }
 }

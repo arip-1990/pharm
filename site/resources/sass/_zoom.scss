@@ -1,0 +1,16 @@
+figure.zoom {
+  position: relative;
+  background-position: 50% 50%;
+  overflow: hidden;
+  cursor: crosshair;
+
+  & img:hover {
+    opacity: 0;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    transition: opacity .5s;
+  }
+}

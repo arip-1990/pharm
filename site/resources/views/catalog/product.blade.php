@@ -7,25 +7,23 @@
 
     <div class="row justify-content-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
         <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
-            @forelse($product->photos as $photo)
-                @if($loop->first)
-                    <img class="mw-100" style="cursor: zoom-in" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
-                @else
-                    <img class="mw-100" style="display: none; cursor: zoom-in" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
-                @endif
-            @empty
-                <img class="mw-100" itemprop="image" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
-            @endforelse
+            @if ($product->photos->count())
+                <figure class="zoom" style="background-image: url({{ $product->photos->first()->getUrl() }})">
+                    <img class="mw-100" itemprop="image" src="{{ $product->photos->first()->getUrl() }}" alt="{{ $product->name }}" />
+                </figure>
+            @else
+                <img class="mw-100" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
+            @endif
 
             @if (in_array($product->id, session('favorites', [])))
-                <img alt="" src="/images/heart.png" style="left: 1.5rem" class="favorite-toggle" data-action="remove">
+                <img alt="" src="/images/heart.png" class="favorite-toggle" data-action="remove">
             @else
-                <img alt="" src="/images/fav.png" style="left: 1.5rem" class="favorite-toggle" data-action="add">
+                <img alt="" src="/images/fav.png" class="favorite-toggle" data-action="add">
             @endif
         </div>
 
         <div class="col-12 col-lg-9 d-flex flex-column">
-            <h3 class="text-center mb-3" itemprop="name">{{ $product->name }}</h3>
+            <h4 class="text-center mb-3" itemprop="name">{{ $product->name }}</h4>
 
             <div class="row" style="min-height: 50%">
                 <div class="col-12 col-lg-8 col-xxl-9 mb-3 mb-lg-0">
@@ -60,11 +58,11 @@
                         @if($item)
                             <div class="input-group input-product">
                                 <button class="btn btn-outline-primary" data-type="-">-</button>
-                                <input type="number" class="form-control input-number" min="1" max="{{ $product->getCount() }}" value="{{ $item->quantity }}" />
+                                <input type="number" class="form-control input-number" min="1" max="{{ $product->category->isParent('Лекарственные средства') ? $product->getQuantity(2) : $product->getQuantity() }}" value="{{ $item->quantity }}" />
                                 <button class="btn btn-outline-primary" data-type="+">+</button>
                             </div>
                         @else
-                            <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->getCount() }}">
+                            <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->category->isParent('Лекарственные средства') ? $product->getQuantity(2) : $product->getQuantity() }}">
                                 Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
                             </a>
                         @endif

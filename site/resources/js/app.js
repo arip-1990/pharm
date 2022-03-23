@@ -6,4 +6,4 @@ require('./favorite');
 require('./auth');
 require('./product');
 require('./collapse');
-require('./carousel');
+require('./zoom');
