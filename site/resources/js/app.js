@@ -7,3 +7,4 @@ require('./auth');
 require('./product');
 require('./collapse');
 require('./zoom');
+require('./checkout');

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { axiosBaseQuery } from '../services/api';
+import { axiosBaseQuery } from './api';
 import { IUser } from '../models/IUser';
 
 

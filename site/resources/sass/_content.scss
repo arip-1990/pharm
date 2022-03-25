@@ -238,11 +238,11 @@
       display: flex;
       align-items: center;
 
-      &:not(.collapsed) h5::before {
+      &:not(.collapsed) h6::before {
         transform: rotate(-180deg);
       }
 
-      h5::before {
+      h6::before {
         content: "\f078";
         display: inline-block;
         font-family: "Font Awesome 5 Free";
@@ -435,12 +435,17 @@
     margin: 0.25rem 0;
     cursor: pointer;
 
+    &:focus,
     &:focus-within {
       border: 2px solid #24b5b7;
     }
 
     &.active {
       border: 2px solid #24b5b7;
+
+      .radio-button_pin:before {
+        transform: scale(1);
+      }
     }
 
     &_pin {

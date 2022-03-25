@@ -12,13 +12,19 @@ class IndexController extends Controller
 {
     public function handle(Request $request): ResourceCollection
     {
-        $query = VisitStatistic::query();
-        if ($request->get('orderField'))
-            $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
+        $query = VisitStatistic::query()->select('visit_statistics.*');
+        if ($request->get('orderField')) {
+            if ($request->get('orderField') === 'user') {
+                $query->join('users', 'users.id', '=', 'visit_statistics.user_id')
+                    ->orderBy('users.name', $request->get('orderDirection'));
+            }
+            else {
+                $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
+            }
+        }
         else
             $query->orderByDesc('created_at');
 
         return StatisticResource::collection($query->paginate($request->get('pageSize', 10)));
     }
 }
-

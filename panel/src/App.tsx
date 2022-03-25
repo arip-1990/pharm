@@ -17,7 +17,7 @@ export default () => {
     if (authenticated === false) navigate('/login');
     else if (authenticated === true) navigate(location.pathname, {state: location.state});
   }, [authenticated]);
-  
+
   return (
     <React.Suspense fallback={<Loader />}>
       <Routes>

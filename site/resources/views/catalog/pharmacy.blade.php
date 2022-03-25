@@ -6,14 +6,14 @@
     {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('cartPharmacy') }}
 
     <div class="row">
-        <div class="col-6"><span class="border-bottom border-primary">Выбор аптеки</span></div>
+        <div class="col-7"><span class="border-bottom border-primary">Выбор аптеки</span></div>
         <div class="col-2 text-center">Наличие</div>
 
         <div class="accordion">
             @foreach($stores as $store)
                 <div class="store-item">
                     <div class="store-item_title collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $store['store']->id }}">
-                        <h5 class="col-7">{{ $store['store']->name }}</h5>
+                        <h6 class="col-7">{{ $store['store']->name }}</h6>
                         <p class="col-2 text-center text-primary">{{ count($store['products']) }} из {{ $total }} товаров</p>
                         <p class="col-1 text-end">
                             @php

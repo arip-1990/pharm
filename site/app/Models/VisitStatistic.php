@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
- * @property User $user
+ * @property ?User $user
  */
 class VisitStatistic extends Model
 {

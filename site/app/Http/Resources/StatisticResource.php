@@ -16,6 +16,10 @@ class StatisticResource extends JsonResource
             'browser' => $this->browser,
             'screen' => $this->screen,
             'referrer' => $this->referrer,
+            'user' => $this->user ? [
+                'id' => $this->user->id,
+                'name' => $this->user->name
+            ] : null,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { Card, Col, Row } from "antd";
-import { productApi } from "../../services/ProductService";
+import { useFetchProductQuery } from "../../services/ProductService";
 import { ViewBase } from "./ViewBase";
 import { ViewDescription } from "./ViewDescription";
 import { ViewAttributes } from "./ViewAttributes";
@@ -12,7 +12,7 @@ const View: React.FC = () => {
   const {
     data: product,
     isLoading: fetchLoading,
-  } = productApi.useFetchProductQuery(slug || "", { skip: !slug });
+  } = useFetchProductQuery(slug || "", { skip: !slug });
 
   return (
     <Row gutter={[32, 32]}>
@@ -40,7 +40,7 @@ const View: React.FC = () => {
       </Col>
 
       <Col span={24}>
-        <Card title="Отографии">
+        <Card title="Фотографии">
           <Upload slug={product?.slug || ''} photos={product?.photos || []} />
         </Card>
       </Col>

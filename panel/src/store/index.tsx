@@ -1,10 +1,12 @@
-import { combineReducers } from "redux";
-import { configureStore } from "@reduxjs/toolkit";
-import { categoryApi } from "../services/CategoryService";
-import { userApi } from "../services/UserService";
-import { statisticApi } from "../services/StatisticService";
-import { orderApi } from "../services/OrderService";
-import { productApi } from "../services/ProductService";
+import {combineReducers} from "redux";
+import {configureStore} from "@reduxjs/toolkit";
+import {categoryApi} from "../services/CategoryService";
+import {userApi} from "../services/UserService";
+import {statisticApi} from "../services/StatisticService";
+import {orderApi} from "../services/OrderService";
+import {productApi} from "../services/ProductService";
+import {offerApi} from "../services/OfferService";
+import {attributeApi} from "../services/AttributeService";
 
 const rootReducer = combineReducers({
   [categoryApi.reducerPath]: categoryApi.reducer,
@@ -12,17 +14,21 @@ const rootReducer = combineReducers({
   [orderApi.reducerPath]: orderApi.reducer,
   [productApi.reducerPath]: productApi.reducer,
   [statisticApi.reducerPath]: statisticApi.reducer,
+  [offerApi.reducerPath]: offerApi.reducer,
+  [attributeApi.reducerPath]: attributeApi.reducer,
 });
 
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false })
+    getDefaultMiddleware({serializableCheck: false})
       .concat(categoryApi.middleware)
       .concat(userApi.middleware)
       .concat(orderApi.middleware)
       .concat(productApi.middleware)
-      .concat(statisticApi.middleware),
+      .concat(statisticApi.middleware)
+      .concat(offerApi.middleware)
+      .concat(attributeApi.middleware),
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

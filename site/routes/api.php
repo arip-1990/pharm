@@ -38,7 +38,13 @@ Route::prefix('v1')->group(function () {
             Route::get('/{order}', [Api\V1\Order\ShowController::class, 'handle']);
         });
 
+        Route::prefix('offer')->group(function () {
+            Route::get('/', [Api\V1\Offer\IndexController::class, 'handle']);
+            Route::get('/{product}', [Api\V1\Offer\ShowController::class, 'handle']);
+        });
+
         Route::get('/category', [Api\V1\Category\IndexController::class, 'handle']);
         Route::get('/statistic', [Api\V1\Statistic\IndexController::class, 'handle']);
+        Route::get('/attribute', [Api\V1\Attribute\IndexController::class, 'handle']);
     });
 });

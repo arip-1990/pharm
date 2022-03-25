@@ -6,6 +6,7 @@ import {
   ShoppingOutlined,
   BulbOutlined,
   DashboardOutlined,
+  ShopOutlined
 } from "@ant-design/icons";
 import { SiderTheme } from "antd/lib/layout/Sider";
 
@@ -33,6 +34,9 @@ const Sidebar: React.FC<PropsType> = ({ theme, collapsed, switchTheme }) => {
         </Menu.Item>
         <Menu.Item key="product" icon={<ShoppingOutlined />}>
           <Link to="product" state={{menuItem: ['product']}}>Товары</Link>
+        </Menu.Item>
+        <Menu.Item key="offer" icon={<ShopOutlined />}>
+          <Link to="offer" state={{menuItem: ['offer']}}>Остатки</Link>
         </Menu.Item>
       </Menu>
       {/* {!collapsed ? (

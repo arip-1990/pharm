@@ -14,8 +14,10 @@ class ShowController extends Controller
         $attributes = [];
         foreach($product->values as $value) {
             $attributes[] = [
-                'attrubuteName' => $value->attribute->name,
-                'attrubuteType' => $value->attribute->type,
+                'id' => $value->attribute->id,
+                'name' => $value->attribute->name,
+                'type' => $value->attribute->type,
+                'variants' => $value->attribute->variants,
                 'value' => $value->value,
             ];
         }

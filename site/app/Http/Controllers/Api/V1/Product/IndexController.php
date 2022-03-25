@@ -29,12 +29,12 @@ class IndexController extends Controller
                 $query->where($request->get('searchColumn'), 'like', $request->get('searchText') . '%');
         }
 
-        $field = $request->get('orderField');
-        if ($field) {
-            if ($field === 'category')
-                $query->join('categories', 'categories.id', '=', 'products.category_id')->orderBy('categories.name', $request->get('orderDirection'));
+        if ($request->get('orderField')) {
+            if ($request->get('orderField') === 'category')
+                $query->join('categories', 'categories.id', '=', 'products.category_id')
+                    ->orderBy('categories.name', $request->get('orderDirection'));
             else
-                $query->orderBy($field, $request->get('orderDirection'));
+                $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
         }
 
         return ProductResource::collection($query->paginate($request->get('pageSize', 10)));

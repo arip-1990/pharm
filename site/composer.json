@@ -11,6 +11,7 @@
         "php": "^8.0",
         "ext-curl": "*",
         "ext-pdo": "*",
+        "ext-openssl": "*",
         "ext-simplexml": "*",
         "cviebrock/eloquent-sluggable": "^8.0",
         "diglactic/laravel-breadcrumbs": "^7.0",

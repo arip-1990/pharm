@@ -1,35 +1,23 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
 import {Button, Card, Col, Row, Table, TablePaginationConfig} from "antd";
-import {useFetchOrdersQuery} from "../../services/OrderService";
-import StatusStep from "./StatusStep";
 import {useSessionStorage} from "react-use-storage";
+import {useFetchOffersQuery} from "../../services/OfferService";
 
 const columns = [
   {
-    title: "№",
-    dataIndex: "id",
+    title: "Код",
+    dataIndex: "code",
     sorter: true,
   },
   {
-    title: "Пользователь",
-    dataIndex: "user",
+    title: "Наименование",
+    dataIndex: "name",
     sorter: true,
   },
   {
-    title: "Аптека",
-    dataIndex: "store",
-    sorter: true,
-  },
-  {
-    title: "Статус",
-    dataIndex: "status",
-    width: 640
-  },
-  {
-    title: "Дата",
-    dataIndex: "created_at",
-    sorter: true,
+    title: "Количество аптек",
+    dataIndex: "stores",
   },
 ];
 
@@ -39,11 +27,11 @@ interface StorageType {
 }
 
 const Order: React.FC = () => {
-  const [filters, setFilters] = useSessionStorage<StorageType>('orderFilters', {
+  const [filters, setFilters] = useSessionStorage<StorageType>('offerFilters', {
     order: {field: null, direction: 'asc'},
     pagination: {current: 1, pageSize: 10}
   });
-  const {data: orders, isLoading: fetchLoading} = useFetchOrdersQuery(filters);
+  const {data: offers, isLoading: fetchLoading} = useFetchOffersQuery(filters);
   const navigate = useNavigate();
 
   const handleChange = (
@@ -72,41 +60,32 @@ const Order: React.FC = () => {
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
-        <h2>Заказы</h2>
+        <h2>Остатки</h2>
       </Col>
       <Col span={24}>
         <Card title={
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <span>`Всего ${orders?.meta.total.toLocaleString('ru') || 0} записи`</span>
+            <span>`Всего ${offers?.meta.total.toLocaleString('ru') || 0} записи`</span>
             <Button type='primary' onClick={resetFilters}>Сбросить фильтр</Button>
           </div>
         }>
           <Table
             columns={columns}
             loading={fetchLoading}
-            dataSource={orders?.data.map((item) => ({
-              key: item.id,
-              id: item.id,
-              user: item.user.name,
-              store: item.store.name,
-              status: (
-                <StatusStep
-                  full
-                  statuses={item.statuses}
-                  paymentType={item.paymentType}
-                  deliveryType={item.deliveryType}
-                />
-              ),
-              created_at: item.createdAt.format("DD.MM.YYYY[г.]"),
+            dataSource={offers?.data.map((item) => ({
+              key: item.slug,
+              code: item.code,
+              name: item.name,
+              stores: item.items.length,
             }))}
             onChange={handleChange}
             pagination={{
-              current: orders?.meta.current_page || filters.pagination.current,
-              total: orders?.meta.total || 0,
-              pageSize: orders?.meta.per_page || filters.pagination.pageSize,
+              current: offers?.meta.current_page || filters.pagination.current,
+              total: offers?.meta.total || 0,
+              pageSize: offers?.meta.per_page || filters.pagination.pageSize,
             }}
             onRow={(record) => ({
-              onClick: () => navigate(`/order/${record.id}`, {state: {menuItem: ['order']}})
+              onClick: () => navigate(`/offer/${record.key}`, {state: {menuItem: ['offer']}})
             })}
           />
         </Card>

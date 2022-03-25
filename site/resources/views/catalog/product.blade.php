@@ -23,7 +23,11 @@
         </div>
 
         <div class="col-12 col-lg-9 d-flex flex-column">
-            <h4 class="text-center mb-3" itemprop="name">{{ $product->name }}</h4>
+            <div class="row">
+                <div class="col-12 col-lg-8 col-xxl-9">
+                    <h4 class="text-center mb-3" itemprop="name">{{ $product->name }}</h4>
+                </div>
+            </div>
 
             <div class="row" style="min-height: 50%">
                 <div class="col-12 col-lg-8 col-xxl-9 mb-3 mb-lg-0">
@@ -42,7 +46,7 @@
                                 @endswitch
                             @endforeach
                             <h6>
-                                <b class="collapsed description-info" data-bs-toggle="collapse" data-bs-target="#product-desc">Информация о товаре</b>
+                                <b class="collapsed description-info text-primary" data-bs-toggle="collapse" data-bs-target="#product-desc">Информация о товаре</b>
                             </h6>
                         </div>
                     @endif

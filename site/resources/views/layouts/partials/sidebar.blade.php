@@ -1,11 +1,13 @@
 <nav class="nav left-nav px-4">
     @switch(\Illuminate\Support\Facades\Route::currentRouteName())
         @case('profile')
+        @case('profile.edit')
             <span class="personal-links active">Профиль</span>
             <a class="personal-links" href="{{ route('order') }}">Заказы</a>
             <a class="personal-links" href="{{ route('favorite') }}">Избранное</a>
             @break
         @case('order')
+        @case('order.show')
             <a class="personal-links" href="{{ route('profile') }}">Профиль</a>
             <span class="personal-links active">Заказы</span>
             <a class="personal-links" href="{{ route('favorite') }}">Избранное</a>

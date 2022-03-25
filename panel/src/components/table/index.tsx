@@ -3,7 +3,7 @@ import { SpinProps, Table as BaseTable, TablePaginationConfig } from "antd";
 import { ColumnProps } from "antd/es/table";
 import { FilterValue } from "antd/lib/table/interface";
 import { SizeType } from "antd/es/config-provider/SizeContext";
-import { GetComponentProps } from "rc-table/lib/interface";
+import { GetComponentProps, PanelRender } from "rc-table/lib/interface";
 
 interface PropsType {
   size?: SizeType;
@@ -17,7 +17,8 @@ interface PropsType {
     filters: Record<string, FilterValue | null>,
     sorter: any
   ) => void;
-  onRow?: GetComponentProps<any>
+  onRow?: GetComponentProps<any>,
+  footer?: PanelRender<any>
 }
 
 const Table: React.FC<PropsType> = ({
@@ -28,7 +29,8 @@ const Table: React.FC<PropsType> = ({
   loading,
   pagination,
   onChange,
-  onRow
+  onRow,
+  footer
 }) => {
   const handleChange = (
     pagination: TablePaginationConfig,
@@ -48,6 +50,7 @@ const Table: React.FC<PropsType> = ({
       onChange={handleChange}
       pagination={pagination ? { ...pagination } : false}
       onRow={onRow}
+      footer={footer}
     />
   );
 };

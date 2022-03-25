@@ -30,8 +30,10 @@ class ProductResource extends JsonResource
             'status' => $this->status,
             'marked' => $this->marked,
             'attributes' => $this->values->map(fn(Value $value) => [
-                'attrubuteName' => $value->attribute->name,
-                'attrubuteType' => $value->attribute->type,
+                'id' => $value->attribute->id,
+                'name' => $value->attribute->name,
+                'type' => $value->attribute->type,
+                'variants' => $value->attribute->variants,
                 'value' => $value->value,
             ]),
             'createdAt' => $this->created_at,

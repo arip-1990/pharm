@@ -13,7 +13,7 @@
             <h4 class="text-center">Способ получения</h4>
             <div class="row">
                 <div class="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
-                    <label class="radio-button">
+                    <label class="radio-button active">
                         <input type="radio" name="delivery" class="radio-button_pin" value="0" checked />
                         <p class="radio-button_text">Самовывоз<span>Бесплатно</span></p>
                     </label>
@@ -37,7 +37,7 @@
             <h4 class="text-center p-4 mt-3" style="border-top: 2px solid #f7f7f7;">Способ оплаты</h4>
             <div class="row">
                 <div class="col-10 col-lg-5 col-xl-4 offset-1 offset-lg-0 offset-xl-1">
-                    <label class="radio-button">
+                    <label class="radio-button active">
                         <input type="radio" name="payment" class="radio-button_pin" value="0" checked />
                         <p class="radio-button_text">Оплата наличными<span>При получении</span></p>
                     </label>
