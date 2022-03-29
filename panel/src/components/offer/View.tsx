@@ -16,7 +16,7 @@ const itemColumns = [
 
 const View: React.FC = () => {
     const {slug} = useParams();
-    const {data: offer, isLoading: fetchLoading} = useFetchOfferQuery(slug);
+    const {data: offer, isLoading: fetchLoading} = useFetchOfferQuery(slug || "", { skip: !slug });
 
     return (
         <Row gutter={[32, 32]}>

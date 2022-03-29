@@ -18,7 +18,7 @@ const itemColumns = [
 
 const View: React.FC = () => {
   const { id } = useParams();
-  const { data: order, isLoading: fetchLoading } = useFetchOrderQuery(Number(id));
+  const { data: order, isLoading: fetchLoading } = useFetchOrderQuery(Number(id), {skip: !id});
 
   return (
     <Row gutter={[32, 32]}>

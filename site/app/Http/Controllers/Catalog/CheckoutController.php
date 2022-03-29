@@ -6,6 +6,7 @@ use App\Models\CartItem;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\ProductStatistic;
+use App\Models\Status;
 use App\Models\Store;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Catalog\CheckoutRequest;
@@ -58,8 +59,9 @@ class CheckoutController extends Controller
     {
         $order = $this->orderService->checkout($request);
 
-        if ((int)$request['payment'] === Order::PAYMENT_TYPE_SBER)
+        if ((int)$request['payment'] === Order::PAYMENT_TYPE_SBER) {
             return redirect($this->orderService->paymentSberbank($order, route('checkout.finish', $order, true)));
+        }
 
         return redirect()->route('checkout.finish', $order);
     }
@@ -78,8 +80,10 @@ class CheckoutController extends Controller
         }
         catch (\Exception $e) {}
 
-        $order->sent();
-        $order->save();
+        if (!$order->inStatus(Status::STATUS_PAID) or !$order->isSend()) {
+            $order->sent();
+            $order->save();
+        }
 
         return view('checkout.finish', compact('title', 'order', 'cartService'));
     }

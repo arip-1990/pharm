@@ -30,11 +30,16 @@ class IndexController extends Controller
         }
 
         if ($request->get('orderField')) {
-            if ($request->get('orderField') === 'category')
+            if ($request->get('orderField') === 'category') {
                 $query->join('categories', 'categories.id', '=', 'products.category_id')
                     ->orderBy('categories.name', $request->get('orderDirection'));
-            else
+            }
+            elseif ($request->get('orderField') === 'photo') {
+                $query->withCount('photos')->orderBy('photos_count', $request->get('orderDirection'));
+            }
+            else {
                 $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
+            }
         }
 
         return ProductResource::collection($query->paginate($request->get('pageSize', 10)));

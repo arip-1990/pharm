@@ -13,12 +13,10 @@ class DeletePhotoController extends Controller
     {
         try {
             unlink(glob(Storage::path("images/original/{$photo->product_id}") . "/{$photo->id}.*")[0]);
+            $photo->delete();
         }
         catch (\Exception $e) {
             return new JsonResponse($e->getMessage());
-        }
-        finally {
-            $photo->delete();
         }
 
         return new JsonResponse();

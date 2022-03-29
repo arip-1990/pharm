@@ -3,43 +3,7 @@ import {Button, Card, Col, Row, Table, TablePaginationConfig} from 'antd';
 import {useFetchStatisticsQuery} from '../../services/StatisticService';
 import moment from 'moment';
 import {useSessionStorage} from "react-use-storage";
-
-const columns = [
-  {
-    title: 'ip',
-    dataIndex: 'ip',
-    sorter: true,
-  },
-  {
-    title: 'Пользователь',
-    dataIndex: 'user',
-    sorter: true,
-  },
-  {
-    title: 'Город',
-    dataIndex: 'city',
-    sorter: true,
-  },
-  {
-    title: 'Система',
-    dataIndex: 'os',
-    sorter: true,
-  },
-  {
-    title: 'Браузер',
-    dataIndex: 'browser',
-    sorter: true,
-  },
-  {
-    title: 'Зашел на сайт',
-    dataIndex: 'created_at',
-    sorter: true,
-  },
-  {
-    title: 'На сайте',
-    dataIndex: 'diff',
-  },
-];
+import {SortOrder} from "antd/lib/table/interface";
 
 interface StorageType {
   order: { field: string | null, direction: "asc" | "desc" };
@@ -52,6 +16,49 @@ const Statistic: React.FC = () => {
     pagination: {current: 1, pageSize: 10}
   });
   const {data: statistics, isLoading: fetchLoading} = useFetchStatisticsQuery(filters);
+
+  const columns = [
+    {
+      title: 'ip',
+      dataIndex: 'ip',
+      sorter: true,
+      sortOrder: filters.order.field === 'ip' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: 'Пользователь',
+      dataIndex: 'user',
+      sorter: true,
+      sortOrder: filters.order.field === 'user' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: 'Город',
+      dataIndex: 'city',
+      sorter: true,
+      sortOrder: filters.order.field === 'city' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: 'Система',
+      dataIndex: 'os',
+      sorter: true,
+      sortOrder: filters.order.field === 'os' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: 'Браузер',
+      dataIndex: 'browser',
+      sorter: true,
+      sortOrder: filters.order.field === 'browser' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: 'Зашел на сайт',
+      dataIndex: 'created_at',
+      sorter: true,
+      sortOrder: filters.order.field === 'created_at' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: 'На сайте',
+      dataIndex: 'diff',
+    },
+  ];
 
   const handleChange = (pag: TablePaginationConfig, filter: any, sorter: any) => {
     setFilters({
@@ -80,7 +87,7 @@ const Statistic: React.FC = () => {
       <Col span={24}>
         <Card title={
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <span>`Всего ${statistics?.meta.total.toLocaleString('ru') || 0} записи`</span>
+            <span>Всего {statistics?.meta.total.toLocaleString('ru') || 0} записи</span>
             <Button type='primary' onClick={resetFilters}>Сбросить фильтр</Button>
           </div>
         }>

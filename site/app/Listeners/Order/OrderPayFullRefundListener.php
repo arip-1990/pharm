@@ -16,21 +16,22 @@ class OrderPayFullRefundListener implements ShouldQueue
         $order = $event->order;
         if ($order->payment_type === Order::PAYMENT_TYPE_SBER and $order->isPay() and !$order->isFullRefund()) {
             $response = $this->getOrderInfo($order->sber_id);
-            if($response['errorCode'] == 0) {
-                $message = 'Успешно! sber_id: ' . $order->sber_id;
+            try {
+                if($response['errorCode'] == 0) {
+                    $order->changeStatusState(Status::STATE_SUCCESS);
+                }
+                elseif (!isset($response['errorCode'])) {
+                    throw new \DomainException('Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id);
+                }
+                else {
+                    throw new \DomainException('Ошибка! ' . $response['errorMessage'] . ', sber_id: ' . $order->sber_id);
+                }
             }
-            elseif (!isset($response['errorCode'])) {
-                $message = 'Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id;
-                Exception::create($order->id, 'full-refund', $message)->save();
-                throw new \DomainException($message);
-            }
-            else {
-                $message = 'Ошибка! ' . $response['errorMessage'] . ', sber_id: ' . $order->sber_id;
+            catch (\Exception $exception) {
                 $order->changeStatusState(Status::STATE_ERROR);
                 $order->save();
 
-                Exception::create($order->id, 'full-refund', $message)->save();
-                throw new \DomainException($message);
+                Exception::create($order->id, 'full-refund', $exception->getMessage())->save();
             }
         }
 

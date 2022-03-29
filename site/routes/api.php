@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/edit-order', [Api\V1\Order\EditController::class, 'handle'])->middleware('auth.basic.once');
+Route::get('/pay', [Api\PayController::class, 'handle']);
 
 Route::prefix('v1')->group(function () {
     Route::post('/login', [Api\V1\Auth\LoginController::class, 'handle']);

@@ -39,9 +39,8 @@ class OrderSendListener implements ShouldQueue
             $order->changeStatusState(Status::STATE_ERROR);
             Exception::create($order->id, '1c', $e->getMessage())->save();
         }
-        finally {
-            $order->save();
-        }
+
+        $order->save();
     }
 
     private function getSendInfo(Order $order): string

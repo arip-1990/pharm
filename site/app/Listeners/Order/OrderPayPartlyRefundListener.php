@@ -13,35 +13,26 @@ class OrderPayPartlyRefundListener implements ShouldQueue
     public function handle(OrderPayPartlyRefund $event): void
     {
         $order = $event->order;
-        if (!$order->isPay() or $order->isPartlyRefund()) {
-            $message = 'Заказ не оплачен или возмещен.';
-            Exception::create($order->id, 'partly-refund', $message)->save();
-            throw new \DomainException($message);
-        }
+        try {
+            if (!$order->isPay() or $order->isPartlyRefund())
+                throw new \DomainException('Заказ не оплачен или возмещен.');
 
-        if(!$difference = $order->getDifferenceOfRefund()) {
-            $message = 'Сумма возврата не должна быть равна сумме заказа при частичном возврате! sber_id: ' . $order->sber_id;
-            Exception::create($order->id, 'partly-refund', $message)->save();
-            throw new \DomainException($message);
-        }
+            if(!$difference = $order->getDifferenceOfRefund())
+                throw new \DomainException('Сумма возврата не должна быть равна сумме заказа при частичном возврате! sber_id: ' . $order->sber_id);
 
-        $response = $this->getOrderInfo($order->sber_id, $difference);
-        if(!isset($response['errorCode'])) {
-            $message = 'Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id;
-            Exception::create($order->id, 'partly-refund', $message)->save();
-            throw new \DomainException($message);
-        }
-        elseif ($response['errorCode'] == 0) {
+            $response = $this->getOrderInfo($order->sber_id, $difference);
+            if(!isset($response['errorCode']))
+                throw new \DomainException('Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id);
+            elseif ($response['errorCode'] != 0)
+                throw new \DomainException('Ошибка! ' . $response['errorMessage'].', sber_id: ' . $order->sber_id);
+
             $order->changeStatusState(Status::STATE_SUCCESS);
             $order->save();
         }
-        else {
-            $message = 'Ошибка! ' . $response['errorMessage'].', sber_id: ' . $order->sber_id;
+        catch (\Exception $exception) {
             $order->changeStatusState(Status::STATE_ERROR);
             $order->save();
-
-            Exception::create($order->id, 'partly-refund', $message)->save();
-            throw new \DomainException($message);
+            Exception::create($order->id, 'partly-refund', $exception->getMessage())->save();
         }
     }
 

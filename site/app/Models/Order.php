@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Events\Order\OrderPay;
 use App\Events\Order\OrderPayFullRefund;
 use App\Events\Order\OrderPayPartlyRefund;
 use App\Events\Order\OrderSend;
@@ -66,7 +65,7 @@ class Order extends Model
         $item->payment_type = $paymentType;
         $item->delivery_type = $deliveryType;
         $item->cost = $cost;
-        $item->addStatus(Status::STATUS_ACCEPTED);
+        $item->addStatus(Status::STATUS_ACCEPTED, Status::STATE_SUCCESS);
         return $item;
     }
 
@@ -75,24 +74,13 @@ class Order extends Model
         $this->delivery = $delivery;
     }
 
-    public function pay(string $sberId = null): void
+    public function pay(string $sberId): void
     {
         if ($this->isPay())
             throw new \DomainException('Заказ уже оплачен.');
 
-        if ($sberId) {
-            $this->sber_id = $sberId;
-            $this->addStatus(Status::STATUS_PAID);
-            OrderPay::dispatch($this);
-        }
-        else {
-            foreach ($this->statuses as $status) {
-                if ($status->equal(Status::STATUS_PAID)) {
-                    $status->changeState(Status::STATE_SUCCESS);
-                    break;
-                }
-            }
-        }
+        $this->sber_id = $sberId;
+        $this->addStatus(Status::STATUS_PAID);
     }
 
     public function sent(): void

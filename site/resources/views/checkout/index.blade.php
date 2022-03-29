@@ -64,7 +64,7 @@
             @foreach($cartService->getItems() as $item)
                 <div class="row">
                     <div class="col-6 col-md-8 offset-1 offset-md-0">
-                        {{ $item->product->name }}
+                        <a href="{{ route('catalog.product', ['product' => $item->product->slug]) }}">{{ $item->product->name }}</a>
                     </div>
                     <div class="col-4 col-md-4 text-end">
                         {{ $item->product->getPrice($store) }}&#8381;<br />

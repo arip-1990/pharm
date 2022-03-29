@@ -1,6 +1,6 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import {Card, TablePaginationConfig, Input, Space, Button, Image, Tag, Row, Col} from "antd";
+import {Card, TablePaginationConfig, Input, Space, Button, Image, Tag, Row, Col, Typography} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import {useSessionStorage} from "react-use-storage";
 import {useFetchProductsQuery} from "../../services/ProductService";
@@ -22,24 +22,15 @@ const Product: React.FC = () => {
     pagination: {current: 1, pageSize: 10}
   });
   const {data: products, isLoading: fetchLoading} = useFetchProductsQuery(filters);
-  const [searchValue, setSearchValue] = React.useState<string>();
   const navigate = useNavigate();
 
   const getColumnSearchProps = (dataIndex: string) => ({
-    filterDropdown: ({
-                       setSelectedKeys,
-                       selectedKeys,
-                       confirm,
-                       clearFilters,
-                     }: any) => (
+    filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}: any) => (
       <div style={{padding: 8}}>
         <Input
           placeholder={`Поиск ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e => {
-            setSearchValue(e.target.value ? e.target.value : undefined);
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{marginBottom: 8, display: "block"}}
         />
@@ -54,7 +45,7 @@ const Product: React.FC = () => {
             Поиск
           </Button>
           <Button
-            onClick={() => handleReset(clearFilters)}
+            onClick={() => handleReset(clearFilters, confirm)}
             size="small"
             style={{width: 90}}
           >
@@ -65,14 +56,7 @@ const Product: React.FC = () => {
     ),
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{color: filtered ? "#1890ff" : undefined}}/>
-    ),
-    onFilter: (value: any, record: any) =>
-      record[dataIndex]
-        ? record[dataIndex]
-          .toString()
-          .toLowerCase()
-          .includes(value.toLowerCase())
-        : "",
+    )
   });
 
   const columns: any = [
@@ -89,29 +73,36 @@ const Product: React.FC = () => {
           value: "off",
         },
       ],
-      defaultFilteredValue: filters.filters.filter(item => item.field === 'photo').map(item => item.value),
+      filteredValue: filters.filters.filter(item => item.field === 'photo').map(item => item.value),
       filterMultiple: false,
-      render: (url: string) => <Image preview={false} width={120} src={url}/>,
+      sorter: true,
+      sortOrder: filters.order.field === 'photo' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+      render: (data: {url: string, total: number}) => (
+        <>
+          <Image preview={false} width={120} src={data.url} />
+          <Typography.Text type="secondary" style={{display: 'block', textAlign: 'center'}}>(Кол-во: {data.total})</Typography.Text>
+        </>
+      ),
     },
     {
       title: "Код товара",
       dataIndex: "code",
       sorter: true,
-      defaultSortOrder: filters.order.field === 'code' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+      sortOrder: filters.order.field === 'code' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       ...getColumnSearchProps("code"),
     },
     {
       title: "Штрих-код",
       dataIndex: "barcode",
       sorter: true,
-      defaultSortOrder: filters.order.field === 'barcode' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+      sortOrder: filters.order.field === 'barcode' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       ...getColumnSearchProps("barcode"),
     },
     {
       title: "Название",
       dataIndex: "name",
       sorter: true,
-      defaultSortOrder: filters.order.field === 'name' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+      sortOrder: filters.order.field === 'name' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       ...getColumnSearchProps("name"),
     },
     {
@@ -128,8 +119,8 @@ const Product: React.FC = () => {
           value: "off",
         },
       ],
-      defaultFilteredValue: filters.filters.filter(item => item.field === 'category').map(item => item.value),
-      defaultSortOrder: filters.order.field === 'category' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+      filteredValue: filters.filters.filter(item => item.field === 'category').map(item => item.value),
+      sortOrder: filters.order.field === 'category' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       filterMultiple: false,
     },
     {
@@ -145,25 +136,26 @@ const Product: React.FC = () => {
           value: "off",
         },
       ],
-      defaultFilteredValue: filters.filters.filter(item => item.field === 'status').map(item => item.value),
+      filteredValue: filters.filters.filter(item => item.field === 'status').map(item => item.value),
       filterMultiple: false,
       sorter: true,
-      defaultSortOrder: filters.order.field === 'status' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+      sortOrder: filters.order.field === 'status' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       render: (status: boolean) => status ? <Tag color="green">Активен</Tag> : <Tag color="red">Не активен</Tag>
     },
   ];
 
   const handleSearch = (
     selectedKeys: string[],
-    confirm: any,
+    confirm: () => void,
     dataIndex: string
   ) => {
     confirm();
-    searchValue && setFilters({...filters, search: {text: searchValue, column: dataIndex}});
+    selectedKeys[0] && setFilters({...filters, search: {text: selectedKeys[0], column: dataIndex}});
   };
 
-  const handleReset = (clearFilters: () => void) => {
+  const handleReset = (clearFilters: () => void, confirm: () => void) => {
     clearFilters();
+    confirm();
     setFilters({...filters, search: {column: "", text: ""}});
   };
 
@@ -212,7 +204,7 @@ const Product: React.FC = () => {
       <Col span={24}>
         <Card title={
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <span>`Всего ${products?.meta.total.toLocaleString('ru') || 0} записи`</span>
+            <span>Всего {products?.meta.total.toLocaleString('ru') || 0} записи</span>
             <Button type='primary' onClick={resetFilters}>Сбросить фильтр</Button>
           </div>
         }>
@@ -221,7 +213,7 @@ const Product: React.FC = () => {
             loading={fetchLoading}
             data={products?.data.map((item) => ({
               key: item.slug,
-              photo: item.photos[0].url,
+              photo: {url: item.photos[0].url, total: item.photos.length},
               code: item.code,
               barcode: item.barcode,
               name: item.name,

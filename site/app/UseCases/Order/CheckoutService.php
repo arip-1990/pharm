@@ -35,7 +35,8 @@ class CheckoutService
             $offers = new Collection();
             $items = $this->cartService->getItems()->map(function (CartItem $item) use (&$offers) {
                 /** @var Offer $offer */
-                $offer = Offer::query()->where('store_id', $this->cartService->getStore()->id)->where('product_id', $item->product_id)->first();
+                $offer = Offer::query()->where('store_id', $this->cartService->getStore()->id)
+                    ->where('product_id', $item->product_id)->first();
                 $offer->checkout($item->quantity);
                 $offers->add($offer);
 

@@ -9,3 +9,7 @@ const zoom = event => {
 document.querySelectorAll('figure.zoom').forEach(element => {
   element.addEventListener('mousemove', zoom);
 });
+
+document.querySelectorAll('figure.zoom').forEach(element => {
+  element.addEventListener('mouseleave', () => element.style = 'background-image: ' + element.style.backgroundImage);
+});

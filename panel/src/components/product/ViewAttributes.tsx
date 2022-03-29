@@ -6,6 +6,46 @@ import {IProduct} from "../../models/IProduct";
 import {useUpdateAttributesProductMutation} from "../../services/ProductService";
 import {useFetchAttributesQuery} from "../../services/AttributeService";
 
+interface PropsAttributeType {
+  visible: boolean;
+  attributes: any;
+  onCreate: (values: number[]) => void;
+  onCancel: () => void;
+}
+
+const NewAttribute: React.FC<PropsAttributeType> = ({visible, attributes, onCreate, onCancel}) => {
+  const [form] = Form.useForm();
+
+  const handleOk = async () => {
+    try {
+      const {attributes} = await form.validateFields();
+      form.resetFields();
+      onCreate(attributes);
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  return (
+    <Modal
+      title="Добавить аттрибут"
+      okText='Добавить'
+      visible={visible}
+      onCancel={onCancel}
+      onOk={handleOk}
+    >
+      <Form component={false} form={form}>
+        <Form.Item style={{margin: 0}} name='attributes'>
+          <Select mode="multiple" allowClear style={{width: '100%'}}>
+            {attributes.map((item: any) => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
+          </Select>
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+}
+
 interface PropsType {
   product?: IProduct;
   loading: boolean;
@@ -14,7 +54,7 @@ interface PropsType {
 const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
   const [edit, setEdit] = React.useState<boolean>(false);
   const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [newAttributes, setNewAttributes] = React.useState([]);
+  const [newAttributes, setNewAttributes] = React.useState<number[]>([]);
   const {data: attributes} = useFetchAttributesQuery();
   const [updateProduct] = useUpdateAttributesProductMutation();
   const [form] = Form.useForm();
@@ -31,7 +71,7 @@ const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
               return <Form.Item style={{margin: 0}} name={item.name} initialValue={item.value}>
                 {item.variants.length
                   ? <Select style={{width: '100%'}}>
-                    {item.variants.map((variant, i) => <Select.Option key={i + 1} value={variant}>{variant}</Select.Option>)}
+                    {item.variants.map((variant: string, i: number) => <Select.Option key={i + 1} value={variant}>{variant}</Select.Option>)}
                   </Select>
                   : <Input/>}
               </Form.Item>;
@@ -47,18 +87,25 @@ const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
   ];
 
   const handleSave = async () => {
-    let data = await form.validateFields();
-    if (product) updateProduct({slug: product.slug, data});
-    setEdit(false);
+    try {
+      let data = await form.validateFields();
+      if (product) updateProduct({slug: product.slug, data});
+      setEdit(false);
+      setNewAttributes([]);
+    }
+    catch (e) {
+      console.log(e);
+    }
   }
 
   const handleReset = () => {
     setEdit(false);
     form.resetFields();
+    setNewAttributes([]);
   }
 
   const getData = () => {
-    let data = [];
+    let data: any = [];
     product?.attributes.forEach(item => {
       data.push({
         key: item.name,
@@ -82,9 +129,10 @@ const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
       title="Аттрибуты"
       loading={loading}
       extra={edit
-        ?
-        <Space><CheckOutlined style={{color: '#52c41a'}} onClick={handleSave}/><CloseOutlined style={{color: '#ff4d4f'}}
-                                                                                              onClick={handleReset}/></Space>
+        ? <Space>
+          <CheckOutlined style={{color: '#52c41a'}} onClick={handleSave}/>
+          <CloseOutlined style={{color: '#ff4d4f'}} onClick={handleReset}/>
+        </Space>
         : <EditOutlined style={{color: '#1890ff'}} onClick={() => setEdit(true)}/>
       }
     >
@@ -98,20 +146,17 @@ const ViewAttributes: React.FC<PropsType> = ({product, loading}) => {
         />
       </Form>
 
-      <Modal
-        title="Добавить аттрибут"
-        okText='Добавить'
+      <NewAttribute
         visible={showModal}
+        attributes={
+          attributes?.filter((item: any) => product?.attributes.length ? product.attributes.some(item2 => item2.id !== item.id) : true)
+        }
+        onCreate={values => {
+          setNewAttributes(values);
+          setShowModal(false);
+        }}
         onCancel={() => setShowModal(false)}
-        onOk={() => setShowModal(false)}
-        footer={null}
-      >
-        <Select mode="multiple" allowClear style={{width: '100%'}} onChange={(values) => setNewAttributes(values)}>
-          {attributes?.filter(item => product ? product.attributes.some(item2 => item2.id !== item.id) : true)
-            .map(item => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)
-          }
-        </Select>
-      </Modal>
+      />
     </Card>
   )
 }

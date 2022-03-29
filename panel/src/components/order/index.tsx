@@ -4,34 +4,7 @@ import {Button, Card, Col, Row, Table, TablePaginationConfig} from "antd";
 import {useFetchOrdersQuery} from "../../services/OrderService";
 import StatusStep from "./StatusStep";
 import {useSessionStorage} from "react-use-storage";
-
-const columns = [
-  {
-    title: "№",
-    dataIndex: "id",
-    sorter: true,
-  },
-  {
-    title: "Пользователь",
-    dataIndex: "user",
-    sorter: true,
-  },
-  {
-    title: "Аптека",
-    dataIndex: "store",
-    sorter: true,
-  },
-  {
-    title: "Статус",
-    dataIndex: "status",
-    width: 640
-  },
-  {
-    title: "Дата",
-    dataIndex: "created_at",
-    sorter: true,
-  },
-];
+import {SortOrder} from "antd/lib/table/interface";
 
 interface StorageType {
   order: { field: string | null, direction: "asc" | "desc" };
@@ -45,6 +18,38 @@ const Order: React.FC = () => {
   });
   const {data: orders, isLoading: fetchLoading} = useFetchOrdersQuery(filters);
   const navigate = useNavigate();
+
+  const columns = [
+    {
+      title: "№",
+      dataIndex: "id",
+      sorter: true,
+      sortOrder: filters.order.field === 'id' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: "Пользователь",
+      dataIndex: "user",
+      sorter: true,
+      sortOrder: filters.order.field === 'user' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: "Аптека",
+      dataIndex: "store",
+      sorter: true,
+      sortOrder: filters.order.field === 'store' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: "Статус",
+      dataIndex: "status",
+      width: 640
+    },
+    {
+      title: "Дата",
+      dataIndex: "created_at",
+      sorter: true,
+      sortOrder: filters.order.field === 'created_at' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+  ];
 
   const handleChange = (
     pag: TablePaginationConfig,
@@ -77,7 +82,7 @@ const Order: React.FC = () => {
       <Col span={24}>
         <Card title={
           <div style={{display: 'flex', justifyContent: 'space-between'}}>
-            <span>`Всего ${orders?.meta.total.toLocaleString('ru') || 0} записи`</span>
+            <span>Всего {orders?.meta.total.toLocaleString('ru') || 0} записи</span>
             <Button type='primary' onClick={resetFilters}>Сбросить фильтр</Button>
           </div>
         }>

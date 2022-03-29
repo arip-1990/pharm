@@ -9,6 +9,7 @@ export const offerApi = createApi({
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
     fetchOffers: builder.query<IPagination<IOffer>, {
+      search: { column: string, text: string } | undefined,
       pagination: { current: number, pageSize: number },
       order: { field: string | null, direction: string }
     }>({
@@ -17,6 +18,11 @@ export const offerApi = createApi({
           page: args.pagination.current,
           pageSize: args.pagination.pageSize,
         };
+
+        if (args.search?.column && args.search?.text) {
+          params.searchColumn = args.search.column;
+          params.searchText = args.search.text;
+        }
 
         if (args.order.field) {
           params.orderField = args.order.field;

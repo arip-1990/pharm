@@ -7,7 +7,7 @@ export const attributeApi = createApi({
     reducerPath: 'attributeApi',
     baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
-        fetchAttributes: builder.query<IAttribute, void>({
+        fetchAttributes: builder.query<IAttribute[], void>({
           query: () => ({
             url: '/attribute'
           }),
