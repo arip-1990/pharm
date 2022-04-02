@@ -29,7 +29,7 @@ const Upload: React.FC<PropsType> = ({ slug, photos }) => {
 
   return (
     <Space>
-      {photos.length < 10 ? <BaseUpload
+      {photos.length < 5 ? <BaseUpload
         accept="image/*"
         customRequest={uploadImage}
         listType="picture-card"

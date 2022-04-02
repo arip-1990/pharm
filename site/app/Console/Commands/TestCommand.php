@@ -25,7 +25,7 @@ class TestCommand extends Command
                echo "\033[2KProcessing: " . $i . '/' . $total . "\t({$photoCount})" . "\r";
 
                if ($photoCount > 5) {
-                   for ($j = 5; $j < $photoCount; $j++) {
+                   for ($j = 0; $j < $photoCount - 5; $j++) {
                        $photo = $product->photos->get($j);
                        $files = glob(Storage::path("images/original/{$photo->product_id}") . "/{$photo->id}.*");
                        if (unlink($files[0])) {
