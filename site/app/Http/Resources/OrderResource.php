@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helper;
 use App\Models\OrderItem;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +23,8 @@ class OrderResource extends JsonResource
             'updatedAt' => $this->updated_at,
             'user' => [
                 'id' => $this->user->id,
-                'name' => $this->user->name
+                'name' => $this->user->name,
+                'phone' => Helper::formatPhone($this->user->phone, true)
             ],
             'store' => [
                 'id' => $this->store->id,

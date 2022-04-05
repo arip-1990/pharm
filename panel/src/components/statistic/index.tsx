@@ -92,6 +92,7 @@ const Statistic: React.FC = () => {
           </div>
         }>
           <Table
+            size='small'
             columns={columns}
             loading={fetchLoading}
             dataSource={statistics?.data.map(item => ({

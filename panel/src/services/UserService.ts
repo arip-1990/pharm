@@ -7,10 +7,13 @@ export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
-    fetchUser: builder.query<IUser[], void>({
+    fetchUsers: builder.query<IUser[], void>({
       query: () => ({url: '/user'})
+    }),
+    fetchUser: builder.query<IUser, string>({
+      query: (id) => ({url: '/user' + id})
     }),
   }),
 });
 
-export const { useFetchUserQuery } = userApi;
+export const { useFetchUserQuery, useFetchUsersQuery } = userApi;

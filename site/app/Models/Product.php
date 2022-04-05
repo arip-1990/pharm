@@ -103,7 +103,7 @@ class Product extends Model
 
     protected function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE)->where('name', 'not like', '*%');
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 
     public function changeCategory(int $categoryId): void

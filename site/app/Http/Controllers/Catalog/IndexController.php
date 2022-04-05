@@ -87,7 +87,9 @@ class IndexController extends Controller
         $productIds = Offer::query()->select('product_id')->whereCity($city)->groupBy('product_id')->get()->pluck('product_id');
 
         $paginator = Product::query()->active()->whereIn('id', $productIds)->where(function(Builder $query) use ($searchText) {
-            $query->whereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$searchText]);
+            $query->where('name', 'like', $searchText . '%')
+                ->orWhere('name', 'like', '%' . $searchText . '%')
+                ->orWhereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$searchText]);
         })->paginate(15);
 
         $paginator->appends(['q' => $searchText]);

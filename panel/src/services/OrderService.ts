@@ -11,13 +11,18 @@ export const orderApi = createApi({
   endpoints: (builder) => ({
     fetchOrders: builder.query<IPagination<IOrder>, {
       pagination: { current: number, pageSize: number },
-      order: { field: string | null, direction: string }
+      order: { field: string | null, direction: string },
+      filters: { field: string, value: string }[]
     }>({
       query: (args) => {
         let params: any = {
           page: args.pagination.current,
           pageSize: args.pagination.pageSize,
         };
+
+        args.filters.forEach(filter => {
+          params[filter.field] = filter.value;
+        });
 
         if (args.order.field) {
           params.orderField = args.order.field;

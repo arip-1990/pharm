@@ -28,7 +28,7 @@
             <span>картой <img src="/images/payments.png" height="20px" alt="Мир, Visa, MasterCard, Maestro">, наличными</span>
 
             <h5><b>Контакты:</b></h5>
-            <span>{{ $phone = $store->phone }}</span>
+            <span>{{ \App\Helper::formatPhone($phone = $store->phone) }}</span>
         </div>
     </div>
 @endsection

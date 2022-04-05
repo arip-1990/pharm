@@ -22,22 +22,23 @@ const Product: React.FC = () => {
     pagination: {current: 1, pageSize: 10}
   });
   const {data: products, isLoading: fetchLoading} = useFetchProductsQuery(filters);
+  const [searchText, setSearchText] = React.useState<string>();
   const navigate = useNavigate();
 
   const getColumnSearchProps = (dataIndex: string) => ({
-    filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}: any) => (
+    filterDropdown: ({confirm, clearFilters}: any) => (
       <div style={{padding: 8}}>
         <Input
           placeholder={`Поиск ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          value={searchText || filters.search.text}
+          onChange={e => setSearchText(e.target.value ? e.target.value : undefined)}
+          onPressEnter={() => handleSearch(dataIndex, confirm)}
           style={{marginBottom: 8, display: "block"}}
         />
         <Space>
           <Button
             type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch(dataIndex, confirm)}
             icon={<SearchOutlined/>}
             size="small"
             style={{width: 90}}
@@ -75,8 +76,6 @@ const Product: React.FC = () => {
       ],
       filteredValue: filters.filters.filter(item => item.field === 'photo').map(item => item.value),
       filterMultiple: false,
-      sorter: true,
-      sortOrder: filters.order.field === 'photo' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
       render: (data: {url: string, total: number}) => (
         <>
           <Image preview={false} width={120} src={data.url} />
@@ -144,26 +143,19 @@ const Product: React.FC = () => {
     },
   ];
 
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: () => void,
-    dataIndex: string
-  ) => {
+  const handleSearch = (dataIndex: string, confirm: () => void) => {
+    searchText && setFilters({...filters, search: {text: searchText, column: dataIndex}});
     confirm();
-    selectedKeys[0] && setFilters({...filters, search: {text: selectedKeys[0], column: dataIndex}});
   };
 
   const handleReset = (clearFilters: () => void, confirm: () => void) => {
     clearFilters();
-    confirm();
+    setSearchText(undefined);
     setFilters({...filters, search: {column: "", text: ""}});
+    confirm();
   };
 
-  const handleChange = (
-    pag: TablePaginationConfig,
-    filter: any,
-    sorter: any
-  ) => {
+  const handleChange = (pag: TablePaginationConfig, filter: any, sorter: any) => {
     const tmp: any = [];
     if (filter) {
       for (const [key, value] of Object.entries<string[] | null>(filter)) {
@@ -188,6 +180,7 @@ const Product: React.FC = () => {
   };
 
   const resetFilters = () => {
+    setSearchText(undefined);
     setFilters({
       ...filters,
       search: {column: '', text: ''},
@@ -209,6 +202,7 @@ const Product: React.FC = () => {
           </div>
         }>
           <Table
+            size='small'
             columns={columns}
             loading={fetchLoading}
             data={products?.data.map((item) => ({

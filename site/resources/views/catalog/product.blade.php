@@ -66,7 +66,7 @@
                                 <button class="btn btn-outline-primary" data-type="+">+</button>
                             </div>
                         @else
-                            <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->category->isParent('Лекарственные средства') ? $product->getQuantity(2) : $product->getQuantity() }}">
+                            <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->category?->isParent('Лекарственные средства') ? $product->getQuantity(2) : $product->getQuantity() }}">
                                 Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
                             </a>
                         @endif

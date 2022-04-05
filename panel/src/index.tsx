@@ -21,7 +21,7 @@ const sanctumConfig = {
   csrfCookieRoute: "sanctum/csrf-cookie",
   signInRoute: "api/v1/login",
   signOutRoute: "api/v1/logout",
-  userObjectRoute: "api/v1/user",
+  userObjectRoute: "api/v1/auth",
 };
 
 ReactDOM.render(

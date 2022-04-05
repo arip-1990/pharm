@@ -131,6 +131,7 @@ const Order: React.FC = () => {
           </div>
         }>
           <Table
+            size='small'
             columns={columns}
             loading={fetchLoading}
             dataSource={offers?.data.map((item) => ({

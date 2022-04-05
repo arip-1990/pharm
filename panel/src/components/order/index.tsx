@@ -5,17 +5,21 @@ import {useFetchOrdersQuery} from "../../services/OrderService";
 import StatusStep from "./StatusStep";
 import {useSessionStorage} from "react-use-storage";
 import {SortOrder} from "antd/lib/table/interface";
+import {useFetchUsersQuery} from "../../services/UserService";
 
 interface StorageType {
   order: { field: string | null, direction: "asc" | "desc" };
+  filters: { field: string; value: string }[];
   pagination: { current: number, pageSize: number }
 }
 
 const Order: React.FC = () => {
   const [filters, setFilters] = useSessionStorage<StorageType>('orderFilters', {
     order: {field: null, direction: 'asc'},
-    pagination: {current: 1, pageSize: 10}
+    pagination: {current: 1, pageSize: 10},
+    filters: [],
   });
+  const {data: users} = useFetchUsersQuery();
   const {data: orders, isLoading: fetchLoading} = useFetchOrdersQuery(filters);
   const navigate = useNavigate();
 
@@ -27,10 +31,22 @@ const Order: React.FC = () => {
       sortOrder: filters.order.field === 'id' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
     },
     {
-      title: "Пользователь",
-      dataIndex: "user",
+      title: "Имя",
+      dataIndex: "userName",
+      filters: users?.map(item => ({
+        text: item.name,
+        value: item.id,
+      })),
+      filteredValue: filters.filters.filter(item => item.field === 'userName').map(item => item.value),
       sorter: true,
-      sortOrder: filters.order.field === 'user' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+      sortOrder: filters.order.field === 'userName' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
+    },
+    {
+      title: "Телефон",
+      dataIndex: "userPhone",
+      width: 120,
+      sorter: true,
+      sortOrder: filters.order.field === 'userPhone' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
     },
     {
       title: "Аптека",
@@ -56,7 +72,15 @@ const Order: React.FC = () => {
     filter: any,
     sorter: any
   ) => {
+    const tmp: any = [];
+    if (filter) {
+      for (const [key, value] of Object.entries<string[] | null>(filter)) {
+        if (value?.length) tmp.push({field: key, value: value.pop()});
+      }
+    }
+
     setFilters({
+      filters: tmp.length ? tmp : filters.filters,
       order: {
         field: sorter.column ? sorter.field : null,
         direction: sorter.column
@@ -71,7 +95,7 @@ const Order: React.FC = () => {
   };
 
   const resetFilters = () => {
-    setFilters({...filters, order: {field: null, direction: 'asc'}});
+    setFilters({...filters, order: {field: null, direction: 'asc'}, filters: []});
   }
 
   return (
@@ -87,12 +111,14 @@ const Order: React.FC = () => {
           </div>
         }>
           <Table
+            size='small'
             columns={columns}
             loading={fetchLoading}
             dataSource={orders?.data.map((item) => ({
               key: item.id,
               id: item.id,
-              user: item.user.name,
+              userName: item.user.name,
+              userPhone: item.user.phone,
               store: item.store.name,
               status: (
                 <StatusStep

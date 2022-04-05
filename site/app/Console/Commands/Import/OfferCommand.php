@@ -73,7 +73,7 @@ class OfferCommand extends Command
     {
         $data = $this->getData(3);
         Offer::query()->truncate();
-        Product::query()->update(['status' => false]);
+        Product::query()->active()->update(['status' => false]);
         $fields = [];
         $productIds = [];
         $i = 0;
@@ -88,7 +88,7 @@ class OfferCommand extends Command
                 'price' => $price > 0 ? $price : 0,
                 'quantity' => $quantity > 0 ? $quantity : 0
             ];
-            $productIds[] = $product->id;
+            if (!str_starts_with($product->name, '*')) $productIds[] = $product->id;
             $i++;
 
             if ($i >= 1000) {
