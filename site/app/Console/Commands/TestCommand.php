@@ -28,7 +28,12 @@ class TestCommand extends Command
                    for ($j = 0; $j < $photoCount - 5; $j++) {
                        $photo = $product->photos->get($j);
                        $files = glob(Storage::path("images/original/{$photo->product_id}") . "/{$photo->id}.*");
-                       if (unlink($files[0])) {
+                       if (isset($files[0])) {
+                           if (unlink($files[0])) {
+                               $photo->delete();
+                           }
+                       }
+                       else {
                            $photo->delete();
                        }
                    }

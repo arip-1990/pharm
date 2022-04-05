@@ -4,6 +4,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   LogoutOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import { SiderTheme } from "antd/lib/layout/Sider";
 import { useSanctum } from "react-sanctum";
@@ -30,8 +31,14 @@ const Header: React.FC<PropsType> = ({ theme, collapsed, onCollapsed }) => {
         onClick: onCollapsed,
       })}
 
-      <Menu theme={theme} style={{lineHeight: '64px'}} onClick={handleClickMenu} selectedKeys={[currentMenu]} mode='horizontal'>
-        <Menu.SubMenu key='profile' title={user.name}>
+      <Menu
+        theme={theme}
+        style={{display: 'flex', flex: 0.5, justifyContent: 'end', lineHeight: '64px'}}
+        onClick={handleClickMenu}
+        selectedKeys={[currentMenu]}
+        mode='horizontal'
+      >
+        <Menu.SubMenu key='profile' icon={<UserOutlined />} title={user.name}>
           <Menu.Item key='logout'>
             <LogoutOutlined /> Выход
           </Menu.Item>

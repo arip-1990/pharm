@@ -80,7 +80,7 @@ class CheckoutController extends Controller
         }
         catch (\Exception $e) {}
 
-        if (!$order->inStatus(Status::STATUS_PAID) or !$order->isSend()) {
+        if (!$order->inStatus(Status::STATUS_PAID) and !$order->isSend()) {
             $order->sent();
             $order->save();
         }

@@ -37,7 +37,7 @@ const Order: React.FC = () => {
         text: item.name,
         value: item.id,
       })),
-      filteredValue: filters.filters.filter(item => item.field === 'userName').map(item => item.value),
+      filteredValue: filters.filters?.filter(item => item.field === 'userName').map(item => item.value) || [],
       sorter: true,
       sortOrder: filters.order.field === 'userName' ? (filters.order.direction === 'asc' ? 'ascend' : 'descend') as SortOrder : null,
     },

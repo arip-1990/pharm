@@ -12,7 +12,7 @@ export const orderApi = createApi({
     fetchOrders: builder.query<IPagination<IOrder>, {
       pagination: { current: number, pageSize: number },
       order: { field: string | null, direction: string },
-      filters: { field: string, value: string }[]
+      filters?: { field: string, value: string }[]
     }>({
       query: (args) => {
         let params: any = {
@@ -20,7 +20,7 @@ export const orderApi = createApi({
           pageSize: args.pagination.pageSize,
         };
 
-        args.filters.forEach(filter => {
+        args.filters?.forEach(filter => {
           params[filter.field] = filter.value;
         });
 
