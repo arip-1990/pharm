@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Exception;
 use App\Models\Order;
 use App\Models\Status;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -26,6 +27,15 @@ class PayController
 
         $binarySignature = hex2bin(strtolower($request->get('checksum')));
         $isVerify = openssl_verify($data, $binarySignature, $publicKey, OPENSSL_ALGO_SHA512);
+
+        $log = [
+            '[ ' . Carbon::now()->format('d-m-Y H:i')  . ' ]',
+            'request => ' . implode('|', $request->all()),
+            'key => ' . $publicKey,
+            'verified => ' . (string)$isVerify
+        ];
+        $fw = fopen('pay.log', 'a+');
+        fwrite($fw, implode(PHP_EOL, $log) . PHP_EOL);
 
         if ($isVerify !== 1) {
             return new Response(status: SymfonyResponse::HTTP_PRECONDITION_FAILED);

@@ -26,11 +26,11 @@
                 <div class="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
                     <label class="radio-button">
                         <input type="radio" name="delivery" class="radio-button_pin" value="0" disabled />
-                        <p class="radio-button_text">Доставка<span>Стоимость доставки 150 руб.</span></p>
+                        <p class="radio-button_text">Доставка<span>Указать адрес доставки.</span></p>
                     </label>
                 </div>
                 <div class="col-10 col-lg-6 col-xl-5 col-xxl-5 offset-1 offset-lg-0 offset-xl-1">
-                    Доставка осуществляется с 9:00 до 21:00, без выходных. По другим городам доставка осуществляется по таксометру.
+                    Доставка осуществляется с 9:00 до 21:00, без выходных. Доставка осуществляется по тарифам такси.
                 </div>
             </div>
 
