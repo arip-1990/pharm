@@ -1,6 +1,6 @@
 FROM php:8.0-cli-alpine
 
-RUN apk add --no-cache postgresql-dev bash coreutils unzip \
+RUN apk add --no-cache bash coreutils unzip postgresql-dev \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo_pgsql
 

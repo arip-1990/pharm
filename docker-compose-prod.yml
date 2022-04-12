@@ -234,6 +234,20 @@ services:
     deploy:
       placement:
         constraints: [ node.role == manager ]
+  
+  bot:
+    image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      REDIS_HOST: redis
+    depends_on:
+      - redis
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 5s
 
 volumes:
   db-postgres:

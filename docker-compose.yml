@@ -196,7 +196,7 @@ services:
       - traefik.docker.network=traefik-public
       - traefik.http.routers.mailer.rule=Host(`mailer.pharm.test`)
       - traefik.http.routers.mailer.entryPoints=http
-      - traefik.http.services.mailer.loadBalancer.server.port=8085
+      - traefik.http.services.mailer.loadBalancer.server.port=8025
 
   redis:
     image: redis:6.2-alpine
@@ -209,6 +209,16 @@ services:
       - traefik.http.routers.redis.rule=Host(`redis.pharm.test`)
       - traefik.http.routers.redis.entryPoints=http
       - traefik.http.services.redis.loadBalancer.server.port=6379
+  
+  bot:
+    build: bot
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      REDIS_HOST: redis
+    volumes:
+      - ./bot:/app
+    depends_on:
+      - redis
 
 volumes:
   db-postgres:

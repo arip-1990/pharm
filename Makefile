@@ -86,10 +86,13 @@ panel-yarn-upgrade:
 panel-ready:
 	docker run --rm -v ${PWD}/panel:/app -w /app alpine touch .ready
 
-build: build-panel build-site
+build: build-panel build-bot build-site
 
 build-panel:
 	docker --log-level=debug build --pull --file=panel/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-panel:${IMAGE_TAG} panel
+
+build-bot:
+	docker --log-level=debug build --pull --file=bot/Dockerfile --tag=${REGISTRY}/pharm-bot:${IMAGE_TAG} bot
 
 build-site:
 	docker --log-level=debug build --pull --file=site/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-site:${IMAGE_TAG} site
@@ -97,10 +100,13 @@ build-site:
 	docker --log-level=debug build --pull --file=site/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} site/docker/common
 
-push: push-panel push-site
+push: push-panel push-bot push-site
 
 push-panel:
 	docker push ${REGISTRY}/pharm-panel:${IMAGE_TAG}
+
+push-bot:
+	docker push ${REGISTRY}/pharm-bot:${IMAGE_TAG}
 
 push-site:
 	docker push ${REGISTRY}/pharm-site:${IMAGE_TAG}
