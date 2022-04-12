@@ -14,9 +14,7 @@ class IndexController extends Controller
 {
     public function index(Request $request): View
     {
-        $city = $request->cookie('city', config('data.city')[0]);
-
-        $productIds = Offer::query()->select('product_id')->whereCity($city)
+        $productIds = Offer::query()->select('product_id')->whereCity($this->city)
             ->groupBy('product_id')->get()->pluck('product_id');
         $popularIds = ProductStatistic::query()->select('id')->whereIn('id', $productIds)
             ->orderByDesc('orders')->orderByDesc('views')->get()->pluck('id');
@@ -41,8 +39,7 @@ class IndexController extends Controller
     public function alphabet(Request $request, string $abc): View
     {
         $title = ' | Список лекарств по алфавиту';
-        $city = $request->cookie('city', config('data.city')[0]);
-        $productIds = Offer::query()->select('product_id')->whereCity($city)
+        $productIds = Offer::query()->select('product_id')->whereCity($this->city)
             ->groupBy('product_id')->get()->pluck('product_id')->toArray();
         $alphabet = Product::query()->selectRaw('SUBSTRING(name, 1, 1) as abc')->distinct('abc')
             ->whereIn('id', $productIds)->get()->pluck('abc');

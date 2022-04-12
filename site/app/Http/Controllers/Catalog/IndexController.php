@@ -26,7 +26,6 @@ class IndexController extends Controller
 
     public function index(Request $request, Category $category = null): View
     {
-        $city = $request->cookie('city', config('data.city')[0]);
         if ($category) $title = ' | ' . $category->name;
         else $title = ' | Категории';
 
@@ -37,7 +36,7 @@ class IndexController extends Controller
 //        }
 //        $filters = $this->productService->getFilters($productIds);
 
-        $paginator = $this->productService->getProductsByCity($city, $category);
+        $paginator = $this->productService->getProductsByCity($this->city, $category);
         $cartService = $this->cartService;
 
         return view('catalog.index', compact('title', 'paginator', 'category', 'cartService'));
@@ -46,9 +45,8 @@ class IndexController extends Controller
     public function sale(Request $request): View
     {
         $title = ' | Распродажа';
-        $city = $request->cookie('city', config('data.city')[0]);
 
-        $paginator = $this->productService->getSalesByCity($city);
+        $paginator = $this->productService->getSalesByCity($this->city);
         $cartService = $this->cartService;
 
         return view('catalog.sale', compact('title', 'paginator', 'cartService'));
@@ -57,9 +55,8 @@ class IndexController extends Controller
     public function product(Request $request, Product $product): View
     {
         $title = ' | ' . $product->name;
-        $city = $request->cookie('city', config('data.city')[0]);
 
-        $offers = $product->offers()->whereCity($city)->get();
+        $offers = $product->offers()->whereCity($this->city)->get();
         $minPrice = $offers->first()?->price ?? 0;
         foreach ($offers as $offer) {
             if ($minPrice > $offer->price) $minPrice = $offer->price;
@@ -81,10 +78,9 @@ class IndexController extends Controller
     public function search(Request $request): View
     {
         $title = ' | Поиск';
-        $city = $request->cookie('city', config('data.city')[0]);
         if (!$searchText = $request->query('q'))
             throw new \DomainException('Введите запрос для поиска');
-        $productIds = Offer::query()->select('product_id')->whereCity($city)->groupBy('product_id')->get()->pluck('product_id');
+        $productIds = Offer::query()->select('product_id')->whereCity($this->city)->groupBy('product_id')->get()->pluck('product_id');
 
         $paginator = Product::query()->active()->whereIn('id', $productIds)->where(function(Builder $query) use ($searchText) {
             $query->where('name', 'like', $searchText . '%')
@@ -127,8 +123,7 @@ class IndexController extends Controller
 
             $limit->save();
 
-            $city = $request->cookie('city', config('data.city')[0]);
-            $offer = Offer::query()->whereCity($city)->where('product_id', $request->query('id'))->orderBy('price')->first();
+            $offer = Offer::query()->whereCity($this->city)->where('product_id', $request->query('id'))->orderBy('price')->first();
 
             return response()->json($offer->price ?? 0);
         }

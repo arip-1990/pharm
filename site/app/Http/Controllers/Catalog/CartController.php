@@ -42,7 +42,6 @@ class CartController extends Controller
     public function pharmacy(Request $request): View | RedirectResponse
     {
         $title = ' | Выбор аптеки';
-        $city = $request->cookie('city', config('data.city')[0]);
 
         if(!$total = $this->cartService->getItems()->count())
             return redirect()->route('cart');
@@ -51,7 +50,7 @@ class CartController extends Controller
 
         $stores = [];
         /** @var Offer[] $offers */
-        $offers = Offer::query()->whereIn('product_id', $productIds)->whereCity($city)->get();
+        $offers = Offer::query()->whereIn('product_id', $productIds)->whereCity($this->city)->get();
         foreach ($offers as $offer) {
             $cartQuantity = $this->cartService->getItem($offer->product_id)->quantity;
             $stores[$offer->store_id]['store'] = $offer->store;
