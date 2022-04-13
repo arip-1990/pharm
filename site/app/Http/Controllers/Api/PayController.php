@@ -28,9 +28,12 @@ class PayController
         $binarySignature = hex2bin(strtolower($request->get('checksum')));
         $isVerify = openssl_verify($data, $binarySignature, $publicKey, OPENSSL_ALGO_SHA512);
 
-        Redis::publish('bot', json_encode(['request' => implode('|', $request->all())]));
-        Redis::publish('bot', json_encode(['key' => $publicKey]));
-        Redis::publish('bot', json_encode(['verified' => (string)$isVerify]));
+        $sendData = [
+            'key' => $publicKey,
+            'verified' => (string)$isVerify,
+            'request' => implode('|', $request->all()),
+        ];
+        Redis::publish('bot:pay', json_encode($sendData));
 
         if ($isVerify !== 1) {
             return new Response(status: SymfonyResponse::HTTP_PRECONDITION_FAILED);

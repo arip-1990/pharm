@@ -203,6 +203,8 @@ services:
     networks:
       - traefik-public
       - default
+    volumes:
+      - redis-data:/data
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
@@ -222,6 +224,7 @@ services:
 
 volumes:
   db-postgres:
+  redis-data:
   uploads:
 
 networks:

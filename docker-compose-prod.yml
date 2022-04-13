@@ -195,7 +195,41 @@ services:
   #     restart_policy:
   #       condition: none
   
-  cheduler:
+  # cheduler:
+  #   image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
+  #   environment:
+  #     APP_NAME: Сеть аптек 120/80
+  #     APP_URL: https://аптека05.рф
+  #     LOG_CHANNEL: stack
+  #     LOG_LEVEL: debug
+  #     DB_CONNECTION: pgsql
+  #     DB_HOST: db-postgres
+  #     DB_DATABASE: app
+  #     DB_USERNAME: app
+  #     DB_PASSWORD: ${DB_PASSWORD}
+  #     FILESYSTEM_DRIVER: public
+  #     BROADCAST_DRIVER: redis
+  #     CACHE_DRIVER: redis
+  #     QUEUE_CONNECTION: redis
+  #     REDIS_HOST: redis
+  #     REDIS_CLIENT: predis
+  #     MAIL_HOST: smtp.yandex.ru
+  #     MAIL_PORT: 465
+  #     MAIL_USERNAME: info@120на80.рф
+  #     MAIL_PASSWORD: ${MAIL_PASSWORD}
+  #     MAIL_FROM_ADDRESS: info@120на80.рф
+  #     MAIL_FROM_NAME: Сеть аптек 120/80
+  #   command: sh -c 'php artisan schedule:run'
+  #   deploy:
+  #     labels:
+  #       - swarm.cronjob.enable=true
+  #       - swarm.cronjob.schedule=* * * * *
+  #       - swarm.cronjob.skip-running=true
+  #     replicas: 0
+  #     restart_policy:
+  #       condition: none
+
+  site-redis-queue:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
@@ -219,21 +253,15 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120на80.рф
       MAIL_FROM_NAME: Сеть аптек 120/80
-    command: sh -c 'php artisan schedule:run'
+    command: sh -c 'php artisan redis:subscribe'
+    depends_on:
+      - redis
     deploy:
-      labels:
-        - swarm.cronjob.enable=true
-        - swarm.cronjob.schedule=* * * * *
-        - swarm.cronjob.skip-running=true
-      replicas: 0
       restart_policy:
-        condition: none
-  
-  redis:
-    image: redis:6.2-alpine
-    deploy:
-      placement:
-        constraints: [ node.role == manager ]
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 120s
   
   bot:
     image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}
@@ -248,6 +276,12 @@ services:
       update_config:
         parallelism: 1
         delay: 5s
+  
+  redis:
+    image: redis:6.2-alpine
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
 
 volumes:
   db-postgres:

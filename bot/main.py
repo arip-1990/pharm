@@ -1,80 +1,84 @@
-import json
 import os
+import json
 import redis
-import asyncio
-from telegram import Bot, Update, ForceReply
-from telegram.ext import Updater, CommandHandler, CallbackContext
+import threading
+from telebot import TeleBot
 
 
-# bot = Bot('5237529924:AAGFckEDU3jv5e481Tzy0yzkudn8Xj03zKc')
+bot = TeleBot('5264546096:AAHH7gzUFdZim4deJs0o78RwZ8x8q6vC6Io')
 r = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, decode_responses=True)
+update_command = None
 
 
-def start(update: Update, context: CallbackContext) -> None:
-    user = update.effective_user
-    update.message.reply_markdown_v2(
-        fr'Привет {user.mention_markdown_v2()}\!',
-        reply_markup=ForceReply(selective=True),
-    )
+@bot.message_handler(commands=['start'])
+def welcome(message) -> None:
+    user_name = f'{message.from_user.first_name} {message.from_user.last_name}' if message.from_user.last_name else message.from_user.first_name
+    bot.reply_to(message, f'Привет {user_name}!')
 
 
-def help_command(update: Update, context: CallbackContext) -> None:
-    with open('md/help.md', 'r') as f:
-        md = f.read()
-
-    update.message.reply_html(md, reply_markup=ForceReply(selective=True))
+@bot.message_handler(commands=['id'])
+def help(message) -> None:
+    bot.send_message(message.chat.id, message.from_user.id)
 
 
-def update_data(update: Update, context: CallbackContext) -> None:
-    # r.publish('update', update.message.text[7:].strip())
-    update.message.reply_text(update.message.text)
-    update.message.reply_text(update.message.text[7:].strip())
-    update.message.reply_text('Ваш запрос обрабатывается!')
+@bot.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer'])
+def update_data(message) -> None:
+    global update_command
+    send_message = ''
+
+    if update_command:
+        if update_command == 'category':
+            send_message = 'Обновление категории не завершено'
+        elif update_command == 'product':
+            send_message = 'Обновление товаров не завершено'
+        elif update_command == 'store':
+            send_message = 'Обновление аптек не завершено'
+        elif update_command == 'offer':
+            send_message = 'Обновление остатков не завершено'
+
+        bot.reply_to(message, send_message)
+    else:
+        update_command = message.text.split(' ')[0].split('_')[1].strip()
+        if update_command == 'category':
+            send_message = 'Обновляем категории...'
+        elif update_command == 'product':
+            send_message = 'Обновляем товары...'
+        elif update_command == 'store':
+            send_message = 'Обновляем аптеки...'
+        elif update_command == 'offer':
+            send_message = 'Обновляем остатки...'
+
+        r.publish('update', json.dumps({'chatId': message.chat.id, 'type': update_command}))
+        bot.send_message(message.chat.id, send_message)
 
 
-def send_message(update: Update, text: str) -> None:
-    update.message.reply_text(text)
-
-
-async def listen_redis():
+def listen_redis() -> None:
+    global update_command
     p = r.pubsub()
-    p.subscribe('bot')
+    p.psubscribe('bot:*')
 
-    f = open('md/test.md', 'r')
-    md = f.read()
-
-    update = Update(1195813156)
     for message in p.listen():
         if message is not None and isinstance(message, dict):
             try:
-                if message.get('type') == 'message':
-                    data = json.loads(message.get('data'))
-                    if isinstance(data, dict):
-                        for k, item in data.items():
-                            send_message(update, md.format(k, item))
+                if message.get('type') == 'pmessage':
+                    type = message.get('channel').split(':')[1]
+                    if type == 'update':
+                        data = json.loads(message.get('data'))
+                        bot.send_message(data['chatId'], data['message'])
+                        update_command = None
+                    elif type == 'pay':
+                        for key, item in json.loads(message.get('data')):
+                            bot.send_message(1195813156, f'{key} => {item}')
                     else:
-                        send_message(update, data)
-            except:
-                pass
+                        bot.send_message(1195813156, message.get('data'))
+            except ValueError:
+                bot.send_message(1195813156, message.get('data'))
 
 
 def main():
-    updater = Updater('5237529924:AAGFckEDU3jv5e481Tzy0yzkudn8Xj03zKc')
+    threading.Thread(target=listen_redis).start()
 
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(listen_redis())
-    finally:
-        pass
-
-    dispatcher = updater.dispatcher
-
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("help", help_command))
-    dispatcher.add_handler(CommandHandler("update", update_data))
-
-    updater.start_polling()
-    updater.idle()
+    bot.infinity_polling()
 
 
 if __name__ == '__main__':
