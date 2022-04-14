@@ -12,15 +12,10 @@
         @foreach ($products as $product)
             <div class="col-10 offset-1 offset-sm-0">
                 <div class="card product" itemprop="itemListElement" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
-                    @if ('По рецепту' === $value = $product->getValue(4))
-                        <div class="card-mod card-mod__prescription">
+                    @if ($product->recipe)
+                        <div class="card-mod card-mod__recipe">
                             <div class="card-mod_icon"></div>
                             <div class="card-mod_text">По рецепту</div>
-                        </div>
-                    @elseif ('По назначению врача' === $value)
-                        <div class="card-mod card-mod__appointment">
-                            <div class="card-mod_icon"></div>
-                            <div class="card-mod_text">По назначению врача</div>
                         </div>
                     @else
                         <div class="card-mod card-mod__delivery">

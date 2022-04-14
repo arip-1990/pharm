@@ -20,11 +20,13 @@ export interface IProduct {
   barcode: string | null;
   photos: {
     id: number;
+    sort: number;
     url: string;
   }[];
   description: string | null;
-  status: boolean;
   marked: boolean;
+  recipe: boolean;
+  status: boolean;
   attributes: IAttribute[];
   createdAt: moment.Moment;
   updatedAt: moment.Moment;

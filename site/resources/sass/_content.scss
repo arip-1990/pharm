@@ -65,12 +65,8 @@
         z-index: 9;
       }
 
-      &__prescription > .card-mod_icon {
+      &__recipe > .card-mod_icon {
         background-image: url(../images/content/warning-red.svg);
-      }
-
-      &__appointment > .card-mod_icon {
-        background-image: url(../images/content/warning-orange.svg);
       }
 
       .store-delivery_icon,
@@ -105,13 +101,8 @@
           padding: 0.1rem 0.75rem;
         }
 
-        &.card-mod__prescription > .card-mod_text {
+        &.card-mod__recipe > .card-mod_text {
           transform: translateX(-124px);
-        }
-
-        &.card-mod__appointment > .card-mod_text {
-          max-width: 174px;
-          transform: translateX(-190px);
         }
 
         &.card-mod__delivery > .card-mod_text {

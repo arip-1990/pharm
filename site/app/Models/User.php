@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,13 +21,14 @@ use Ramsey\Uuid\Uuid;
  * @property string $email
  * @property string $phone
  * @property string $password
- * @property int $status
  * @property int $role
  * @property string|null $confirm_token
  * @property string|null $reset_token
  * @property string|null $remember_token
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property Carbon|null $email_verified_at
+ * @property Carbon|null $phone_verified_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
  *
  * @property Collection<Order> $orders
@@ -45,13 +45,9 @@ class User extends Authenticatable
     const ROLE_MODERATOR = 40;
     const ROLE_ADMIN = 50;
 
-    const STATUS_WAIT = 0;
-    const STATUS_INACTIVE = 1;
-    const STATUS_ACTIVE = 2;
-
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id', 'name', 'email', 'phone', 'password', 'status', 'role'];
+    protected $fillable = ['id', 'name', 'email', 'phone', 'password'];
     protected $hidden = ['password', 'remember_token'];
 
     public static function rolesList(): array
@@ -72,8 +68,6 @@ class User extends Authenticatable
             'name' => $name,
             'email' => $email,
             'password' => Hash::make(Str::random()),
-            'role' => self::ROLE_USER,
-            'status' => self::STATUS_ACTIVE
         ]);
     }
 
@@ -85,8 +79,6 @@ class User extends Authenticatable
             'email' => $email,
             'phone' => $phone,
             'password' => Hash::make($password),
-            'role' => self::ROLE_USER,
-            'status' => self::STATUS_ACTIVE
         ]);
     }
 
@@ -95,10 +87,7 @@ class User extends Authenticatable
         if (!$this->isWait())
             throw new \DomainException('User is already verified.');
 
-        $this->update([
-            'status' => self::STATUS_ACTIVE,
-            'confirm_token' => null
-        ]);
+        $this->update(['confirm_token' => null]);
     }
 
     public function changeRole(int $role): void
@@ -110,21 +99,6 @@ class User extends Authenticatable
             throw new \DomainException('Role is already assigned.');
 
         $this->update(['role' => $role]);
-    }
-
-    public function isWait(): bool
-    {
-        return $this->status === self::STATUS_WAIT;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->status === self::STATUS_ACTIVE;
-    }
-
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->where('status', self::STATUS_ACTIVE);
     }
 
     public function validatePassword(string $password): bool

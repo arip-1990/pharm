@@ -29,19 +29,20 @@ const ViewBase: React.FC<PropsType> = ({product, loading}) => {
         {
             dataIndex: "value",
             render: (item: any, record: {key: string, value: string | number}) => {
-                if (edit) {
-                    switch (record.key) {
-                        case 'Штрих-код':
-                            return <Form.Item style={{margin: 0}} name='barcode' initialValue={item}><Input /></Form.Item>;
-                        case 'Название':
-                            return <Form.Item style={{margin: 0}} name='name' initialValue={item}><Input /></Form.Item>;
-                        case 'Статус':
-                            return <Form.Item style={{margin: 0}} name='status' initialValue={item} valuePropName="checked"><Switch /></Form.Item>;
-                        case 'Категория':
-                            return <Form.Item style={{margin: 0}} name='category' initialValue={item?.id}><TreeSelect treeLine={{showLeafIcon: false}} treeData={getCategoryTree(categories)} /></Form.Item>;
-                    }
+                switch (record.key) {
+                    case 'Штрих-код':
+                        return edit ? <Form.Item style={{margin: 0}} name='barcode' initialValue={item}><Input /></Form.Item> : item;
+                    case 'Название':
+                        return edit ? <Form.Item style={{margin: 0}} name='name' initialValue={item}><Input /></Form.Item> : item;
+                    case 'Рецептурный':
+                        return edit ? <Form.Item style={{margin: 0}} name='recipe' initialValue={item} valuePropName="checked"><Switch /></Form.Item> : item ? <Tag color="green">Да</Tag> : <Tag color="red">Нет</Tag>;
+                    case 'Маркирован':
+                        return edit ? <Form.Item style={{margin: 0}} name='marked' initialValue={item} valuePropName="checked"><Switch /></Form.Item> : item ? <Tag color="green">Да</Tag> : <Tag color="red">Нет</Tag>;
+                    case 'Статус':
+                        return edit ? <Form.Item style={{margin: 0}} name='status' initialValue={item} valuePropName="checked"><Switch /></Form.Item> : item ? <Tag color="green">Активен</Tag> : <Tag color="red">Не активен</Tag>;
+                    case 'Категория':
+                        return edit ? <Form.Item style={{margin: 0}} name='category' initialValue={item?.id}><TreeSelect treeLine={{showLeafIcon: false}} treeData={getCategoryTree(categories)} /></Form.Item> : item?.name;
                 }
-                return record.key === 'Категория' ? item?.name : record.key === 'Статус' ? (item ? <Tag color="green">Активен</Tag> : <Tag color="red">Не активен</Tag>) : item;
             }
         }
     ];
@@ -76,10 +77,9 @@ const ViewBase: React.FC<PropsType> = ({product, loading}) => {
                         { key: "Штрих-код", value: product?.barcode },
                         { key: "Название", value: product?.name },
                         { key: "Категория", value: product?.category },
-                        {
-                            key: "Статус",
-                            value: product?.status,
-                        },
+                        { key: "Рецептурный", value: product?.recipe },
+                        { key: "Маркирован", value: product?.marked },
+                        { key: "Статус", value: product?.status },
                     ]}
                 />
             </Form>

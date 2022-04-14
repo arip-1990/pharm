@@ -27,8 +27,9 @@ class ProductResource extends JsonResource
             'barcode' => $this->barcode,
             'photos' => $photos->count() ? $photos : [['id' => null, 'url' => url(Photo::DEFAULT_FILE)]],
             'description' => $this->description,
-            'status' => $this->status,
             'marked' => $this->marked,
+            'recipe' => $this->recipe,
+            'status' => $this->status,
             'attributes' => $this->values->map(fn(Value $value) => [
                 'id' => $value->attribute->id,
                 'name' => $value->attribute->name,

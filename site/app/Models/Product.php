@@ -20,8 +20,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $code
  * @property string|null $barcode
  * @property string|null $description
- * @property bool $status
  * @property bool $marked
+ * @property bool $recipe
+ * @property bool $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -43,7 +44,7 @@ class Product extends Model
     public string $abc = '';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id', 'name', 'code', 'category_id', 'barcode', 'description', 'status', 'marked'];
+    protected $fillable = ['id', 'name', 'code', 'category_id', 'barcode', 'description', 'marked', 'recipe', 'status'];
 
     public function sluggable(): array
     {
@@ -92,15 +93,6 @@ class Product extends Model
         return $this->status == self::STATUS_DRAFT;
     }
 
-    public function isPrescription(): bool
-    {
-        foreach ($this->values as $value) {
-            if ($value->attribute_id === 4 and ($value->value === 'По рецепту' or $value->value === 'По назначению врача'))
-                return true;
-        }
-        return false;
-    }
-
     protected function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
@@ -123,7 +115,7 @@ class Product extends Model
 
     public function photos(): HasMany
     {
-        return $this->hasMany(Photo::class)->where('type', Photo::TYPE_PICTURE);
+        return $this->hasMany(Photo::class)->where('type', Photo::TYPE_PICTURE)->orderBy('sort');
     }
 
     public function addCertificate(): void
@@ -133,7 +125,7 @@ class Product extends Model
 
     public function certificates(): HasMany
     {
-        return $this->hasMany(Photo::class)->where('type', Photo::TYPE_CERTIFICATE);
+        return $this->hasMany(Photo::class)->where('type', Photo::TYPE_CERTIFICATE)->orderBy('sort');
     }
 
     public function getValue(int $attributeId): ?string

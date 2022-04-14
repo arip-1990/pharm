@@ -39,7 +39,7 @@ const NewAttribute: React.FC<PropsAttributeType> = ({visible, attributes, onCrea
       <Form component={false} form={form}>
         <Form.Item style={{margin: 0}} name='attributes'>
           <Select mode="multiple" allowClear style={{width: '100%'}}>
-            {attributes.map((item: any) => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
+            {attributes?.map((item: any) => <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>)}
           </Select>
         </Form.Item>
       </Form>

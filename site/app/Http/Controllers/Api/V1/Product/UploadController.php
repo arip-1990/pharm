@@ -15,7 +15,8 @@ class UploadController extends Controller
     {
         if($request->hasFile('file') and $request->file('file')->isValid()) {
             try {
-                $photo = new Photo(['product_id' => $product->id]);
+                $sort = $product->photos()->orderByDesc('sort')->first();
+                $photo = new Photo(['product_id' => $product->id, 'sort' => $sort ? $sort->sort + 1 : 0]);
                 $photo->save();
 
                 $image = $request->file('file');

@@ -28,8 +28,29 @@
   position: relative;
   display: inline-block;
 
+  &:hover .anticon-select,
   &:hover .anticon-close-circle {
     display: inline-block;
+  }
+
+  .anticon-select {
+    display: none;
+    position: absolute;
+    left: -8px;
+    top: -8px;
+    width: 22px;
+    height: 22px;
+    background: transparent;
+    padding: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.75 );
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 99;
+
+    &.active {
+      display: inline-block;
+      background: #1890ff;
+    }
   }
 
   .anticon-close-circle {

@@ -13,6 +13,8 @@ class UpdateController extends Controller
     {
         $product->update([
             'name' => $request['name'],
+            'marked' => $request['marked'],
+            'recipe' => $request['recipe'],
             'status' => $request['status'],
             'category_id' => $request['category'] ?? null,
             'barcode' => $request['barcode'] ?? null

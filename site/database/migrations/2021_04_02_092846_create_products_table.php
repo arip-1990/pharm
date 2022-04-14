@@ -16,6 +16,7 @@ class CreateProductsTable extends Migration
             $table->string('barcode')->nullable();
             $table->text('description')->nullable();
             $table->boolean('marked')->default(false);
+            $table->boolean('recipe')->default(false);
             $table->boolean('status')->default(false);
             $table->timestamps();
             $table->softDeletes();

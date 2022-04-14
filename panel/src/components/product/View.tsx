@@ -1,11 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Card, Col, Row } from "antd";
+import { Col, Row } from "antd";
 import { useFetchProductQuery } from "../../services/ProductService";
 import { ViewBase } from "./ViewBase";
+import { ViewPhotos } from "./ViewPhotos";
 import { ViewDescription } from "./ViewDescription";
 import { ViewAttributes } from "./ViewAttributes";
-import { Upload } from "../Upload";
 
 const View: React.FC = () => {
   const { slug } = useParams();
@@ -40,9 +40,7 @@ const View: React.FC = () => {
       </Col>
 
       <Col span={24}>
-        <Card title="Фотографии">
-          <Upload slug={product?.slug || ''} photos={product?.photos || []} />
-        </Card>
+        <ViewPhotos slug={slug || ''} photos={product?.photos || []} loading={fetchLoading} />
       </Col>
     </Row>
   );

@@ -40,14 +40,14 @@ class CheckoutController extends Controller
                     'quantity' => $quantity
                 ]));
 
-            if (!$request->session()->get('prescription', false))
-                $request->session()->put('prescription', $offer->product->isPrescription());
+            if (!$request->session()->get('recipe', false))
+                $request->session()->put('recipe', $offer->product->recipe);
         }
 
         $this->cartService->clear();
         $this->cartService->setItems($items);
 
-        if ($request->session()->get('prescription', false))
+        if ($request->session()->get('recipe', false))
             $request->session()->flash('status', 'Заказать рецептурный препарат на сайте, можно только путем самовывоза из аптеки при наличии рецепта, выписанного врачом!');
 
         $cartService = $this->cartService;

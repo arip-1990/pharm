@@ -1,16 +1,71 @@
 import React from 'react';
 import { Upload as BaseUpload, Image as BaseImage, Space, Popconfirm } from 'antd';
 import { PlusOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { useAddPhotoProductMutation, useDeletePhotoProductMutation } from '../services/ProductService';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useAddPhotoProductMutation, useDeletePhotosProductMutation } from '../services/ProductService';
+import classNames from 'classnames';
 
-interface PropsType {
-  slug: string;
-  photos: {id: number, url: string}[];
+const reorder = (list: {id: number, sort: number, url: string}[], startIndex: number, endIndex: number) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result.map((item, index) => ({...item, sort: index}));
+};
+
+const grid = 5;
+
+const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+  userSelect: 'none',
+  margin: `0 ${grid}px 0 0`,
+  ...draggableStyle,
+});
+
+const getListStyle = (isDraggingOver: boolean) => ({
+  display: 'flex',
+  padding: grid,
+});
+
+interface ImagePropsType {
+  item: {id: number, sort: number, url: string};
+  selectPhoto: (id: number, add: boolean) => void;
+  deletePhoto: (id: number) => void;
 }
 
-const Upload: React.FC<PropsType> = ({ slug, photos }) => {
+const Image: React.FC<ImagePropsType> = ({item, selectPhoto, deletePhoto}) => {
+  const [active, setActive] = React.useState<boolean>(false);
+
+  const handleClick = () => {
+    setActive(!active);
+    selectPhoto(item.id, !active);
+  }
+
+  return (
+    <div className='media'>
+      <Popconfirm
+        title="Вы уверены, что хотите удалить?"
+        onConfirm={() => deletePhoto(item.id)}
+        okText="Да"
+        cancelText="Нет"
+      >
+        <CloseCircleOutlined />
+      </Popconfirm>
+      <span className={classNames('anticon-select', {active})} onClick={handleClick} />
+      <BaseImage width={140} src={item.url} />
+    </div>
+  );
+}
+
+interface UploadPropsType {
+  slug: string;
+  photos: {id: number, sort: number, url: string}[];
+  changePhotos: (items: {id: number, sort: number, url: string}[]) => void;
+  deletePhoto: (id: number, add: boolean) => void;
+}
+
+const Upload: React.FC<UploadPropsType> = ({ slug, photos, changePhotos, deletePhoto }) => {
   const [addPhoto] = useAddPhotoProductMutation();
-  const [deletePhoto] = useDeletePhotoProductMutation();
+  const [deletePhotos] = useDeletePhotosProductMutation();
 
   const uploadImage = async (options: any) => {
     const { onSuccess, onError, file, onProgress } = options;
@@ -27,6 +82,18 @@ const Upload: React.FC<PropsType> = ({ slug, photos }) => {
     }
   };
 
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    
+    const newItems: any = reorder(
+      photos,
+      result.source.index,
+      result.destination.index
+    );
+    
+    changePhotos(newItems);
+  }
+
   return (
     <Space>
       {photos.length < 5 ? <BaseUpload
@@ -40,25 +107,42 @@ const Upload: React.FC<PropsType> = ({ slug, photos }) => {
           <div style={{ marginTop: 8 }}>Загрузить</div>
         </div>
       </BaseUpload> : null}
-      <BaseImage.PreviewGroup>
-        <Space>
-          {photos
-            .filter((item) => !!item.id)
-            .map((item) => (
-              <div key={item.id} className='media'>
-                <Popconfirm
-                  title="Вы уверены, что хотите удалить?"
-                  onConfirm={() => deletePhoto(item.id)}
-                  okText="Да"
-                  cancelText="Нет"
-                >
-                  <CloseCircleOutlined />
-                </Popconfirm>
-                <BaseImage width={140} src={item.url} />
-              </div>
-          ))}
-        </Space>
-      </BaseImage.PreviewGroup>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable" direction="horizontal">
+          {(provided: any, snapshot: any) => (
+            <div
+              ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver)}
+              {...provided.droppableProps}
+            >
+              <BaseImage.PreviewGroup>
+                <Space>
+                  {photos
+                    .filter((item) => !!item.id)
+                    .map((item, index) => (
+                      <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
+                        {(provided: any, snapshot: any) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={getItemStyle(
+                              snapshot.isDragging,
+                              provided.draggableProps.style
+                            )}
+                          >
+                            <Image item={item} selectPhoto={deletePhoto} deletePhoto={id => deletePhotos({slug, items: [id]})} />
+                          </div>
+                        )}
+                      </Draggable>
+                  ))}
+                </Space>
+              </BaseImage.PreviewGroup>
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </Space>
   );
 };

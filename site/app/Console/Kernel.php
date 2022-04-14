@@ -22,8 +22,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('import:category')->daily();
-        $schedule->command('import:store')->dailyAt('0:15');
-        $schedule->command('import:product')->dailyAt('0:30');
+        $schedule->command('import:store')->dailyAt('0:10');
+        $schedule->command('import:product')->dailyAt('0:20');
         $schedule->command('import:offer')->dailyAt('1:00');
         $schedule->command('import:offer change')->everyMinute();
         $schedule->command('import:offer stock')->everyMinute();

@@ -14,15 +14,16 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->string('password');
-            $table->tinyInteger('status')->default(0);
-            $table->tinyInteger('role')->default(10);
-            $table->string('auth_key')->nullable()->unique();
             $table->string('confirm_token')->nullable()->unique();
             $table->string('reset_token')->nullable()->unique();
             $table->string('tmp')->nullable()->unique();
             $table->rememberToken();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('phone_verified_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreignId('role_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

@@ -23,7 +23,7 @@ class CreateOrdersTable extends Migration
             $table->softDeletes();
 
             $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
-            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('store_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

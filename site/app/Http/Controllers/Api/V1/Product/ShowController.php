@@ -26,6 +26,7 @@ class ShowController extends Controller
         foreach($product->photos as $photo) {
             $photos[] = [
                 'id' => $photo->id,
+                'sort' => $photo->sort,
                 'url' => $photo->getUrl()
             ];
         }
@@ -44,8 +45,9 @@ class ShowController extends Controller
             'barcode' => $product->barcode,
             'photos' => $photos,
             'description' => $product->description,
-            'status' => $product->status,
             'marked' => $product->marked,
+            'recipe' => $product->recipe,
+            'status' => $product->status,
             'attributes' => $attributes,
             'createdAt' => $product->created_at,
             'updatedAt' => $product->updated_at,
