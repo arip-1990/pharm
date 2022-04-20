@@ -29,6 +29,7 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'marked' => $this->marked,
             'recipe' => $this->recipe,
+            'sale' => $this->sale,
             'status' => $this->status,
             'attributes' => $this->values->map(fn(Value $value) => [
                 'id' => $value->attribute->id,

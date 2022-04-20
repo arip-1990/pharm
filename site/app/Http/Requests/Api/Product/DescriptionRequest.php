@@ -13,6 +13,6 @@ class DescriptionRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['description' => 'string'];
+        return ['description' => 'string|nullable'];
     }
 }

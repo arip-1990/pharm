@@ -14,21 +14,21 @@ class TestCommand extends Command
 
     public function handle(): int
     {
-       $total = Product::withTrashed()->count();
-       $i = 1;
-       Product::withTrashed()->chunk(1000, function ($products) use ($total, &$id, &$i) {
-           /** @var Product $product */
-           foreach ($products as $product) {
-               echo "\033[2KProcessing: " . $i . '/' . $total . "\r";
+    //    $total = Product::withTrashed()->count();
+    //    $i = 1;
+    //    Product::withTrashed()->chunk(1000, function ($products) use ($total, &$id, &$i) {
+    //        /** @var Product $product */
+    //        foreach ($products as $product) {
+    //            echo "\033[2KProcessing: " . $i . '/' . $total . "\r";
 
-               if ($product->isPrescription())
-                   $product->update(['recipe' => true]);
+    //            if ($product->isPrescription())
+    //                $product->update(['recipe' => true]);
 
-               $i++;
-           }
-       });
+    //            $i++;
+    //        }
+    //    });
 
-        $this->info(PHP_EOL . 'Обновление успешно завершена!');
+    //     $this->info(PHP_EOL . 'Обновление успешно завершена!');
         return 0;
     }
 }

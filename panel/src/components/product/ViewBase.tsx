@@ -5,7 +5,7 @@ import { Table } from "..";
 import { IProduct } from "../../models/IProduct";
 import { categoryApi } from "../../services/CategoryService";
 import { ICategory } from "../../models/ICategory";
-import { productApi } from "../../services/ProductService";
+import { useUpdateProductMutation } from "../../services/ProductService";
 
 interface PropsType {
     product?: IProduct;
@@ -15,7 +15,7 @@ interface PropsType {
 const ViewBase: React.FC<PropsType> = ({product, loading}) => {
     const [edit, setEdit] = React.useState<boolean>(false);
     const {data: categories} = categoryApi.useFetchCategoriesQuery();
-    const [updateProduct, {isLoading: updateLoading}] = productApi.useUpdateProductMutation();
+    const [updateProduct, {isLoading: updateLoading}] = useUpdateProductMutation();
     const [form] = Form.useForm();
 
     const getCategoryTree: any = (categories: ICategory[]) => categories?.map(item => ({
@@ -38,10 +38,14 @@ const ViewBase: React.FC<PropsType> = ({product, loading}) => {
                         return edit ? <Form.Item style={{margin: 0}} name='recipe' initialValue={item} valuePropName="checked"><Switch /></Form.Item> : item ? <Tag color="green">Да</Tag> : <Tag color="red">Нет</Tag>;
                     case 'Маркирован':
                         return edit ? <Form.Item style={{margin: 0}} name='marked' initialValue={item} valuePropName="checked"><Switch /></Form.Item> : item ? <Tag color="green">Да</Tag> : <Tag color="red">Нет</Tag>;
+                    case 'Распродажа':
+                            return edit ? <Form.Item style={{margin: 0}} name='sale' initialValue={item} valuePropName="checked"><Switch /></Form.Item> : item ? <Tag color="green">Да</Tag> : <Tag color="red">Нет</Tag>;
                     case 'Статус':
                         return edit ? <Form.Item style={{margin: 0}} name='status' initialValue={item} valuePropName="checked"><Switch /></Form.Item> : item ? <Tag color="green">Активен</Tag> : <Tag color="red">Не активен</Tag>;
                     case 'Категория':
                         return edit ? <Form.Item style={{margin: 0}} name='category' initialValue={item?.id}><TreeSelect treeLine={{showLeafIcon: false}} treeData={getCategoryTree(categories)} /></Form.Item> : item?.name;
+                    default:
+                        return item;
                 }
             }
         }
@@ -79,6 +83,7 @@ const ViewBase: React.FC<PropsType> = ({product, loading}) => {
                         { key: "Категория", value: product?.category },
                         { key: "Рецептурный", value: product?.recipe },
                         { key: "Маркирован", value: product?.marked },
+                        { key: "Распродажа", value: product?.sale },
                         { key: "Статус", value: product?.status },
                     ]}
                 />

@@ -48,20 +48,21 @@ class ProductCommand extends Command
                     'name' => (string)$item->name,
                     'slug' => $slug,
                     'code' => (int)$item->code,
-                    'recipe' => (string)$item->recipe === 'true', // ? true : (Product::query()->find((string)$item->uuid)?->recipe ?? false),
-                    'marked' => (string)$item->is_marked === 'true'
+                    'recipe' => (string)$item->recipe === 'true' ? true : (Product::query()->find((string)$item->uuid)?->recipe ?? false),
+                    'marked' => (string)$item->is_marked === 'true',
+                    'sale' => (string)$item->sale === 'true'
                 ];
                 $i++;
 
                 if ($i >= 1000) {
-                    Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
+                    Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe', 'sale']);
                     $productFields = [];
                     $i = 0;
                 }
             }
 
             if ($i) {
-                Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
+                Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe', 'sale']);
                 $i = 0;
             }
 

@@ -17,6 +17,7 @@ class CreateProductsTable extends Migration
             $table->text('description')->nullable();
             $table->boolean('marked')->default(false);
             $table->boolean('recipe')->default(false);
+            $table->boolean('sale')->default(false);
             $table->boolean('status')->default(false);
             $table->timestamps();
             $table->softDeletes();

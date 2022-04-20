@@ -19,7 +19,10 @@ unknown
         const result = await axios({ url: `${API_URL}/api/v1${url}`, method, headers, data, params, onUploadProgress: onProgress, withCredentials: true })
         return { data: result.data }
     } catch (axiosError) {
-        let err = axiosError as AxiosError
-        return {error: { status: err.response?.status, data: err.response?.data }}
+        let err = axiosError as AxiosError;
+        if (err.response?.status === 401)
+            window.location.href = '/login';
+        
+        return {error: { status: err.response?.status, data: err.response?.data }};
     }
 }

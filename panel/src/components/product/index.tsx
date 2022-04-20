@@ -84,6 +84,23 @@ const Product: React.FC = () => {
       ),
     },
     {
+      title: "Распродажа",
+      dataIndex: "sale",
+      filters: [
+        {
+          text: "Да",
+          value: "on",
+        },
+        {
+          text: "Нет",
+          value: "off",
+        },
+      ],
+      filteredValue: filters.filters.filter(item => item.field === 'sale').map(item => item.value),
+      filterMultiple: false,
+      render: (sale: boolean) => <div style={{textAlign: 'center'}}>{sale ? <Tag color="green">Да</Tag> : <Tag color="red">Нет</Tag>}</div>
+    },
+    {
       title: "Код товара",
       dataIndex: "code",
       sorter: true,
@@ -208,6 +225,7 @@ const Product: React.FC = () => {
             data={products?.data.map((item) => ({
               key: item.slug,
               photo: {url: item.photos[0].url, total: item.photos.length},
+              sale: item.sale,
               code: item.code,
               barcode: item.barcode,
               name: item.name,

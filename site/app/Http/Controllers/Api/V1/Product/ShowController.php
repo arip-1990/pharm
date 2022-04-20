@@ -47,6 +47,7 @@ class ShowController extends Controller
             'description' => $product->description,
             'marked' => $product->marked,
             'recipe' => $product->recipe,
+            'sale' => $product->sale,
             'status' => $product->status,
             'attributes' => $attributes,
             'createdAt' => $product->created_at,

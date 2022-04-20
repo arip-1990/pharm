@@ -15,6 +15,7 @@ class UpdateController extends Controller
             'name' => $request['name'],
             'marked' => $request['marked'],
             'recipe' => $request['recipe'],
+            'sale' => $request['sale'],
             'status' => $request['status'],
             'category_id' => $request['category'] ?? null,
             'barcode' => $request['barcode'] ?? null

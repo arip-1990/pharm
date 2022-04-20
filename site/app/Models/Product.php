@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $description
  * @property bool $marked
  * @property bool $recipe
+ * @property bool $sale
  * @property bool $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -44,7 +45,7 @@ class Product extends Model
     public string $abc = '';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id', 'name', 'code', 'category_id', 'barcode', 'description', 'marked', 'recipe', 'status'];
+    protected $fillable = ['id', 'name', 'code', 'category_id', 'barcode', 'description', 'marked', 'recipe', 'sale', 'status'];
 
     public function sluggable(): array
     {

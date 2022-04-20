@@ -17,8 +17,7 @@ class BaseRequest extends FormRequest
             'name' => 'required|string|max:255',
             'status' => 'required|boolean',
             'category' => 'integer',
-            'barcode' => 'string',
-            'description' => 'string'
+            'barcode' => 'string|nullable'
         ];
     }
 }

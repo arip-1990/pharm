@@ -14,7 +14,11 @@ class IndexController extends Controller
     {
         $query = Product::query()->select('products.*');
         if ($status = $request->get('status')) {
-            $query->where('status', $status === 'on' ? Product::STATUS_ACTIVE : Product::STATUS_DRAFT);
+            $query->where('status', $status === 'on');
+        }
+
+        if ($sale = $request->get('sale')) {
+            $query->where('sale', $sale === 'on');
         }
 
         if ($photo = $request->get('photo')) {
