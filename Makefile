@@ -115,7 +115,7 @@ push-site:
 	docker push ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
 
 deploy:
-	ssh -o StrictHostKeyChecking=no arip@${HOST} 'rm -rf pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER}'
+	ssh -o StrictHostKeyChecking=no arip@${HOST} 'rm -rf pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER}/logs'
 
 	envsubst < docker-compose-prod.yml > docker-compose-prod-env.yml
 	scp -o StrictHostKeyChecking=no docker-compose-prod-env.yml arip@${HOST}:pharm_${BUILD_NUMBER}/docker-compose.yml

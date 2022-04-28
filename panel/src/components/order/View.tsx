@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { Card, Col, Row, Table } from "antd";
-import { useFetchOrderQuery } from "../../services/OrderService";
+import { useFetchOrderItemsQuery, useFetchOrderQuery } from "../../services/OrderService";
 import StatusStep from './StatusStep';
 
 const baseColumns = [
@@ -19,6 +19,7 @@ const itemColumns = [
 const View: React.FC = () => {
   const { id } = useParams();
   const { data: order, isLoading: fetchLoading } = useFetchOrderQuery(Number(id), {skip: !id});
+  const { data: items, isLoading: fetchItemsLoading } = useFetchOrderItemsQuery(Number(id), {skip: !id});
 
   return (
     <Row gutter={[32, 32]}>
@@ -58,6 +59,24 @@ const View: React.FC = () => {
             pagination={false}
             columns={itemColumns}
             dataSource={order?.items.map((item, i) => ({
+              key: i + 1,
+              name: <Link to={`/product/${item.product.slug}`}>{item.product.name}</Link>,
+              quantity: item.quantity,
+              price: (item.price * 1).toLocaleString('ru'),
+              total: (item.quantity * item.price).toLocaleString('ru')
+            }))}
+          />
+        </Card>
+      </Col>
+
+      <Col span={24}>
+        <Card title="Всего заказанных товаров">
+          <Table
+            size="small"
+            loading={fetchItemsLoading}
+            pagination={false}
+            columns={itemColumns}
+            dataSource={items?.map((item, i) => ({
               key: i + 1,
               name: <Link to={`/product/${item.product.slug}`}>{item.product.name}</Link>,
               quantity: item.quantity,

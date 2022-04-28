@@ -131,6 +131,7 @@ services:
       MAIL_FROM_NAME: Сеть аптек 120/80
     volumes:
       - uploads:/app/storage/app/public
+      - ./logs:/app/storage/logs
     deploy:
       mode: replicated
       replicas: 1

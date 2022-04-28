@@ -16,10 +16,10 @@ class PayController
     public function handle(Request $request): Response
     {
         $data = [
-            'amount' . $request->get('amount'),
-            'mdOrder' . $request->get('mdOrder'),
-            'operation' . $request->get('operation'),
-            'status' . $request->get('status')
+            'amount;' . $request->get('amount'),
+            'mdOrder;' . $request->get('mdOrder'),
+            'operation;' . $request->get('operation'),
+            'status;' . $request->get('status')
         ];
         $data = implode(';', $data) . ';';
 

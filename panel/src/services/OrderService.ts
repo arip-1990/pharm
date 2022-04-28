@@ -1,7 +1,7 @@
 import {createApi} from '@reduxjs/toolkit/query/react';
 import moment from 'moment';
 import {axiosBaseQuery} from './api';
-import {IOrder} from '../models/IOrder';
+import {IItem, IOrder} from '../models/IOrder';
 import {IPagination} from '../models/IPagination';
 
 
@@ -55,7 +55,12 @@ export const orderApi = createApi({
         statuses: response.statuses.map(status => ({...status, createdAt: moment(status.createdAt)}))
       }),
     }),
+    fetchOrderItems: builder.query<IItem[], number>({
+      query: (id) => ({
+        url: `/order/${id}/items`
+      }),
+    }),
   }),
 });
 
-export const {useFetchOrdersQuery, useFetchOrderQuery} = orderApi;
+export const {useFetchOrdersQuery, useFetchOrderQuery, useFetchOrderItemsQuery} = orderApi;

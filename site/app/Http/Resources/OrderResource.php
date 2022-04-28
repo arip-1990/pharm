@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Helper;
-use App\Models\OrderItem;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
@@ -35,15 +34,7 @@ class OrderResource extends JsonResource
                 'state' => $status['state'] ?? 2,
                 'createdAt' => $status['created_at']
             ]),
-            'items' => $this->items->map(fn(OrderItem $item) => [
-                'product' => [
-                    'id' => $item->product->id,
-                    'name' => $item->product->name,
-                    'slug' => $item->product->slug
-                ],
-                'price' => $item->price,
-                'quantity' => $item->quantity
-            ])
+            'items' => OrderItemResource::collection($this->items)
         ];
     }
 }
