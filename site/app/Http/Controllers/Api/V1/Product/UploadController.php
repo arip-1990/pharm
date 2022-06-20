@@ -8,27 +8,24 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UploadController extends Controller
 {
     public function handle(Product $product, Request $request): JsonResponse
     {
         if($request->hasFile('file') and $request->file('file')->isValid()) {
-            try {
-                $sort = $product->photos()->orderByDesc('sort')->first();
-                $photo = new Photo(['product_id' => $product->id, 'sort' => $sort ? $sort->sort + 1 : 0]);
-                $photo->save();
-
-                $image = $request->file('file');
-                if (!Storage::exists("images/original/{$product->id}"))
-                    mkdir(Storage::path("images/original/{$product->id}"), recursive: true);
-
-                $image->storeAs("images/original/{$product->id}", $photo->id . '.' . $image->getClientOriginalExtension());
+            $image = $request->file('file');
+            do {
+                $fileName = Str::random() . '.' . $image->getClientOriginalExtension();
             }
-            catch (\Exception $e) {
-                $photo->delete();
-                return new JsonResponse($e->getMessage());
-            }
+            while (Storage::exists('images/original/' . $fileName));
+
+            if ($image->storeAs('images/original', $fileName))
+                return new JsonResponse('Ошибка!', 500);
+
+            $sort = $product->photos()->orderByDesc('sort')->first();
+            Photo::query()->create(['product_id' => $product->id, 'file' => $fileName, 'sort' => $sort ? $sort->sort + 1 : 0]);
         }
 
         return new JsonResponse();

@@ -1,28 +1,28 @@
-init: init-ci site-node-ready client-ready panel-ready
-init-ci: docker-down-clear \
-	site-clear client-clear panel-clear \
+init: init-ci site-node-ready panel-ready
+init-ci: docker-down-clear site-clear panel-clear \
 	docker-pull docker-build docker-up \
-	site-init client-init panel-init
+	site-init panel-init
 up: docker-up
 down: docker-down
 restart: down up
 
-update-deps: site-composer-update site-node-upgrade api-composer-update panel-yarn-upgrade restart
+update-deps: site-composer-update site-node-upgrade panel-yarn-upgrade restart
 
 docker-up:
-	docker-compose up -d
+	docker compose up -d
 
 docker-down:
-	docker-compose down --remove-orphans
+	docker compose down --remove-orphans
 
 docker-down-clear:
-	docker-compose down -v --remove-orphans
+	docker compose down -v --remove-orphans
 
 docker-pull:
-	docker-compose pull
+	docker compose pull
 
 docker-build:
-	docker-compose build --pull
+	docker compose build --pull
+
 
 site-clear:
 	docker run --rm -v ${PWD}/site:/app -w /app alpine sh -c 'rm -rf .ready storage/framework/cache/data/* storage/framework/sessions/* storage/framework/testing/* storage/framework/views/* storage/logs/*'
@@ -33,43 +33,28 @@ site-permissions:
 	docker run --rm -v ${PWD}/site:/app -w /app alpine chmod 777 -R storage bootstrap/cache
 
 site-composer-install:
-	docker-compose run --rm site-php-cli composer install
+	docker compose run --rm site-php-cli composer install
 
 site-composer-update:
-	docker-compose run --rm site-php-cli composer update
+	docker compose run --rm site-php-cli composer update
 
 site-wait-db:
-	docker-compose run --rm site-php-cli wait-for-it db-postgres:5432 -t 30
+	docker compose run --rm site-php-cli wait-for-it db-postgres:5432 -t 30
 
 site-migrations:
-	docker-compose run --rm site-php-cli php artisan migrate --force
+	docker compose run --rm site-php-cli php artisan migrate --force
 
 site-backup:
-	docker-compose run --rm site-postgres-backup
+	docker compose run --rm site-postgres-backup
 
 site-node-install:
-	docker-compose run --rm site-node-cli yarn install
+	docker compose run --rm site-node-cli yarn install
 
 site-node-upgrade:
-	docker-compose run --rm site-node-cli yarn upgrade
+	docker compose run --rm site-node-cli yarn upgrade
 
 site-node-ready:
 	docker run --rm -v ${PWD}/site:/app -w /app alpine touch .ready
-
-
-client-clear:
-	docker run --rm -v ${PWD}/client:/app -w /app alpine sh -c 'rm -rf .ready build'
-
-client-init: client-yarn-install
-
-client-yarn-install:
-	docker-compose run --rm client-node-cli yarn install
-
-client-yarn-upgrade:
-	docker-compose run --rm client-node-cli yarn upgrade
-
-client-ready:
-	docker run --rm -v ${PWD}/client:/app -w /app alpine touch .ready
 
 
 panel-clear:
@@ -78,13 +63,14 @@ panel-clear:
 panel-init: panel-yarn-install
 
 panel-yarn-install:
-	docker-compose run --rm panel-node-cli yarn install
+	docker compose run --rm panel-node-cli yarn install
 
 panel-yarn-upgrade:
-	docker-compose run --rm panel-node-cli yarn upgrade
+	docker compose run --rm panel-node-cli yarn upgrade
 
 panel-ready:
 	docker run --rm -v ${PWD}/panel:/app -w /app alpine touch .ready
+
 
 build: build-panel build-bot build-site
 
@@ -115,6 +101,7 @@ push-site:
 	docker push ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
 
 deploy:
+	ssh -o StrictHostKeyChecking=no arip@${HOST} 'docker network create --driver=overlay traefik-public || true'
 	ssh -o StrictHostKeyChecking=no arip@${HOST} 'rm -rf pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER}/logs'
 
 	envsubst < docker-compose-prod.yml > docker-compose-prod-env.yml

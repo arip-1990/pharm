@@ -12,17 +12,7 @@ services:
 
   traefik:
     image: traefik:2.7
-    command:
-      --providers.docker=true
-      --providers.docker.watch=true
-      --providers.docker.swarmMode=true
-      --providers.docker.exposedByDefault=false
-      --entryPoints.http.address=:80
-      --entryPoints.https.address=:443
-      --certificatesResolvers.letsEncrypt.acme.httpChallenge=true
-      --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http
-      --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info
-      --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
+    command: --providers.docker=true --providers.docker.watch=true --providers.docker.swarmMode=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80 --entryPoints.https.address=:443 --certificatesResolvers.letsEncrypt.acme.httpChallenge=true --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
     ports:
       - target: 80
         published: 80
@@ -138,35 +128,6 @@ services:
       update_config:
         parallelism: 1
         delay: 5s
-  
-  site-php-cli:
-    image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
-    environment:
-      APP_NAME: Сеть аптек 120/80
-      APP_URL: https://аптека05.рф
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
-      DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
-      DB_DATABASE: app
-      DB_USERNAME: app
-      DB_PASSWORD: ${DB_PASSWORD}
-      FILESYSTEM_DRIVER: public
-      BROADCAST_DRIVER: redis
-      CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      SESSION_DRIVER: redis
-      SESSION_LIFETIME: 120
-      REDIS_HOST: redis
-      REDIS_CLIENT: predis
-      MAIL_HOST: smtp.yandex.ru
-      MAIL_PORT: 465
-      MAIL_USERNAME: info@120на80.рф
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120на80.рф
-      MAIL_FROM_NAME: Сеть аптек 120/80
-    volumes:
-      - uploads:/app/storage/app/public
 
   site-migration:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
@@ -224,7 +185,7 @@ services:
   #     replicas: 0
   #     restart_policy:
   #       condition: none
-  
+
   # cheduler:
   #   image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
   #   environment:
@@ -283,16 +244,14 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120на80.рф
       MAIL_FROM_NAME: Сеть аптек 120/80
-    command: sh -c 'php artisan redis:subscribe'
-    depends_on:
-      - redis
+    command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan redis:subscribe'
     deploy:
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 5
         window: 120s
-  
+
   bot:
     image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}
     environment:
@@ -306,7 +265,7 @@ services:
       update_config:
         parallelism: 1
         delay: 5s
-  
+
   redis:
     image: redis:6.2-alpine
     deploy:
@@ -317,6 +276,7 @@ volumes:
   db-postgres:
   uploads:
   traefik-public-certs:
+
 
 networks:
   traefik-public:

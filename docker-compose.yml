@@ -2,10 +2,7 @@ version: '3.9'
 services:
   traefik:
     image: traefik:2.7
-    command:
-      --providers.docker=true
-      --providers.docker.exposedByDefault=false
-      --entryPoints.http.address=:80
+    command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80
     ports:
       - "80:80"
     networks:
@@ -16,34 +13,6 @@ services:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
 
-  client:
-    build:
-      context: client/docker/dev/nginx
-    networks:
-      - traefik-public
-      - default
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.http.routers.client.rule=Host(`client.pharm.test`)
-      - traefik.http.routers.client.entryPoints=http
-      - traefik.http.services.frontend.loadBalancer.server.port=80
-
-  client-node:
-    build:
-      context: client/docker/dev/node
-    environment:
-      API_URL: http://pharm.test
-    volumes:
-      - ./client:/app
-    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn dev"
-
-  client-node-cli:
-    build:
-      context: client/docker/dev/node
-    volumes:
-      - ./client:/app
-  
   panel:
     build:
       context: panel/docker/dev/nginx
@@ -184,7 +153,7 @@ services:
     volumes:
       - db-postgres:/var/lib/postgresql/data
     ports:
-      - "54321:5432"
+      - "5432:5432"
 
   mailer:
     image: mailhog/mailhog
@@ -211,7 +180,7 @@ services:
       - traefik.http.routers.redis.rule=Host(`redis.pharm.test`)
       - traefik.http.routers.redis.entryPoints=http
       - traefik.http.services.redis.loadBalancer.server.port=6379
-  
+
   bot:
     build: bot
     environment:
@@ -226,6 +195,7 @@ volumes:
   db-postgres:
   redis-data:
   uploads:
+
 
 networks:
   traefik-public:

@@ -1,8 +1,8 @@
 FROM php:8.0-cli-alpine AS builder
 
-RUN apk add --no-cache postgresql-dev unzip \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo_pgsql opcache
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
@@ -19,9 +19,11 @@ RUN composer install --no-dev --no-scripts --prefer-dist --no-progress --no-sugg
 
 FROM php:8.0-fpm-alpine
 
-RUN apk add --no-cache postgresql-dev fcgi \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo_pgsql opcache
+RUN apk add --no-cache fcgi
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache
 
 RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 
