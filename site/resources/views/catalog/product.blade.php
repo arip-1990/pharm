@@ -7,9 +7,9 @@
 
     <div class="row justify-content-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
         <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
-            @if ($product->photos->count())
+            @if ($product->checkedPhotos->count())
                 <figure class="zoom" style="background-image: url({{ $product->photos->first()->getUrl() }})">
-                    <img class="mw-100 m-auto" itemprop="image" src="{{ $product->photos->first()->getUrl() }}" alt="{{ $product->name }}" />
+                    <img class="mw-100 m-auto" itemprop="image" src="{{ $product->checkedPhotos->first()->getUrl() }}" alt="{{ $product->name }}" />
                 </figure>
             @else
                 <img class="mw-100" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />

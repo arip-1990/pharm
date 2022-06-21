@@ -34,8 +34,8 @@
                                 @foreach($order->items as $item)
                                     <div class="col" style="text-align: center">
                                         <p><a href="{{ route('catalog.product', $item->product) }}">
-                                            @if ($item->product->photos()->count())
-                                                <img alt="{{ $item->product->name }}" src="{{ $item->product->photos()->first()->getUrl() }}" width="150" />
+                                            @if ($item->product->checkedPhotos()->count())
+                                                <img alt="{{ $item->product->name }}" src="{{ $item->product->checkedPhotos()->first()->getUrl() }}" width="150" />
                                             @else
                                                 <img alt="{{ $item->product->name }}" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" width="150" />
                                             @endif

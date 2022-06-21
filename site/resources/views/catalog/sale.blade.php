@@ -39,8 +39,8 @@
                                     </div>
                                 @endif
                                 <div class="card_img">
-                                    @if ($product->photos->count())
-                                        <img class="mt-2" itemprop="image" src="{{ $product->photos()->first()->getUrl() }}" alt="{{ $product->name }}" />
+                                    @if ($product->checkedPhotos->count())
+                                        <img class="mt-2" itemprop="image" src="{{ $product->checkedPhotos()->first()->getUrl() }}" alt="{{ $product->name }}" />
                                     @else
                                         <img class="mt-2" itemprop="image" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
                                     @endif

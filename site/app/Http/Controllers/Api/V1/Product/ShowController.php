@@ -27,7 +27,8 @@ class ShowController extends Controller
             $photos[] = [
                 'id' => $photo->id,
                 'sort' => $photo->sort,
-                'url' => $photo->getUrl()
+                'url' => $photo->getUrl(),
+                'status' => $photo->status
             ];
         }
         if (!count($photos)) $photos[] = ['id' => null, 'url' => url(Photo::DEFAULT_FILE)];

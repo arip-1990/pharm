@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property Category|null $category
  * @property Collection<Photo> $photos
+ * @property Collection<Photo> $checkedPhotos
  * @property Collection<Photo> $certificates
  * @property Collection<Offer> $offers
  * @property Collection<Value> $values
@@ -94,7 +95,7 @@ class Product extends Model
         return $this->status == self::STATUS_DRAFT;
     }
 
-    protected function scopeActive(Builder $query): Builder
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_ACTIVE);
     }
@@ -117,6 +118,11 @@ class Product extends Model
     public function photos(): HasMany
     {
         return $this->hasMany(Photo::class)->where('type', Photo::TYPE_PICTURE)->orderBy('sort');
+    }
+
+    public function checkedPhotos(): HasMany
+    {
+        return $this->photos()->where('status', Photo::STATUS_CHECKED);
     }
 
     public function addCertificate(): void

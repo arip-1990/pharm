@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Offer;
 use App\Models\Photo;
 use App\Models\Product;
 use Illuminate\Console\Command;
@@ -17,30 +18,10 @@ class TestCommand extends Command
 
     public function handle(): int
     {
-        $directories = Storage::directories('images/original');
-        print_r($directories);
-//        $total = count($directories);
-//        foreach ($directories as $i => $directory) {
-//            echo "\033[2KProcessing: {$i}/{$total}\r";
-//            $productId = explode('/', $directory)[2];
-//            if (Product::withTrashed()->where('id', $productId)->exists()) {
-//                $sort = 0;
-//                foreach (Storage::allFiles($directory) as $file) {
-//                    $exp = explode('/', $file)[3];
-//                    $exp = explode('.', $exp)[1];
-//                    do {
-//                        $fileName = Str::random() . '.' . $exp;
-//                    }
-//                    while (Storage::exists('images/original/' . $fileName));
-//
-//                    if (Storage::move($file, 'images/original/' . $fileName)) {
-//                        Photo::query()->create(['product_id' => $productId, 'file' => $fileName, 'sort' => $sort]);
-//                        $sort++;
-//                    }
-//                }
-//
-//                Storage::deleteDirectory($directory);
-//            }
+//        $productIds = Offer::query()->select('product_id')->groupBy('product_id')->get()->pluck('product_id');
+//        /** @var Product $product */
+//        foreach (Product::query()->findMany($productIds) as $product) {
+//            $product->photos()->update(['status' => Photo::STATUS_CHECKED]);
 //        }
         echo PHP_EOL;
         $this->info(PHP_EOL . 'Очистка успешно завершена!');

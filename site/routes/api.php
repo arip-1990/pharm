@@ -36,8 +36,9 @@ Route::prefix('v1')->group(function () {
             Route::put('/description/{product}', [Api\V1\Product\UpdateDescriptionController::class, 'handle']);
             Route::put('/{product}', [Api\V1\Product\UpdateController::class, 'handle']);
             Route::post('/upload/{product}', [Api\V1\Product\UploadController::class, 'handle']);
-            Route::patch('/upload/{product}', [Api\V1\Product\UpdatePhotoController::class, 'handle']);
-            Route::delete('/upload/{product}', [Api\V1\Product\DeletePhotoController::class, 'handle']);
+            Route::patch('/upload', [Api\V1\Product\UpdatePhotoController::class, 'handle']);
+            Route::patch('/upload/status', [Api\V1\Product\UpdateStatusPhotoController::class, 'handle']);
+            Route::delete('/upload', [Api\V1\Product\DeletePhotoController::class, 'handle']);
         });
 
         Route::prefix('order')->group(function () {

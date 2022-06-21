@@ -5,6 +5,7 @@ import {
   Space,
   Popconfirm,
   notification,
+  Typography,
 } from "antd";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -13,6 +14,7 @@ import {
   useDeletePhotosProductMutation,
 } from "../services/ProductService";
 import classNames from "classnames";
+import { IPhoto } from "../models/IPhoto";
 
 const reorder = (
   list: { id: number; sort: number; url: string }[],
@@ -40,7 +42,7 @@ const getListStyle = (isDraggingOver: boolean) => ({
 });
 
 interface ImagePropsType {
-  item: { id: number; sort: number; url: string };
+  item: IPhoto;
   selectPhoto: (id: number, add: boolean) => void;
   deletePhoto: (id: number) => void;
 }
@@ -72,14 +74,29 @@ const Image: React.FC<ImagePropsType> = ({
         onClick={handleClick}
       />
       <BaseImage width={140} src={item.url} />
+      {item.status ? (
+        <Typography.Text
+          style={{ fontSize: "0.75rem", textAlign: "center" }}
+          type="success"
+        >
+          (Проверен)
+        </Typography.Text>
+      ) : (
+        <Typography.Text
+          style={{ fontSize: "0.75rem", textAlign: "center" }}
+          type="danger"
+        >
+          (Не проверен)
+        </Typography.Text>
+      )}
     </div>
   );
 };
 
 interface UploadPropsType {
   slug: string;
-  photos: { id: number; sort: number; url: string }[];
-  changePhotos: (items: { id: number; sort: number; url: string }[]) => void;
+  photos: IPhoto[];
+  changePhotos: (items: IPhoto[]) => void;
   deletePhoto: (id: number, add: boolean) => void;
 }
 
@@ -172,9 +189,7 @@ const Upload: React.FC<UploadPropsType> = ({
                             <Image
                               item={item}
                               selectPhoto={deletePhoto}
-                              deletePhoto={(id) =>
-                                deletePhotos({ slug, items: [id] })
-                              }
+                              deletePhoto={(id) => deletePhotos([id])}
                             />
                           </div>
                         )}

@@ -18,8 +18,8 @@
                     @foreach ($paginator as $product)
                         <div class="row favorite" data-product="{{ $product->id }}">
                             <div class="col-3 col-md-3">
-                                @if ($product->photos()->count())
-                                    <img alt="" src="{{ $product->photos()->first()->getUrl() }}" style="height: 120px;width: 120px;">
+                                @if ($product->checkedPhotos()->count())
+                                    <img alt="" src="{{ $product->checkedPhotos()->first()->getUrl() }}" style="height: 120px;width: 120px;">
                                 @else
                                     <img alt="" src="{{ App\Models\Photo::DEFAULT_FILE }}" style="height: 120px;width: 120px;">
                                 @endif

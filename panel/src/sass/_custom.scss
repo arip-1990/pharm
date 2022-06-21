@@ -26,7 +26,9 @@
 
 .media {
   position: relative;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   &:hover .anticon-select,
   &:hover .anticon-close-circle {

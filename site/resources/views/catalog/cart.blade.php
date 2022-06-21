@@ -24,8 +24,8 @@
             @foreach ($cartService->getItems() as $item)
                 <div class="row align-items-center product" data-product="{{ $item->product->id }}">
                     <div class="col-10 col-sm-3 offset-1 offset-sm-0 col-md-2 text-center">
-                        @if ($item->product->photos()->count())
-                            <img alt="" style="width: 100%" src="{{ $item->product->photos()->first()->getUrl() }}">
+                        @if ($item->product->checkedPhotos()->count())
+                            <img alt="" style="width: 100%" src="{{ $item->product->checkedPhotos()->first()->getUrl() }}">
                         @else
                             <img alt="" style="width: 100%" src="{{ App\Models\Photo::DEFAULT_FILE }}">
                         @endif

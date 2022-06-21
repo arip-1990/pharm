@@ -89,19 +89,27 @@ export const productApi = createApi({
       }),
       invalidatesTags: ['IProduct'],
     }),
-    updatePhotosProduct: builder.mutation<void, {slug: string, items: any[]}>({
-      query: (args) => ({
-        url: `/product/upload/${args.slug}`,
+    updateStatusPhotosProduct: builder.mutation<void, number[]>({
+      query: (items) => ({
+        url: '/product/upload/status',
         method: 'patch',
-        data: {items: args.items}
+        data: {items}
       }),
       invalidatesTags: ['IProduct'],
     }),
-    deletePhotosProduct: builder.mutation<void, {slug: string, items: number[]}>({
-      query: (args) => ({
-        url: `/product/upload/${args.slug}`,
+    updatePhotosProduct: builder.mutation<void, any[]>({
+      query: (items) => ({
+        url: '/product/upload',
+        method: 'patch',
+        data: {items}
+      }),
+      invalidatesTags: ['IProduct'],
+    }),
+    deletePhotosProduct: builder.mutation<void, number[]>({
+      query: (items) => ({
+        url: '/product/upload',
         method: 'delete',
-        data: {items: args.items}
+        data: {items}
       }),
       invalidatesTags: ['IProduct'],
     }),
@@ -116,5 +124,6 @@ export const {
   useUpdateAttributesProductMutation,
   useAddPhotoProductMutation,
   useUpdatePhotosProductMutation,
+  useUpdateStatusPhotosProductMutation,
   useDeletePhotosProductMutation
 } = productApi;
