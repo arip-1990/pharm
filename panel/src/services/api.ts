@@ -1,7 +1,7 @@
 import { BaseQueryFn } from '@reduxjs/toolkit/query';
 import axios, { AxiosRequestConfig, AxiosError } from 'axios';
 
-export const API_URL = 'http://pharm.test';//'https://аптека05.рф';
+export const API_URL = 'https://аптека05.рф';
 
 export const axiosBaseQuery = (): BaseQueryFn<
 {
