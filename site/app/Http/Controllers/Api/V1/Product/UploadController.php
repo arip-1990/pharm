@@ -21,8 +21,7 @@ class UploadController extends Controller
             }
             while (Storage::exists('images/original/' . $fileName));
 
-            if ($image->storeAs('images/original', $fileName))
-                return new JsonResponse('Ошибка!', 500);
+            $image->storeAs('images/original', $fileName);
 
             $sort = $product->photos()->orderByDesc('sort')->first();
             Photo::query()->create(['product_id' => $product->id, 'file' => $fileName, 'sort' => $sort ? $sort->sort + 1 : 0]);

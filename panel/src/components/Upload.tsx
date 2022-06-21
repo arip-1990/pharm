@@ -1,47 +1,64 @@
-import React from 'react';
-import { Upload as BaseUpload, Image as BaseImage, Space, Popconfirm } from 'antd';
-import { PlusOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { useAddPhotoProductMutation, useDeletePhotosProductMutation } from '../services/ProductService';
-import classNames from 'classnames';
+import React from "react";
+import {
+  Upload as BaseUpload,
+  Image as BaseImage,
+  Space,
+  Popconfirm,
+  notification,
+} from "antd";
+import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {
+  useAddPhotoProductMutation,
+  useDeletePhotosProductMutation,
+} from "../services/ProductService";
+import classNames from "classnames";
 
-const reorder = (list: {id: number, sort: number, url: string}[], startIndex: number, endIndex: number) => {
+const reorder = (
+  list: { id: number; sort: number; url: string }[],
+  startIndex: number,
+  endIndex: number
+) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
 
-  return result.map((item, index) => ({...item, sort: index}));
+  return result.map((item, index) => ({ ...item, sort: index }));
 };
 
 const grid = 5;
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
-  userSelect: 'none',
+  userSelect: "none",
   margin: `0 ${grid}px 0 0`,
   ...draggableStyle,
 });
 
 const getListStyle = (isDraggingOver: boolean) => ({
-  display: 'flex',
+  display: "flex",
   padding: grid,
 });
 
 interface ImagePropsType {
-  item: {id: number, sort: number, url: string};
+  item: { id: number; sort: number; url: string };
   selectPhoto: (id: number, add: boolean) => void;
   deletePhoto: (id: number) => void;
 }
 
-const Image: React.FC<ImagePropsType> = ({item, selectPhoto, deletePhoto}) => {
+const Image: React.FC<ImagePropsType> = ({
+  item,
+  selectPhoto,
+  deletePhoto,
+}) => {
   const [active, setActive] = React.useState<boolean>(false);
 
   const handleClick = () => {
     setActive(!active);
     selectPhoto(item.id, !active);
-  }
+  };
 
   return (
-    <div className='media'>
+    <div className="media">
       <Popconfirm
         title="Вы уверены, что хотите удалить?"
         onConfirm={() => deletePhoto(item.id)}
@@ -50,20 +67,28 @@ const Image: React.FC<ImagePropsType> = ({item, selectPhoto, deletePhoto}) => {
       >
         <CloseCircleOutlined />
       </Popconfirm>
-      <span className={classNames('anticon-select', {active})} onClick={handleClick} />
+      <span
+        className={classNames("anticon-select", { active })}
+        onClick={handleClick}
+      />
       <BaseImage width={140} src={item.url} />
     </div>
   );
-}
+};
 
 interface UploadPropsType {
   slug: string;
-  photos: {id: number, sort: number, url: string}[];
-  changePhotos: (items: {id: number, sort: number, url: string}[]) => void;
+  photos: { id: number; sort: number; url: string }[];
+  changePhotos: (items: { id: number; sort: number; url: string }[]) => void;
   deletePhoto: (id: number, add: boolean) => void;
 }
 
-const Upload: React.FC<UploadPropsType> = ({ slug, photos, changePhotos, deletePhoto }) => {
+const Upload: React.FC<UploadPropsType> = ({
+  slug,
+  photos,
+  changePhotos,
+  deletePhoto,
+}) => {
   const [addPhoto] = useAddPhotoProductMutation();
   const [deletePhotos] = useDeletePhotosProductMutation();
 
@@ -73,40 +98,49 @@ const Upload: React.FC<UploadPropsType> = ({ slug, photos, changePhotos, deleteP
     const data = new FormData();
     data.append("file", file);
     try {
-      await addPhoto({slug, data, onProgress: (event: any) => onProgress({ percent: (event.loaded / event.total) * 100 })}).unwrap();
+      await addPhoto({
+        slug,
+        data,
+        onProgress: (event: any) =>
+          onProgress({ percent: (event.loaded / event.total) * 100 }),
+      }).unwrap();
       onSuccess("Ok");
-    }
-    catch (error) {
-      console.log("Error: ", error);
+    } catch (error) {
+      const err = error as any;
+      notification.error(err.data);
+      console.log("Error: ", err);
       onError({ error });
     }
   };
 
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
-    
+
     const newItems: any = reorder(
       photos,
       result.source.index,
       result.destination.index
     );
-    
+
     changePhotos(newItems);
-  }
+  };
 
   return (
     <Space>
-      {photos.length < 5 ? <BaseUpload
-        accept="image/*"
-        customRequest={uploadImage}
-        listType="picture-card"
-        fileList={[]}
-      >
-        <div>
-          <PlusOutlined />
-          <div style={{ marginTop: 8 }}>Загрузить</div>
-        </div>
-      </BaseUpload> : null}
+      {photos.length < 5 ? (
+        <BaseUpload
+          accept="image/*"
+          customRequest={uploadImage}
+          listType="picture-card"
+          fileList={[]}
+        >
+          <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Загрузить</div>
+          </div>
+        </BaseUpload>
+      ) : null}
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable" direction="horizontal">
           {(provided: any, snapshot: any) => (
@@ -120,7 +154,11 @@ const Upload: React.FC<UploadPropsType> = ({ slug, photos, changePhotos, deleteP
                   {photos
                     .filter((item) => !!item.id)
                     .map((item, index) => (
-                      <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id.toString()}
+                        index={index}
+                      >
                         {(provided: any, snapshot: any) => (
                           <div
                             ref={provided.innerRef}
@@ -131,11 +169,17 @@ const Upload: React.FC<UploadPropsType> = ({ slug, photos, changePhotos, deleteP
                               provided.draggableProps.style
                             )}
                           >
-                            <Image item={item} selectPhoto={deletePhoto} deletePhoto={id => deletePhotos({slug, items: [id]})} />
+                            <Image
+                              item={item}
+                              selectPhoto={deletePhoto}
+                              deletePhoto={(id) =>
+                                deletePhotos({ slug, items: [id] })
+                              }
+                            />
                           </div>
                         )}
                       </Draggable>
-                  ))}
+                    ))}
                 </Space>
               </BaseImage.PreviewGroup>
               {provided.placeholder}
@@ -147,4 +191,4 @@ const Upload: React.FC<UploadPropsType> = ({ slug, photos, changePhotos, deleteP
   );
 };
 
-export { Upload }
+export { Upload };
