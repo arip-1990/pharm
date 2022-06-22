@@ -47,6 +47,8 @@ class IndexController extends Controller
             }
         }
 
+        $query->withCount('photos')->orderByDesc('photos_count');
+
         return ProductResource::collection($query->paginate($request->get('pageSize', 10)));
     }
 }
