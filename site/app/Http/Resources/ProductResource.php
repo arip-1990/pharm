@@ -12,6 +12,8 @@ class ProductResource extends JsonResource
     {
         $photos = $this->photos->map(fn(Photo $photo) => [
             'id' => $photo->id,
+            'sort' => $photo->sort,
+            'status' => $photo->status,
             'url' => $photo->getUrl()
         ]);
 

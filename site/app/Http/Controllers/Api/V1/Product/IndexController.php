@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Product;
 
+use App\Models\Photo;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controller;
@@ -22,7 +24,23 @@ class IndexController extends Controller
         }
 
         if ($photo = $request->get('photo')) {
-            $photo === 'on' ? $query->has('photos') : $query->doesnthave('photos');
+            switch ($photo) {
+                case 'present':
+                    $query->has('photos');
+                    break;
+                case 'missing':
+                    $query->doesnthave('photos');
+                    break;
+                case 'checked':
+                    $query->whereHas('photos', function (Builder $builder) {
+                        $builder->where('status', Photo::STATUS_CHECKED);
+                    });
+                    break;
+                case 'unchecked':
+                    $query->whereHas('photos', function (Builder $builder) {
+                        $builder->where('status', Photo::STATUS_NOT_CHECKED);
+                    });
+            }
         }
 
         if ($category = $request->get('category')) {
