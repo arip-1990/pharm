@@ -24,8 +24,8 @@ class TestCommand extends Command
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'Код');
-        $sheet->setCellValue('B1', 'Штрих-код');
-        $sheet->setCellValue('C1', 'Наименование');
+        $sheet->setCellValue('B1', 'Наименование');
+        $sheet->setCellValue('C1', 'Описание');
         $sheet->getStyle('A1')->applyFromArray([
             'font' => ['bold' => true],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
@@ -40,14 +40,14 @@ class TestCommand extends Command
         ]);
 
         /** @var Product $product */
-        foreach (Product::active()->doesntHave('photos')->get() as $i => $product) {
+        foreach (Product::active()->whereNotNull('description')->get() as $i => $product) {
             $sheet->setCellValue('A' . ($i + 2), $product->code);
-            $sheet->setCellValue('B' . ($i + 2), $product->barcode ?? '');
-            $sheet->setCellValue('C' . ($i + 2), $product->name);
+            $sheet->setCellValue('B' . ($i + 2), $product->name);
+            $sheet->setCellValue('C' . ($i + 2), $product->description ?? '');
         }
 
         $writer = new Xlsx($spreadsheet);
-        $writer->save('Товары без фото.xlsx');
+        $writer->save('Товары с описанием.xlsx');
 
         $this->info(PHP_EOL . 'Процесс завершена!');
         return 0;
