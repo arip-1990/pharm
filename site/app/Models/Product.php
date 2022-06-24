@@ -35,13 +35,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Collection<Offer> $offers
  * @property Collection<Value> $values
  * @property ProductStatistic|null $statistic
+ * @property ModerationProduct|null $moderation
  */
 class Product extends Model
 {
     use SoftDeletes, Sluggable;
 
-    const STATUS_DRAFT = false;
-    const STATUS_ACTIVE = true;
+    const STATUS_DRAFT = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_MODERATION = 2;
 
     public string $abc = '';
     public $incrementing = false;
@@ -170,5 +172,10 @@ class Product extends Model
     public function statistic(): HasOne
     {
         return $this->hasOne(ProductStatistic::class, 'id');
+    }
+
+    public function moderation(): HasOne
+    {
+        return $this->hasOne(ModerationProduct::class);
     }
 }

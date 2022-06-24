@@ -16,8 +16,6 @@ services:
   panel:
     build:
       context: panel/docker/dev/nginx
-    environment:
-      API_URL: http://pharm.test
     networks:
       - traefik-public
       - default
@@ -32,7 +30,7 @@ services:
     build:
       context: panel/docker/dev/node
     environment:
-      API_URL: http://pharm.test
+      REACT_APP_API_URL: http://pharm.test
     volumes:
       - ./panel:/app
     command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn start"
@@ -180,6 +178,20 @@ services:
       - traefik.http.routers.redis.rule=Host(`redis.pharm.test`)
       - traefik.http.routers.redis.entryPoints=http
       - traefik.http.services.redis.loadBalancer.server.port=6379
+
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - 4444:4444
+
+  parser:
+    build: parser
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      SELENIUM_URL: http://selenium:4444/wd/hub
+    volumes:
+      - ./parser:/app
+      - uploads:/app/data
 
   bot:
     build: bot

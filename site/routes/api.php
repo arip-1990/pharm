@@ -30,15 +30,23 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::prefix('product')->group(function () {
+            Route::prefix('/upload')->group(function () {
+                Route::patch('/', [Api\V1\Product\UpdatePhotoController::class, 'handle']);
+                Route::delete('/', [Api\V1\Product\DeletePhotoController::class, 'handle']);
+                Route::patch('/status', [Api\V1\Product\UpdateStatusPhotoController::class, 'handle']);
+                Route::post('/{product}', [Api\V1\Product\UploadController::class, 'handle']);
+            });
+
+            Route::prefix('/moderation')->group(function () {
+                Route::get('/', [Api\V1\Product\Moderation\IndexController::class, 'handle']);
+                Route::put('/{product}', [Api\V1\Product\Moderation\UpdateController::class, 'handle']);
+            });
+
             Route::get('/', [Api\V1\Product\IndexController::class, 'handle']);
             Route::get('/{product}', [Api\V1\Product\ShowController::class, 'handle']);
             Route::put('/attributes/{product}', [Api\V1\Product\UpdateAttributesController::class, 'handle']);
             Route::put('/description/{product}', [Api\V1\Product\UpdateDescriptionController::class, 'handle']);
             Route::put('/{product}', [Api\V1\Product\UpdateController::class, 'handle']);
-            Route::post('/upload/{product}', [Api\V1\Product\UploadController::class, 'handle']);
-            Route::patch('/upload', [Api\V1\Product\UpdatePhotoController::class, 'handle']);
-            Route::patch('/upload/status', [Api\V1\Product\UpdateStatusPhotoController::class, 'handle']);
-            Route::delete('/upload', [Api\V1\Product\DeletePhotoController::class, 'handle']);
         });
 
         Route::prefix('order')->group(function () {

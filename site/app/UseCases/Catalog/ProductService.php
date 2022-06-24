@@ -9,7 +9,6 @@ use App\Models\Product;
 use App\Models\Value;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\Builder;
 
 class ProductService
 {

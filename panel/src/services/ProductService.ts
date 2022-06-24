@@ -55,11 +55,25 @@ export const productApi = createApi({
       }),
       providesTags: ['IProduct'],
     }),
+    fetchModerationProducts: builder.query<IProduct[], void>({
+      query: () => ({
+        url: '/product/moderation'
+      }),
+      providesTags: ['IProduct'],
+    }),
     updateProduct: builder.mutation<void, { slug: string, data: any }>({
       query: (args) => ({
         url: `/product/${args.slug}`,
         method: 'put',
         data: args.data
+      }),
+      invalidatesTags: ['IProduct'],
+    }),
+    updateModerationProduct: builder.mutation<void, { slug: string, check: boolean }>({
+      query: (args) => ({
+        url: `/product/moderation/${args.slug}`,
+        method: 'put',
+        data: {check: args.check}
       }),
       invalidatesTags: ['IProduct'],
     }),
@@ -119,7 +133,9 @@ export const productApi = createApi({
 export const {
   useFetchProductsQuery,
   useFetchProductQuery,
+  useFetchModerationProductsQuery,
   useUpdateProductMutation,
+  useUpdateModerationProductMutation,
   useUpdateDescriptionProductMutation,
   useUpdateAttributesProductMutation,
   useAddPhotoProductMutation,

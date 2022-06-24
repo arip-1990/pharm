@@ -14,7 +14,7 @@ class FavoriteController extends Controller
     public function index(Request $request): View
     {
         $favorites = $request->session()->get('favorites', []);
-        $paginator = Product::query()->active()->whereIn('id', $favorites)->paginate(15);
+        $paginator = Product::query()->whereIn('id', $favorites)->paginate(15);
         $cartService = $this->cartService;
 
         return view('catalog.favorite', compact('paginator', 'cartService'));

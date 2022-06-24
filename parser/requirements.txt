@@ -1,0 +1,6 @@
+pandas
+requests
+fuzzywuzzy
+selenium
+openpyxl
+bs4

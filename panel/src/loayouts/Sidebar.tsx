@@ -6,7 +6,7 @@ import {
   ShoppingOutlined,
   BulbOutlined,
   DashboardOutlined,
-  ShopOutlined
+  ShopOutlined,
 } from "@ant-design/icons";
 import { SiderTheme } from "antd/lib/layout/Sider";
 
@@ -17,26 +17,46 @@ interface PropsType {
 }
 
 const Sidebar: React.FC<PropsType> = ({ theme, collapsed, switchTheme }) => {
-  const {state}: any = useLocation();
+  const { state }: any = useLocation();
 
   return (
-    <Layout.Sider theme={theme} trigger={null} collapsible collapsed={collapsed}>
+    <Layout.Sider
+      theme={theme}
+      trigger={null}
+      collapsible
+      collapsed={collapsed}
+    >
       <div className="brand">
         <span className="logo" />
       </div>
 
-      <Menu mode="inline" defaultSelectedKeys={state?.menuItem || ['stats']}>
+      <Menu mode="inline" defaultSelectedKeys={state?.menuItem || ["stats"]}>
         <Menu.Item key="stats" icon={<DashboardOutlined />}>
-          <Link to='/' state={{menuItem: ['stats']}}>Статистика</Link>
+          <Link to="/" state={{ menuItem: ["stats"] }}>
+            Статистика
+          </Link>
         </Menu.Item>
         <Menu.Item key="order" icon={<ShoppingCartOutlined />}>
-          <Link to="order" state={{menuItem: ['order']}}>Заказы</Link>
+          <Link to="order" state={{ menuItem: ["order"] }}>
+            Заказы
+          </Link>
         </Menu.Item>
-        <Menu.Item key="product" icon={<ShoppingOutlined />}>
-          <Link to="product" state={{menuItem: ['product']}}>Товары</Link>
-        </Menu.Item>
+        <Menu.SubMenu title="Товары" icon={<ShoppingOutlined />}>
+          <Menu.Item key="product">
+            <Link to="product" state={{ menuItem: ["product"] }}>
+              Все товары
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="moderation">
+            <Link to="/product/moderation" state={{ menuItem: ["moderation"] }}>
+              Модерация
+            </Link>
+          </Menu.Item>
+        </Menu.SubMenu>
         <Menu.Item key="offer" icon={<ShopOutlined />}>
-          <Link to="offer" state={{menuItem: ['offer']}}>Остатки</Link>
+          <Link to="offer" state={{ menuItem: ["offer"] }}>
+            Остатки
+          </Link>
         </Menu.Item>
       </Menu>
       {/* {!collapsed ? (

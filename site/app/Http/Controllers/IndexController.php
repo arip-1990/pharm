@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): View
     {
         $productIds = Offer::query()->select('product_id')->whereCity($this->city)
             ->groupBy('product_id')->get()->pluck('product_id');
