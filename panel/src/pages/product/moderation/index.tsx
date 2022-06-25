@@ -31,7 +31,16 @@ const Moderation: React.FC = () => {
           loading={isLoading}
         >
           {products?.map((product) => (
-            <Card key={product.id} title={product.name}>
+            <Card
+              key={product.id}
+              title={
+                <Row>
+                  <Col span={4}>{product.code}</Col>
+                  <Col span={20}>{product.name}</Col>
+                </Row>
+              }
+              style={{ marginBottom: "1rem" }}
+            >
               <Row style={{ alignItems: "center" }}>
                 <Col span={4}>
                   <Image width={64} src={product.photos[0].url} />

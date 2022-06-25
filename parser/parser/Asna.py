@@ -22,7 +22,11 @@ class Asna:
         for item in self.soup.select('.content .detail .product-information .product-information__info__content__block'):
             tmp = item.select_one('h3')
             if tmp and tmp.text.strip().lower().startswith('описание'):
-                description = '\n'.join([str(item) for item in item.select(' > *:not(h3)')])
+                description = '\n'.join([str(item) for item in self.soup.select('.content .detail '
+                                                                                '.product-information '
+                                                                                '.product'
+                                                                                '-information__info__content__block > '
+                                                                                '*:not(h3)')])
                 data = description.strip()
 
         return data

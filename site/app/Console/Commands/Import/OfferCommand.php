@@ -95,6 +95,7 @@ class OfferCommand extends Command
                 $i = 0;
             }
         }
+
         if ($i) {
             Offer::query()->upsert($fields, ['store_id', 'product_id']);
         }

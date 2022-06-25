@@ -11,14 +11,19 @@ interface PropsType {
   columns: ColumnProps<any>[];
   data: any[] | undefined;
   loading?: boolean | SpinProps;
-  pagination?: { current: number; total: number; pageSize: number };
+  pagination?: {
+    current: number;
+    total: number;
+    pageSize: number;
+    showQuickJumper?: boolean;
+  };
   onChange?: (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue | null>,
     sorter: any
   ) => void;
-  onRow?: GetComponentProps<any>,
-  footer?: PanelRender<any>
+  onRow?: GetComponentProps<any>;
+  footer?: PanelRender<any>;
 }
 
 const Table: React.FC<PropsType> = ({
@@ -30,7 +35,7 @@ const Table: React.FC<PropsType> = ({
   pagination,
   onChange,
   onRow,
-  footer
+  footer,
 }) => {
   const handleChange = (
     pagination: TablePaginationConfig,

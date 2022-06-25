@@ -210,15 +210,15 @@ services:
   #     MAIL_PASSWORD: ${MAIL_PASSWORD}
   #     MAIL_FROM_ADDRESS: info@120на80.рф
   #     MAIL_FROM_NAME: Сеть аптек 120/80
-  #   command: sh -c 'php artisan schedule:run'
-  #   deploy:
-  #     labels:
-  #       - swarm.cronjob.enable=true
-  #       - swarm.cronjob.schedule=* * * * *
-  #       - swarm.cronjob.skip-running=true
-  #     replicas: 0
-  #     restart_policy:
-  #       condition: none
+  #  command: sh -c 'php artisan schedule:run'
+  #  deploy:
+  #    labels:
+  #      - swarm.cronjob.enable=true
+  #      - swarm.cronjob.schedule=* * * * *
+  #      - swarm.cronjob.skip-running=true
+  #    replicas: 0
+  #    restart_policy:
+  #      condition: none
 
   site-redis-queue:
     image: ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
@@ -251,6 +251,21 @@ services:
         delay: 5s
         max_attempts: 5
         window: 120s
+
+  parser:
+    image: ${REGISTRY}/pharm-parser:${IMAGE_TAG}
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      SELENIUM_URL: http://selenium:4444/wd/hub
+    command: sh -c 'python main.py'
+    deploy:
+      labels:
+        - swarm.cronjob.enable=true
+        - swarm.cronjob.schedule=0 0 * * *
+        - swarm.cronjob.skip-running=true
+      replicas: 0
+      restart_policy:
+        condition: none
 
   bot:
     image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}

@@ -325,6 +325,7 @@ const Product: React.FC = () => {
                 products?.meta.current_page || filters.pagination.current,
               total: products?.meta.total || 0,
               pageSize: products?.meta.per_page || filters.pagination.pageSize,
+              showQuickJumper: true,
             }}
             onRow={(record) => ({
               onClick: () =>

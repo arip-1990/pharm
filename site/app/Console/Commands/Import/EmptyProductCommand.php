@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\Import;
 
+use App\Models\Photo;
 use App\Models\Product;
 use Carbon\Carbon;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -24,16 +24,30 @@ class EmptyProductCommand extends \Illuminate\Console\Command
             $spreadsheet = $reader->load(Storage::path('Найденные товары.xlsx'));
 
             foreach ($spreadsheet->getActiveSheet()->toArray() as $row) {
+                /** @var Product $product */
                 $product = Product::query()->where('code', (int)$row[0])
                     ->where('status', Product::STATUS_DRAFT)->first();
                 if ($product) {
-                    $photo = file_get_contents((string)$row[3]);
-                    do {
-                        $fileName = Str::random() . '.' . $image->getClientOriginalExtension();
-                    }
-                    while (Storage::exists('images/original/' . $fileName));
+                    if ($photo = explode('|', (string)$row[3])[0]) {
+                        try {
+                            $info = pathinfo($photo);
+                            $info['extension'] = explode('?', $info['extension'])[0];
+                            $photo = file_get_contents($photo);
+                            do {
+                                $fileName = Str::random() . '.' . $info['extension'];
+                            }
+                            while (Storage::exists('images/original/' . $fileName));
 
-                    Storage::put('images/original/' . $fileName, $photo);
+                            Storage::put('images/original/' . $fileName, $photo);
+
+                            $product->photos()->create([
+                                'file' => $fileName,
+                                'status' => Photo::STATUS_CHECKED,
+                                'sort' => $product->photos()->count()
+                            ]);
+                        }
+                        catch (\Exception $e) {}
+                    }
 
                     $product->update([
                         'status' => Product::STATUS_MODERATION,

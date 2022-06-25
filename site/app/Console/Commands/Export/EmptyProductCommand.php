@@ -16,7 +16,7 @@ class EmptyProductCommand extends Command
     protected $signature = 'export:emptyProduct {type=photo}';
     protected $description = 'Export products with
                                 {photo (default) : empty photos}
-                                {barcode : empty barcode}
+                                {attribute : empty attributes}
                                 {description : empty description}';
 
     public function handle(): int
@@ -25,8 +25,8 @@ class EmptyProductCommand extends Command
 
         try {
             switch ($this->argument('type')) {
-                case 'barcode':
-                    $this->barcode();
+                case 'attribute':
+                    $this->attributes();
                     break;
                 case 'description':
                     $this->description();
@@ -42,33 +42,6 @@ class EmptyProductCommand extends Command
 
         $this->info('Выгрузка успешно завершена! ' . $startTime->diff(Carbon::now())->format('%mм %sс'));
         return 0;
-    }
-
-    private function barcode(): void
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Products');
-        $sheet->setCellValue('A1', 'Код');
-        $sheet->setCellValue('B1', 'Наименование');
-        $sheet->getStyle('A1')->applyFromArray([
-            'font' => ['bold' => true],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
-        ]);
-        $sheet->getStyle('B1')->applyFromArray([
-            'font' => ['bold' => true],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
-        ]);
-
-        $productIds = Offer::query()->select('product_id')->groupBy('product_id')->get()->pluck('product_id');
-        /** @var Product $product */
-        foreach (Product::query()->whereIn('id', $productIds)->whereNull('description')->get() as $i => $product) {
-            $sheet->setCellValue('A' . ($i + 2), $product->code);
-            $sheet->setCellValue('B' . ($i + 2), $product->name);
-        }
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save(Storage::path('Товары без штрих-кода.xlsx'));
     }
 
     private function description(): void
@@ -96,6 +69,33 @@ class EmptyProductCommand extends Command
 
         $writer = new Xlsx($spreadsheet);
         $writer->save(Storage::path('Товары без описания.xlsx'));
+    }
+
+    private function attributes(): void
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Products');
+        $sheet->setCellValue('A1', 'Код');
+        $sheet->setCellValue('B1', 'Наименование');
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+        ]);
+        $sheet->getStyle('B1')->applyFromArray([
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+        ]);
+
+        $productIds = Offer::query()->select('product_id')->groupBy('product_id')->get()->pluck('product_id');
+        /** @var Product $product */
+        foreach (Product::query()->whereIn('id', $productIds)->doesntHave('values')->get() as $i => $product) {
+            $sheet->setCellValue('A' . ($i + 2), $product->code);
+            $sheet->setCellValue('B' . ($i + 2), $product->name);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save(Storage::path('Товары без аттрибутов.xlsx'));
     }
 
     private function photos(): void

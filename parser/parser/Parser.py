@@ -9,7 +9,6 @@ from fuzzywuzzy import fuzz
 from bs4 import BeautifulSoup
 from threading import Thread, Event
 from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import WebDriverException
 from .Asna import Asna
 from .Apteka import Apteka
@@ -34,8 +33,6 @@ class Parser:
         self.excel_data = pd.read_excel(file, 'Products')
         self.total = len(self.excel_data)
         self.progress = 1
-        desired = DesiredCapabilities.CHROME
-        desired['loggingPrefs'] = {'performance': 'ALL'}
 
         options = webdriver.ChromeOptions()
         if headless:
@@ -54,17 +51,16 @@ class Parser:
         if proxy:
             options.add_argument(f'--proxy-server={proxy}')
 
-        self.driver = webdriver.Remote(os.getenv('SELENIUM_URL'), options=options, desired_capabilities=desired)
+        self.driver = webdriver.Remote(os.getenv('SELENIUM_URL'), desired_capabilities=options.to_capabilities())
         self.driver.implicitly_wait(10)
         self.driver.set_page_load_timeout(20)
         self.status_event = Event()
-        self.session = requests.Session()
 
     def close(self) -> None:
         self.driver.close()
 
     def parse_proxy(self) -> None:
-        r = self.session.get('https://free-proxy-list.net')
+        r = requests.get('https://free-proxy-list.net')
         if r.status_code == 200:
             soup = BeautifulSoup(r.text, 'html.parser')
             for item in soup.select('#list table tbody tr'):
@@ -99,8 +95,9 @@ class Parser:
 
         if parser:
             data = parser.parse()
-            data['url'] = url
-            result.append(data)
+            if data:
+                data['url'] = url
+                result.append(data)
 
     def find_product(self, urls: list) -> dict:
         data = {}
@@ -142,21 +139,18 @@ class Parser:
         for index, row in self.excel_data.iterrows():
             self.code = str(row['Код']).replace('.0', '')
             self.title = str(row['Наименование']).replace('.0', '')
-            # if not len(self.proxies):
-            #     self.parse_proxy()
-
-            r = self.session.get(self.SEARCH_URL + self.title, headers={'User-Agent': self.AGENT})
-            if r.status_code != 200:
-                continue
-
-            urls = []
-            soup = BeautifulSoup(r.text, 'html.parser')
-            for link in soup.select('#search-result .OrganicTitle a'):
-                tmp = link.get('href').strip()
-                if 'eapteka.ru' in tmp or 'apteka.ru' in tmp or 'megapteka.ru' in tmp or 'asna.ru' in tmp or 'uteka.ru' in tmp:
-                    urls.append(tmp)
 
             try:
+                self.driver.get(self.SEARCH_URL + self.title)
+                page = self.driver.execute_script('return document.body.innerHTML;')
+
+                urls = []
+                soup = BeautifulSoup(page, 'html.parser')
+                for link in soup.select('#search-result .OrganicTitle a'):
+                    tmp = link.get('href').strip()
+                    if 'eapteka.ru' in tmp or 'apteka.ru' in tmp or 'megapteka.ru' in tmp or 'asna.ru' in tmp or 'uteka.ru' in tmp:
+                        urls.append(tmp)
+
                 product = self.find_product(urls)
                 if product:
                     self.total_found += 1
@@ -166,7 +160,6 @@ class Parser:
             self.progress += 1
 
         self.status_event.set()
-        self.session.close()
         self.driver.quit()
 
     def save_to_excel(self, data: dict):
@@ -185,7 +178,8 @@ class Parser:
         df = pd.DataFrame(temp)
         file = pathlib.Path('./data/Найденные товары.xlsx')
         if file.is_file():
-            df = df.append(pd.DataFrame(pd.read_excel('./data/Найденные товары.xlsx', 'Products')), ignore_index=True)
+            df = pd.concat(
+                [pd.DataFrame(pd.read_excel('./data/Найденные товары.xlsx', 'Products')), df], ignore_index=True)
 
         df.to_excel('./data/Найденные товары.xlsx', sheet_name='Products', index=False)
 

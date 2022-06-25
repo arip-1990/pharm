@@ -18,7 +18,8 @@ class EApteka:
         return data
 
     def parse_description(self) -> str | None:
-        data = self.soup.select_one('#binstructions [itemprop=description] #instruction_DESCRIPTION .offer-instruction__item-text')
+        data = self.soup.select_one('#binstructions [itemprop=description] #instruction_DESCRIPTION '
+                                    '.offer-instruction__item-text')
         if data is None:
             return None
 

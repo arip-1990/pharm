@@ -22,7 +22,9 @@ class Apteka:
         for item in self.soup.select('.ViewProductPage .ProductBottomInfo .ProductDescription .ProdDescList'):
             tmp = item.select_one('h3')
             if tmp and tmp.text.strip().lower().startswith('описание'):
-                description = '\n'.join([str(item) for item in item.select(' > *:not(h3)')])
+                description = '\n'.join([str(item) for item in self.soup.select('.ViewProductPage .ProductBottomInfo '
+                                                                                '.ProductDescription .ProdDescList > '
+                                                                                '*:not(h3)')])
                 data = description.strip()
 
         return data
