@@ -261,7 +261,7 @@ services:
     deploy:
       labels:
         - swarm.cronjob.enable=true
-        - swarm.cronjob.schedule=0 0 * * *
+        - swarm.cronjob.schedule=0 5 * * *
         - swarm.cronjob.skip-running=true
       replicas: 0
       restart_policy:

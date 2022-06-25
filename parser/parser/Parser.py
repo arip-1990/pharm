@@ -54,7 +54,7 @@ class Parser:
         self.driver = webdriver.Remote(os.getenv('SELENIUM_URL'), desired_capabilities=options.to_capabilities())
         self.driver.implicitly_wait(10)
         self.driver.set_page_load_timeout(20)
-        self.status_event = Event()
+        # self.status_event = Event()
 
     def close(self) -> None:
         self.driver.close()
@@ -135,7 +135,7 @@ class Parser:
         return data
 
     def start(self) -> None:
-        Thread(target=self.print_status).start()
+        # Thread(target=self.print_status).start()
         for index, row in self.excel_data.iterrows():
             self.code = str(row['Код']).replace('.0', '')
             self.title = str(row['Наименование']).replace('.0', '')
@@ -159,7 +159,7 @@ class Parser:
                 self.message = e.msg
             self.progress += 1
 
-        self.status_event.set()
+        # self.status_event.set()
         self.driver.quit()
 
     def save_to_excel(self, data: dict):

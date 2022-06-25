@@ -47,8 +47,6 @@ class ProductCommand extends Command
                     $valueFields = [];
                     $i = 0;
                 }
-
-                $j++;
             }
 
             if ($i) {
