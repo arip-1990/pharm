@@ -19,8 +19,6 @@ RUN composer install --no-dev --no-scripts --prefer-dist --no-progress --no-sugg
 
 FROM php:8.0-cli-alpine
 
-RUN apk add --no-cache bash
-
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache

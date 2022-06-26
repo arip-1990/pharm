@@ -14,7 +14,7 @@ class UpdatePhotosRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'items' => 'required|array|max:5',
+            'items' => 'required|array',
             'items.*.id' => 'required|integer|distinct',
             'items.*.sort' => 'required|integer|distinct',
         ];

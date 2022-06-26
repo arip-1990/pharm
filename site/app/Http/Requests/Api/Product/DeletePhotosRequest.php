@@ -14,7 +14,7 @@ class DeletePhotosRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'items' => 'required|array|max:5',
+            'items' => 'required|array',
             'items.*' => 'required|integer|distinct',
         ];
     }

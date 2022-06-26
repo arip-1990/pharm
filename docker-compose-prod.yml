@@ -70,7 +70,7 @@ services:
       - traefik-public
       - default
     volumes:
-      - uploads:/app/storage/app/public
+      - uploads:/app/public/storage
     deploy:
       labels:
         - traefik.enable=true
@@ -252,6 +252,16 @@ services:
         max_attempts: 5
         window: 120s
 
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - 4444:4444
+    privileged: true
+    shm_size: 2g
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
+
   parser:
     image: ${REGISTRY}/pharm-parser:${IMAGE_TAG}
     environment:
@@ -261,7 +271,7 @@ services:
     deploy:
       labels:
         - swarm.cronjob.enable=true
-        - swarm.cronjob.schedule=30 8 * * *
+        - swarm.cronjob.schedule=30 13 * * *
         - swarm.cronjob.skip-running=true
       replicas: 0
       restart_policy:

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Product;
 
+use App\Models\Offer;
 use App\Models\Photo;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
@@ -14,7 +15,9 @@ class IndexController extends Controller
 {
     public function handle(Request $request): ResourceCollection
     {
-        $query = Product::query()->select('products.*');
+        $productIds = Offer::query()->select('product_id')->groupBy('product_id')->get()->pluck('product_id');
+        $query = Product::query()->select('products.*')->whereIn('id', $productIds);
+
         if ($status = $request->get('status')) {
             $query->where('status', $status === 'on' ? Product::STATUS_ACTIVE : Product::STATUS_DRAFT);
         }
