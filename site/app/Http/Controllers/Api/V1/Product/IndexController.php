@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\Product;
 
-use App\Models\Offer;
 use App\Models\Photo;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
@@ -15,11 +14,10 @@ class IndexController extends Controller
 {
     public function handle(Request $request): ResourceCollection
     {
-        $productIds = Offer::query()->select('product_id')->groupBy('product_id')->get()->pluck('product_id');
-        $query = Product::query()->select('products.*')->whereIn('id', $productIds);
+        $query = Product::query()->select('products.*');
 
         if ($status = $request->get('status')) {
-            $query->where('status', $status === 'on' ? Product::STATUS_ACTIVE : Product::STATUS_DRAFT);
+            $status === 'on' ? $query->has('offers') : $query->doesntHave('offers');
         }
 
         if ($sale = $request->get('sale')) {
@@ -67,8 +65,6 @@ class IndexController extends Controller
                 $query->orderBy($request->get('orderField'), $request->get('orderDirection'));
             }
         }
-
-        $query->withCount('photos')->orderByDesc('photos_count');
 
         return ProductResource::collection($query->paginate($request->get('pageSize', 10)));
     }

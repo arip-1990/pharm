@@ -217,13 +217,6 @@ const Product: React.FC = () => {
         .filter((item) => item.field === "status")
         .map((item) => item.value),
       filterMultiple: false,
-      sorter: true,
-      sortOrder:
-        filters.order.field === "status"
-          ? ((filters.order.direction === "asc"
-              ? "ascend"
-              : "descend") as SortOrder)
-          : null,
       render: (status: boolean) =>
         status ? (
           <Tag color="green">Активен</Tag>
@@ -317,7 +310,7 @@ const Product: React.FC = () => {
               barcode: item.barcode,
               name: item.name,
               category: item.category?.name,
-              status: item.status,
+              status: item.offers,
             }))}
             onChange={handleChange}
             pagination={{

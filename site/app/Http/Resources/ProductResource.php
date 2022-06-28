@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Photo;
+use App\Models\Product;
 use App\Models\Value;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,6 +18,7 @@ class ProductResource extends JsonResource
             'url' => $photo->getUrl()
         ]);
 
+        /** @var Product $this */
         return [
             'id' => $this->id,
             'slug' => $this->slug,
@@ -42,6 +44,7 @@ class ProductResource extends JsonResource
             ]),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
+            'offers' => !!$this->offers()->count()
         ];
     }
 }

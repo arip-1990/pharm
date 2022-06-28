@@ -21,7 +21,7 @@ def help(message) -> None:
     bot.send_message(message.chat.id, message.from_user.id)
 
 
-@bot.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer'])
+@bot.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer', 'update_test'])
 def update_data(message) -> None:
     global update_command
     send_message = ''
@@ -35,6 +35,8 @@ def update_data(message) -> None:
             send_message = 'Обновление аптек не завершено'
         elif update_command == 'offer':
             send_message = 'Обновление остатков не завершено'
+        elif update_command == 'test':
+            send_message = 'Обработка запроса не завершено'
 
         bot.reply_to(message, send_message)
     else:
@@ -47,6 +49,8 @@ def update_data(message) -> None:
             send_message = 'Обновляем аптеки...'
         elif update_command == 'offer':
             send_message = 'Обновляем остатки...'
+        elif update_command == 'test':
+            send_message = 'Обрабатываем запрос...'
 
         r.publish('update', json.dumps({'chatId': message.chat.id, 'type': update_command}))
         bot.send_message(message.chat.id, send_message)

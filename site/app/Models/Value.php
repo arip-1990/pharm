@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $attribute_id
  * @property string $value
+ *
+ * @property Attribute $attribute
  */
 class Value extends Model
 {

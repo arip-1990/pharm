@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Storage;
  * @property string $product_id
  * @property int $sort
  * @property int $status
+ *
+ * @property Product $product
  */
 class Photo extends Model
 {
@@ -30,6 +33,11 @@ class Photo extends Model
         if (Storage::exists('images/original/' . $this->file))
             return Storage::url('images/original/' . $this->file);
         return null;
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
     }
 
 //    public function getThumbFilePath(string $type = 'thumb'): ?string
