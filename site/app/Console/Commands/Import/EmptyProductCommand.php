@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Models\Photo;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -42,7 +41,6 @@ class EmptyProductCommand extends \Illuminate\Console\Command
 
                             $product->photos()->create([
                                 'file' => $fileName,
-                                'status' => Photo::STATUS_CHECKED,
                                 'sort' => $product->photos()->count()
                             ]);
                         }

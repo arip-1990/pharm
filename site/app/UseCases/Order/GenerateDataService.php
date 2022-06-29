@@ -4,12 +4,13 @@ namespace App\UseCases\Order;
 
 use App\Models\Order;
 use App\Helper;
+use Carbon\Carbon;
 
 class GenerateDataService
 {
     public function __construct(private Order $order) {}
 
-    public function generateSenData(\DateTimeImmutable $date): string
+    public function generateSenData(Carbon $date): string
     {
         $phone = '+' . $this->order->user->phone;
         $price_all = $this->order->getTotalCost();
@@ -83,7 +84,7 @@ class GenerateDataService
                     </payment>
                 </payments>";
         }
-        elseif($this->order->payment_type === Order::PAYMENT_TYPE_SBERBANK) {
+        elseif($this->order->payment_type === Order::PAYMENT_TYPE_SBER) {
             $xml .=
                 "<payments>
                     <payment>

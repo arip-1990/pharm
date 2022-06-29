@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/test', [IndexController::class, 'test']);
+Route::get('/test', [IndexController::class, 'test']);
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 Route::get('/set-city/{city}', [IndexController::class, 'setCity'])->name('setCity');

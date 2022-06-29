@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Offer;
-use App\Models\Photo;
 use App\Models\Product;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;

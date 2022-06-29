@@ -8,6 +8,7 @@ use App\Models\Status;
 use App\Events\Order\OrderSend;
 use App\Mail\Order\CreateOrder;
 use App\UseCases\Order\GenerateDataService;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +54,7 @@ class OrderSendListener implements ShouldQueue
             CURLOPT_POST => true,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => false,
-            CURLOPT_POSTFIELDS => $service->generateSenData(new \DateTimeImmutable())
+            CURLOPT_POSTFIELDS => $service->generateSenData(Carbon::now())
         ]);
 
         $response = curl_exec($ch);

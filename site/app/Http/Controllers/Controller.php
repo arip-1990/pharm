@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\UseCases\CartService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -34,7 +35,7 @@ class Controller extends BaseController
 //            dump($query->sql);
 //            dump($query->bindings);
 //        });
-//        $products = Product::query()->findMany(config('data.productIds'));
-//        dd($products->first()->getCountByCity($request->cookie('city', $this->defaultCity)));
+        $order = Order::query()->orderByDesc('id')->first();
+        dd($order->statuses);
     }
 }

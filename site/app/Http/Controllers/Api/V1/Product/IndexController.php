@@ -30,7 +30,7 @@ class IndexController extends Controller
                     $query->has('photos');
                     break;
                 case 'missing':
-                    $query->doesnthave('photos');
+                    $query->doesntHave('photos');
                     break;
                 case 'checked':
                     $query->whereHas('photos', function (Builder $builder) {
@@ -49,11 +49,15 @@ class IndexController extends Controller
         }
 
         if ($request->get('searchColumn')) {
-            $query->where($request->get('searchColumn'), 'like', $request->get('searchText') . '%')
-                ->orWhere($request->get('searchColumn'), 'like', '%' . $request->get('searchText') . '%');
-
-            if ($request->get('searchColumn') === 'name')
-                $query->orWhereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$request->get('searchText')]);
+            if ($request->get('searchColumn') === 'name') {
+                $query->where(function (Builder $builder) use ($request) {
+                    $builder->where($request->get('searchColumn'), 'like', '%' . $request->get('searchText') . '%')
+                        ->orWhereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$request->get('searchText')]);
+                });
+            }
+            else {
+                $query->where($request->get('searchColumn'), 'like', '%' . $request->get('searchText') . '%');
+            }
         }
 
         if ($request->get('orderField')) {

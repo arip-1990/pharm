@@ -15,13 +15,12 @@ class PayController
 {
     public function handle(Request $request): Response
     {
-        Redis::publish('bot:pay', json_encode($request->all()));
-
-        $data = 'amount;' . $request->get('amount') . ';mdOrder;' . $request->get('mdOrder')
-            . ';operation;' . $request->get('operation') . ';status;' . $request->get('status') . ';';
+        $data = '';
+        foreach ($request->collect()->except('checksum', 'sign_alias')->sortKeys() as $key => $value) {
+            $data .= $key . ';' . $value . ';';
+        }
 
         $publicKey = Storage::get('callback.cer');
-
         $binarySignature = hex2bin(strtolower($request->get('checksum')));
         $isVerify = openssl_verify($data, $binarySignature, $publicKey, OPENSSL_ALGO_SHA512);
 
