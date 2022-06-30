@@ -52,7 +52,7 @@
                         </li>
                         <li style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
                             <b>Способы оплаты:</b>
-                            <span>{{ $order->payment_type === \App\Models\Order::PAYMENT_TYPE_SBERBANK ? 'Банковской картой' : 'Наличными' }}</span>
+                            <span>{{ $order->payment_type === \App\Models\Order::PAYMENT_TYPE_SBER ? 'Банковской картой' : 'Наличными' }}</span>
                         </li>
                     </ul>
                 </div>

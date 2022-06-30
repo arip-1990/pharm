@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->boolean('marked')->default(false);
             $table->boolean('recipe')->default(false);
             $table->boolean('sale')->default(false);
-            $table->boolean('status')->default(false);
+            $table->tinyInteger('status', unsigned: true)->default(0);
             $table->timestamps();
             $table->softDeletes();
 

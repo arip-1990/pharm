@@ -15,6 +15,7 @@ class CreateCategoriesTable extends Migration
             $table->integer('_lft', unsigned: true);
             $table->integer('_rgt', unsigned: true);
             $table->smallInteger('sort', unsigned: true)->default(0);
+            $table->string('picture')->nullable();
 
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');
         });

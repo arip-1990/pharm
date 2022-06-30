@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Offer\ImShopController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Catalog\CheckoutController;
@@ -23,8 +24,6 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/test', [IndexController::class, 'test']);
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 Route::get('/set-city/{city}', [IndexController::class, 'setCity'])->name('setCity');
@@ -93,3 +92,5 @@ Route::middleware('auth')->group(function () {
         Route::get('/{order}', [OrderController::class, 'show'])->name('.show');
     });
 });
+
+Route::middleware('auth.basic.once')->get('/offers', [ImShopController::class, 'handle']);

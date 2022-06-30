@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property bool $marked
  * @property bool $recipe
  * @property bool $sale
- * @property bool $status
+ * @property int $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at

@@ -50,7 +50,8 @@ class CartController extends Controller
 
         $stores = [];
         /** @var Offer[] $offers */
-        $offers = Offer::query()->whereIn('product_id', $productIds)->whereCity($this->city)->get();
+        $offers = Offer::query()->whereIn('product_id', $productIds)
+            ->where('quantity', '>', 0)->whereCity($this->city)->get();
         foreach ($offers as $offer) {
             $cartQuantity = $this->cartService->getItem($offer->product_id)->quantity;
             $stores[$offer->store_id]['store'] = $offer->store;

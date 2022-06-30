@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+
 class Status
 {
     // Сбербанк статусы
@@ -22,8 +24,8 @@ class Status
     const STATUS_RECEIVED_BY_CLIENT = 'F'; // Заказ получен клиентом
     const STATUS_CAUSED_BY_DELIVERY = 'G'; // Вызвана доставка
     const STATUS_ASSEMBLED_PHARMACY = 'H'; // Доставлен в аптеку (собран)
-    const STATUS_SENT_IN_1C = 'I'; // Отправлен в 1с
-    const STATUS_SENT_MAIL = 'J'; // Отправлена почта
+    const STATUS_SENT_IN_1C = 'I'; // Отправка в 1с
+    const STATUS_SENT_MAIL = 'J'; // Отправка почты
     const STATUS_PARTLY_REFUND = 'K'; // Частичный возврат
     const STATUS_FULL_REFUND = 'L'; // Полный возврат
     const STATUS_ACCEPTED = 'N'; // Принят
@@ -41,12 +43,12 @@ class Status
 
     public string $value;
     public int $state;
-    public \DateTimeImmutable $created_at;
+    public Carbon $created_at;
 
-    public function __construct(string $value, \DateTimeImmutable $created_at)
+    public function __construct(string $value, Carbon $created_at, int $state = self::STATE_WAIT)
     {
         $this->value = $value;
-        $this->state = self::STATE_WAIT;
+        $this->state = $state;
         $this->created_at = $created_at;
     }
 

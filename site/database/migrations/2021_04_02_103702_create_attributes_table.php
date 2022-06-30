@@ -15,6 +15,7 @@ class CreateAttributesTable extends Migration
             $table->string('default')->nullable();
             $table->boolean('required')->default(false);
             $table->json('variants')->default('[]');
+            $table->timestamps();
 
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
         });

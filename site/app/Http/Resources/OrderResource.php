@@ -3,12 +3,15 @@
 namespace App\Http\Resources;
 
 use App\Helper;
+use App\Models\Order;
+use App\Models\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
 {
     public function toArray($request): array
     {
+        /** @var Order $this */
         return [
             'id' => $this->id,
             'otherId' => $this->id + config('data.orderStartNumber'),
@@ -29,10 +32,10 @@ class OrderResource extends JsonResource
                 'id' => $this->store->id,
                 'name' => $this->store->name
             ],
-            'statuses' => $this->statuses->map(fn($status) => [
-                'value' => $status['value'],
-                'state' => $status['state'] ?? 2,
-                'createdAt' => $status['created_at']
+            'statuses' => $this->statuses->map(fn(Status $status) => [
+                'value' => $status->value,
+                'state' => $status->state ?? 2,
+                'createdAt' => $status->created_at
             ]),
             'items' => OrderItemResource::collection($this->items)
         ];

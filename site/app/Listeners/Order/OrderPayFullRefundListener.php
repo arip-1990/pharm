@@ -14,9 +14,9 @@ class OrderPayFullRefundListener implements ShouldQueue
     public function handle(OrderPayFullRefund $event): void
     {
         $order = $event->order;
-        if ($order->payment_type === Order::PAYMENT_TYPE_SBER and $order->isPay() and !$order->isFullRefund()) {
-            $response = $this->getOrderInfo($order->sber_id);
-            try {
+        try {
+            if ($order->payment_type === Order::PAYMENT_TYPE_SBER and $order->isPay() and !$order->isFullRefund()) {
+                $response = $this->getOrderInfo($order->sber_id);
                 if($response['errorCode'] == 0) {
                     $order->changeStatusState(Status::STATE_SUCCESS);
                 }
@@ -27,12 +27,13 @@ class OrderPayFullRefundListener implements ShouldQueue
                     throw new \DomainException('Ошибка! ' . $response['errorMessage'] . ', sber_id: ' . $order->sber_id);
                 }
             }
-            catch (\Exception $exception) {
-                $order->changeStatusState(Status::STATE_ERROR);
-                $order->save();
+        }
+        catch (\Exception $exception) {
+            $order->changeStatusState(Status::STATE_ERROR);
+            $order->save();
 
-                Exception::create($order->id, 'full-refund', $exception->getMessage())->save();
-            }
+            Exception::create($order->id, 'full-refund', $exception->getMessage())->save();
+            return;
         }
 
         $order->delete();

@@ -35,7 +35,7 @@ class Controller extends BaseController
 //            dump($query->sql);
 //            dump($query->bindings);
 //        });
-        $order = Order::query()->orderByDesc('id')->first();
-        dd($order->statuses);
+//        $order = Order::query()->orderByDesc('id')->first();
+//        dd($order->statuses);
     }
 }

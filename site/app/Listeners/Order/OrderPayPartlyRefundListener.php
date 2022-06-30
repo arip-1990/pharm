@@ -27,13 +27,14 @@ class OrderPayPartlyRefundListener implements ShouldQueue
                 throw new \DomainException('Ошибка! ' . $response['errorMessage'].', sber_id: ' . $order->sber_id);
 
             $order->changeStatusState(Status::STATE_SUCCESS);
-            $order->save();
         }
         catch (\Exception $exception) {
             $order->changeStatusState(Status::STATE_ERROR);
-            $order->save();
+
             Exception::create($order->id, 'partly-refund', $exception->getMessage())->save();
         }
+
+        $order->save();
     }
 
     private function getOrderInfo(string $orderId, int $difference): array

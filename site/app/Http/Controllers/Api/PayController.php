@@ -24,8 +24,6 @@ class PayController
         $binarySignature = hex2bin(strtolower($request->get('checksum')));
         $isVerify = openssl_verify($data, $binarySignature, $publicKey, OPENSSL_ALGO_SHA512);
 
-        Redis::publish('bot:pay', 'verified => ' . $isVerify);
-
         if ($isVerify !== 1) {
             return new Response(status: SymfonyResponse::HTTP_PRECONDITION_FAILED);
         }
@@ -33,6 +31,7 @@ class PayController
         /** @var Order $order */
         $order = Order::query()->find((int)$request->get('orderNumber'));
         $this->checkStatus($order, $request->get('operation'), (int)$request->get('status'));
+        Redis::publish('bot:pay', 'status: ' . $order->statuses->toJson());
         $order->save();
 
         return new Response();
@@ -41,6 +40,8 @@ class PayController
     private function checkStatus(Order $order, string $operation, int $status): void
     {
         if ($order->status === Status::STATUS_PAID) {
+            Redis::publish('bot:pay', 'operation: ' . $operation);
+            Redis::publish('bot:pay', 'status: ' . $status);
             switch ($operation) {
                 case 'deposited':
                     if ($status === 1) {

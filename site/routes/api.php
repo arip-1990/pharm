@@ -14,11 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth.basic.once')->group(function () {
-//    Route::get('/offers', [Api\V1\Order\EditController::class, 'handle']);
-    Route::post('/edit-order', [Api\V1\Order\EditController::class, 'handle']);
-});
-Route::get('/offers', [Api\V1\Offer\ImShopController::class, 'handle']);
+Route::middleware('auth.basic.once')->post('/edit-order', [Api\V1\Order\EditController::class, 'handle']);
 
 Route::get('/pay', [Api\PayController::class, 'handle']);
 

@@ -10,8 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Routing\Controller;
 
-ini_set('memory_limit', -1);
-
 class ImShopController extends Controller
 {
     public function handle(): string
@@ -29,7 +27,7 @@ class ImShopController extends Controller
     {
         $data = '<categories>';
         /** @var Category $category */
-        foreach (Category::all() as $category) {
+        foreach (Category::query()->orderBy('_lft')->get() as $category) {
             if ($category->parent_id) {
                 $data .= "<category id='{$category->id}' parentId='{$category->parent_id}'>{$category->name}</category>";
             }

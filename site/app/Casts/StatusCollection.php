@@ -2,9 +2,12 @@
 
 namespace App\Casts;
 
+use App\Models\Status;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Support\Collection;
 
-class Status implements CastsAttributes
+class StatusCollection implements CastsAttributes
 {
     /**
      * Cast the given value.
@@ -17,7 +20,11 @@ class Status implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return $value;
+        $tmp = new Collection(json_decode($value, true));
+        return $tmp->map(function ($item) {
+            $date = is_array($item['created_at']) ? Carbon::parse($item['created_at']['date']) : Carbon::parse($item['created_at']);
+            return new Status($item['value'], $date, $item['state']);
+        });
     }
 
     /**
@@ -31,9 +38,9 @@ class Status implements CastsAttributes
      */
     public function set($model, string $key, $value, array $attributes)
     {
-        if (!$value instanceof \App\Models\Status) {
-            throw new \InvalidArgumentException('Данное значение не является экземпляром Status.');
+        if (!$value instanceof Collection) {
+            throw new \InvalidArgumentException('Данное значение не является экземпляром Collection.');
         }
-        return $value;
+        return $value->toJson();
     }
 }

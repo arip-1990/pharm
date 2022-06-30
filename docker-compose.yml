@@ -2,9 +2,10 @@ version: '3.9'
 services:
   traefik:
     image: traefik:2.7
-    command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80
+    command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80 --entryPoints.http_other.address=:8888
     ports:
       - "80:80"
+      - "8888:8888"
     networks:
       - traefik-public
     volumes:
@@ -56,7 +57,12 @@ services:
       - traefik.docker.network=traefik-public
       - traefik.http.routers.site.rule=Host(`pharm.test`) || Host(`www.pharm.test`)
       - traefik.http.routers.site.entryPoints=http
-      - traefik.http.services.site.loadBalancer.server.port=80
+      - traefik.http.routers.site.service=site_main
+      - traefik.http.services.site_main.loadBalancer.server.port=80
+      - traefik.http.routers.site_other.rule=Host(`pharm.test`) || Host(`www.pharm.test`)
+      - traefik.http.routers.site_other.entryPoints=http_other
+      - traefik.http.routers.site_other.service=site_other
+      - traefik.http.services.site_other.loadBalancer.server.port=8888
       - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
       - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
       - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true

@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Casts\StatusCollection;
 use App\Events\Order\OrderPayFullRefund;
 use App\Events\Order\OrderPayPartlyRefund;
 use App\Events\Order\OrderSend;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,7 +46,7 @@ class Order extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'statuses' => AsCollection::class
+        'statuses' => StatusCollection::class
     ];
 
     // Тип оплаты
@@ -216,9 +216,9 @@ class Order extends Model
     public function addStatus(string $value, int $state = Status::STATE_WAIT): void
     {
         $statuses = $this->statuses;
-        $status = new Status($value, new \DateTimeImmutable());
+        $status = new Status($value, Carbon::now());
         $status->changeState($state);
-        $statuses[] = $status;
+        $statuses->add($status);
         $this->statuses = $statuses;
         $this->status = $value;
     }

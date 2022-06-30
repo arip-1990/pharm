@@ -13,6 +13,7 @@ class CreateProductStatisticsTable extends Migration
             $table->integer('views', unsigned: true)->default(0);
             $table->integer('orders', unsigned: true)->default(0);
             $table->integer('cancellations', unsigned: true)->default(0);
+            $table->float('rating', unsigned: true)->default(0);
             $table->timestamps();
 
             $table->foreign('id')->references('id')->on('products')->onDelete('cascade');

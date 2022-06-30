@@ -11,7 +11,10 @@ class CreatePhotosTable extends Migration
         Schema::create('photos', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('type')->default(0);
+            $table->string('file');
             $table->smallInteger('sort', unsigned: true)->default(0);
+            $table->tinyInteger('status', unsigned: true)->default(0);
+            $table->timestamps();
 
             $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
         });
