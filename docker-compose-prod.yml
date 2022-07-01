@@ -327,8 +327,7 @@ services:
     environment:
       APP_NAME: Сеть аптек 120/80
       REDIS_HOST: redis
-    depends_on:
-      - redis
+    command: sh -c 'wait-for-it redis:6379 -t 60 && python main.py'
     deploy:
       mode: replicated
       replicas: 1

@@ -26,7 +26,7 @@ return [
     'pay' => [
         'sber' => [
             'prod' => [
-                'prefix_number' => 'order_',
+                'prefix_number' => '',
                 'url' => 'https://securepayments.sberbank.ru/payment/rest/register.do',
                 'statusUrl' => 'https://securepayments.sberbank.ru/payment/rest/getOrderStatus.do',
                 'refundUrl' => 'https://securepayments.sberbank.ru/payment/rest/refund.do',
@@ -34,7 +34,7 @@ return [
                 'password' => '9RML$ZMjN@',
             ],
             'test' => [
-                'prefix_number' => 'test-order_',
+                'prefix_number' => 'test-',
                 'url' => 'https://3dsec.sberbank.ru/payment/rest/register.do',
                 'statusUrl' => 'https://3dsec.sberbank.ru/payment/rest/getOrderStatus.do',
                 'refundUrl' => 'https://3dsec.sberbank.ru/payment/rest/refund.do',

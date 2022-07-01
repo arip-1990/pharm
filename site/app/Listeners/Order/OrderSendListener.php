@@ -11,7 +11,6 @@ use App\UseCases\Order\GenerateDataService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class OrderSendListener implements ShouldQueue
@@ -24,16 +23,16 @@ class OrderSendListener implements ShouldQueue
             $response = simplexml_load_string($this->getSendInfo($order));
 
             if(isset($response->errors->error->code)) {
-                $message = 'Номер заказа: ' . $order_number . '. Код ошибки: ' . $response->errors->error->code . '.';
+                $message = 'Номер заказа: ' . $order_number . '. Код ошибки: ' . $response->errors->error->code;
 
-                throw new \DomainException($message . $response->errors->error->message);
+                throw new \DomainException($message . '. ' . $response->errors->error->message);
             }
 
             if(isset($response->success->order_id)) {
                 $order->changeStatusState(Status::STATE_SUCCESS);
                 $order->addStatus(Status::STATUS_SENT_MAIL);
 
-                Mail::to(Auth::user())->send(new CreateOrder($order));
+                Mail::to($order->user)->send(new CreateOrder($order));
             }
         }
         catch (\Exception $e) {

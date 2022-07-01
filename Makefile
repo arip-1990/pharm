@@ -81,7 +81,7 @@ build-parser:
 	docker --log-level=debug build --pull --file=parser/Dockerfile --tag=${REGISTRY}/pharm-parser:${IMAGE_TAG} parser
 
 build-bot:
-	docker --log-level=debug build --pull --file=bot/Dockerfile --tag=${REGISTRY}/pharm-bot:${IMAGE_TAG} bot
+	docker --log-level=debug build --pull --file=bot/docker/Dockerfile --tag=${REGISTRY}/pharm-bot:${IMAGE_TAG} bot
 
 build-site:
 	docker --log-level=debug build --pull --file=site/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-site:${IMAGE_TAG} site

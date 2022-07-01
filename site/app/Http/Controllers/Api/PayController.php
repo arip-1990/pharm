@@ -31,7 +31,6 @@ class PayController
         /** @var Order $order */
         $order = Order::query()->find((int)$request->get('orderNumber'));
         $this->checkStatus($order, $request->get('operation'), (int)$request->get('status'));
-        Redis::publish('bot:pay', 'status: ' . $order->statuses->toJson());
         $order->save();
 
         return new Response();
@@ -40,8 +39,6 @@ class PayController
     private function checkStatus(Order $order, string $operation, int $status): void
     {
         if ($order->status === Status::STATUS_PAID) {
-            Redis::publish('bot:pay', 'operation: ' . $operation);
-            Redis::publish('bot:pay', 'status: ' . $status);
             switch ($operation) {
                 case 'deposited':
                     if ($status === 1) {
@@ -63,7 +60,7 @@ class PayController
             }
         }
         else {
-            Redis::publish('bot:pay', 'Данный заказ не ожидает оплаты!');
+            Redis::publish('bot:pay', "Заказ №{$order->id} не ожидает оплаты!");
         }
     }
 }
