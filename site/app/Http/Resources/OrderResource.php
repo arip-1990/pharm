@@ -14,10 +14,11 @@ class OrderResource extends JsonResource
         /** @var Order $this */
         return [
             'id' => $this->id,
-            'otherId' => $this->id + config('data.orderStartNumber'),
+            'otherId' => config('data.orderStartNumber') + $this->id,
             'cost' => $this->cost,
             'paymentType' => $this->payment_type,
             'deliveryType' => $this->delivery_type,
+            'deliveryAddress' => (string)$this->delivery,
             'status' => $this->status,
             'note' => $this->note,
             'cancel_reason' => $this->cancel_reason,

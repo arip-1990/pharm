@@ -28,6 +28,7 @@ class CheckoutController extends Controller
         $title = ' | Состав заказа';
         if (!$this->cartService->getItems()->count()) return redirect()->route('cart');
 
+        $request->session()->forget('recipe');
         $this->cartService->setStore($store);
         $items = new Collection();
         /** @var Offer $offer */
@@ -59,7 +60,7 @@ class CheckoutController extends Controller
     {
         $order = $this->orderService->checkout($request);
 
-        if ((int)$request['payment'] === Order::PAYMENT_TYPE_SBER) {
+        if ((int)$request->get('payment') === Order::PAYMENT_TYPE_SBER) {
             return redirect($this->orderService->paymentSberbank($order, route('checkout.finish', $order, true)));
         }
 

@@ -64,7 +64,7 @@ class GenerateDataService
                 <order>
                     <code>$order_number</code>
                     <date_time>{$date->format('Y-m-d H:i:s')}</date_time>
-                    <status_id>N</status_id>
+                    <status_id>O</status_id>
                     <status_date_time>{$date->format('Y-m-d H:i:s')}</status_date_time>
                     <price>$price_all</price>
                     <city>RU-100000</city>

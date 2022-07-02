@@ -3,6 +3,7 @@
 namespace App\UseCases\Order;
 
 use App\Models\CartItem;
+use App\Models\Delivery;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -19,19 +20,16 @@ class CheckoutService
 
     public function checkout(CheckoutRequest $request): Order
     {
-        if ($request['delivery'] === Order::DELIVERY_TYPE_COURIER and $request['payment'] == Order::PAYMENT_TYPE_CASH)
-            throw new \DomainException('Не возможно оплатить наличными');
-
         $this->cartService->setStore(Store::query()->find($request['store']));
         $order = Order::create(
             Auth::id(),
             $this->cartService->getStore()->id,
-            $request['payment'],
+            $request->get('payment'),
             $this->cartService->getTotalAmount(),
-            $request['delivery'],
+            $request->get('delivery'),
         );
 
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order, $request) {
             $offers = new Collection();
             $items = $this->cartService->getItems()->map(function (CartItem $item) use (&$offers) {
                 /** @var Offer $offer */
@@ -47,19 +45,20 @@ class CheckoutService
 
             $order->items()->saveMany($items);
 
-//        if ($request['delivery'] === Order::DELIVERY_TYPE_COURIER) {
-//            $order->setDeliveryInfo(Delivery::create(
-//                $request->delivery->city,
-//                [
-//                    'street' => $request->delivery->street,
-//                    'house' => $request->delivery->house,
-//                    'entrance' => $request->delivery->entrance,
-//                    'floor' => $request->delivery->floor,
-//                    'apartment' => $request->delivery->apartment
-//                ],
-//                $request->delivery->service_to_door
-//            ), $request->delivery_type);
-//        }
+        if ($request->get('delivery') == Order::DELIVERY_TYPE_COURIER) {
+            $delivery = Delivery::create(
+                $request->get('city'),
+                [
+                    'street' => $request->get('street'),
+                    'house' => $request->get('house'),
+                    'entrance' => $request->get('entrance'),
+                    'floor' => $request->get('floor'),
+                    'apartment' => $request->get('apartment')
+                ],
+                $request->get('service_to_door', false)
+            );
+            $order->delivery()->save($delivery);
+        }
 
             $offers->each(fn(Offer $offer) => $offer->save());
             $this->cartService->clear();

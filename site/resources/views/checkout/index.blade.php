@@ -11,26 +11,83 @@
         <input type="hidden" name="store" value="{{ $store->id }}">
         <div class="col-md-8 p-4" style="border: 2px solid #f7f7f7;">
             <h4 class="text-center">Способ получения</h4>
-            <div class="row">
-                <div class="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
-                    <label class="radio-button active">
-                        <input type="radio" name="delivery" class="radio-button_pin" value="0" checked />
-                        <p class="radio-button_text">Самовывоз<span>Бесплатно</span></p>
-                    </label>
+            <div class="accordion" id="deliveryAddress">
+                <div class="row accordion-header" id="headingPickup">
+                    <div class="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
+                        <label class="radio-button{{ old('delivery', 0) == 0 ? ' active' : '' }}" data-bs-toggle="collapse" data-bs-target="#collapseEmpty" aria-controls="collapseEmpty">
+                            <input type="radio" name="delivery" class="radio-button_pin" value="0" checked />
+                            <p class="radio-button_text">Самовывоз<span>Бесплатно</span></p>
+                        </label>
+                    </div>
+                    <div class="col-10 col-lg-6 col-xl-5 col-xxl-5 offset-1 offset-lg-0 offset-xl-1">
+                        Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку.
+                    </div>
                 </div>
-                <div class="col-10 col-lg-6 col-xl-5 col-xxl-5 offset-1 offset-lg-0 offset-xl-1">
-                    Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку.
+                <div id="collapseEmpty" class="accordion-collapse collapse" aria-labelledby="headingPickup" data-bs-parent="#deliveryAddress"></div>
+
+                <div class="row accordion-header" id="headingDelivery">
+                    <div class="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
+                        <label class="radio-button{{ old('delivery', 0) == 1 ? ' active' : '' }}" data-bs-toggle="collapse" data-bs-target="#collapse" aria-controls="collapse">
+                            @if(session('recipe', false))
+                                <input type="radio" class="radio-button_pin" disabled />
+                            @else
+                                <input type="radio" name="delivery" class="radio-button_pin" value="1" />
+                            @endif
+                            <p class="radio-button_text">Доставка<span>Указать адрес доставки.</span></p>
+                        </label>
+                    </div>
+                    <div class="col-10 col-lg-6 col-xl-5 col-xxl-5 offset-1 offset-lg-0 offset-xl-1">
+                        Доставка осуществляется с 9:00 до 21:00, без выходных. Доставка осуществляется по тарифам такси.
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
-                    <label class="radio-button">
-                        <input type="radio" name="delivery" class="radio-button_pin" value="0" disabled />
-                        <p class="radio-button_text">Доставка<span>Указать адрес доставки.</span></p>
-                    </label>
-                </div>
-                <div class="col-10 col-lg-6 col-xl-5 col-xxl-5 offset-1 offset-lg-0 offset-xl-1">
-                    Доставка осуществляется с 9:00 до 21:00, без выходных. Доставка осуществляется по тарифам такси.
+                <div id="{{session('recipe', false) ? '' : 'collapse'}}" class="accordion-collapse collapse{{ (!session('recipe', false) and old('delivery', 0) == 1) ? ' show' : '' }}" aria-labelledby="headingDelivery" data-bs-parent="#deliveryAddress">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-sm-3 offset-xl-1">
+                                <label for="city" class="form-label">Город</label>
+                                <select class="form-select" id="city" name="city" aria-label="Город">
+                                    @php $city = Illuminate\Support\Facades\Cookie::get('city', config('data.city')[0]) @endphp
+                                    @foreach (config('data.city') as $item)
+                                        @if($city == $item)
+                                            <option value="{{$item}}" selected>{{$item}}</option>
+                                        @else
+                                            <option value="{{$item}}">{{$item}}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-sm-5">
+                                <label for="street" class="form-label">Улица</label>
+                                <input name="street" class="form-control @error('street') is-invalid @enderror" id="street" placeholder="Улица" value="{{ old('street') }}">
+                                @error('street') <p style="font-size: 0.75rem; font-weight: 300" class="text-danger">Поле обязательно для заполнения.</p> @enderror
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="house" class="form-label">Дом</label>
+                                <input name="house" class="form-control @error('house') is-invalid @enderror" id="house" placeholder="Дом" value="{{ old('house') }}">
+                                @error('house') <p style="font-size: 0.75rem; font-weight: 300" class="text-danger">Поле обязательно для заполнения.</p> @enderror
+                            </div>
+                        </div>
+                        <div class="row my-3">
+                            <div class="col-sm-3 offset-xl-1">
+                                <label for="entrance" class="form-label">Подъезд</label>
+                                <input name="entrance" class="form-control" id="entrance" placeholder="Подъезд" value="{{ old('entrance') }}">
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="floor" class="form-label">Этаж</label>
+                                <input name="floor" class="form-control" id="floor" placeholder="Этаж" value="{{ old('floor') }}">
+                            </div>
+                            <div class="col-sm-3">
+                                <label for="apartment" class="form-label">Квартира</label>
+                                <input name="apartment" class="form-control" id="apartment" placeholder="Квартира" value="{{ old('apartment') }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-10 offset-1 offset-lg-0 offset-xl-1">
+                                <input class="form-check-input" type="checkbox" name="service_to_door" value="{{ old('service_to_door') }}" id="service_to_door">
+                                <label class="form-check-label" for="service_to_door">Доставка до двери</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -53,8 +110,9 @@
             <div class="row my-3">
                 <div class="col offset-1 offset-lg-0 offset-xl-1">
                     <div class="form-check">
-                        <input class="form-check-input{{ $errors->has('rule') ? ' is-invalid' : '' }}" type="checkbox" name="rule" id="rule">
+                        <input class="form-check-input @error('rule') is-invalid @enderror" type="checkbox" name="rule" id="rule">
                         <label class="form-check-label" for="rule">Я согласен(а) с правилами сайта</label>
+                        @error('rule') <p style="font-size: 0.75rem; font-weight: 300" class="text-danger">Обязательно для заполнения.</p> @enderror
                     </div>
                 </div>
             </div>

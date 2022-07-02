@@ -3,7 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Models\Offer;
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
+use App\Models\VisitStatistic;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +15,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Ramsey\Uuid\Uuid;
 
 ini_set('memory_limit', -1);
 
@@ -22,12 +26,12 @@ class TestCommand extends Command
 
     public function handle(): int
     {
-        try {
-            $this->import();
-        }
-        catch (\RuntimeException $e) {
-            $this->error($e->getMessage());
-        }
+//        try {
+//
+//        }
+//        catch (\RuntimeException $e) {
+//            $this->error($e->getMessage());
+//        }
 
         $this->info(PHP_EOL . 'Процесс завершена!');
         return 0;

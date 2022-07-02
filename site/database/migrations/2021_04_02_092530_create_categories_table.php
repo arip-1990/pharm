@@ -12,6 +12,7 @@ class CreateCategoriesTable extends Migration
             $table->id();
             $table->string('name')->index();
             $table->string('slug')->unique();
+            $table->text('description')->nullable();
             $table->integer('_lft', unsigned: true);
             $table->integer('_rgt', unsigned: true);
             $table->smallInteger('sort', unsigned: true)->default(0);

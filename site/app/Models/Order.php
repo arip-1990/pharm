@@ -69,11 +69,6 @@ class Order extends Model
         return $item;
     }
 
-    public function setDeliveryInfo(Delivery $delivery): void
-    {
-        $this->delivery = $delivery;
-    }
-
     public function pay(string $sberId): void
     {
         if ($this->isPay())
@@ -137,8 +132,6 @@ class Order extends Model
 
     public function getTotalCost(): float
     {
-        if ($this->delivery_type === self::DELIVERY_TYPE_COURIER)
-            return $this->cost + Delivery::DELIVERY_PRICE;
         return $this->cost;
     }
 

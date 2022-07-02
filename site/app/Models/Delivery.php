@@ -10,17 +10,18 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $city
  * @property string $street
  * @property string $house
- * @property string $entrance
+ * @property int $entrance
  * @property int $floor
- * @property string $apartment
+ * @property int $apartment
  * @property bool $service_to_door
  * @property float $delivery_price
  */
 class Delivery extends Model
 {
-    const DELIVERY_PRICE = 150;
+    protected $table = 'order_deliveries';
+    public $timestamps = false;
 
-    public static function create(string $city, array $address, bool $serviceToDoor, float $deliveryPrice = null): self
+    public static function create(string $city, array $address, bool $serviceToDoor = false, float $deliveryPrice = 0): self
     {
         $delivery = new self();
         $delivery->city = $city;
@@ -30,7 +31,7 @@ class Delivery extends Model
         $delivery->floor = $address['floor'] ?? null;
         $delivery->apartment = $address['apartment'] ?? null;
         $delivery->service_to_door = $serviceToDoor;
-        $delivery->delivery_price = $deliveryPrice ?? self::DELIVERY_PRICE;
+        $delivery->delivery_price = $deliveryPrice;
         return $delivery;
     }
 
