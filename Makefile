@@ -111,7 +111,7 @@ api-backup:
 	docker compose run --rm api-postgres-backup
 
 
-build: build-panel build-parser build-bot build-site
+build: build-panel build-parser build-bot build-api build-site
 
 build-panel:
 	docker --log-level=debug build --pull --file=panel/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-panel:${IMAGE_TAG} panel
@@ -122,13 +122,17 @@ build-parser:
 build-bot:
 	docker --log-level=debug build --pull --file=bot/docker/Dockerfile --tag=${REGISTRY}/pharm-bot:${IMAGE_TAG} bot
 
+build-api:
+	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-api:${IMAGE_TAG} api
+	docker --log-level=debug build --pull --file=api/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG} api
+
 build-site:
 	docker --log-level=debug build --pull --file=site/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-site:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG} site
 	docker --log-level=debug build --pull --file=site/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} site/docker/common
 
-push: push-panel push-parser push-bot push-site
+push: push-panel push-parser push-bot push-api push-site
 
 push-panel:
 	docker push ${REGISTRY}/pharm-panel:${IMAGE_TAG}
@@ -138,6 +142,10 @@ push-parser:
 
 push-bot:
 	docker push ${REGISTRY}/pharm-bot:${IMAGE_TAG}
+
+push-api:
+	docker push ${REGISTRY}/pharm-api:${IMAGE_TAG}
+	docker push ${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG}
 
 push-site:
 	docker push ${REGISTRY}/pharm-site:${IMAGE_TAG}

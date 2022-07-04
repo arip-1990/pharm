@@ -42,7 +42,8 @@ class OfferCommand extends Command
         $delFields = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
-            if (!$product = Product::query()->find((string)$item->code)) continue;
+            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
             $storeId = (string)$item->store_uuid;
@@ -73,12 +74,10 @@ class OfferCommand extends Command
     {
         $data = $this->getData(3);
         Offer::query()->truncate();
-        Product::query()->active()->update(['status' => false]);
         $fields = [];
-        $productIds = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
-            if (!$product = Product::query()->find((string)$item->code)) continue;
+            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
 
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
@@ -88,20 +87,17 @@ class OfferCommand extends Command
                 'price' => $price > 0 ? $price : 0,
                 'quantity' => $quantity > 0 ? $quantity : 0
             ];
-            if (!str_starts_with($product->name, '*')) $productIds[] = $product->id;
             $i++;
 
             if ($i >= 1000) {
                 Offer::query()->upsert($fields, ['store_id', 'product_id']);
-                Product::query()->whereIn('id', $productIds)->update(['status' => true]);
-                $productIds = [];
                 $fields = [];
                 $i = 0;
             }
         }
+
         if ($i) {
             Offer::query()->upsert($fields, ['store_id', 'product_id']);
-            Product::query()->whereIn('id', $productIds)->update(['status' => true]);
         }
     }
 
@@ -112,7 +108,7 @@ class OfferCommand extends Command
         $fields = [];
         $i = 0;
         foreach ($data->offers->offer as $item) {
-            if (!$product = Product::query()->find((string)$item->uuid)) continue;
+            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
             $fields[] = [

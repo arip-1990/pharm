@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Casts\StatusCollection;
+use App\Events\Order\OrderPayFullRefund;
+use App\Events\Order\OrderPayPartlyRefund;
+use App\Events\Order\OrderSend;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,7 +36,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property Collection<Status> $statuses
  * @property Collection<OrderItem> $items
- * @property Collection<Archive> $archives
  *
  * @property Exception $lastException
  * @property Collection<Exception> $exceptions
@@ -43,7 +45,7 @@ class Order extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'statuses' => AsCollection::class
+        'statuses' => StatusCollection::class
     ];
 
     // Тип оплаты
@@ -66,11 +68,6 @@ class Order extends Model
         return $item;
     }
 
-    public function setDeliveryInfo(Delivery $delivery): void
-    {
-        $this->delivery = $delivery;
-    }
-
     public function pay(string $sberId): void
     {
         if ($this->isPay())
@@ -86,7 +83,7 @@ class Order extends Model
             throw new \DomainException('Заказ уже отправлен.');
 
         $this->addStatus(Status::STATUS_SENT_IN_1C);
-//        OrderSend::dispatch($this);
+        OrderSend::dispatch($this);
     }
 
     public function confirm(): void
@@ -120,7 +117,7 @@ class Order extends Model
             throw new \DomainException('Заказ уже возмещен.');
 
         $this->addStatus(Status::STATUS_PARTLY_REFUND);
-//        OrderPayPartlyRefund::dispatch($this);
+        OrderPayPartlyRefund::dispatch($this);
     }
 
     public function fullRefund(): void
@@ -129,13 +126,11 @@ class Order extends Model
             throw new \DomainException('Заказ уже возмещен.');
 
         $this->addStatus(Status::STATUS_FULL_REFUND);
-//        OrderPayFullRefund::dispatch($this);
+        OrderPayFullRefund::dispatch($this);
     }
 
     public function getTotalCost(): float
     {
-        if ($this->delivery_type === self::DELIVERY_TYPE_COURIER)
-            return $this->cost + Delivery::DELIVERY_PRICE;
         return $this->cost;
     }
 
@@ -151,8 +146,8 @@ class Order extends Model
     public function isPay(): bool
     {
         return $this->inStatus(Status::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
-            return $status->equal(Status::STATUS_PAID) and $status->state === Status::STATE_SUCCESS;
-        });
+                return $status->equal(Status::STATUS_PAID) and $status->state === Status::STATE_SUCCESS;
+            });
     }
 
     public function isSend(): bool
@@ -213,9 +208,9 @@ class Order extends Model
     public function addStatus(string $value, int $state = Status::STATE_WAIT): void
     {
         $statuses = $this->statuses;
-        $status = new Status($value, new \DateTimeImmutable());
+        $status = new Status($value, Carbon::now());
         $status->changeState($state);
-        $statuses[] = $status;
+        $statuses->add($status);
         $this->statuses = $statuses;
         $this->status = $value;
     }
@@ -245,11 +240,6 @@ class Order extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
-    }
-
-    public function archives(): HasMany
-    {
-        return $this->hasMany(Archive::class);
     }
 
     public function user(): BelongsTo

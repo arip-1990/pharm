@@ -35,6 +35,10 @@ class RedisSubscribe extends Command
                     case 'store':
                         $code = Artisan::call('import:store');
                         $message = $code ? 'Произошла ошибка при обновлении аптек' : 'Аптеки успешно обновлены';
+                        break;
+                    case 'test':
+                        $code = Artisan::call('test');
+                        $message = $code ? 'Произошла ошибка при обработке запроса' : 'Запрос обработан успешно';
                 }
             }
             catch (\Exception $exception) {

@@ -33,7 +33,7 @@ class CartService
         return $this->items;
     }
 
-    public function getTotalQuantity(): int
+    public function getTotal(): int
     {
         $this->loadItems();
         $total = 0;

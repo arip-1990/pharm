@@ -12,6 +12,7 @@ use Kalnoy\Nestedset\NodeTrait;
  * @property int $id
  * @property string $name
  * @property string $slug
+ * @property string $description
  * @property int|null $parent_id
  *
  * @property Category $parent

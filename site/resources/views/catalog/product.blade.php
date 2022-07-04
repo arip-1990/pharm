@@ -62,11 +62,11 @@
                         @if($item)
                             <div class="input-group input-product">
                                 <button class="btn btn-outline-primary" data-type="-">-</button>
-                                <input type="number" class="form-control input-number" min="1" max="{{ $product->category->isParent('Лекарственные средства') ? $product->getQuantity(2) : $product->getQuantity() }}" value="{{ $item->quantity }}" />
+                                <input type="number" class="form-control input-number" min="1" max="{{ $product->getQuantity() }}" value="{{ $item->quantity }}" />
                                 <button class="btn btn-outline-primary" data-type="+">+</button>
                             </div>
                         @else
-                            <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->category?->isParent('Лекарственные средства') ? $product->getQuantity(2) : $product->getQuantity() }}">
+                            <a class="btn btn-primary" data-toggle="modal" data-target="product" data-max="{{ $product->getQuantity() }}">
                                 Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
                             </a>
                         @endif

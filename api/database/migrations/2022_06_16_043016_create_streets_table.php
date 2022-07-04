@@ -10,8 +10,11 @@ return new class extends Migration
     {
         Schema::create('streets', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
+            $table->tinyInteger('type', unsigned: true)->default(0);
             $table->timestamps();
+
+            $table->unique(['name', 'type']);
         });
     }
 
