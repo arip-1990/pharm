@@ -10,12 +10,12 @@
     <div class="row">
         <nav class="col-md-3">
             <ul class="category">
-                <li class="sale">
-                    <a href="{{ route('catalog.sale') }}">
-                        <img src="/images/sale-icon.png" alt="">
-                        Распродажа
-                    </a>
-                </li>
+{{--                <li class="sale">--}}
+{{--                    <a href="{{ route('catalog.sale') }}">--}}
+{{--                        <img src="/images/sale-icon.png" alt="">--}}
+{{--                        Распродажа--}}
+{{--                    </a>--}}
+{{--                </li>--}}
                 @each ('layouts.partials.menu', isset($category) ? $category->children : \App\Models\Category::query()->where('parent_id', null)->get(), 'category')
             </ul>
         </nav>

@@ -1,0 +1,55 @@
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #27bfc1;
+  border-radius: 0.25rem;
+
+  &_toggler {
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .collapse {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    transition: height 0.35s ease;
+
+    &:not(.show) {
+      display: none;
+      height: 0;
+    }
+  }
+
+  &_item {
+    text-align: center;
+    line-height: 2;
+
+    a {
+      display: block;
+      font-size: 1.1rem;
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.15s ease-in-out;
+
+      &:hover {
+        color: #ffbb34;
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+}

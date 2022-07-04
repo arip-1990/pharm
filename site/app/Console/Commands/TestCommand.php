@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Status;
 use App\Models\User;
 use App\Models\VisitStatistic;
 use GuzzleHttp\Client;
@@ -15,7 +16,6 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Ramsey\Uuid\Uuid;
 
 ini_set('memory_limit', -1);
 
@@ -27,13 +27,18 @@ class TestCommand extends Command
     public function handle(): int
     {
 //        try {
-//
+//            Order::all()->each(function (Order $order) {
+//                $order->statuses->each(function (Status $status) {
+//                    $status->state = Status::STATE_SUCCESS;
+//                });
+//                $order->save();
+//            });
 //        }
 //        catch (\RuntimeException $e) {
 //            $this->error($e->getMessage());
 //        }
 
-        $this->info(PHP_EOL . 'Процесс завершена!');
+        $this->info('Процесс завершена!');
         return 0;
     }
 

@@ -10,12 +10,12 @@
     <div class="row">
         <nav class="col-md-3">
             <ul class="category">
-                <li class="sale">
-                    <span>
-                        <img src="/images/sale-icon.png" alt="">
-                        Распродажа
-                    </span>
-                </li>
+{{--                <li class="sale">--}}
+{{--                    <span>--}}
+{{--                        <img src="/images/sale-icon.png" alt="">--}}
+{{--                        Распродажа--}}
+{{--                    </span>--}}
+{{--                </li>--}}
                 @each ('layouts.partials.menu', \App\Models\Category::all()->toTree(), 'category')
             </ul>
         </nav>

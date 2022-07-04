@@ -1,0 +1,23 @@
+@import "../../styles/variables";
+
+.sidebar {
+  &_item {
+    display: flex;
+    align-items: center;
+    color: #6c757d;
+    background-color: rgba(#27bfc1, 0);
+    border-radius: 0.5rem;
+    user-select: none;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+    transition: color, background-color 0.2s ease-in;
+
+    &:hover,
+    &:active,
+    &.active {
+      color: #ffbb34;
+      background-color: rgba(#27bfc1, 1);
+    }
+  }
+}

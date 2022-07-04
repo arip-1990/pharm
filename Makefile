@@ -1,7 +1,7 @@
-init: init-ci site-node-ready panel-ready
-init-ci: docker-down-clear site-clear panel-clear \
+init: init-ci site-node-ready panel-ready client-ready
+init-ci: docker-down-clear site-clear panel-clear api-clear client-clear \
 	docker-pull docker-build docker-up \
-	site-init panel-init
+	site-init panel-init api-init client-init
 up: docker-up
 down: docker-down
 restart: down up
@@ -70,6 +70,45 @@ panel-yarn-upgrade:
 
 panel-ready:
 	docker run --rm -v ${PWD}/panel:/app -w /app alpine touch .ready
+
+
+client-clear:
+	docker run --rm -v ${PWD}/client:/app -w /app alpine sh -c 'rm -rf .ready build'
+
+client-init: client-yarn-install
+
+client-yarn-install:
+	docker compose run --rm client-node-cli yarn install
+
+client-yarn-upgrade:
+	docker compose run --rm client-node-cli yarn upgrade
+
+client-ready:
+	docker run --rm -v ${PWD}/client:/app -w /app alpine touch .ready
+
+
+api-clear:
+	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf .ready storage/framework/cache/data/* storage/framework/sessions/* storage/framework/testing/* storage/framework/views/* storage/logs/*'
+
+api-init: api-permissions api-composer-install api-wait-db api-migrations
+
+api-permissions:
+	docker run --rm -v ${PWD}/api:/app -w /app alpine chmod 777 -R storage bootstrap/cache
+
+api-composer-install:
+	docker compose run --rm api-php-cli composer install
+
+api-composer-update:
+	docker compose run --rm api-php-cli composer update
+
+api-wait-db:
+	docker compose run --rm api-php-cli wait-for-it db-postgres:5432 -t 30
+
+api-migrations:
+	docker compose run --rm api-php-cli php artisan migrate --force
+
+api-backup:
+	docker compose run --rm api-postgres-backup
 
 
 build: build-panel build-parser build-bot build-site

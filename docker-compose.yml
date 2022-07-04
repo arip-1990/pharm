@@ -14,6 +14,46 @@ services:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
 
+  client:
+    build:
+      context: client/docker/dev/nginx
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.panel.rule=Host(`client.pharm.test`)
+      - traefik.http.routers.panel.entryPoints=http
+      - traefik.http.services.panel.loadBalancer.server.port=80
+    healthcheck:
+      test: [ "curl", "--fail http://127.0.0.1/health || exit 1" ]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  client-node:
+    build:
+      context: client/docker/dev/node
+    volumes:
+      - ./client:/app
+    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn dev"
+    links:
+      - "api:api.pharm.test"
+    healthcheck:
+      test: [ "curl", "--fail http://127.0.0.1:3000/health || exit 1" ]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  client-node-cli:
+    build:
+      context: client/docker/dev/node
+    volumes:
+      - ./client:/app
+
   panel:
     build:
       context: panel/docker/dev/nginx
@@ -148,6 +188,102 @@ services:
     volumes:
       - ./site:/app
 
+  api:
+    build:
+      context: api/docker
+      dockerfile: dev/nginx/Dockerfile
+    volumes:
+      - ./api:/app
+      - uploads:/app/storage/app/public
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.api.rule=Host(`api.pharm.test`)
+      - traefik.http.routers.api.entryPoints=http
+      - traefik.http.services.api.loadBalancer.server.port=80
+    healthcheck:
+      test: [ "curl", "--fail http://127.0.0.1/health || exit 1" ]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  api-php-fpm:
+    build:
+      context: api/docker
+      dockerfile: dev/php-fpm/Dockerfile
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: http://api.pharm.test
+      APP_ENV: local
+      APP_DEBUG: true
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      DB_CONNECTION: pgsql
+      DB_HOST: db-postgres
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: secret
+      BROADCAST_DRIVER: redis
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      SESSION_LIFETIME: 120
+      SESSION_DOMAIN: '.pharm.test'
+      SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
+      CORS_ORIGIN: 'http://panel.pharm.test|http://client.pharm.test'
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      MAIL_HOST: mailer
+      MAIL_FROM_ADDRESS: info@pharm.test
+      MAIL_FROM_NAME: Сеть аптек 120/80
+      FILESYSTEM_DRIVER: public
+    volumes:
+      - ./api:/app
+      - uploads:/app/storage/app/public
+    healthcheck:
+      test: [ "cgi-fcgi", "-bind -connect 127.0.0.1:9000 || exit 1" ]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  api-php-cli:
+    build:
+      context: api/docker
+      dockerfile: dev/php-cli/Dockerfile
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: http://api.pharm.test
+      APP_ENV: local
+      APP_DEBUG: true
+      LOG_CHANNEL: stack
+      LOG_LEVEL: debug
+      DB_CONNECTION: pgsql
+      DB_HOST: db-postgres
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: secret
+      BROADCAST_DRIVER: redis
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      SESSION_LIFETIME: 120
+      SESSION_DOMAIN: '.pharm.test'
+      SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
+      REDIS_HOST: redis
+      REDIS_CLIENT: predis
+      MAIL_HOST: mailer
+      MAIL_FROM_ADDRESS: info@pharm.test
+      MAIL_FROM_NAME: Сеть аптек 120/80
+      FILESYSTEM_DRIVER: public
+    volumes:
+      - ./api:/app
+      - uploads:/app/storage/app/public
+
   db-postgres:
     image: postgres:14.1-alpine
     environment:
@@ -202,7 +338,9 @@ services:
       - uploads:/app/data
 
   bot:
-    build: bot
+    build:
+      context: bot
+      dockerfile: docker/Dockerfile
     environment:
       APP_NAME: Сеть аптек 120/80
       REDIS_HOST: redis

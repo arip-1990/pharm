@@ -1,0 +1,52 @@
+.overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.6);
+    opacity: 0;
+    transform: translateZ(0);
+}
+
+.modal-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    .modal {
+        background: #fff;
+        border-radius: 10px;
+        width: 300px;
+        height: 250px;
+        display: flex;
+        align-items: flex-end;
+        
+        footer {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+        }
+        
+        button {
+          border: none;
+          border-radius: 5px;
+          padding: 25px 50px;
+          margin: 0 10px 10px 0;
+        }
+
+        .submit {
+            background: #8CDA26;
+        }
+        
+        .cancel {
+            background: #DA2632;
+        }
+    }
+}

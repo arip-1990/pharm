@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Dadata\DadataClient;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
@@ -22,42 +23,32 @@ class VisitStatistic
 
         if (!$dd->isBot()) {
             $dadata = new DadataClient(config('data.dadata_api.token'), config('data.dadata_api.secret'));
-            if ($this->request->session()->has('static_id')) {
-                /** @var \App\Models\VisitStatistic $statistic */
-                $statistic = \App\Models\VisitStatistic::query()->find($this->request->session()->get('static_id'));
+            /** @var \App\Models\VisitStatistic $statistic */
+            if ($statistic = \App\Models\VisitStatistic::query()->find($this->request->session()->get('static_id'))) {
                 if (!$statistic->city) {
                     $response = $dadata->iplocate($ip);
                     $statistic->city = $response['unrestricted_value'] ?? null;
                 }
-                $statistic->updated_at = new \DateTimeImmutable();
-                if (!$statistic->user and Auth::user())
+                if (!$statistic->user and Auth::check())
                     $statistic->user()->associate(Auth::user());
-                $statistic->save();
-            }
-            elseif ($this->request->session()->has('static_created')) {
-                $created = $this->request->session()->pull('static_created');
-                if ($created->diff(new \DateTimeImmutable())->format('s')) {
-                    $os = $dd->getOs();
-                    $os = $os['name'] . ' ' . $os['platform'];
-                    $browser = $dd->getClient();
-                    $browser = $browser['name'] . ' ' . $browser['version'];
-                    $response = $dadata->iplocate($ip);
-                    $statistic = new \App\Models\VisitStatistic([
-                        'ip' => $ip,
-                        'os' => $os,
-                        'browser' => $browser,
-                        'city' => $response['unrestricted_value'] ?? null,
-                        'referer' => $this->request->header('referer')
-                    ]);
-                    $statistic->created_at = $created;
-                    if (Auth::user())
-                        $statistic->user()->associate(Auth::user());
-                    $statistic->save();
-                    $this->request->session()->put('static_id', $statistic->id);
-                }
+
+                $statistic->update(['updated_at' => Carbon::now()]);
             }
             else {
-                $this->request->session()->put('static_created', new \DateTimeImmutable());
+                $os = $dd->getOs();
+                $browser = $dd->getClient();
+                $response = $dadata->iplocate($ip);
+                $statistic = \App\Models\VisitStatistic::query()->create([
+                    'ip' => $ip,
+                    'os' => $os['name'] . ' ' . $os['platform'],
+                    'browser' => $browser['name'] . ' ' . $browser['version'],
+                    'city' => $response['unrestricted_value'] ?? null,
+                    'referer' => $this->request->header('referer')
+                ]);
+                if (Auth::check())
+                    $statistic->user()->associate(Auth::user());
+
+                $this->request->session()->put('static_id', $statistic->id);
             }
         }
     }

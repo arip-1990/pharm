@@ -1,0 +1,108 @@
+.accordion {
+  position: relative;
+
+  &Item {
+    &_header {
+      font-weight: 700;
+      text-decoration: none;
+      transition: background-color 0.5s ease-in-out;
+
+      &::after {
+        content: '\e803';
+        font-family: 'icon';
+        transition: transform 0.35s ease;
+      }
+
+      &.active {
+        &::after {
+          transform: rotate(-180deg);
+        }
+      }
+    }
+
+    div.accordionItem_header {
+      display: flex;
+      justify-content: space-between;
+      background-color: rgba($color: #dae1e1, $alpha: 0.5);
+
+      &::after {
+        content: "+";
+        font-size: 1.5em;
+        line-height: 0.5em;
+        transition: transform 0.3s ease-in-out;
+      }
+    
+      &:hover {
+        background-color: #dae1e1;
+      }
+  
+      &.active {
+        background-color:#dae1e1;
+  
+        &::after {
+          transform: rotate(-225deg);
+        }
+      }
+    }
+  
+    &_body {
+      height: auto;
+      max-height: 100rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      overflow: hidden;
+      transition: max-height 1s, padding 1s;
+  
+      &.collapsed {
+        max-height: 0;
+        padding: 0;
+      }
+  
+      > * {
+        padding: 1rem 2rem;
+      }
+    }
+  }
+}
+
+.animateIn {
+  animation-name: accordionIn;
+  animation-duration: 0.65s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  animation-delay: 0s;
+}
+
+.animateOut {
+  animation-name: accordionOut;
+  animation-duration: 0.75s;
+  animation-iteration-count: 1;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  animation-delay: 0s;
+}
+
+@keyframes accordionIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes accordionOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}

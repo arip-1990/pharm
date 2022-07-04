@@ -21,10 +21,7 @@ class StatusCollection implements CastsAttributes
     public function get($model, string $key, $value, array $attributes)
     {
         $tmp = new Collection(json_decode($value, true));
-        return $tmp->map(function ($item) {
-            $date = is_array($item['created_at']) ? Carbon::parse($item['created_at']['date']) : Carbon::parse($item['created_at']);
-            return new Status($item['value'], $date, $item['state']);
-        });
+        return $tmp->map(fn($item) => new Status($item['value'], new Carbon($item['created_at']), $item['state']));
     }
 
     /**
