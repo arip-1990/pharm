@@ -23,10 +23,10 @@ class CheckoutService
         $this->cartService->setStore(Store::query()->find($request['store']));
         $order = Order::create(
             Auth::id(),
-            $this->cartService->getStore()->id,
+            $this->cartService->getStore()?->id,
             $request->get('payment'),
             $this->cartService->getTotalAmount(),
-            $request->get('delivery'),
+            $request->get('delivery', false),
         );
 
         DB::transaction(function () use ($order, $request) {
@@ -38,7 +38,7 @@ class CheckoutService
                 $offer->checkout($item->quantity);
                 $offers->add($offer);
 
-                return OrderItem::create($item->product_id, $item->getAmount($offer->store), $item->quantity);
+                return OrderItem::create($item->product_id, $item->getPrice($offer->store), $item->quantity);
             });
 
             $order->save();

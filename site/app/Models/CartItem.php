@@ -28,6 +28,11 @@ class CartItem extends Model
         $this->quantity = $quantity;
     }
 
+    public function getPrice(Store $store = null): float
+    {
+        return $this->product->getPrice($store);
+    }
+
     public function getAmount(Store $store = null): float
     {
         return round($this->quantity * $this->product->getPrice($store), 2);
