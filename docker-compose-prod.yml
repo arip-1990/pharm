@@ -115,9 +115,9 @@ services:
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.yandex.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: info@120на80.рф
+      MAIL_USERNAME: service@120на80.рф
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120на80.рф
+      MAIL_FROM_ADDRESS: service@120на80.рф
       MAIL_FROM_NAME: Сеть аптек 120/80
     volumes:
       - uploads:/app/storage/app/public
@@ -183,9 +183,9 @@ services:
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.yandex.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: info@120на80.рф
+      MAIL_USERNAME: service@120на80.рф
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120на80.рф
+      MAIL_FROM_ADDRESS: service@120на80.рф
       MAIL_FROM_NAME: Сеть аптек 120/80
     volumes:
       - uploads:/app/storage/app/public
@@ -280,9 +280,9 @@ services:
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.yandex.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: info@120на80.рф
+      MAIL_USERNAME: service@120на80.рф
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120на80.рф
+      MAIL_FROM_ADDRESS: service@120на80.рф
       MAIL_FROM_NAME: Сеть аптек 120/80
     command: sh -c 'php artisan schedule:run'
     volumes:
@@ -317,9 +317,9 @@ services:
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.yandex.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: info@120на80.рф
+      MAIL_USERNAME: service@120на80.рф
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120на80.рф
+      MAIL_FROM_ADDRESS: service@120на80.рф
       MAIL_FROM_NAME: Сеть аптек 120/80
     command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan queue:work'
     volumes:
@@ -352,9 +352,9 @@ services:
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.yandex.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: info@120на80.рф
+      MAIL_USERNAME: service@120на80.рф
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120на80.рф
+      MAIL_FROM_ADDRESS: service@120на80.рф
       MAIL_FROM_NAME: Сеть аптек 120/80
     command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan redis:subscribe'
     volumes:
