@@ -17,7 +17,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/order', [OrderController::class, 'handle'])->middleware('auth.basic.once');
+Route::prefix('1c')->group(function () {
+    Route::post('/order', [OrderController::class, 'handle'])->middleware('auth.basic.once');
+});
+
 Route::get('/pay', [PayController::class, 'handle']);
 
 Route::prefix('v1')->group(function () {

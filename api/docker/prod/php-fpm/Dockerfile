@@ -38,3 +38,7 @@ COPY ./ ./
 
 RUN chown www-data:www-data ./storage ./bootstrap/cache -R \
     && php artisan key:generate --ansi && php artisan storage:link --ansi
+
+HEALTHCHECK --interval=5s --timeout=3s --start-period=1s \
+    CMD REDIRECT_STATUS=true SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET \
+    cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1
