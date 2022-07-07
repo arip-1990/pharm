@@ -16,6 +16,6 @@ class CreateOrder extends Mailable
     public function build(): self
     {
         return $this->subject('Оформление заказа в ' . env('APP_NAME'))
-            ->view('emails.order.create', ['pathToImage' => asset('images/logo.svg')]);
+            ->view('emails.order.create', ['pathToImage' => public_path('images/logo.svg')]);
     }
 }

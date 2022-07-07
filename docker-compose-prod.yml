@@ -113,12 +113,13 @@ services:
       CORS_ORIGIN: https://panel.xn--12080-6ve4g.xn--p1ai
       REDIS_HOST: redis
       REDIS_CLIENT: predis
-      MAIL_HOST: smtp.yandex.ru
+      MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: service@120на80.рф
+      MAIL_USERNAME: info@120-na-80.ru
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: service@120на80.рф
+      MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
+      MAIL_ENCRYPTION: ssl
     volumes:
       - uploads:/app/storage/app/public
       - ./logs:/app/storage/logs
@@ -175,12 +176,13 @@ services:
       CORS_ORIGIN: https://panel.xn--12080-6ve4g.xn--p1ai
       REDIS_HOST: redis
       REDIS_CLIENT: predis
-      MAIL_HOST: smtp.yandex.ru
+      MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: service@120на80.рф
+      MAIL_USERNAME: info@120-na-80.ru
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: service@120на80.рф
+      MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
+      MAIL_ENCRYPTION: ssl
     volumes:
       - uploads:/app/storage/app/public
       - ./logs:/app/storage/logs
@@ -266,12 +268,13 @@ services:
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       REDIS_CLIENT: predis
-      MAIL_HOST: smtp.yandex.ru
+      MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: service@120на80.рф
+      MAIL_USERNAME: info@120-na-80.ru
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: service@120на80.рф
+      MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
+      MAIL_ENCRYPTION: ssl
     command: sh -c 'php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public
@@ -303,12 +306,13 @@ services:
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       REDIS_CLIENT: predis
-      MAIL_HOST: smtp.yandex.ru
+      MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: service@120на80.рф
+      MAIL_USERNAME: info@120-na-80.ru
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: service@120на80.рф
+      MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
+      MAIL_ENCRYPTION: ssl
     command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan queue:work'
     volumes:
       - uploads:/app/storage/app/public
@@ -338,12 +342,13 @@ services:
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       REDIS_CLIENT: predis
-      MAIL_HOST: smtp.yandex.ru
+      MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
-      MAIL_USERNAME: service@120на80.рф
+      MAIL_USERNAME: info@120-na-80.ru
       MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: service@120на80.рф
+      MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
+      MAIL_ENCRYPTION: ssl
     command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan redis:subscribe'
     volumes:
       - uploads:/app/storage/app/public

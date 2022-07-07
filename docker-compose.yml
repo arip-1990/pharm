@@ -23,9 +23,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.panel.rule=Host(`client.pharm.test`)
-      - traefik.http.routers.panel.entryPoints=http
-      - traefik.http.services.panel.loadBalancer.server.port=80
+      - traefik.http.routers.client.rule=Host(`client.pharm.test`)
+      - traefik.http.routers.client.entryPoints=http
+      - traefik.http.services.client.loadBalancer.server.port=80
     healthcheck:
       test: [ "curl", "--fail http://127.0.0.1/health || exit 1" ]
       interval: 60s

@@ -21,7 +21,7 @@ Route::prefix('1c')->group(function () {
     Route::post('/order', [OrderController::class, 'handle'])->middleware('auth.basic.once');
 });
 
-Route::get('/pay', [PayController::class, 'handle']);
+Route::post('/pay', [PayController::class, 'handle']);
 
 Route::prefix('v1')->group(function () {
     Route::post('/login', [V1\Auth\LoginController::class, 'handle']);

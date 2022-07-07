@@ -10,7 +10,7 @@
     <body>
         <div style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 22px; background-color: #eee; padding: 3rem 0; margin: auto;">
             <div style="max-width: 640px; margin: auto; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <div style="width: 120px;"><img style="width: 100%; height: 100%;" src="{{ $message->embed($pathToImage) }}"  alt=""/></div>
+                <div style="width: 120px;"><img style="width: 100%; height: 100%;" src="{{ $message->embed($pathToImage) }}"  alt="120на80.рф"/></div>
                 <div>
                     <a style="text-decoration: none; margin-right: .5rem;" href="https://120на80.рф/catalog">Каталог товаров</a>
                     <a style="text-decoration: none;" href="https://120на80.рф/cabinet/profile">Кабинет</a>

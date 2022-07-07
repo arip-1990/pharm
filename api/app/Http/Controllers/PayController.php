@@ -56,6 +56,7 @@ class PayController
                 case 'declinedByTimeout':
                     $order->changeStatusState(Status::STATE_ERROR);
                     Exception::create($order->id, 'pay', 'Истек время ожидания оплаты')->save();
+                    break;
             }
         }
         else {

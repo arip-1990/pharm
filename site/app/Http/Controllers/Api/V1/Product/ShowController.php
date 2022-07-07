@@ -16,8 +16,10 @@ class ShowController extends Controller
             $attributes[] = [
                 'id' => $value->attribute->id,
                 'name' => $value->attribute->name,
+                'category' => $value->attribute->category,
                 'type' => $value->attribute->type,
                 'variants' => $value->attribute->variants,
+                'required' => $value->attribute->required,
                 'value' => $value->value,
             ];
         }

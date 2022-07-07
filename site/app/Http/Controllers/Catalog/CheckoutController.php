@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Catalog;
 
+use App\Mail\Order\CreateOrder;
 use App\Models\CartItem;
 use App\Models\Offer;
 use App\Models\Order;
@@ -15,6 +16,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {

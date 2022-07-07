@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $default
  * @property boolean $required
  * @property array $variants
+ *
+ * @property Category $category
  */
 class Attribute extends Model
 {
@@ -49,5 +52,10 @@ class Attribute extends Model
     public function isSelect(): bool
     {
         return count($this->variants) > 0;
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }
