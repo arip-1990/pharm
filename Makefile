@@ -117,7 +117,7 @@ build-panel:
 	docker --log-level=debug build --pull --file=panel/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-panel:${IMAGE_TAG} panel
 
 build-parser:
-	docker --log-level=debug build --pull --file=parser/Dockerfile --tag=${REGISTRY}/pharm-parser:${IMAGE_TAG} parser
+	docker --log-level=debug build --pull --file=parser/docker/Dockerfile --tag=${REGISTRY}/pharm-parser:${IMAGE_TAG} parser
 
 build-bot:
 	docker --log-level=debug build --pull --file=bot/docker/Dockerfile --tag=${REGISTRY}/pharm-bot:${IMAGE_TAG} bot

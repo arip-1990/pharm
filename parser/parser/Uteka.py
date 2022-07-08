@@ -12,21 +12,33 @@ class Uteka:
             return None
 
         data['title'] = title.text.strip()
-        data['description'] = self.parse_description()
+
+        vendor = self.soup.select_one('.product-page #card [itemprop=brand] [itemprop=name]')
+        data['vendor'] = vendor.text.strip() if vendor else ''
+
+        country = self.soup.select_one('.product-page #card [data-test=country]')
+        data['country'] = country.text.strip() if country else ''
+
+        description = ''
+        consist = ''
+        for item in self.soup.select('.product-page #instructions [itemprop=description] [data-test=instruction]'):
+            tmp = item.select_one('h3')
+            if tmp and 'описание' in tmp.text.strip().lower():
+                text = tmp.next_sibling
+                if text:
+                    description = text.text.strip()
+            elif tmp and 'состав' in tmp.text.strip().lower():
+                text = tmp.next_sibling
+                if text:
+                    consist = text.text.strip()
+
+        data['description'] = description
+        data['consist'] = consist
+
         data['image'] = self.parse_image()
 
         return data
 
-    def parse_description(self) -> str | None:
-        data = None
-        for item in self.soup.select('.product-page #instructions [itemprop=description] [data-test=instruction]'):
-            tmp = item.select_one('h3')
-            if tmp and tmp.text.strip().lower().startswith('описание'):
-                description = '\n'.join([str(item) for item in item.select('.tinymce-content > *')])
-                data = description.strip()
-
-        return data
-
-    def parse_image(self) -> str | None:
+    def parse_image(self) -> str:
         data = self.soup.select_one('.product-page .image-slider picture img')
-        return data.get('src').strip() if data else None
+        return data.get('src').strip() if data else ''

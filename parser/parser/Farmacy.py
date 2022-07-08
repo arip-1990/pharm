@@ -12,18 +12,37 @@ class Farmacy:
             return None
 
         data['title'] = title.text.strip()
-        # data['description'] = self.parse_description()
-        data['images'] = '|'.join(self.parse_images())
+
+        vendor = ''
+        country = ''
+        for item in self.soup.select('.c-block__content .c-product-features-overview .c-product-features-overview__item'):
+            param = item.select_one('.c-value__label-text')
+            if param and 'производитель' in param.text.strip().lower():
+                text = item.select_one('.c-value__value-text')
+                if text:
+                    vendor = text.text.strip()
+
+        data['vendor'] = vendor
+        data['country'] = country
+
+        description = ''
+        consist = ''
+        for item in self.soup.select('.c-product-page .c-product-page__content .c-block__content .desc'):
+            if 'состав' in item.text.strip().lower():
+                text = item.next_sibling
+                if text:
+                    consist = text.text.strip()
+            elif 'описание' in item.text.strip().lower():
+                text = item.select_one('.c-value__value-text')
+                if text:
+                    description = text.text.strip()
+
+        data['description'] = description
+        data['consist'] = consist
+        data['image'] = self.parse_image()
 
         return data
 
-    # def parse_description(self) -> str:
-    #     data = ''
-    #     tmp = self.driver.find_elements(By.XPATH, "//*[@class='desc' and contains(., 'Описание')]/../p/text()")
-    #     for item in tmp:
-    #         data += item.text.strip() + '\n'
-    #     return data
-
-    def parse_images(self) -> list:
-        data = [item.get('src').strip() for item in self.soup.select('.c-product-images img')]
-        return data
+    def parse_image(self) -> str:
+        data = self.soup.select_one('.c-product-images img')
+        return data.get('src').strip() if data else ''

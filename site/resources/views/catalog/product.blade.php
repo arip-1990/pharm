@@ -7,13 +7,17 @@
 
     <div class="row justify-content-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
         <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
-            @if ($product->checkedPhotos->count())
-                <figure class="zoom" style="background-image: url({{ $product->photos->first()->getUrl() }})">
-                    <img class="mw-100 m-auto" itemprop="image" src="{{ $product->checkedPhotos->first()->getUrl() }}" alt="{{ $product->name }}" />
-                </figure>
-            @else
-                <img class="mw-100" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
-            @endif
+            @forelse($product->photos as $photo)
+                @if($loop->first)
+                    <figure class="zoom" style="background-image: url({{ $photo->getUrl() }})">
+                        <img class="mw-100 m-auto" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
+                    </figure>
+                @else
+                    <img class="mw-100 m-auto" style="display: none" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
+                @endif
+            @empty
+                <img class="mw-100" itemprop="image" src="{{ url(\App\Models\Photo::DEFAULT_FILE) }}" alt="{{ $product->name }}" />
+            @endforelse
 
             @if (in_array($product->id, session('favorites', [])))
                 <img alt="" src="/images/heart.png" class="favorite-toggle" data-action="remove">

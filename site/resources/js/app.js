@@ -8,3 +8,4 @@ require('./product');
 require('./collapse');
 require('./zoom');
 require('./checkout');
+require('./carousel');

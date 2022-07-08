@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Import;
 
+use App\Models\Photo;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +28,8 @@ class EmptyProductCommand extends \Illuminate\Console\Command
                 $product = Product::query()->where('code', (int)$row[0])
                     ->where('status', Product::STATUS_DRAFT)->first();
                 if ($product) {
-                    if ($photo = explode('|', (string)$row[3])[0]) {
+                    $checkedPhotos = !$product->photos()->where('status', Photo::STATUS_CHECKED)->count();
+                    if ($photo = explode('|', (string)$row[6])[0] and $checkedPhotos) {
                         try {
                             $info = pathinfo($photo);
                             $info['extension'] = explode('?', $info['extension'])[0];
@@ -49,8 +51,20 @@ class EmptyProductCommand extends \Illuminate\Console\Command
 
                     $product->update([
                         'status' => Product::STATUS_MODERATION,
-                        'description' => (string)$row[2],
+                        'description' => (string)$row[5],
                     ]);
+                    $product->values()->updateOrCreate(
+                        ['attribute_id' => 2, 'product_id' => $product->id],
+                        ['value' => (string)$row[2]]
+                    );
+                    $product->values()->updateOrCreate(
+                        ['attribute_id' => 1, 'product_id' => $product->id],
+                        ['value' => (string)$row[3]]
+                    );
+                    $product->values()->updateOrCreate(
+                        ['attribute_id' => 30, 'product_id' => $product->id],
+                        ['value' => (string)$row[4]]
+                    );
                 }
             }
         }

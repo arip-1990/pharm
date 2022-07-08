@@ -8,7 +8,7 @@ from time import time
 from fuzzywuzzy import fuzz
 from bs4 import BeautifulSoup
 from threading import Thread, Event
-from selenium import webdriver
+import undetected_chromedriver as uc
 from selenium.common.exceptions import WebDriverException
 from .Asna import Asna
 from .Apteka import Apteka
@@ -16,11 +16,11 @@ from .EApteka import EApteka
 from .Farmacy import Farmacy
 from .Uteka import Uteka
 from .MegApteka import MegApteka
+from .Wildberries import Wildberries
 
 
 class Parser:
     SEARCH_URL = 'https://yandex.ru/search/?text='
-    AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36'
     proxies = []
     code = None
     title = None
@@ -29,32 +29,25 @@ class Parser:
     message = ''
     total_found = 0
 
-    def __init__(self, file: str, headless: bool = False, proxy: str = None):
+    def __init__(self, file: str):
         self.excel_data = pd.read_excel(file, 'Products')
         self.total = len(self.excel_data)
         self.progress = 1
 
-        options = webdriver.ChromeOptions()
-        if headless:
-            options.add_argument('--headless')
-        options.add_argument('--window-size=1280,720')
-        options.add_argument('--disable-xss-auditor')
-        options.add_argument('--disable-web-security')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--allow-running-insecure-content')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-setuid-sandbox')
-        options.add_argument('--disable-webgl')
-        options.add_argument('--disable-popup-blocking')
-        options.add_argument(f'--user-agent={self.AGENT}')
-        options.add_argument('--load-extension=./stopper')
-        if proxy:
-            options.add_argument(f'--proxy-server={proxy}')
+        options = uc.ChromeOptions()
+        # options.add_argument('--disable-gpu')  # for headless
+        # options.add_argument('--disable-dev-shm-usage')  # uses /tmp for memory sharing
+        # # disable popups on startup
+        # options.add_argument('--no-first-run')
+        # options.add_argument('--no-service-autorun')
+        # options.add_argument('--no-default-browser-check')
+        # options.add_argument('--password-store=basic')
+        options.arguments.extend(["--no-sandbox", "--disable-setuid-sandbox"])
 
-        self.driver = webdriver.Remote(os.getenv('SELENIUM_URL'), desired_capabilities=options.to_capabilities())
+        self.driver = uc.Chrome(options, headless=True)
         self.driver.implicitly_wait(10)
         self.driver.set_page_load_timeout(20)
-        # self.status_event = Event()
+        self.status_event = Event()
 
     def close(self) -> None:
         self.driver.close()
@@ -84,14 +77,16 @@ class Parser:
             parser = EApteka(page)
         if 'megapteka.ru' in url:
             parser = MegApteka(page)
-        # elif 'farmacy.ru' in url:
-        #     parser = Farmacy(page)
+        elif 'farmacy.ru' in url:
+            parser = Farmacy(page)
         elif 'apteka.ru' in url:
             parser = Apteka(page)
         elif 'asna.ru' in url:
             parser = Asna(page)
         elif 'uteka.ru' in url:
             parser = Uteka(page)
+        elif 'wildberries.ru' in url:
+            parser = Wildberries(page)
 
         if parser:
             data = parser.parse()
@@ -104,14 +99,6 @@ class Parser:
         product = {}
         link = ''
         search = []
-        # threads = []
-        # for url in urls:
-        #     t = Thread(target=self.find_product_by_name, args=(url, search))
-        #     threads.append(t)
-        #     t.start()
-        #
-        # for thread in threads:
-        #     thread.join()
 
         for url in urls:
             self.find_product_by_name(url, search)
@@ -135,7 +122,7 @@ class Parser:
         return data
 
     def start(self) -> None:
-        # Thread(target=self.print_status).start()
+        Thread(target=self.print_status).start()
         for index, row in self.excel_data.iterrows():
             self.code = str(row['Код']).replace('.0', '')
             self.title = str(row['Наименование']).replace('.0', '')
@@ -148,7 +135,7 @@ class Parser:
                 soup = BeautifulSoup(page, 'html.parser')
                 for link in soup.select('#search-result .OrganicTitle a'):
                     tmp = link.get('href').strip()
-                    if 'eapteka.ru' in tmp or 'apteka.ru' in tmp or 'megapteka.ru' in tmp or 'asna.ru' in tmp or 'uteka.ru' in tmp:
+                    if 'eapteka.ru' in tmp or 'apteka.ru' in tmp or 'megapteka.ru' in tmp or 'asna.ru' in tmp or 'uteka.ru' in tmp or 'farmacy.ru' in tmp or 'wildberries.ru' in tmp:
                         urls.append(tmp)
 
                 product = self.find_product(urls)
@@ -159,19 +146,25 @@ class Parser:
                 self.message = e.msg
             self.progress += 1
 
-        # self.status_event.set()
+        self.status_event.set()
         self.driver.quit()
 
     def save_to_excel(self, data: dict):
         temp = {
             'Код': [],
             'Наименование': [],
+            'Страна': [],
+            'Производитель': [],
+            'Состав': [],
             'Описание': [],
             'Картинка': [],
             'Ссылка': []
         }
         temp['Код'].append(data['code'])
         temp['Наименование'].append(data['title'])
+        temp['Страна'].append(data['product']['country'])
+        temp['Производитель'].append(data['product']['vendor'])
+        temp['Состав'].append(data['product']['consist'])
         temp['Описание'].append(data['product']['description'])
         temp['Картинка'].append(data['product']['image'])
         temp['Ссылка'].append(data['url'])
