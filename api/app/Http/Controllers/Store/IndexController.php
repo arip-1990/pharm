@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V2\Store;
+namespace App\Http\Controllers\Store;
 
 use App\Http\Resources\StoreResource;
 use App\Models\Store;

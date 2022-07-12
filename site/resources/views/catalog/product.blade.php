@@ -6,12 +6,16 @@
     {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('catalogProduct', $product) }}
 
     <div class="row justify-content-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
-        <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
+        <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative text-center">
             @forelse($product->photos as $photo)
                 @if($loop->first)
-                    <figure class="zoom" style="background-image: url({{ $photo->getUrl() }})">
-                        <img class="mw-100 m-auto" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
-                    </figure>
+                    @if($photo->getSize()[0] < 420)
+                        <img class="mw-100 m-auto" style="cursor: zoom-in" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
+                    @else
+                        <figure class="zoom" style="background-image: url({{ $photo->getUrl() }})">
+                            <img class="mw-100 m-auto" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
+                        </figure>
+                    @endif
                 @else
                     <img class="mw-100 m-auto" style="display: none" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
                 @endif
@@ -41,6 +45,7 @@
                                 @switch ($value->attribute->name)
                                     @case('Производитель')
                                     @case('Страна')
+                                    @case('Бренд')
                                     @case('Действующее вещество')
                                     @case('Условия отпуска из аптек')
                                     <h6>

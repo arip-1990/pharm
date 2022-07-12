@@ -54,11 +54,10 @@ class EmptyProductCommand extends Command
         ]);
 
         $i = 2;
-        $productIds = Offer::query()->select('product_id')->groupBy('product_id')->get()->pluck('product_id');
-        Product::query()->whereIn('id', $productIds)->chunk(1000, function ($products) use ($sheet, $i) {
+        Product::query()->has('offers')->has('values', '<', 5)->chunk(1000, function ($products) use ($sheet, $i) {
             /** @var Product $product */
             foreach ($products as $product) {
-                if ($product->values()->count() < 5 or !$product->getValue(1) or !$product->getValue(3) or !$product->getValue(30)) {
+                if (!$product->getValue(1) or !$product->getValue(3) or !$product->getValue(30)) {
                     $sheet->setCellValue('A' . $i, $product->code);
                     $sheet->setCellValue('B' . $i, $product->name);
 

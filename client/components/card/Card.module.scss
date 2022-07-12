@@ -70,6 +70,7 @@
     display: flex;
     width: 0;
     align-items: center;
+    z-index: 9;
 
     .icon {
       display: flex;
@@ -77,10 +78,12 @@
       justify-content: center;
       align-items: center;
       height: 24px;
-      background-color: #fff;
+      background-color: transparent;
       background-repeat: no-repeat;
       background-position: center;
+      border-radius: 0 1rem 1rem 0;
       z-index: 9;
+      transition: background-color .5s ease-out;
     }
 
     &__prescription > .icon {
@@ -99,17 +102,21 @@
       overflow: hidden;
       white-space: nowrap;
       background-color: rgba($white, 0.85);
-      border-radius: 1rem;
-      padding: 0 0 0 1.5rem;
+      border-radius: 1rem 0 0 1rem;
+      padding: 0;
       transform: translateX(-24px);
-      transition: all .5s ease-out 0s;
+      transition: .5s ease-out;
       transition-property: max-width, padding, transform;
     }
 
     &:hover {
+      .icon {
+        background-color: rgba($white, 0.85);
+      }
+
       .text {
         max-width: 108px;
-        padding: 0.1rem 0.75rem;
+        padding: 0 0.75rem;
       }
 
       &.card_mod__prescription > .text {

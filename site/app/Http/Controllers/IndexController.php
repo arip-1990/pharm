@@ -16,12 +16,16 @@ class IndexController extends Controller
     {
         $productIds = Offer::query()->select('product_id')->whereCity($this->city)
             ->groupBy('product_id')->get()->pluck('product_id');
+
         $popularIds = ProductStatistic::query()->select('id')->whereIn('id', $productIds)
             ->orderByDesc('orders')->orderByDesc('views')->get()->pluck('id');
+
         $categoryIds = Category::query()->whereIn('id', [536, 556])->get()
             ->map(fn(Category $category) => $category->descendants->pluck('id'))->collapse();
 
-        $products = Product::query()->whereNotIn('category_id', $categoryIds->push(536, 556))->whereIn('id', $popularIds)->take(12)->get();
+        $products = Product::query()->whereNotIn('category_id', $categoryIds->push(536, 556))
+            ->whereIn('id', $popularIds)->take(20)->get();
+
         $alphabet = Product::query()->selectRaw('SUBSTRING(name, 1, 1) as abc')->distinct('abc')
             ->whereIn('id', $productIds)->get()->pluck('abc');
         $abc = '';
@@ -41,6 +45,7 @@ class IndexController extends Controller
         $title = ' | Список лекарств по алфавиту';
         $productIds = Offer::query()->select('product_id')->whereCity($this->city)
             ->groupBy('product_id')->get()->pluck('product_id')->toArray();
+
         $alphabet = Product::query()->selectRaw('SUBSTRING(name, 1, 1) as abc')->distinct('abc')
             ->whereIn('id', $productIds)->get()->pluck('abc');
 

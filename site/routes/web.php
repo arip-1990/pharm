@@ -3,15 +3,15 @@
 use App\Http\Controllers\Api\V1\Offer\ImShopController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Cabinet\IndexController as CabinetController;
+use App\Http\Controllers\Cabinet\OrderController;
+use App\Http\Controllers\Catalog\CartController;
 use App\Http\Controllers\Catalog\CheckoutController;
+use App\Http\Controllers\Catalog\FavoriteController;
+use App\Http\Controllers\Catalog\IndexController as CatalogController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Pharmacy\PharmacyController;
-use App\Http\Controllers\Cabinet\IndexController as CabinetController;
-use App\Http\Controllers\Cabinet\OrderController;
-use App\Http\Controllers\Catalog\IndexController as CatalogController;
-use App\Http\Controllers\Catalog\CartController;
-use App\Http\Controllers\Catalog\FavoriteController;
 use Illuminate\Support\Facades\Route;
 
 /*

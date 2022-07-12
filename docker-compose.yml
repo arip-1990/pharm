@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   traefik:
-    image: traefik:2.7
+    image: traefik:2.8
     command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80 --entryPoints.http_other.address=:8888
     ports:
       - "80:80"
@@ -138,6 +138,7 @@ services:
       MAIL_FROM_ADDRESS: info@pharm.test
       MAIL_FROM_NAME: Сеть аптек 120/80
       FILESYSTEM_DRIVER: public
+      ELASTICSEARCH_HOST: elasticsearch
     volumes:
       - ./site:/app
       - uploads:/app/storage/app/public
@@ -171,6 +172,7 @@ services:
       MAIL_FROM_ADDRESS: info@pharm.test
       MAIL_FROM_NAME: Сеть аптек 120/80
       FILESYSTEM_DRIVER: public
+      ELASTICSEARCH_HOST: elasticsearch
     volumes:
       - ./site:/app
       - uploads:/app/storage/app/public
@@ -343,10 +345,29 @@ services:
     depends_on:
       - redis
 
+  elasticsearch:
+    image: elasticsearch:8.3.2
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=elasticsearch
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+
 volumes:
   db-postgres:
   redis-data:
   uploads:
+  esdata:
 
 
 networks:

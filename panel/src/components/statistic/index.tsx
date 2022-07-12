@@ -18,9 +18,10 @@ const Statistic: React.FC = () => {
       pagination: { current: 1, pageSize: 10 },
     }
   );
-  const { data: statistics, isLoading: fetchLoading } = useFetchStatisticsQuery(
-    filters
-  );
+  const {
+    data: statistics,
+    isFetching: fetchLoading,
+  } = useFetchStatisticsQuery(filters);
 
   const columns = [
     {

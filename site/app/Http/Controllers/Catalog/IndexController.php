@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Catalog;
 
+use App\Http\Requests\Catalog\SearchRequest;
 use App\Models\Category;
 use App\Models\Limit;
 use App\Models\Offer;
@@ -9,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductStatistic;
 use App\Http\Controllers\Controller;
 use App\UseCases\Catalog\ProductService;
+use App\UseCases\SearchService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class IndexController extends Controller
 {
-    public function __construct(private ProductService $productService)
+    public function __construct(private ProductService $productService, private SearchService $search)
     {
         parent::__construct();
     }
@@ -75,19 +77,21 @@ class IndexController extends Controller
         return view('catalog.product', compact('title', 'product', 'offers', 'minPrice', 'item', 'cartService'));
     }
 
-    public function search(Request $request): View
+    public function search(SearchRequest $request): View
     {
         $title = ' | Поиск';
+
         if (!$searchText = $request->query('q'))
             throw new \DomainException('Введите запрос для поиска');
-        $productIds = Offer::query()->select('product_id')->whereCity($this->city)->groupBy('product_id')->get()->pluck('product_id');
 
-        $paginator = Product::query()->whereIn('id', $productIds)->where(function(Builder $query) use ($searchText) {
+//        $paginator = $this->search->search($request, $this->city, 30);
+        $paginator = Product::active($this->city)->where(function(Builder $query) use ($searchText) {
             $query->where('name', 'like', '%' . $searchText . '%')
                 ->orWhereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$searchText]);
-        })->paginate(15);
+        })->paginate(30);
 
         $paginator->appends(['q' => $searchText]);
+
         $cartService = $this->cartService;
 
         return view('catalog.index', compact('title', 'paginator', 'cartService'));
@@ -124,7 +128,7 @@ class IndexController extends Controller
 
             $offer = Offer::query()->whereCity($this->city)->where('product_id', $request->query('id'))->orderBy('price')->first();
 
-            return response()->json($offer->price ?? 0);
+            return new JsonResponse($offer->price ?? 0);
         }
 
         throw new NotFoundHttpException('Страница не найдена.');

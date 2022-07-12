@@ -3,7 +3,7 @@ import Head from "next/head";
 import { Container, Row } from "react-bootstrap";
 import Header from "./header";
 import Footer from "./footer";
-import bannerImage from "../assets/images/banner.png";
+import bannerImage from "../../assets/images/banner.png";
 import Image from "next/image";
 
 type Props = {

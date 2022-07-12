@@ -11,18 +11,15 @@ import {
 } from "../../services/cartService";
 
 const isRecipe = (recipe: boolean) => {
-  if (recipe) {
-    return (
-      <div className={styles.card_mod + " " + styles.card_mod__prescription}>
-        <div className={styles.icon} />
-        <div className={styles.text}>По рецепту</div>
-      </div>
-    );
-  }
+  const classess = [styles.card_mod];
+  classess.push(
+    recipe ? styles.card_mod__prescription : styles.card_mod__delivery
+  );
+
   return (
-    <div className={styles.card_mod + " " + styles.card_mod__delivery}>
+    <div className={classess.join(" ")}>
       <div className={styles.icon} />
-      <div className={styles.text}>Доставка</div>
+      <div className={styles.text}>{recipe ? "По рецепту" : "Доставка"}</div>
     </div>
   );
 };

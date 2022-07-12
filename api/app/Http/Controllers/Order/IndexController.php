@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\V2;
+namespace App\Http\Controllers\Order;
 
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
-class OrderController
+class IndexController
 {
     public function index(): JsonResource
     {

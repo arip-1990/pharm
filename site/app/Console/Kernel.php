@@ -28,8 +28,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('import:offer change')->everyMinute();
         $schedule->command('import:offer stock')->everyMinute();
 
+        $schedule->command('laravel-elasticsearch:utils:index-create products')->dailyAt('1:00');
+        $schedule->command('search:init')->dailyAt('1:01');
+        $schedule->command('search:reindex')->dailyAt('1:05');
+
         $schedule->command('import:emptyProduct')->hourly();
-        $schedule->command('export:emptyProduct description')->dailyAt('1:00');
+        $schedule->command('export:emptyProduct description')->dailyAt('1:30');
     }
 
     /**

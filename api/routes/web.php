@@ -1,9 +1,15 @@
 <?php
 
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Auth;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\Category;
+use App\Http\Controllers\CityController;
 use App\Http\Controllers\PayController;
+use App\Http\Controllers\Product;
+use App\Http\Controllers\Order;
+use App\Http\Controllers\Store;
+use App\Http\Controllers\User;
 use App\Http\Controllers\V1;
-use App\Http\Controllers\V2;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('1c')->group(function () {
-    Route::post('/order', [OrderController::class, 'handle'])->middleware('auth.basic.once');
+    Route::post('/order', [Order\UpdateController::class, 'handle'])->middleware('auth.basic.once');
 });
 
 Route::post('/pay', [PayController::class, 'handle']);
@@ -57,41 +63,41 @@ Route::prefix('v1')->group(function () {
 });
 
 Route::prefix('v2')->group(function () {
-    Route::get('/city', [V2\CityController::class, 'handle']);
+    Route::get('/city', [CityController::class, 'handle']);
 
     Route::prefix('catalog')->group(function () {
-        Route::get('/sale', [V2\Product\PopularController::class, 'handle']);
-        Route::get('/search', [V2\Product\PopularController::class, 'handle']);
-        Route::get('/popular', [V2\Product\PopularController::class, 'handle']);
-        Route::get('/product/{product}', [V2\Product\ProductController::class, 'handle']);
-        Route::get('/{category?}', [V2\Product\IndexController::class, 'handle']);
+        Route::get('/sale', [Product\PopularController::class, 'handle']);
+        Route::get('/search', [Product\PopularController::class, 'handle']);
+        Route::get('/popular', [Product\PopularController::class, 'handle']);
+        Route::get('/product/{product}', [Product\ProductController::class, 'handle']);
+        Route::get('/{category?}', [Product\IndexController::class, 'handle']);
     });
 
     Route::prefix('category')->group(function () {
-        Route::get('/', [V2\Category\IndexController::class, 'handle']);
+        Route::get('/', [Category\IndexController::class, 'handle']);
     });
 
     Route::prefix('store')->group(function () {
-        Route::get('/', [V2\Store\IndexController::class, 'handle']);
-        Route::get('/{store}', [V2\Store\ShowController::class, 'handle']);
+        Route::get('/', [Store\IndexController::class, 'handle']);
+        Route::get('/{store}', [Store\ShowController::class, 'handle']);
     });
 
     Route::prefix('cart')->group(function () {
-        Route::get('/', [V2\CartController::class, 'index']);
-        Route::post('/{id}', [V2\CartController::class, 'store']);
-        Route::put('/{id}', [V2\CartController::class, 'update']);
-        Route::delete('/{id}', [V2\CartController::class, 'delete']);
+        Route::get('/', [CartController::class, 'index']);
+        Route::post('/{id}', [CartController::class, 'store']);
+        Route::put('/{id}', [CartController::class, 'update']);
+        Route::delete('/{id}', [CartController::class, 'delete']);
     });
 
-    Route::post('/login', [V2\Auth\LoginController::class, 'handle']);
-    Route::post('/register', [V2\Auth\RegisterController::class, 'handle']);
-    Route::post('/logout', [V2\Auth\LogoutController::class, 'handle']);
+    Route::post('/login', [Auth\LoginController::class, 'handle']);
+    Route::post('/register', [Auth\RegisterController::class, 'handle']);
+    Route::post('/logout', [Auth\LogoutController::class, 'handle']);
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user', [V2\User\IndexController::class, 'handle']);
+        Route::get('/user', [User\IndexController::class, 'handle']);
 
         Route::prefix('order')->group(function () {
-            Route::get('/', [V2\OrderController::class, 'index']);
+            Route::get('/', [Order\IndexController::class, 'index']);
         });
     });
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Order;
 
 use App\Models\Order;
 use App\Models\Status;
@@ -8,7 +8,7 @@ use App\UseCases\Order\RefundService;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
-class OrderController extends Controller
+class UpdateController extends Controller
 {
     public function __construct(private RefundService $refundService) {}
 
@@ -50,12 +50,9 @@ class OrderController extends Controller
             return response($this->orderError('Неверный XML', 1), 500);
 
         $id = intval($xml->order->id) - config('data.orderStartNumber');
-        try {
-            /** @var Order $order */
-            $order = Order::query()->find($id);
-        }
-        catch (\DomainException $e) {
-            return response($this->orderError($e->getMessage(), 2, $id), 500);
+        /** @var Order $order */
+        if (!$order = Order::query()->find($id)) {
+            return response($this->orderError('Не найден заказ №' . $id . '!', 2, $id), 500);
         }
 
         switch ($xml->order->status) {

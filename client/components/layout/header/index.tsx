@@ -2,14 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container, Row, Col, Modal } from "react-bootstrap";
 import Navbar from "./Navbar";
-import Logo from "../../assets/images/logo.svg";
-import heart from "../../assets/images/heart.png";
-import cart from "../../assets/images/cart.png";
+import Logo from "../../../assets/images/logo.svg";
+import heart from "../../../assets/images/heart.png";
+import cart from "../../../assets/images/cart.png";
 import { FC, MouseEvent, useEffect, useState } from "react";
 import { useSanctum } from "react-sanctum";
-import { Login, Register } from "../auth";
+import { Login, Register } from "../../auth";
 import { useLocalStorage } from "react-use-storage";
-import { useFetchCartQuery } from "../../services/cartService";
+import { useFetchCartQuery } from "../../../services/cartService";
 import { SetCity } from "./SetCity";
 
 const Header: FC = () => {

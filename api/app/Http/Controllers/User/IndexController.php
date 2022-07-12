@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V2\User;
+namespace App\Http\Controllers\User;
 
 use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;

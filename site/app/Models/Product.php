@@ -97,9 +97,16 @@ class Product extends Model
         return $this->status == self::STATUS_DRAFT;
     }
 
-    public function scopeActive(Builder $query): Builder
+    public function scopeActive(Builder $query, string $city = null): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE);
+        return $query->whereHas('offers', function (Builder $query) use ($city) {
+            $query->where('quantity', '>', 0);
+            if ($city) {
+                $query->join('stores', 'offers.store_id', '=', 'stores.id')
+                    ->where('status', Store::STATUS_ACTIVE)
+                    ->where('stores.address', 'like', $city . '%');
+            }
+        });
     }
 
     public function changeCategory(int $categoryId): void
@@ -166,7 +173,7 @@ class Product extends Model
 
     public function offers(): HasMany
     {
-        return $this->hasMany(Offer::class)->where('quantity', '>', 0)->orderBy('price');
+        return $this->hasMany(Offer::class)->orderBy('price');
     }
 
     public function statistic(): HasOne

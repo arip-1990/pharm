@@ -28,6 +28,17 @@ class Photo extends Model
 
     protected $fillable = ['type', 'file', 'status', 'product_id', 'sort'];
 
+    public function getSize(): array
+    {
+        $data = [0, 0];
+        if (Storage::exists('images/original/' . $this->file)) {
+            list($width, $height) = getimagesize(Storage::path('images/original/' . $this->file));
+            $data = [$width, $height];
+        }
+
+        return $data;
+    }
+
     public function getUrl(): ?string
     {
         if (Storage::exists('images/original/' . $this->file))

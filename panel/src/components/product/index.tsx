@@ -35,7 +35,7 @@ const Product: React.FC = () => {
       pagination: { current: 1, pageSize: 10 },
     }
   );
-  const { data: products, isLoading: fetchLoading } = useFetchProductsQuery(
+  const { data: products, isFetching: fetchLoading } = useFetchProductsQuery(
     filters
   );
   const [searchText, setSearchText] = React.useState<string>();

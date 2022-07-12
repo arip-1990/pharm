@@ -4,7 +4,6 @@ namespace App\UseCases\Catalog;
 
 use App\Models\Attribute;
 use App\Models\Category;
-use App\Models\Offer;
 use App\Models\Product;
 use App\Models\Value;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -23,25 +22,12 @@ class ProductService
             $categories = Category::all();
         }
 
-        $productIds = Offer::query()->select('product_id')->whereCity($city)
-            ->groupBy('product_id')->get()->pluck('product_id');
-
-        return Product::query()->whereIn('id', $productIds)
-            ->whereIn('category_id', $categoryIds->merge($categories)->pluck('id'))->paginate(12);
+        return Product::active($city)->whereIn('category_id', $categoryIds->merge($categories)->pluck('id'))->paginate(30);
     }
 
     public function getSalesByCity(string $city): Paginator
     {
-        $productIds = Offer::query()->select('product_id')->whereCity($city)
-            ->groupBy('product_id')->get()->pluck('product_id');
-
-        return Product::query()->whereIn('id', [])->paginate(12);
-    }
-
-    public function getNamesBySearch(string $text, int $limit = 10): array
-    {
-        return Product::query()->where('name', 'like', $text . '%')
-            ->orWhere('name', 'like', '%' . $text . '%')->limit($limit)->get();
+        return Product::active($city)->where('sale', true)->paginate(30);
     }
 
     public function getFilters(Collection $productIds): array

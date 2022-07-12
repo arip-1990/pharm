@@ -20,7 +20,7 @@ const Order: React.FC = () => {
     filters: [],
   });
   const { data: users } = useFetchUsersQuery();
-  const { data: orders, isLoading: fetchLoading } = useFetchOrdersQuery(
+  const { data: orders, isFetching: fetchLoading } = useFetchOrdersQuery(
     filters
   );
   const navigate = useNavigate();

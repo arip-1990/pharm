@@ -7,9 +7,9 @@ import { store } from "../services/store";
 const sanctumConfig = {
   apiUrl: API_URL,
   csrfCookieRoute: "sanctum/csrf-cookie",
-  signInRoute: "api/v2/login",
-  signOutRoute: "api/v2/logout",
-  userObjectRoute: "api/v2/user",
+  signInRoute: "v2/login",
+  signOutRoute: "v2/logout",
+  userObjectRoute: "v2/user",
 };
 
 export default ({ Component, pageProps }) => {

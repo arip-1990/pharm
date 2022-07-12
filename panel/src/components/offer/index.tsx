@@ -27,7 +27,7 @@ const Order: React.FC = () => {
     order: { field: null, direction: "asc" },
     pagination: { current: 1, pageSize: 10 },
   });
-  const { data: offers, isLoading: fetchLoading } = useFetchOffersQuery(
+  const { data: offers, isFetching: fetchLoading } = useFetchOffersQuery(
     filters
   );
   const navigate = useNavigate();

@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Api\V1\Product;
 use App\Models\Photo;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
+use App\UseCases\SearchService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controller;
 
 class IndexController extends Controller
 {
+    public function __construct(private SearchService $search) {}
+
     public function handle(Request $request): ResourceCollection
     {
         $query = Product::query()->select('products.*');

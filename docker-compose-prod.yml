@@ -11,7 +11,7 @@ services:
         constraints: [ node.role == manager ]
 
   traefik:
-    image: traefik:2.7
+    image: traefik:2.8
     command: --providers.docker=true --providers.docker.watch=true --providers.docker.swarmMode=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80 --entryPoints.https.address=:443 --certificatesResolvers.letsEncrypt.acme.httpChallenge=true --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
     ports:
       - target: 80
@@ -26,7 +26,7 @@ services:
       - traefik-public
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-public-certs:/certs
+      - traefik-certs:/certs
     deploy:
       labels:
         - traefik.enable=true
@@ -119,7 +119,7 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
-      MAIL_ENCRYPTION: ssl
+      ELASTICSEARCH_HOST: elasticsearch
     volumes:
       - uploads:/app/storage/app/public
       - ./logs:/app/storage/logs
@@ -182,7 +182,7 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
-      MAIL_ENCRYPTION: ssl
+      ELASTICSEARCH_HOST: elasticsearch
     volumes:
       - uploads:/app/storage/app/public
       - ./logs:/app/storage/logs
@@ -274,7 +274,7 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
-      MAIL_ENCRYPTION: ssl
+      ELASTICSEARCH_HOST: elasticsearch
     command: sh -c 'php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public
@@ -312,7 +312,6 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
-      MAIL_ENCRYPTION: ssl
     command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan queue:work'
     volumes:
       - uploads:/app/storage/app/public
@@ -348,7 +347,6 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
-      MAIL_ENCRYPTION: ssl
     command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan redis:subscribe'
     volumes:
       - uploads:/app/storage/app/public
@@ -360,19 +358,19 @@ services:
         max_attempts: 5
         window: 120s
 
-  parser:
-    image: ${REGISTRY}/pharm-parser:${IMAGE_TAG}
-    environment:
-      APP_NAME: Сеть аптек 120/80
-    command: sh -c 'python main.py'
-    deploy:
-      labels:
-        - swarm.cronjob.enable=true
-        - swarm.cronjob.schedule=0 2 * * *
-        - swarm.cronjob.skip-running=true
-      replicas: 0
-      restart_policy:
-        condition: none
+  # parser:
+  #   image: ${REGISTRY}/pharm-parser:${IMAGE_TAG}
+  #   environment:
+  #     APP_NAME: Сеть аптек 120/80
+  #   command: sh -c 'python main.py'
+  #   deploy:
+  #     labels:
+  #       - swarm.cronjob.enable=true
+  #       - swarm.cronjob.schedule=0 2 * * *
+  #       - swarm.cronjob.skip-running=true
+  #     replicas: 0
+  #     restart_policy:
+  #       condition: none
 
   bot:
     image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}
@@ -387,6 +385,28 @@ services:
         parallelism: 1
         delay: 5s
 
+  # elasticsearch:
+  #   image: elasticsearch:8.3.2
+  #   environment:
+  #     - node.name=elasticsearch
+  #     - cluster.name=oms-logs.qa
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #     - discovery.seed_hosts=elasticsearch
+  #     - cluster.initial_master_nodes=elasticsearch
+  #     - xpack.ml.enabled=false
+  #     - xpack.monitoring.templates.enabled=false
+  #     - xpack.security.enabled=false
+  #     - xpack.watcher.enabled=false
+  #     - bootstrap.memory_lock=false
+  #   volumes:
+  #     - es-data:/usr/share/elasticsearch/data
+  #   deploy:
+  #     mode: global
+  #     endpoint_mode: dnsrr
+  #     resources:
+  #       limits:
+  #         memory: 4G
+
   redis:
     image: redis:6.2-alpine
     deploy:
@@ -396,9 +416,10 @@ services:
 volumes:
   db-postgres:
   uploads:
-  traefik-public-certs:
+  traefik-certs:
+  es-data:
 
 
 networks:
   traefik-public:
-    name: traefik-public
+    external: true

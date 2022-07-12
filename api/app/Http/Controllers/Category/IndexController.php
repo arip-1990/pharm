@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\V2\Category;
+namespace App\Http\Controllers\Category;
 
-use App\Models\Category;
 use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

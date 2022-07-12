@@ -1,30 +1,31 @@
 import Link from "next/link";
 import { Container, Row, Col } from "react-bootstrap";
 import moment from "moment";
-import Logo from "../assets/images/logo_min.svg";
+import Logo from "../../../assets/images/logo_min.svg";
 import { FC } from "react";
+import styles from "./Footer.module.scss";
 
 const Footer: FC = () => {
   return (
-    <Container as="footer">
-      <Row className="ofer">
+    <Container as="footer" className={styles.footer}>
+      <Row className={styles.ofer}>
         <span>
           Информация о товаре, в том числе цена товара, носит ознакомительный
           характер и не является публичной офертой согласно ст.437 ГК РФ.
         </span>
       </Row>
 
-      <Row className="footer">
+      <Row className={styles.info}>
         <Col
           sm={{ span: 10, offset: 1 }}
           md={{ span: 6, offset: 0 }}
           className="ps-md-5 d-flex align-items-center"
         >
-          <Logo className="logo" />
-          <div className="info-phone text-center">
+          <Logo className={styles.info_logo} />
+          <div className={styles.info_phone}>
             <h5>Единая справочная сети</h5>
             <p>+7 (8722) 606-366</p>
-            <p className="times">ежедневно с 9:00 до 21:00</p>
+            <p className={styles.times}>ежедневно с 9:00 до 21:00</p>
           </div>
         </Col>
         <Col
