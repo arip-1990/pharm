@@ -21,6 +21,7 @@
     "gray-matter": "^4.0.2",
     "moment": "^2.29.2",
     "next": "latest",
+    "next-redux-wrapper": "^7.0.5",
     "popmotion": "^11.0.3",
     "react": "17.0.2",
     "react-bootstrap": "^2.2.2",

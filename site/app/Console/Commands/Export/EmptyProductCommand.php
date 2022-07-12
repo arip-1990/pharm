@@ -6,6 +6,7 @@ use App\Models\Offer;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -54,7 +55,20 @@ class EmptyProductCommand extends Command
         ]);
 
         $i = 2;
-        Product::query()->has('offers')->has('values', '<', 5)->chunk(1000, function ($products) use ($sheet, $i) {
+        Product::query()->whereHas('offers', fn(Builder $query) => $query->whereIn('store_id', [
+            '6179a810-3e07-11eb-80ec-ac1f6bd1d36d',
+            'fcd58bdb-f170-11e9-969d-005056011715',
+            'af98853a-f0da-11e9-969d-005056011715',
+            'dba0cfa1-ee6e-11e9-969d-005056011715',
+            'a9ccff41-f0be-11e9-969d-005056011715',
+            'f6b96c60-da8a-11ec-80f4-ac1f6bd1d36d',
+            'f36356e9-eaa1-11e9-969d-005056011715',
+            '2012fa57-d2a5-11ec-80f4-ac1f6bd1d36d',
+            'f1bd373d-da63-11ec-80f4-ac1f6bd1d36d',
+            'f4ecaaea-b427-11ec-80f3-ac1f6bd1d36d',
+            '6c463751-da64-11ec-80f4-ac1f6bd1d36d'
+        ]))
+            ->has('values', '<', 5)->chunk(1000, function ($products) use ($sheet, &$i) {
             /** @var Product $product */
             foreach ($products as $product) {
                 if (!$product->getValue(1) or !$product->getValue(3) or !$product->getValue(30)) {

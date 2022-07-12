@@ -28,43 +28,51 @@ class EmptyProductCommand extends \Illuminate\Console\Command
                 $product = Product::query()->where('code', (int)$row[0])
                     ->where('status', Product::STATUS_DRAFT)->first();
                 if ($product) {
-                    $checkedPhotos = !$product->photos()->where('status', Photo::STATUS_CHECKED)->count();
-                    if ($photo = explode('|', (string)$row[6])[0] and $checkedPhotos) {
-                        try {
-                            $info = pathinfo($photo);
-                            $info['extension'] = explode('?', $info['extension'])[0];
-                            $photo = file_get_contents($photo);
-                            do {
-                                $fileName = Str::random() . '.' . $info['extension'];
-                            }
-                            while (Storage::exists('images/original/' . $fileName));
+//                    $checkedPhotos = !$product->photos()->where('status', Photo::STATUS_CHECKED)->count();
+//                    if ($photo = explode('|', (string)$row[6])[0] and $checkedPhotos) {
+//                        try {
+//                            $info = pathinfo($photo);
+//                            $info['extension'] = explode('?', $info['extension'])[0];
+//                            $photo = file_get_contents($photo);
+//                            do {
+//                                $fileName = Str::random() . '.' . $info['extension'];
+//                            }
+//                            while (Storage::exists('images/original/' . $fileName));
+//
+//                            Storage::put('images/original/' . $fileName, $photo);
+//
+//                            $product->photos()->create([
+//                                'file' => $fileName,
+//                                'sort' => $product->photos()->count()
+//                            ]);
+//                        }
+//                        catch (\Exception $e) {}
+//                    }
 
-                            Storage::put('images/original/' . $fileName, $photo);
-
-                            $product->photos()->create([
-                                'file' => $fileName,
-                                'sort' => $product->photos()->count()
-                            ]);
-                        }
-                        catch (\Exception $e) {}
+                    if ($description = (string)$row[5]) {
+                        $product->update([
+                            'status' => Product::STATUS_MODERATION,
+                            'description' => $description,
+                        ]);
                     }
-
-                    $product->update([
-                        'status' => Product::STATUS_MODERATION,
-                        'description' => (string)$row[5],
-                    ]);
-                    $product->values()->updateOrCreate(
-                        ['attribute_id' => 2, 'product_id' => $product->id],
-                        ['value' => (string)$row[2]]
-                    );
-                    $product->values()->updateOrCreate(
-                        ['attribute_id' => 1, 'product_id' => $product->id],
-                        ['value' => (string)$row[3]]
-                    );
-                    $product->values()->updateOrCreate(
-                        ['attribute_id' => 30, 'product_id' => $product->id],
-                        ['value' => (string)$row[4]]
-                    );
+                    if ($value = (string)$row[2]) {
+                        $product->values()->updateOrCreate(
+                            ['attribute_id' => 2, 'product_id' => $product->id],
+                            ['value' => $value]
+                        );
+                    }
+                    if ($value = (string)$row[3]) {
+                        $product->values()->updateOrCreate(
+                            ['attribute_id' => 1, 'product_id' => $product->id],
+                            ['value' => $value]
+                        );
+                    }
+                    if ($value = (string)$row[4]) {
+                        $product->values()->updateOrCreate(
+                            ['attribute_id' => 30, 'product_id' => $product->id],
+                            ['value' => $value]
+                        );
+                    }
                 }
             }
         }

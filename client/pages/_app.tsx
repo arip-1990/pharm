@@ -1,8 +1,7 @@
 import "../styles/global.scss";
 import { Sanctum } from "react-sanctum";
 import { API_URL } from "../services/api";
-import { Provider } from "react-redux";
-import { store } from "../services/store";
+import { wrapper } from "../services/store";
 
 const sanctumConfig = {
   apiUrl: API_URL,
@@ -12,12 +11,12 @@ const sanctumConfig = {
   userObjectRoute: "v2/user",
 };
 
-export default ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }) => {
   return (
     <Sanctum config={sanctumConfig}>
-      <Provider store={store}>
-        <Component {...pageProps} />
-      </Provider>
+      <Component {...pageProps} />
     </Sanctum>
   );
 };
+
+export default wrapper.withRedux(App);

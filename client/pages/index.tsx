@@ -4,6 +4,8 @@ import React, { FC } from "react";
 import { IProduct } from "../models/IProduct";
 import { GetServerSideProps } from "next";
 import { getPopularProducts } from "../lib/catalog";
+import { wrapper } from "../services/store";
+import { setProductData } from "../services/productService";
 
 type Props = {
   products: IProduct[];
@@ -28,14 +30,26 @@ const Home: FC<Props> = ({ products }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  const data = await getPopularProducts();
+export const getServerSideProps: GetServerSideProps<Props> = wrapper.getServerSideProps(
+  (store) => async (ctx) => {
+    try {
+      const data = await getPopularProducts();
 
-  return {
-    props: {
-      products: data,
-    },
-  };
-};
+      store.dispatch(setProductData(data));
+
+      return {
+        props: {
+          products: data,
+        },
+      };
+    } catch (error) {
+      console.log(error);
+
+      return {
+        props: { products: [] },
+      };
+    }
+  }
+);
 
 export default Home;
