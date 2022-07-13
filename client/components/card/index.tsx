@@ -5,10 +5,7 @@ import defaultImage from "../../assets/images/default.png";
 import { useLocalStorage } from "react-use-storage";
 import { FC, useCallback, useEffect, useState } from "react";
 import styles from "./Card.module.scss";
-import {
-  useAddCartMutation,
-  useFetchCartQuery,
-} from "../../services/cartService";
+import { useAddCartMutation, useFetchCartQuery } from "../../lib/cartService";
 
 const isRecipe = (recipe: boolean) => {
   const classess = [styles.card_mod];

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Offer;
+namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Offer;
@@ -9,6 +9,8 @@ use App\Models\Value;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Routing\Controller;
+
+set_time_limit(600);
 
 class ImShopController extends Controller
 {
@@ -47,7 +49,7 @@ class ImShopController extends Controller
             foreach ($products as $product) {
                 /** @var Offer $offer */
                 $offer = $product->offers()->first();
-                $url = route('catalog.product', ['product' => $product]);
+                $url = url('catalog/product', ['product' => $product]);
                 $tmp = "<offer id='{$offer->id}' available='true'>";
                 if ($product->barcode) {
                     $tmp .= "<barcode>{$product->barcode}</barcode>";
@@ -61,10 +63,8 @@ class ImShopController extends Controller
                     $tmp .= "<typePrefix>{$product->category->name}</typePrefix>";
                     $tmp .= "<categoryId>{$product->category_id}</categoryId>";
                 }
-                if ($product->checkedPhotos->count()) {
-                    foreach ($product->checkedPhotos as $photo) {
-                        $tmp .= "<picture>{$photo->getUrl()}</picture>";
-                    }
+                foreach ($product->checkedPhotos as $photo) {
+                    $tmp .= "<picture>{$photo->getUrl()}</picture>";
                 }
                 $tmp .= "<currencyId>RUR</currencyId><price>{$offer->price}</price>";
                 if ($product->description) {

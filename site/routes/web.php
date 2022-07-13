@@ -92,5 +92,3 @@ Route::middleware('auth')->group(function () {
         Route::get('/{order}', [OrderController::class, 'show'])->name('.show');
     });
 });
-
-Route::middleware('auth.basic.once')->get('/offers', [ImShopController::class, 'handle']);

@@ -99,10 +99,6 @@ services:
       - traefik.http.routers.site.entryPoints=http
       - traefik.http.routers.site.service=site_main
       - traefik.http.services.site_main.loadBalancer.server.port=80
-      - traefik.http.routers.site_other.rule=Host(`pharm.test`) || Host(`www.pharm.test`)
-      - traefik.http.routers.site_other.entryPoints=http_other
-      - traefik.http.routers.site_other.service=site_other
-      - traefik.http.services.site_other.loadBalancer.server.port=8888
       - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
       - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
       - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
@@ -204,7 +200,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
       - traefik.http.routers.api.rule=Host(`api.pharm.test`)
-      - traefik.http.routers.api.entryPoints=http
+      - traefik.http.routers.api.entryPoints=http,http_other
       - traefik.http.services.api.loadBalancer.server.port=80
     healthcheck:
       test: [ "curl", "--fail http://127.0.0.1/health || exit 1" ]

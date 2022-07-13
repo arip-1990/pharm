@@ -9,7 +9,7 @@ import { FC, MouseEvent, useEffect, useState } from "react";
 import { useSanctum } from "react-sanctum";
 import { Login, Register } from "../../auth";
 import { useLocalStorage } from "react-use-storage";
-import { useFetchCartQuery } from "../../../services/cartService";
+import { useFetchCartQuery } from "../../../lib/cartService";
 import { SetCity } from "./SetCity";
 
 const Header: FC = () => {

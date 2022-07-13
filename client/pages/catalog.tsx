@@ -1,20 +1,19 @@
 import Layout from "../components/layout";
 import Card from "../components/card";
-import { FC } from "react";
-import { IProduct } from "../models/IProduct";
+import { FC, useState } from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../models/ICategory";
 import saleImage from "../assets/images/sale-icon.png";
 import Image from "next/image";
 import Link from "next/link";
-import { getProducts } from "../lib/catalog";
-import { getCategories } from "../lib/category";
 import Paginate from "../components/Paginate";
-
-type Props = {
-  products: Pagination<IProduct>;
-  categories: ICategory[];
-};
+import { wrapper } from "../lib/store";
+import {
+  fetchCategories,
+  getRunningOperationPromises,
+  useFetchCategoriesQuery,
+} from "../lib/categoryService";
+import { useFetchProductsQuery } from "../lib/productService";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -52,7 +51,11 @@ const generateCategory = (category: ICategory) => {
   );
 };
 
-const Catalog: FC<Props> = ({ categories, products }) => {
+const Catalog: FC = () => {
+  const [pagination, setPagination] = useState<number>(1);
+  const { data: categories } = useFetchCategoriesQuery();
+  const { data: products } = useFetchProductsQuery({ page: pagination });
+
   return (
     <Layout>
       <div className="alert alert-danger" role="alert">
@@ -69,12 +72,12 @@ const Catalog: FC<Props> = ({ categories, products }) => {
                 Распродажа
               </a>
             </li>
-            {categories.map((item) => generateCategory(item))}
+            {categories?.map((item) => generateCategory(item))}
           </ul>
         </nav>
 
         <div className="col-md-9 mt-3 mt-md-0">
-          {products.data.length ? (
+          {products?.data.length ? (
             <>
               <div
                 className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4"
@@ -82,7 +85,7 @@ const Catalog: FC<Props> = ({ categories, products }) => {
                 itemType="https://schema.org/ItemList"
               >
                 <link itemProp="url" href="/products" />
-                {products.data.map((product) => (
+                {products?.data.map((product) => (
                   <div key={product.id} className="col-10 offset-1 offset-sm-0">
                     <Card product={product} />
                   </div>
@@ -91,8 +94,8 @@ const Catalog: FC<Props> = ({ categories, products }) => {
               <div className="row mt-3">
                 <div className="col">
                   <Paginate
-                    current={products.meta.current_page}
-                    total={products.meta.total}
+                    current={products?.meta.current_page}
+                    total={products?.meta.total}
                   />
                 </div>
               </div>
@@ -106,17 +109,14 @@ const Catalog: FC<Props> = ({ categories, products }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const page = context.query.page as string;
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    store.dispatch(fetchCategories.initiate());
 
-  const categories = await getCategories();
-  const products = await getProducts({ page });
+    await Promise.all(getRunningOperationPromises());
 
-  return {
-    props: { categories, products },
-  };
-};
+    return { props: {} };
+  }
+);
 
 export default Catalog;

@@ -1,7 +1,7 @@
 import "../styles/global.scss";
 import { Sanctum } from "react-sanctum";
-import { API_URL } from "../services/api";
-import { wrapper } from "../services/store";
+import { API_URL } from "../lib/api";
+import { wrapper } from "../lib/store";
 
 const sanctumConfig = {
   apiUrl: API_URL,

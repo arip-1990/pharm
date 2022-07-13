@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useCookies } from "react-cookie";
-import { useFetchCitiesQuery } from "../../../services/cityService";
+import { useFetchCitiesQuery } from "../../../lib/cityService";
 
 type Props = {
   className?: string;

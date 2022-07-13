@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Storage;
  * @property int $type
  * @property string $product_id
  * @property int $sort
+ * @property int $status
+ *
+ * @property Product $product
  */
 class Photo extends Model
 {
@@ -21,7 +24,10 @@ class Photo extends Model
     const TYPE_PICTURE = 0;
     const TYPE_CERTIFICATE = 1;
 
-    protected $fillable = ['type', 'product_id', 'sort'];
+    const STATUS_NOT_CHECKED = 0;
+    const STATUS_CHECKED = 1;
+
+    protected $fillable = ['type', 'file', 'status', 'product_id', 'sort'];
 
     public function getUrl(): ?string
     {

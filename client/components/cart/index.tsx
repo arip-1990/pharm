@@ -4,7 +4,7 @@ import {
   useAddCartMutation,
   useChangeCartMutation,
   useFetchCartQuery,
-} from "../../services/cartService";
+} from "../../lib/cartService";
 
 type Props = {
   productId: string;

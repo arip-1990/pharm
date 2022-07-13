@@ -1,17 +1,19 @@
 import Layout from "../components/layout";
 import Card from "../components/card";
 import React, { FC } from "react";
-import { IProduct } from "../models/IProduct";
 import { GetServerSideProps } from "next";
-import { getPopularProducts } from "../lib/catalog";
-import { wrapper } from "../services/store";
-import { setProductData } from "../services/productService";
+import { wrapper } from "../lib/store";
+import {
+  fetchPopularProducts,
+  useFetchPopularProductsQuery,
+  getRunningOperationPromises,
+} from "../lib/productService";
 
-type Props = {
-  products: IProduct[];
-};
+const Home: FC = () => {
+  const { data, isLoading } = useFetchPopularProductsQuery();
 
-const Home: FC<Props> = ({ products }) => {
+  console.log(isLoading);
+
   return (
     <Layout banner>
       <div
@@ -20,35 +22,27 @@ const Home: FC<Props> = ({ products }) => {
         itemType="https://schema.org/ItemList"
       >
         <link itemProp="url" href="/" />
-        {products.map((product) => (
-          <div key={product.id} className="col-10 offset-1 offset-sm-0">
-            <Card product={product} />
-          </div>
-        ))}
+        {isLoading ? (
+          <span>loading</span>
+        ) : (
+          data?.map((product) => (
+            <div key={product.id} className="col-10 offset-1 offset-sm-0">
+              <Card product={product} />
+            </div>
+          ))
+        )}
       </div>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = wrapper.getServerSideProps(
-  (store) => async (ctx) => {
-    try {
-      const data = await getPopularProducts();
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    store.dispatch(fetchPopularProducts.initiate());
 
-      store.dispatch(setProductData(data));
+    await Promise.all(getRunningOperationPromises());
 
-      return {
-        props: {
-          products: data,
-        },
-      };
-    } catch (error) {
-      console.log(error);
-
-      return {
-        props: { products: [] },
-      };
-    }
+    return { props: {} };
   }
 );
 
