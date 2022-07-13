@@ -323,15 +323,15 @@ services:
       - traefik.http.routers.redis.entryPoints=http
       - traefik.http.services.redis.loadBalancer.server.port=6379
 
-  parser:
-    build:
-      context: parser
-      dockerfile: docker/Dockerfile
-    environment:
-      APP_NAME: Сеть аптек 120/80
-    volumes:
-      - ./parser:/app
-      - uploads:/app/data
+  # parser:
+  #   build:
+  #     context: parser
+  #     dockerfile: docker/Dockerfile
+  #   environment:
+  #     APP_NAME: Сеть аптек 120/80
+  #   volumes:
+  #     - ./parser:/app
+  #     - uploads:/app/data
 
   bot:
     build:
@@ -344,24 +344,23 @@ services:
       - ./bot:/app
     depends_on:
       - redis
-
-  elasticsearch:
-    image: elasticsearch:8.3.2
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=elasticsearch
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
+  # elasticsearch:
+  #   image: elasticsearch:8.3.2
+  #   environment:
+  #     - node.name=elasticsearch
+  #     - cluster.name=es-docker-cluster
+  #     - cluster.initial_master_nodes=elasticsearch
+  #     - bootstrap.memory_lock=true
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #     - xpack.security.enabled=false
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   volumes:
+  #     - esdata:/usr/share/elasticsearch/data
+  #   ports:
+  #     - 9200:9200
 
 volumes:
   db-postgres:

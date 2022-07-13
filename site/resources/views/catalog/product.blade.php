@@ -5,9 +5,9 @@
 @section('content')
     {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('catalogProduct', $product) }}
 
-    <div class="row justify-content-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
-        <div class="col-8 col-sm-7 col-md-5 col-lg-3 position-relative text-center">
-            @forelse($product->photos as $photo)
+    <div class="row align-items-center mb-3" itemscope itemtype="https://schema.org/Product" data-product="{{ $product->id }}">
+        <div class="col-8 col-sm-6 col-lg-3 offset-2 offset-sm-3 offset-lg-0 position-relative text-center">
+            @forelse($product->checkedPhotos as $photo)
                 @if($loop->first)
                     @if($photo->getSize()[0] < 420)
                         <img class="mw-100 m-auto" style="cursor: zoom-in" itemprop="image" data-toggle="carousel" data-target=".carousel" src="{{ $photo->getUrl() }}" alt="{{ $product->name }}" />
@@ -30,44 +30,44 @@
             @endif
         </div>
 
-        <div class="col-12 col-lg-9 d-flex flex-column">
+        <div class="col-12 col-lg-6 my-3">
             <div class="row">
-                <div class="col-12 col-lg-8 col-xxl-9">
-                    <h4 class="text-center mb-3" itemprop="name">{{ $product->name }}</h4>
-                </div>
-            </div>
-
-            <div class="row" style="min-height: 50%">
-                <div class="col-12 col-lg-8 col-xxl-9 mb-3 mb-lg-0">
-                    @if ($product->values->count())
-                        <div style="background: #e6eded;padding: .75rem;">
-                            @foreach ($product->values as $value)
-                                @switch ($value->attribute->name)
-                                    @case('Производитель')
-                                    @case('Страна')
-                                    @case('Бренд')
-                                    @case('Действующее вещество')
-                                    @case('Условия отпуска из аптек')
+                <h4 class="text-center mb-5" itemprop="name">{{ $product->name }}</h4>
+                @if ($product->values->count())
+                    <div style="background: #e6eded;padding: .75rem;">
+                        @foreach ($product->values as $value)
+                            @switch ($value->attribute->name)
+                                @case('Производитель')
+                                @case('Страна')
+                                @case('Бренд')
+                                @case('Действующее вещество')
+                                @case('Условия отпуска из аптек')
                                     <h6>
                                         <b class="me-2">{{ $value->attribute->name }}:</b>
                                         {{ html_entity_decode($value->value) }}
                                     </h6>
-                                @endswitch
-                            @endforeach
-                            <h6>
-                                <b class="collapsed description-info text-primary" data-bs-toggle="collapse" data-bs-target="#product-desc">Информация о товаре</b>
-                            </h6>
-                        </div>
-                    @endif
-                </div>
-                <div class="col-12 col-lg-4 col-xxl-3 d-flex flex-column justify-content-evenly align-items-end">
-                    @if ($minPrice)
+                            @endswitch
+                        @endforeach
+                        <h6>
+                            <b class="collapsed description-info text-primary" data-bs-toggle="collapse" data-bs-target="#product-desc">Информация о товаре</b>
+                        </h6>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-3">
+            <div class="row">
+                @if ($minPrice)
+                    <div class="col-6 col-lg-12 text-lg-end">
                         <h5 class="price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                             <p itemprop="price">
                                 Цена: от <span style="font-size: 1.75rem; font-weight: 600">{{ $minPrice }}</span> &#8381;
                             </p>
                         </h5>
+                    </div>
 
+                    <div class="col-6 col-lg-12 text-end">
                         @if($item)
                             <div class="input-group input-product">
                                 <button class="btn btn-outline-primary" data-type="-">-</button>
@@ -79,10 +79,10 @@
                                 Добавить в корзину <i class="fas fa-caret-right" style="vertical-align: middle"></i>
                             </a>
                         @endif
-                    @else
-                        <h4 class="text-center">Нет в наличии</h4>
-                    @endif
-                </div>
+                    </div>
+                @else
+                    <h4 class="text-center">Нет в наличии</h4>
+                @endif
             </div>
         </div>
     </div>
