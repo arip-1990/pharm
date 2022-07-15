@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Card,
   TablePaginationConfig,
@@ -39,7 +39,6 @@ const Product: React.FC = () => {
     filters
   );
   const [searchText, setSearchText] = React.useState<string>();
-  const navigate = useNavigate();
 
   const getColumnSearchProps = (dataIndex: string) => ({
     filterDropdown: ({ confirm, clearFilters }: any) => (
@@ -174,6 +173,11 @@ const Product: React.FC = () => {
               : "descend") as SortOrder)
           : null,
       ...getColumnSearchProps("name"),
+      render: (item: string, record: any) => (
+        <Link to={`/product/${record.key}`} state={{ menuItem: ["product"] }}>
+          {item}
+        </Link>
+      ),
     },
     {
       title: "Категория",
@@ -230,6 +234,10 @@ const Product: React.FC = () => {
     searchText &&
       setFilters({
         ...filters,
+        pagination: {
+          ...filters.pagination,
+          current: 1,
+        },
         search: { text: searchText, column: dataIndex },
       });
     confirm();
@@ -264,7 +272,7 @@ const Product: React.FC = () => {
           : filters.order.direction,
       },
       pagination: {
-        current: pag.current || filters.pagination.current,
+        current: tmp.length ? 1 : pag.current || filters.pagination.current,
         pageSize: pag.pageSize || filters.pagination.pageSize,
       },
     } as StorageType);
@@ -320,12 +328,6 @@ const Product: React.FC = () => {
               pageSize: products?.meta.per_page || filters.pagination.pageSize,
               showQuickJumper: true,
             }}
-            onRow={(record) => ({
-              onClick: () =>
-                navigate(`/product/${record.key}`, {
-                  state: { menuItem: ["product"] },
-                }),
-            })}
           />
         </Card>
       </Col>

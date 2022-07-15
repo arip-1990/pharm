@@ -21,7 +21,7 @@ class IndexController extends Controller
         $query = Product::query()->select('products.*');
 
         if ($status = $request->get('status')) {
-            $status === 'on' ? $query->has('offers') : $query->doesntHave('offers');
+            $status === 'on' ? $query->active() : $query->doesntHave('offers');
         }
 
         if ($sale = $request->get('sale')) {

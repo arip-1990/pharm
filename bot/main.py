@@ -8,6 +8,7 @@ from telebot import TeleBot
 bot = TeleBot('5264546096:AAHH7gzUFdZim4deJs0o78RwZ8x8q6vC6Io')
 r = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, decode_responses=True)
 update_command = None
+test_command = False
 
 
 @bot.message_handler(commands=['start'])
@@ -21,7 +22,7 @@ def help(message) -> None:
     bot.send_message(message.chat.id, message.from_user.id)
 
 
-@bot.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer', 'update_test'])
+@bot.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer'])
 def update_data(message) -> None:
     global update_command
     send_message = ''
@@ -56,8 +57,25 @@ def update_data(message) -> None:
         bot.send_message(message.chat.id, send_message)
 
 
+@bot.message_handler(commands=['test'])
+def test_data(message) -> None:
+    global test_command
+
+    if test_command:
+        send_message = 'Обработка запроса не завершено!'
+
+        bot.reply_to(message, send_message)
+    else:
+        test_command = True
+        send_message = 'Обрабатываем запрос...'
+
+        order_id = message.text.split(' ')[1]
+        r.publish('test', json.dumps({'chatId': message.chat.id, 'order': order_id}))
+        bot.send_message(message.chat.id, send_message)
+
+
 def listen_redis() -> None:
-    global update_command
+    global update_command, test_command
     p = r.pubsub()
     p.psubscribe('bot:*')
 
@@ -73,6 +91,10 @@ def listen_redis() -> None:
                     elif type == 'pay':
                         for key, item in json.loads(message.get('data')):
                             bot.send_message(1195813156, f'{key} => {item}')
+                    elif type == 'test':
+                        data = json.loads(message.get('data'))
+                        bot.send_message(data['chatId'], data['message'])
+                        test_command = False
                     else:
                         bot.send_message(1195813156, message.get('data'))
             except ValueError:

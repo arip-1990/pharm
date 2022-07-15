@@ -17,7 +17,7 @@ class IndexController
         }
         else {
             $products = Product::query()->where('status', Product::STATUS_MODERATION)
-                ->doesntHave('moderation')->take(10)->get();
+                ->doesntHave('moderation')->take(100)->get();
             foreach ($products as $product) {
                 ModerationProduct::query()->create([
                     'type' => 'photo',

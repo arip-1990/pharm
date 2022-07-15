@@ -100,11 +100,12 @@ class Product extends Model
     public function scopeActive(Builder $query, string $city = null): Builder
     {
         return $query->whereHas('offers', function (Builder $query) use ($city) {
-            $query->where('quantity', '>', 0);
+            $query->where('quantity', '>', 0)
+                ->join('stores', 'offers.store_id', '=', 'stores.id')
+                ->where('status', Store::STATUS_ACTIVE);
+
             if ($city) {
-                $query->join('stores', 'offers.store_id', '=', 'stores.id')
-                    ->where('status', Store::STATUS_ACTIVE)
-                    ->where('stores.address', 'like', $city . '%');
+                $query->where('stores.address', 'like', $city . '%');
             }
         });
     }

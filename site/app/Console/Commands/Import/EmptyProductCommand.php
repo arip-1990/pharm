@@ -29,25 +29,25 @@ class EmptyProductCommand extends \Illuminate\Console\Command
                     ->where('status', Product::STATUS_DRAFT)->first();
                 if ($product) {
 //                    $checkedPhotos = !$product->photos()->where('status', Photo::STATUS_CHECKED)->count();
-//                    if ($photo = explode('|', (string)$row[6])[0] and $checkedPhotos) {
-//                        try {
-//                            $info = pathinfo($photo);
-//                            $info['extension'] = explode('?', $info['extension'])[0];
-//                            $photo = file_get_contents($photo);
-//                            do {
-//                                $fileName = Str::random() . '.' . $info['extension'];
-//                            }
-//                            while (Storage::exists('images/original/' . $fileName));
-//
-//                            Storage::put('images/original/' . $fileName, $photo);
-//
-//                            $product->photos()->create([
-//                                'file' => $fileName,
-//                                'sort' => $product->photos()->count()
-//                            ]);
-//                        }
-//                        catch (\Exception $e) {}
-//                    }
+                    if ($photo = (string)$row[6]) {
+                        try {
+                            $info = pathinfo($photo);
+                            $info['extension'] = explode('?', $info['extension'])[0];
+                            $photo = file_get_contents($photo);
+                            do {
+                                $fileName = Str::random() . '.' . $info['extension'];
+                            }
+                            while (Storage::exists('images/original/' . $fileName));
+
+                            Storage::put('images/original/' . $fileName, $photo);
+
+                            $product->photos()->create([
+                                'file' => $fileName,
+                                'sort' => $product->photos()->count()
+                            ]);
+                        }
+                        catch (\Exception $e) {}
+                    }
 
                     if ($description = (string)$row[5]) {
                         $product->update([
@@ -80,6 +80,8 @@ class EmptyProductCommand extends \Illuminate\Console\Command
             $this->error($e->getMessage());
             return 1;
         }
+
+        Storage::delete('Найденные товары.xlsx');
 
         $this->info('Загрузка успешно завершена! ' . $startTime->diff()->format('%iм %sс'));
         return 0;

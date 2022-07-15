@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   useFetchModerationProductsQuery,
   useUpdateModerationProductMutation,
@@ -97,7 +98,7 @@ const Moderation: React.FC = () => {
                 title={
                   <Row>
                     <Col span={2}>{product.code}</Col>
-                    <Col span={4}>
+                    <Col span={5}>
                       {vendor ? (
                         <Typography.Text type="success">
                           {vendor.value}
@@ -108,10 +109,15 @@ const Moderation: React.FC = () => {
                         </Typography.Text>
                       )}
                     </Col>
-                    <Col span={16}>
-                      <Typography.Text type="success">
-                        {product.name}
-                      </Typography.Text>
+                    <Col span={15}>
+                      <Link
+                        to={`/product/${product.slug}`}
+                        state={{ menuItem: ["product"] }}
+                      >
+                        <Typography.Text type="success">
+                          {product.name}
+                        </Typography.Text>
+                      </Link>
                     </Col>
                     <Col span={2} style={{ textAlign: "end" }}>
                       <Space>

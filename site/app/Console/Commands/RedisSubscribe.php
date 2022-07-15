@@ -35,10 +35,6 @@ class RedisSubscribe extends Command
                     case 'store':
                         $code = Artisan::call('import:store');
                         $message = $code ? 'Произошла ошибка при обновлении аптек' : 'Аптеки успешно обновлены';
-                        break;
-                    case 'test':
-                        $code = Artisan::call('test');
-                        $message = $code ? 'Произошла ошибка при обработке запроса' : 'Запрос обработан успешно';
                 }
             }
             catch (\Exception $exception) {
@@ -46,6 +42,19 @@ class RedisSubscribe extends Command
             }
 
             $redis->publish('bot:update', json_encode(['chatId' => $data['chatId'], 'message' => $message]));
+        });
+
+        Redis::subscribe(['test'], function (string $data) use ($redis) {
+            try {
+                $data = json_decode($data, true);
+                $code = Artisan::call('test', ['order' => $data['order']]);
+                $message = $code ? 'Произошла ошибка при обработке запроса' : 'Запрос обработан успешно';
+            }
+            catch (\Exception $exception) {
+                $message = $exception->getMessage();
+            }
+
+            $redis->publish("bot:test", json_encode(['chatId' => $data['chatId'], 'message' => $message]));
         });
 
         return 0;

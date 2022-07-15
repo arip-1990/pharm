@@ -50,7 +50,7 @@ class GenerateDataService
             $delivery_xml .= $delivery->apartment ? "<apartment>{$delivery->apartment}</apartment>" : '';
             $delivery_xml .= $delivery->floor ? "<floor>{$delivery->floor}</floor>" : '';
             $delivery_xml .= $delivery->entrance ? "<entrance>{$delivery->entrance}</entrance>" : '';
-            $delivery_xml .= "<id_service>14</id_service>";
+            $delivery_xml .= "<id_service></id_service>"; // 12 - 50р. 13 - 100р. 14 - 150р. 15 - 200р.
 
             $delivery_xml .=
                 "<courier_phone>+79999999999</courier_phone>
@@ -64,7 +64,7 @@ class GenerateDataService
                 <order>
                     <code>$order_number</code>
                     <date_time>{$date->format('Y-m-d H:i:s')}</date_time>
-                    <status_id>M</status_id>
+                    <status_id>N</status_id>
                     <status_date_time>{$date->format('Y-m-d H:i:s')}</status_date_time>
                     <price>$price_all</price>
                     <city>RU-100000</city>
