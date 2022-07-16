@@ -50,8 +50,6 @@ def update_data(message) -> None:
             send_message = 'Обновляем аптеки...'
         elif update_command == 'offer':
             send_message = 'Обновляем остатки...'
-        elif update_command == 'test':
-            send_message = 'Обрабатываем запрос...'
 
         r.publish('update', json.dumps({'chatId': message.chat.id, 'type': update_command}))
         bot.send_message(message.chat.id, send_message)
@@ -69,8 +67,8 @@ def test_data(message) -> None:
         test_command = True
         send_message = 'Обрабатываем запрос...'
 
-        order_id = message.text.split(' ')[1]
-        r.publish('test', json.dumps({'chatId': message.chat.id, 'order': order_id}))
+        order_id = message.text.split(' ')[1].strip()
+        r.publish('update', json.dumps({'chatId': message.chat.id, 'type': 'test', 'order': order_id}))
         bot.send_message(message.chat.id, send_message)
 
 

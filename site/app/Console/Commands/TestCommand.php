@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Events\Order\OrderSend;
-use App\Models\Order;
-use App\Models\Status;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 ini_set('memory_limit', -1);
 
@@ -17,16 +15,10 @@ class TestCommand extends Command
     public function handle(): int
     {
         $orderId = $this->argument('order');
-        /** @var Order $order */
-        if (!$order = Order::query()->find((int)$orderId) and $order->status === Status::STATUS_SENT_IN_1C) {
-            return 1;
-        }
+        $code = Artisan::call('send:order', ['order' => $orderId]);
+        $message = $code ? 'Произошла ошибка при обработке запроса' : 'Запрос обработан успешно';
 
-        $order->changeStatusState(Status::STATE_WAIT);
-        OrderSend::dispatch($order);
-        $order->save();
-
-        $this->info('Процесс завершена!');
+        $this->info('Процесс завершена! ' . $message);
         return 0;
     }
 }

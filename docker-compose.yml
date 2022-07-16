@@ -155,10 +155,10 @@ services:
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql
-      DB_HOST: 185.46.10.253
+      DB_HOST: db-postgres
       DB_DATABASE: app
       DB_USERNAME: app
-      DB_PASSWORD: fa6*c@w5Yd+EV3p9
+      DB_PASSWORD: secret
       BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
