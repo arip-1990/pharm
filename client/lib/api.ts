@@ -5,9 +5,7 @@ export const API_URL = 'http://api.pharm.test';
 
 const instance = axios.create({
     baseURL: API_URL + '/v2',
-    headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-    },
+    headers: {'X-Requested-With': 'XMLHttpRequest'},
     withCredentials: true
 });
 
@@ -26,10 +24,9 @@ unknown
     try {
         const result = await instance({ url, method, headers, data, params, onUploadProgress: onProgress})
         return { data: result.data }
-    } catch (axiosError) {
-        const err = axiosError as AxiosError;
-        
-        return {error: { status: err.response?.status, data: err.response?.data }};
+    } catch (error) {
+        if (axios.isAxiosError(error))
+            return {error: { status: error.response.status, data: error.response.data }};
     }
 }
 
