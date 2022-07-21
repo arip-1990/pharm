@@ -16,7 +16,8 @@ class EmptyProductCommand extends Command
 {
     protected $signature = 'export:emptyProduct {type=photo}';
     protected $description = 'Export products with
-                                {photo (default) : empty photos}
+                                {photo (default) : has photos}
+                                {not-photo : empty photos}
                                 {description : empty description}';
 
     public function handle(): int
@@ -26,8 +27,10 @@ class EmptyProductCommand extends Command
         try {
             if ($this->argument('type') === 'description')
                 $this->description();
-            else
+            elseif ($this->argument('type') === 'not-photo')
                 $this->photos();
+            else
+                $this->photos(true);
         }
         catch (\Exception $e) {
             $this->error($e->getMessage());
@@ -40,16 +43,22 @@ class EmptyProductCommand extends Command
 
     private function description(): void
     {
+        $date = Carbon::now();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Products');
         $sheet->setCellValue('A1', 'Код');
         $sheet->setCellValue('B1', 'Наименование');
+        $sheet->setCellValue('C1', 'Ссылка');
         $sheet->getStyle('A1')->applyFromArray([
             'font' => ['bold' => true],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
         ]);
         $sheet->getStyle('B1')->applyFromArray([
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+        ]);
+        $sheet->getStyle('C1')->applyFromArray([
             'font' => ['bold' => true],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
         ]);
@@ -74,6 +83,7 @@ class EmptyProductCommand extends Command
                 if (!$product->getValue(1) or !$product->getValue(3) or !$product->getValue(30)) {
                     $sheet->setCellValue('A' . $i, $product->code);
                     $sheet->setCellValue('B' . $i, $product->name);
+                    $sheet->setCellValue('C' . $i, route('catalog.product', ['product' => $product]));
 
                     $i++;
                 }
@@ -81,16 +91,18 @@ class EmptyProductCommand extends Command
         });
 
         $writer = new Xlsx($spreadsheet);
-        $writer->save(Storage::path('Товары без описания.xlsx'));
+        $writer->save(Storage::path('Товары без описания ' . $date->format('d-m-Y') . '.xlsx'));
     }
 
-    private function photos(): void
+    private function photos($hasPhotos = false): void
     {
+        $date = Carbon::now();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Products');
         $sheet->setCellValue('A1', 'Код');
         $sheet->setCellValue('B1', 'Наименование');
+        $sheet->setCellValue('C1', 'Ссылка');
         $sheet->getStyle('A1')->applyFromArray([
             'font' => ['bold' => true],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
@@ -99,15 +111,26 @@ class EmptyProductCommand extends Command
             'font' => ['bold' => true],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
         ]);
+        $sheet->getStyle('C1')->applyFromArray([
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+        ]);
+        
+        $query = Product::query()->has('offers');
+        if ($hasPhotos) $query->has('photos');
+        else $query->doesntHave('photos');
 
-        $productIds = Offer::query()->select('product_id')->groupBy('product_id')->get()->pluck('product_id');
         /** @var Product $product */
-        foreach (Product::query()->whereIn('id', $productIds)->doesntHave('photos')->get() as $i => $product) {
+        foreach ($query->get() as $i => $product) {
             $sheet->setCellValue('A' . ($i + 2), $product->code);
             $sheet->setCellValue('B' . ($i + 2), $product->name);
+            $sheet->setCellValue('C' . ($i + 2), route('catalog.product', ['product' => $product]));
         }
 
+        if ($hasPhotos) $fileName = 'Товары с фото ' . $date->format('d-m-Y') . '.xlsx';
+        else $fileName = 'Товары без фото ' . $date->format('d-m-Y') . '.xlsx';
+
         $writer = new Xlsx($spreadsheet);
-        $writer->save(Storage::path('Товары без фото.xlsx'));
+        $writer->save(Storage::path($fileName));
     }
 }

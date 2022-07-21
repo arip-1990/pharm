@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Category;
 use App\Http\Controllers\CityController;
-use App\Http\Controllers\ImShopController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\Product;
 use App\Http\Controllers\Order;
@@ -24,11 +23,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test', [Auth\LoginController::class, 'handle']);
+
 Route::prefix('1c')->group(function () {
     Route::post('/order', [Order\UpdateController::class, 'handle'])->middleware('auth.basic.once');
 });
-
-Route::get('/shop', [ImShopController::class, 'handle']);
 
 Route::post('/pay', [PayController::class, 'handle']);
 

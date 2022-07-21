@@ -61,5 +61,23 @@ return [
     'dadata_api' => [
         'token' => 'cf0a769944c29a5b279769a97303e8508558679b',
         'secret' => '875598b9e417663986bd5b8b5aab7155ed646df5'
+    ],
+    'loyalty' => [
+        'test' => [
+            'url' => [
+                'pos' => 'http://seredinacrm4.ru:8083/posprocessing.asmx',
+                'lk' => 'http://seredinacrm4.ru:1011/CustomerOfficeService',
+                'admin' => 'http://seredinacrm4.ru:1013/AdministratorOfficeService'
+            ],
+            'organization' => '00001', // идентификатор организации
+            'business_unit' => 1, // идентификатор магазина
+            'pos' => 1, // идентификатор кассы
+            'org_name' => 'ZS2',
+            'login' => 'crm\Integr',
+            'password' => 'E9JxGqe2Z',
+            'id_task_card' => 'integr2',
+            'partner_id' => 'BE4205A0-1EC0-E611-80B5-001DD8B75065',
+            'session_id' => 'A35B9DCA-1947-407B-8079-86AF61E2A2C5' // сессия администратора
+        ]
     ]
 ];

@@ -14,12 +14,10 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => [
-                'required',
-                'string',
-                'regex:/^((7\d{10})|([-.\w]+@([-\w]+\.)+[-\w]{2,8}$|^7\d{10}))$/'
-            ],
-            'password' => 'required|string|min:6'
+            'Login' => 'required|string',
+            'Password' => 'required|string',
+            'Ip' => 'ip|nullable',
+            'sessionId' => 'uuid|nullable'
         ];
     }
 }

@@ -3,20 +3,28 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\LoginRequest;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class LoginController
 {
-    public function handle(LoginRequest $request): JsonResponse
+    public function handle(): JsonResponse
     {
-        if (!Auth::attempt(['phone' => $request->get('email'), 'password' => $request->get('password')], $request->filled('remember')) and
-            !Auth::attempt(['email' => $request->get('email'), 'password' => $request->get('password')], $request->filled('remember')))
-            return new JsonResponse(['message' => trans('auth.failed')], Response::HTTP_UNPROCESSABLE_ENTITY);
+        $url = config('data.loyalty.test.url.lk') . '/Identity/Login';
+//        $data = $request->validated();
+        $data = ['parameter' => ['Login' => 'crm\Integr', 'Password' => 'E9JxGqe2Z']];
 
-        $request->session()->regenerate();
+        $client = new Client([
+            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
+            'http_errors' => false,
+            'verify' => false
+        ]);
 
-        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
+        $response = $client->post($url, ['body' => json_encode($data)]);
+        if ($response->getStatusCode() !== 200)
+            return new JsonResponse(json_decode($response->getBody()), $response->getStatusCode());
+
+        return new JsonResponse(json_decode($response->getBody()));
     }
 }

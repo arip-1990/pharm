@@ -6,17 +6,18 @@ import Logo from "../../../assets/images/logo.svg";
 import heart from "../../../assets/images/heart.png";
 import cart from "../../../assets/images/cart.png";
 import { FC, MouseEvent, useEffect, useState } from "react";
-import { useSanctum } from "react-sanctum";
 import { Login, Register } from "../../auth";
 import { useLocalStorage } from "react-use-storage";
 import { useFetchCartQuery } from "../../../lib/cartService";
 import { SetCity } from "./SetCity";
+import api from "../../../lib/api";
+import axios from "axios";
 
 const Header: FC = () => {
   const [loginType, setLoginType] = useState<"login" | "register">("login");
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [totalCart, setTotalCart] = useState<number>(0);
-  const { authenticated, signIn } = useSanctum();
   const [favorites] = useLocalStorage<string[]>("favorites", []);
   const { data: cartItems } = useFetchCartQuery();
 
@@ -26,9 +27,16 @@ const Header: FC = () => {
     setTotalCart(total);
   }, [cartItems]);
 
-  const handleLogin = async (values: { login: string; password: string }) => {
-    const result = await signIn(values.login, values.password);
-    if (result.signedIn) setShowModal(false);
+  const handleLogin = async (values: { Login: string; Password: string }) => {
+    try {
+      const result = await api.post("login", { ...values });
+      console.log(result.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) console.log(error.response.data);
+      else console.log(error);
+    }
+
+    setShowModal(false);
   };
 
   const handleRegister = async (values: {
