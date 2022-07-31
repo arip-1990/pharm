@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
@@ -9,9 +10,11 @@ use Illuminate\Support\Facades\Storage;
 /**
  * @property int $id
  * @property int $type
- * @property string $product_id
+ * @property string $file
  * @property int $sort
  * @property int $status
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
  * @property Product $product
  */

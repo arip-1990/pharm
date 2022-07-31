@@ -7,7 +7,7 @@ use Carbon\Carbon;
 class Status
 {
     // Сбербанк статусы
-// https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatus
+    // https://securepayments.sberbank.ru/wiki/doku.php/integration:api:rest:requests:getorderstatus
     const SBERBANK_ORDER_REGISTERED = 0; // заказ зарегистрирован, но не оплачен
     const SBERBANK_ORDER_PRE_AUTH_DEPOSIT = 1; // предавторизованная сумма удержана (для двухстадийных платежей)
     const SBERBANK_ORDER_AUTH_DEPOSIT = 2; // проведена полная авторизация суммы заказа
@@ -16,7 +16,7 @@ class Status
     const SBERBANK_ORDER_AUTH_ISSUER = 5; // инициирована авторизация через сервер контроля доступа банка-эмитента
     const SBERBANK_ORDER_AUTH_REJECTED = 6; // авторизация отклонена
 
-// Статусы
+    // Статусы
     const STATUS_CREATED_BY_OPERATOR = 'B'; // Создается оператором
     const STATUS_CALLING = 'C'; // Дозваниваемся
     const STATUS_WAIT_GOODS_ARRIVAL = 'D'; // Ожидает поступления товара (под заказ)

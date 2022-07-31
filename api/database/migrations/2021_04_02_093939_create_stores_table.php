@@ -11,17 +11,16 @@ return new class extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('slug')->unique();
+            $table->string('slug')->nullable()->unique();
             $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->decimal('lon', 10, 7)->nullable();
-            $table->decimal('lat', 10, 7)->nullable();
             $table->json('schedule')->default('[]');
             $table->text('route')->nullable();
             $table->boolean('delivery')->default(false);
             $table->boolean('status')->default(false);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreignId('location_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

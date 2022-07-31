@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property int $category_id
  * @property string $name
  * @property string $type
- * @property string|null $default
+ * @property ?string $default
  * @property boolean $required
- * @property array $variants
+ * @property Collection $variants
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
  * @property ?Category $category
  */
@@ -23,10 +27,9 @@ class Attribute extends Model
     const TYPE_FLOAT = 'float';
     const TYPE_TEXT = 'text';
 
-    public $timestamps = false;
     protected $fillable = ['name', 'type', 'required'];
     protected $casts = [
-        'variants' => 'array'
+        'variants' => AsCollection::class
     ];
 
     public function isString(): bool

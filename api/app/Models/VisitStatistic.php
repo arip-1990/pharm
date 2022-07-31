@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property string $ip
- * @property string|null $city
  * @property string $os
  * @property string $browser
- * @property string $screen
- * @property string|null $referrer
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property ?string $city
+ * @property ?string $screen
+ * @property ?string $referrer
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
  * @property ?User $user
  */

@@ -10,9 +10,6 @@ return new class extends Migration
     {
         Schema::create('order_deliveries', function (Blueprint $table) {
             $table->id();
-            $table->string('city');
-            $table->string('street');
-            $table->string('house');
             $table->smallInteger('entrance', unsigned: true)->nullable();
             $table->smallInteger('floor', unsigned: true)->nullable();
             $table->smallInteger('apartment', unsigned: true)->nullable();
@@ -20,6 +17,7 @@ return new class extends Migration
             $table->float('delivery_price', unsigned: true);
 
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->foreignId('location_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

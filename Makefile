@@ -27,7 +27,7 @@ docker-build:
 site-clear:
 	docker run --rm -v ${PWD}/site:/app -w /app alpine sh -c 'rm -rf .ready storage/framework/cache/data/* storage/framework/sessions/* storage/framework/testing/* storage/framework/views/* storage/logs/*'
 
-site-init: site-permissions site-composer-install site-wait-db site-migrations site-node-install
+site-init: site-permissions site-composer-install site-node-install
 
 site-permissions:
 	docker run --rm -v ${PWD}/site:/app -w /app alpine chmod 777 -R storage bootstrap/cache
@@ -37,12 +37,6 @@ site-composer-install:
 
 site-composer-update:
 	docker compose run --rm site-php-cli composer update
-
-site-wait-db:
-	docker compose run --rm site-php-cli wait-for-it db-postgres:5432 -t 30
-
-site-migrations:
-	docker compose run --rm site-php-cli php artisan migrate --force
 
 site-backup:
 	docker compose run --rm site-postgres-backup

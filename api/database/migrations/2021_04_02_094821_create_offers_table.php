@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->float('price', unsigned: true)->default(0);
             $table->integer('quantity', unsigned: true)->default(0);
+            $table->timestamps();
 
             $table->unique(['store_id', 'product_id']);
 

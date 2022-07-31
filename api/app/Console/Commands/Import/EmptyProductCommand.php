@@ -59,7 +59,7 @@ class EmptyProductCommand extends \Illuminate\Console\Command
             return 1;
         }
 
-        $this->info('Загрузка успешно завершена! ' . $startTime->diff()->format('%iм %sс'));
+        $this->info('Загрузка успешно завершена! ' . $startTime->diff(Carbon::now())->format('%iм %sс'));
         return 0;
     }
 }

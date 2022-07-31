@@ -3,28 +3,22 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\LoginRequest;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use App\UseCases\Auth\LoginService;
 use Illuminate\Http\JsonResponse;
 
 class LoginController
 {
-    public function handle(): JsonResponse
+    public function __construct(private readonly LoginService $service) {}
+
+    public function handle(LoginRequest $request): JsonResponse
     {
-        $url = config('data.loyalty.test.url.lk') . '/Identity/Login';
-//        $data = $request->validated();
-        $data = ['parameter' => ['Login' => 'crm\Integr', 'Password' => 'E9JxGqe2Z']];
+        try {
+            $this->service->phoneAuth($request);
+        }
+        catch (\DomainException $e) {
+            return new JsonResponse(json_decode($e->getMessage(), true));
+        }
 
-        $client = new Client([
-            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-            'http_errors' => false,
-            'verify' => false
-        ]);
-
-        $response = $client->post($url, ['body' => json_encode($data)]);
-        if ($response->getStatusCode() !== 200)
-            return new JsonResponse(json_decode($response->getBody()), $response->getStatusCode());
-
-        return new JsonResponse(json_decode($response->getBody()));
+        return new JsonResponse();
     }
 }

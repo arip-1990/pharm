@@ -10,13 +10,13 @@ import { Login, Register } from "../../auth";
 import { useLocalStorage } from "react-use-storage";
 import { useFetchCartQuery } from "../../../lib/cartService";
 import { SetCity } from "./SetCity";
-import api from "../../../lib/api";
 import axios from "axios";
+import { useAuth } from "../../../hooks/useAuth";
 
 const Header: FC = () => {
   const [loginType, setLoginType] = useState<"login" | "register">("login");
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const { isAuth, login } = useAuth();
   const [totalCart, setTotalCart] = useState<number>(0);
   const [favorites] = useLocalStorage<string[]>("favorites", []);
   const { data: cartItems } = useFetchCartQuery();
@@ -27,10 +27,9 @@ const Header: FC = () => {
     setTotalCart(total);
   }, [cartItems]);
 
-  const handleLogin = async (values: { Login: string; Password: string }) => {
+  const handleLogin = async (values: { login: string; password: string }) => {
     try {
-      const result = await api.post("login", { ...values });
-      console.log(result.data);
+      await login(values.login, values.password);
     } catch (error) {
       if (axios.isAxiosError(error)) console.log(error.response.data);
       else console.log(error);
@@ -64,7 +63,7 @@ const Header: FC = () => {
         <Col xs={7} sm={7} className="auth text-end">
           <span className="phone">+7 (8722) 606-366</span>
           <span className="d-inline-block">
-            {authenticated ? (
+            {isAuth ? (
               <Link href="/profile/order">
                 <a>Личный кабинет</a>
               </Link>

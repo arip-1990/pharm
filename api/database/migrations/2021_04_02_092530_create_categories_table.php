@@ -10,13 +10,14 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->index();
-            $table->string('slug')->unique();
+            $table->string('name');
+            $table->string('slug')->unique()->nullable();
             $table->text('description')->nullable();
             $table->integer('_lft', unsigned: true);
             $table->integer('_rgt', unsigned: true);
             $table->smallInteger('sort', unsigned: true)->default(0);
             $table->string('picture')->nullable();
+            $table->timestamps();
 
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');
         });

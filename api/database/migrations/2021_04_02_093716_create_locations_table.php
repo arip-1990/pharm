@@ -8,14 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('houses', function (Blueprint $table) {
+        Schema::create('locations', function (Blueprint $table) {
             $table->id();
+            $table->json('coordinate')->default('[]');
             $table->timestamps();
+
+            $table->foreignId('city_id')->constrained()->onDelete('cascade');
+            $table->foreignId('street_id')->constrained()->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('houses');
+        Schema::dropIfExists('locations');
     }
 };

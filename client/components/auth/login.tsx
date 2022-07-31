@@ -2,12 +2,12 @@ import { useFormik } from "formik";
 import { FC } from "react";
 
 type Props = {
-  onSubmit: (values: { Login: string; Password: string }) => void;
+  onSubmit: (values: { login: string; password: string }) => void;
 };
 
 const Login: FC<Props> = ({ onSubmit }) => {
   const formik = useFormik({
-    initialValues: { Login: "", Password: "" },
+    initialValues: { login: "", password: "" },
     onSubmit: (values) => {
       onSubmit(values);
     },
@@ -16,29 +16,29 @@ const Login: FC<Props> = ({ onSubmit }) => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="mb-3">
-        <label htmlFor="Login" className="form-label">
+        <label htmlFor="login" className="form-label">
           Логин
         </label>
         <input
-          id="Login"
-          name="Login"
+          id="login"
+          name="login"
           type="text"
           className="form-control"
           onChange={formik.handleChange}
-          value={formik.values.Login}
+          value={formik.values.login}
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="Password" className="form-label">
+        <label htmlFor="password" className="form-label">
           Пароль
         </label>
         <input
-          id="Password"
-          name="Password"
+          id="password"
+          name="password"
           type="password"
           className="form-control"
           onChange={formik.handleChange}
-          value={formik.values.Password}
+          value={formik.values.password}
         />
       </div>
       <div className="row align-items-center">

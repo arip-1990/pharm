@@ -16,23 +16,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
- * @property int $user_id
- * @property string $store_id
  * @property int $payment_type
  * @property int $delivery_type
  * @property float $cost
  * @property string $status
- * @property string|null $note
- * @property string|null $cancel_reason
- * @property string|null $sber_id
- * @property string|null $yandex_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property ?string $note
+ * @property ?string $cancel_reason
+ * @property ?string $sber_id
+ * @property ?string $yandex_id
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property ?Carbon $deleted_at
  *
- * @property Delivery $delivery
- * @property Store $store
  * @property User $user
+ * @property OrderDelivery $orderDelivery
+ * @property ?Store $store
  *
  * @property Collection<Status> $statuses
  * @property Collection<OrderItem> $items
@@ -232,9 +230,9 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function delivery(): HasOne
+    public function orderDelivery(): HasOne
     {
-        return $this->hasOne(Delivery::class);
+        return $this->hasOne(OrderDelivery::class);
     }
 
     public function store(): BelongsTo

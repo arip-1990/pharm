@@ -2,20 +2,20 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property int $attribute_id
  * @property string $value
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
  * @property Attribute $attribute
  */
 class Value extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = ['attribute_id', 'value'];
 
     public function attribute(): BelongsTo

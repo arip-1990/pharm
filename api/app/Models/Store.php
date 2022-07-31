@@ -5,7 +5,10 @@ namespace App\Models;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,18 +16,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $id
  * @property string $name
  * @property string $slug
- * @property string|null $phone
- * @property string|null $address
- * @property float|null $lon
- * @property float|null $lat
- * @property array $schedule
- * @property string|null $route
- * @property bool $status
+ * @property ?string $phone
+ * @property Collection $schedule
+ * @property ?string $route
  * @property bool $delivery
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property bool $status
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property ?Carbon $deleted_at
  *
+ * @property ?Location $location
  * @property Offer[] $offers
  */
 class Store extends Model
@@ -41,7 +42,7 @@ class Store extends Model
     protected $keyType = 'string';
     protected $fillable = ['name', 'slug', 'phone', 'address'];
     protected $casts = [
-        'schedule' => 'array'
+        'schedule' => AsCollection::class
     ];
 
     public function sluggable(): array
@@ -99,5 +100,10 @@ class Store extends Model
     public function offers(): HasMany
     {
         return $this->hasMany(Offer::class)->orderBy('price');
+    }
+
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class);
     }
 }

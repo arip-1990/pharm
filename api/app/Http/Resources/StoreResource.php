@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Helper;
+use App\Models\Store;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StoreResource extends JsonResource
@@ -17,13 +18,12 @@ class StoreResource extends JsonResource
 
     public function toArray($request): array
     {
+        /** @var Store $this */
         return [
             'id' => $this->id,
             'slug' => $this->slug,
             'name' => $this->name,
             'phone' => Helper::formatPhone($this->phone),
-            'address' => $this->address,
-            'coordinate' => [$this->lat, $this->lon],
             'schedule' => Helper::formatSchedule($this->schedule),
             'route' => $this->route,
             'delivery' => $this->delivery,

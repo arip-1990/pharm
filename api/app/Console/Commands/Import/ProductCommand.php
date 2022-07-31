@@ -25,7 +25,7 @@ class ProductCommand extends Command
                     'category_id' => (int)$item->category ?: null,
                     'name' => (string)$item->name,
                     'code' => (int)$item->code,
-                    'recipe' => (string)$item->recipe === 'true' ? true : (Product::query()->find((string)$item->uuid)?->recipe ?? false),
+                    'recipe' => (string)$item->recipe === 'true' ? true : Product::query()->find((string)$item->uuid)?->recipe,
                     'marked' => (string)$item->is_marked === 'true',
                     'sale' => (string)$item->sale === 'true'
                 ];

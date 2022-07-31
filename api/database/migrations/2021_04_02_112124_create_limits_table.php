@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('limits', function (Blueprint $table) {
-            $table->string('ip')->primary();
+            $table->ipAddress('ip')->primary();
             $table->smallInteger('limit', unsigned: true);
             $table->smallInteger('requests', unsigned: true)->default(0);
             $table->timestamp('last_request')->nullable();

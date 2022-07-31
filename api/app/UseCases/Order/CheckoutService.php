@@ -3,7 +3,7 @@
 namespace App\UseCases\Order;
 
 use App\Models\CartItem;
-use App\Models\Delivery;
+use App\Models\OrderDelivery;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -46,7 +46,7 @@ class CheckoutService
             $order->items()->saveMany($items);
 
         if ($request->get('delivery') == Order::DELIVERY_TYPE_COURIER) {
-            $delivery = Delivery::create(
+            $delivery = OrderDelivery::create(
                 $request->get('city'),
                 [
                     'street' => $request->get('street'),

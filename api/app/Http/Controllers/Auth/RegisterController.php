@@ -3,18 +3,22 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\User;
+use App\UseCases\Auth\RegisterService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class RegisterController
 {
+    public function __construct(private readonly RegisterService $service) {}
+
     public function handle(RegisterRequest $request): JsonResponse
     {
-        Auth::login(User::register($request['name'], $request['email'], $request['phone'], $request['password']));
-        $request->session()->regenerate();
+        try {
+            $this->service->handle($request);
+        }
+        catch (\DomainException $e) {
+            return new JsonResponse($e->getMessage());
+        }
 
-        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
+        return new JsonResponse();
     }
 }
