@@ -1,10 +1,30 @@
-import { FC } from "react";
 import Layout from "../components/layout";
 import Page from "../components/page";
+import { FC, useCallback } from "react";
+import Head from "next/head";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const Return: FC = () => {
+  const getDefaultTextGenerator = useCallback((subpath: string) => {
+    return (
+      { return: "Условия возврата" }[subpath] ||
+      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
+    );
+  }, []);
+
   return (
     <Layout>
+      <Head>
+        <title>Сеть аптек 120/80 | Условия возврата</title>
+        <meta
+          key="description"
+          name="description"
+          content="Клиент в праве на обмен или возврат раннее заказанного товара в случаях..."
+        />
+      </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <Page title="Условия возврата">
         <p>
           Клиент в праве на обмен или возврат раннее заказанного товара в

@@ -1,10 +1,30 @@
-import { FC } from "react";
 import Layout from "../components/layout";
 import Page from "../components/page";
+import { FC, useCallback } from "react";
+import Head from "next/head";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const OrderPayment: FC = () => {
+  const getDefaultTextGenerator = useCallback((subpath: string) => {
+    return (
+      { "order-payment": "Оплата заказа" }[subpath] ||
+      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
+    );
+  }, []);
+
   return (
     <Layout>
+      <Head>
+        <title>Сеть аптек 120/80 | Оплата заказа</title>
+        <meta
+          key="description"
+          name="description"
+          content="Способы оплаты при получении заказа в аптеке: Наличными; Оплата банковской картой."
+        />
+      </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <Page>
         <h6 className="text-center fw-bold">
           Способы оплаты при получении заказа в аптеке:

@@ -3,10 +3,11 @@
 namespace App;
 
 use \App\Models\Status;
+use Illuminate\Support\Collection;
 
 class Helper
 {
-    public static function formatSchedule(array $schedule, bool $long = false): string
+    public static function formatSchedule(Collection $schedule, bool $long = false): string
     {
         $str = '';
         if ($long) {

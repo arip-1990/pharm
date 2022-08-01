@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Row } from "react-bootstrap";
+import Head from "next/head";
 import Layout from "../components/layout";
 import Page from "../components/page";
 import distance_trading from "../assets/images/licenses/distance_trading.jpg";
@@ -9,11 +10,30 @@ import license_3 from "../assets/images/licenses/license_3.jpg";
 import license_4 from "../assets/images/licenses/license_4.jpg";
 import license_5 from "../assets/images/licenses/license_5.jpg";
 import license_6 from "../assets/images/licenses/license_6.jpg";
-import { FC } from "react";
+import { FC, useCallback } from "react";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const About: FC = () => {
+  const getDefaultTextGenerator = useCallback((subpath: string) => {
+    return (
+      { about: "О компании" }[subpath] ||
+      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
+    );
+  }, []);
+
   return (
     <Layout>
+      <Head>
+        <title>Сеть аптек 120/80 | О компании</title>
+        <meta
+          key="description"
+          name="description"
+          content="Мы создаем новые стандарты обслуживания, внедряем новые технологии, стремимся удовлетворить запросы всех групп потребителей."
+        />
+      </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <Page>
         <h6
           className="text-center fw-bold mb-3"
@@ -158,7 +178,7 @@ const About: FC = () => {
 
           <p className="ms-3">
             Ответственное лицо за размещение информации о лекарственных
-            препаратах: Газимагомедов Магомедарип Гасанович +7 (928) 984 44 68{" "}
+            препаратах: Газимагомедов Магомедарип Гасанович +7 (928) 98 444 68{" "}
             <a href="mailto:120x80@arip.info">120x80@arip.info</a>
           </p>
         </div>

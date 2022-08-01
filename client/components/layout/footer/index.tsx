@@ -47,7 +47,7 @@ const Footer: FC = () => {
               </Link>
             </li>
             <li>
-              <Link href="/pharmacy">
+              <Link href="/store">
                 <a>Адреса аптек</a>
               </Link>
             </li>
@@ -57,7 +57,7 @@ const Footer: FC = () => {
               </Link>
             </li>
             <li>
-              <Link href="/rulesRemotely">
+              <Link href="/rules-remotely">
                 <a>Правила дистанционной торговли ЛС</a>
               </Link>
             </li>
@@ -99,17 +99,17 @@ const Footer: FC = () => {
               </Link>
             </li>
             <li>
-              <Link href="/processingPersonalData">
+              <Link href="/processing-personal-data">
                 <a>Обработка персональных данных</a>
               </Link>
             </li>
             <li>
-              <Link href="/privacyPolicy">
+              <Link href="/privacy-policy">
                 <a>Политика конфиденциальности</a>
               </Link>
             </li>
             <li>
-              <Link href="/orderPayment">
+              <Link href="/order-payment">
                 <a>Оплата заказа</a>
               </Link>
             </li>

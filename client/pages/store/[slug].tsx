@@ -3,21 +3,29 @@ import Head from "next/head";
 import { Map, YMaps, Clusterer, Placemark } from "@pbe/react-yandex-maps";
 import { GetServerSideProps } from "next";
 import { FC } from "react";
-import api from "../../services/api";
-import { IStore } from "../../models/IStore";
 import Page from "../../components/page";
 import Image from "next/image";
 import payments from "../../assets/images/payments.png";
+import { wrapper } from "../../lib/store";
+import {
+  getRunningOperationPromises,
+  getStore,
+  useGetStoreQuery,
+} from "../../lib/storeService";
+import { useRouter } from "next/router";
 
-type Props = {
-  store: IStore;
-};
+const Store: FC = () => {
+  const router = useRouter();
+  const { slug } = router.query;
+  const { data, isFetching } = useGetStoreQuery(
+    typeof slug === "string" ? slug : slug[0]
+  );
 
-const Store: FC<Props> = ({ store }) => {
   return (
     <Layout>
       <Head>
-        <title>{store.name}</title>
+        <title>{data?.name}</title>
+        <meta key="description" name="description" content={data?.name} />
       </Head>
 
       <Page className="row">
@@ -27,7 +35,7 @@ const Store: FC<Props> = ({ store }) => {
               width="100%"
               height={400}
               defaultState={{
-                center: store.coordinate,
+                center: [0, 0], //data?.coordinate,
                 zoom: 17,
                 behaviors: ["default", "scrollZoom"],
               }}
@@ -39,40 +47,40 @@ const Store: FC<Props> = ({ store }) => {
                   gridSize: 80,
                 }}
               >
-                <Placemark
-                  geometry={store.coordinate}
+                {/* <Placemark
+                  geometry={data?.coordinate}
                   properties={{
-                    balloonContentHeader: store.name,
-                    balloonContentBody: store.phone,
+                    balloonContentHeader: data?.name,
+                    balloonContentBody: data?.phone,
                   }}
                   options={{ preset: "islands#violetIcon" }}
-                />
+                /> */}
               </Clusterer>
             </Map>
           </YMaps>
         </div>
 
         <div className="col-12 col-md-6">
-          <h4 className="text-center">{store.name}</h4>
+          <h4 className="text-center">{data?.name}</h4>
 
-          {store.route ? (
+          {data?.route ? (
             <>
               <h5>
                 <b>Как добраться:</b>
               </h5>
-              <span dangerouslySetInnerHTML={{ __html: store.route }} />
+              <span dangerouslySetInnerHTML={{ __html: data?.route }} />
             </>
           ) : null}
 
           <h5>
             <b>Режим работы:</b>
           </h5>
-          <span dangerouslySetInnerHTML={{ __html: store.schedule }} />
+          <span dangerouslySetInnerHTML={{ __html: data?.schedule }} />
 
           <h5>
             <b>Доставка:</b>
           </h5>
-          <span>{store.delivery ? "Есть" : "Нет"}</span>
+          <span>{data?.delivery ? "Есть" : "Нет"}</span>
 
           <h5>
             <b>Способ оплаты:</b>
@@ -90,23 +98,21 @@ const Store: FC<Props> = ({ store }) => {
           <h5>
             <b>Контакты:</b>
           </h5>
-          <span>{store.phone}</span>
+          <span>{data?.phone}</span>
         </div>
       </Page>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const slug = context.query.slug as string;
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async () => {
+    store.dispatch(getStore.initiate());
 
-  const { data } = await api.get<IStore>(`store/${slug}`);
+    await Promise.all(getRunningOperationPromises());
 
-  return {
-    props: { store: data },
-  };
-};
+    return { props: {} };
+  }
+);
 
 export default Store;

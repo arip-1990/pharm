@@ -6,11 +6,31 @@ import advantage_1 from "../assets/images/advantage/1.jpg";
 import advantage_2 from "../assets/images/advantage/2.jpg";
 import advantage_3 from "../assets/images/advantage/3.jpg";
 import advantage_4 from "../assets/images/advantage/4.jpg";
-import { FC } from "react";
+import { FC, useCallback } from "react";
+import Head from "next/head";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const Advantage: FC = () => {
+  const getDefaultTextGenerator = useCallback((subpath: string) => {
+    return (
+      { advantage: "Наши преимущества" }[subpath] ||
+      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
+    );
+  }, []);
+
   return (
     <Layout>
+      <Head>
+        <title>Сеть аптек 120/80 | Наши преимущества</title>
+        <meta
+          key="description"
+          name="description"
+          content="Создавая каждую аптеку, мы стремимся, чтобы в ней Вы нашли все необходимое. Компания выбирает партнеров-поставщиков согласно требованиям потребителей и обеспечивает постоянное наличие на складах огромного количества товаров."
+        />
+      </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <Page
         title="Преимущества наших аптек"
         style={{ backgroundColor: "transparent" }}

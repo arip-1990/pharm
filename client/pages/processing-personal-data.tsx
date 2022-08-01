@@ -1,10 +1,31 @@
-import { FC } from "react";
 import Layout from "../components/layout";
 import Page from "../components/page";
+import { FC, useCallback } from "react";
+import Head from "next/head";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const ProcessingPersonalData: FC = () => {
+  const getDefaultTextGenerator = useCallback((subpath: string) => {
+    return (
+      { "processing-personal-data": "Обработка персональных данных" }[
+        subpath
+      ] || subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
+    );
+  }, []);
+
   return (
     <Layout>
+      <Head>
+        <title>Сеть аптек 120/80 | Обработка персональных данных</title>
+        <meta
+          key="description"
+          name="description"
+          content="Покупатель, предоставляя свои персональные данные даёт согласие на обработку, хранение и использование своих персональных данных на основании ФЗ №152-ФЗ «О персональных данных» от 27.07.2006г."
+        />
+      </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <Page title="Обработка персональных данных">
         <p>
           Покупатель, предоставляя свои персональные данные даёт согласие на

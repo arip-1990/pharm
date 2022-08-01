@@ -1,20 +1,39 @@
 import { GetServerSideProps } from "next";
 import { Map, YMaps, Clusterer, Placemark } from "@pbe/react-yandex-maps";
-import { FC } from "react";
+import { FC, useState, useCallback } from "react";
 import Layout from "../components/layout";
 import Page from "../components/page";
-import { IStore } from "../models/IStore";
-import api from "../services/api";
 import Paginate from "../components/Paginate";
 import Link from "next/link";
+import Head from "next/head";
+import Breadcrumbs from "../components/breadcrumbs";
+import { wrapper } from "../lib/store";
+import {
+  fetchStores,
+  getRunningOperationPromises,
+  useFetchStoresQuery,
+} from "../lib/storeService";
 
-type Props = {
-  stories: Pagination<IStore>;
-};
+const Store: FC = () => {
+  const [pagination, setPagination] = useState<number>(1);
+  const { data, isFetching } = useFetchStoresQuery(pagination);
 
-const Store: FC<Props> = ({ stories }) => {
+  const getDefaultTextGenerator = useCallback((subpath: string) => {
+    return (
+      { store: "Точки самовывоза" }[subpath] ||
+      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
+    );
+  }, []);
+
   return (
     <Layout>
+      <Head>
+        <title>Сеть аптек 120/80 | Точки самовывоза</title>
+        <meta key="description" name="description" content="Точки самовывоза" />
+      </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <Page title="Точки самовывоза">
         <YMaps query={{ apikey: "de8de84b-e8b4-46c9-ba10-4cf2911deebf" }}>
           <Map
@@ -33,7 +52,7 @@ const Store: FC<Props> = ({ stories }) => {
                 gridSize: 80,
               }}
             >
-              {stories.data.map((item) => (
+              {/* {data?.data.map((item) => (
                 <Placemark
                   key={item.id}
                   geometry={item.coordinate}
@@ -43,12 +62,12 @@ const Store: FC<Props> = ({ stories }) => {
                   }}
                   options={{ preset: "islands#violetIcon" }}
                 />
-              ))}
+              ))} */}
             </Clusterer>
           </Map>
         </YMaps>
 
-        {stories.data.map((item) => (
+        {data?.data.map((item) => (
           <div key={item.id} className="row address">
             <div className="col-12 col-md-5 text-center text-md-start">
               <span>{item.name}</span>
@@ -68,27 +87,20 @@ const Store: FC<Props> = ({ stories }) => {
           </div>
         ))}
 
-        <Paginate
-          current={stories.meta.current_page}
-          total={stories.meta.total}
-        />
+        <Paginate current={data?.meta.current_page} total={data?.meta.total} />
       </Page>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const page = context.query.page as string;
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async () => {
+    store.dispatch(fetchStores.initiate());
 
-  const { data } = await api.get<Pagination<IStore>>("store", {
-    params: { page },
-  });
+    await Promise.all(getRunningOperationPromises());
 
-  return {
-    props: { stories: data },
-  };
-};
+    return { props: {} };
+  }
+);
 
 export default Store;

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->smallInteger('sort', unsigned: true)->default(0);
             $table->tinyInteger('status', unsigned: true)->default(0);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
         });

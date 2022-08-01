@@ -1,10 +1,30 @@
-import { FC } from "react";
 import Layout from "../components/layout";
 import Page from "../components/page";
+import { FC, useCallback } from "react";
+import Head from "next/head";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const RulesRemotely: FC = () => {
+  const getDefaultTextGenerator = useCallback((subpath: string) => {
+    return (
+      { "rules-remotely": "Правила дистанционной торговли ЛС" }[subpath] ||
+      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
+    );
+  }, []);
+
   return (
     <Layout>
+      <Head>
+        <title>Сеть аптек 120/80 | Правила дистанционной торговли ЛС</title>
+        <meta
+          key="description"
+          name="description"
+          content="Правила торговли лекарственными препаратами дистанционным способом."
+        />
+      </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <Page>
         <p className="text-center fw-bold">
           Правила торговли лекарственными препаратами дистанционным способом.

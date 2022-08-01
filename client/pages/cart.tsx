@@ -2,7 +2,8 @@ import { FC } from "react";
 import Layout from "../components/layout";
 import defaultImage from "../assets/images/default.png";
 import Link from "next/link";
-import { useFetchCartQuery } from "../services/cartService";
+import Head from "next/head";
+import { useFetchCartQuery } from "../lib/cartService";
 import BaseCart from "../components/cart";
 
 const Cart: FC = () => {
@@ -11,10 +12,10 @@ const Cart: FC = () => {
 
   return (
     <Layout>
-      <div className="alert alert-danger" role="alert">
-        В связи с повышенным спросом мы вынуждены ввести временное ограничение
-        продажи лекарственных средств «НЕ БОЛЕЕ 2 УП В ОДНИ РУКИ»
-      </div>
+      <Head>
+        <title>Сеть аптек 120/80 | Корзина</title>
+        <meta key="description" name="description" content="Корзина." />
+      </Head>
 
       <div className="row">
         <h3>Состав заказа</h3>

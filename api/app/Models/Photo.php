@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
  * @property int $status
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
+ * @property ?Carbon $deleted_at
  *
  * @property Product $product
  */

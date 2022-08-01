@@ -1,5 +1,4 @@
 import { FC, ReactNode } from "react";
-import Head from "next/head";
 import { Container, Row } from "react-bootstrap";
 import Header from "./header";
 import Footer from "./footer";
@@ -14,10 +13,6 @@ type Props = {
 const Layout: FC<Props> = ({ children, banner }) => {
   return (
     <>
-      <Head>
-        <title>Сеть аптек 120/80</title>
-      </Head>
-
       <Header />
 
       {banner ? (

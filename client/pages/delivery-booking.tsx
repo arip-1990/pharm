@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Row } from "react-bootstrap";
+import Head from "next/head";
 import Layout from "../components/layout";
 import Page from "../components/page";
 import Box from "../assets/images/content/box.svg";
@@ -9,12 +10,31 @@ import delivery_1 from "../assets/images/delivery/i-delivery-1.png";
 import delivery_2 from "../assets/images/delivery/i-delivery-2.png";
 import delivery_3 from "../assets/images/delivery/i-delivery-3.png";
 import delivery_4 from "../assets/images/delivery/i-delivery-4.png";
-import { FC } from "react";
+import { FC, useCallback } from "react";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const DeliveryBooking: FC = () => {
+  const getDefaultTextGenerator = useCallback((subpath: string) => {
+    return (
+      { "delivery-booking": "Доставка/Бронирование" }[subpath] ||
+      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
+    );
+  }, []);
+
   return (
     <Layout>
-      <Page title="Доставка / Бронирование">
+      <Head>
+        <title>Сеть аптек 120/80 | Доставка/Бронирование</title>
+        <meta
+          key="description"
+          name="description"
+          content="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой."
+        />
+      </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
+      <Page title="Доставка/Бронирование">
         <Row>
           <div className="col-6 text-center">
             <Box width={60} height={60} />

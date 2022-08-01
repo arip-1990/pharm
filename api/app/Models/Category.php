@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Cviebrock\EloquentSluggable\Services\SlugService;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Kalnoy\Nestedset\NodeTrait;
 
 /**
  * @property int $id
@@ -25,9 +27,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Category extends Model
 {
-    use Sluggable;
+    use Sluggable, NodeTrait {
+        NodeTrait::replicate as replicateNode;
+        Sluggable::replicate as replicateSlug;
+    }
 
     protected $fillable = ['id', 'name', 'parent_id'];
+
+    public function replicate(array $except = null)
+    {
+        $instance = $this->replicateNode($except);
+        (new SlugService())->slug($instance, true);
+
+        return $instance;
+    }
 
     public function sluggable(): array
     {

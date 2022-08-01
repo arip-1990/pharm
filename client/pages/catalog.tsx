@@ -58,11 +58,6 @@ const Catalog: FC = () => {
 
   return (
     <Layout>
-      <div className="alert alert-danger" role="alert">
-        В связи с повышенным спросом мы вынуждены ввести временное ограничение
-        продажи лекарственных средств «НЕ БОЛЕЕ 2 УП В ОДНИ РУКИ»
-      </div>
-
       <div className="row">
         <nav className="col-md-3">
           <ul className="category">
@@ -110,7 +105,7 @@ const Catalog: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
+  (store) => async () => {
     store.dispatch(fetchCategories.initiate());
 
     await Promise.all(getRunningOperationPromises());
