@@ -18,6 +18,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class City extends Model
 {
+    const TYPE_CITY = 0;
+    const TYPE_TOWNSHIP = 1;
+    const TYPE_VILLAGE = 2;
+    const TYPE_MICRO_DISTRICT = 3;
+
     public function locations(): HasMany
     {
         return $this->hasMany(Location::class);
