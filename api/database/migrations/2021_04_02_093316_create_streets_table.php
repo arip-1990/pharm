@@ -11,8 +11,9 @@ return new class extends Migration
         Schema::create('streets', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('house', 50)->nullable();
-            $table->tinyInteger('type', unsigned: true)->default(0);
+            $table->string('house', 16)->nullable();
+            $table->string('prefix', 8)->nullable();
+            $table->tinyInteger('type', unsigned: true)->nullable();
             $table->timestamps();
         });
     }

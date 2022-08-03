@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $name
  * @property ?string $house
- * @property int $type
+ * @property ?string $prefix
+ * @property ?int $type
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
@@ -19,6 +20,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Street extends Model
 {
+    const TYPE_AVENUE = 0;
+    const TYPE_STREET = 1;
+    const TYPE_LANE = 2;
+
     public function locations(): HasMany
     {
         return $this->hasMany(Location::class);

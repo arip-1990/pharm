@@ -11,10 +11,13 @@ return new class extends Migration
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('prefix', 8);
             $table->tinyInteger('type', unsigned: true)->default(0);
             $table->timestamps();
 
             $table->unique(['name', 'type']);
+
+            $table->foreignId('parent_id')->nullable()->constrained('cities')->onDelete('set null');
         });
     }
 

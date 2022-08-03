@@ -30,27 +30,27 @@ const SetCity: FC<Props> = ({ className }) => {
             as="a"
             style={{ cursor: "pointer" }}
           >
-            {city || data[0]}
+            {city || data[0].name}
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
             {data.map((item) => (
               <Dropdown.Item
-                key={item}
+                key={item.id}
                 href="#"
-                eventKey={item}
-                active={city === item}
+                eventKey={item.name}
+                active={city === item.name}
               >
-                {item}
+                {item.name}
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
         </Dropdown>
         <div className="city-choose" style={city ? {} : { display: "flex" }}>
-          <h5 className="w-100 mb-3">Ваш город {data[0]}?</h5>
+          <h5 className="w-100 mb-3">Ваш город {data[0].name}?</h5>
           <button
             className="btn btn-primary btn-sm"
-            onClick={() => setCookie("city", data[0])}
+            onClick={() => setCookie("city", data[0].name)}
           >
             Да, все верно
           </button>
