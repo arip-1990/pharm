@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Product;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
+use App\Models\City;
 use App\Models\Offer;
 use App\Models\Product;
 use App\Models\ProductStatistic;
@@ -15,7 +16,7 @@ class PopularController
     public function handle(Request $request): JsonResponse
     {
         $productIds = Offer::query()->select('product_id')
-            ->whereCity($request->get('city', config('data.city')[0]))
+            ->whereCity($request->get('city', $request->cookie('city', City::query()->find(1)?->name)))
             ->groupBy('product_id')->get()->pluck('product_id');
 
         $popularIds = ProductStatistic::query()->select('id')->whereIn('id', $productIds)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\City;
 use App\Models\Photo;
 use App\Models\Product;
 use App\Models\Value;
@@ -35,7 +36,7 @@ class ProductResource extends JsonResource
                 'value' => $value->value,
             ]),
             'minPrice' => $this->getPrice(),
-            'totalOffer' => $this->getCountByCity($request->get('city', config('data.city')[0])),
+            'totalOffer' => $this->getCountByCity($request->get('city', $request->cookie('city', City::query()->find(1)?->name))),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

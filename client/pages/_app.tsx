@@ -1,12 +1,15 @@
-import "../styles/global.scss";
+import { CookiesProvider } from "react-cookie";
 import { wrapper } from "../lib/store";
 import { Auth } from "../lib/auth";
+import "../styles/global.scss";
 
 const App = ({ Component, pageProps }) => {
   return (
-    <Auth>
-      <Component {...pageProps} />
-    </Auth>
+    <CookiesProvider>
+      <Auth>
+        <Component {...pageProps} />
+      </Auth>
+    </CookiesProvider>
   );
 };
 

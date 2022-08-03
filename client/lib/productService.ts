@@ -12,7 +12,7 @@ export const productApi = createApi({
       }
     },
     endpoints: (builder) => ({
-      fetchPopularProducts: builder.query<IProduct[], void>({
+      fetchPopularProducts: builder.query<any, void>({
         query: () => ({url: '/catalog/popular'}),
       }),
       fetchProducts: builder.query<Pagination<IProduct>, {page: number, category?: string}>({

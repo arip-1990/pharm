@@ -22,7 +22,7 @@ unknown,
 unknown
 > => async ({ url, method, headers, data, params, onProgress }) => {
     try {
-        const result = await instance({ url, method, headers, data, params, onUploadProgress: onProgress})
+        const result = await instance({ url, method, headers, data, params, onUploadProgress: onProgress});
         return { data: result.data }
     } catch (error) {
         if (axios.isAxiosError(error))

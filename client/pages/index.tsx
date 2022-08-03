@@ -9,9 +9,10 @@ import {
   getRunningOperationPromises,
 } from "../lib/productService";
 import Head from "next/head";
+import axios from "axios";
 
 const Home: FC = () => {
-  const { data, isLoading } = useFetchPopularProductsQuery();
+  const { data, isFetching } = useFetchPopularProductsQuery();
 
   return (
     <Layout banner>
@@ -30,7 +31,7 @@ const Home: FC = () => {
         itemType="https://schema.org/ItemList"
       >
         <link itemProp="url" href="/" />
-        {isLoading ? (
+        {isFetching ? (
           <span>loading</span>
         ) : (
           data?.map((product) => (
@@ -45,7 +46,9 @@ const Home: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
+  (store) => async ({ req }) => {
+    if (req) axios.defaults.headers.get.Cookie = req.headers.cookie;
+
     store.dispatch(fetchPopularProducts.initiate());
 
     await Promise.all(getRunningOperationPromises());

@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "ext-pdo": "*",
         "ext-curl": "*",
         "ext-openssl": "*",
         "ext-simplexml": "*",

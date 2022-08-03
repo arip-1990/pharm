@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useCookies } from "react-cookie";
 import { useFetchCitiesQuery } from "../../../lib/cityService";
@@ -8,21 +8,15 @@ type Props = {
 };
 
 const SetCity: FC<Props> = ({ className }) => {
-  const [city, setCity] = useState<string>();
-  const [cookies, setCookie] = useCookies(["city"]);
+  const [{ city }, setCity] = useCookies(["city"]);
   const { data } = useFetchCitiesQuery();
-
   let classes = ["menu-city"];
   if (className) classes = classes.concat(className.split(" "));
-
-  useEffect(() => {
-    if (cookies.city) setCity(cookies.city);
-  }, [cookies.city]);
 
   if (data) {
     return (
       <div className={classes.join(" ")}>
-        <Dropdown onSelect={(eventKey) => setCookie("city", eventKey)}>
+        <Dropdown onSelect={(eventKey) => setCity("city", eventKey)}>
           <span>Ваш город:</span>
           <Dropdown.Toggle
             variant="success"
@@ -38,7 +32,7 @@ const SetCity: FC<Props> = ({ className }) => {
               <Dropdown.Item
                 key={item.id}
                 href="#"
-                eventKey={item.name}
+                eventKey={item.id}
                 active={city === item.name}
               >
                 {item.name}
@@ -50,7 +44,7 @@ const SetCity: FC<Props> = ({ className }) => {
           <h5 className="w-100 mb-3">Ваш город {data[0].name}?</h5>
           <button
             className="btn btn-primary btn-sm"
-            onClick={() => setCookie("city", data[0].name)}
+            onClick={() => setCity("city", data[0].name)}
           >
             Да, все верно
           </button>

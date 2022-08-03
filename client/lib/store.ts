@@ -9,24 +9,24 @@ import { productApi } from "./productService";
 import { storeApi } from "./storeService";
 
 const makeStore = () =>
-  configureStore({
-    reducer: {
-      [cityApi.reducerPath]: cityApi.reducer,
-      [cartApi.reducerPath]: cartApi.reducer,
-      [orderApi.reducerPath]: orderApi.reducer,
-      [categoryApi.reducerPath]: categoryApi.reducer,
-      [productApi.reducerPath]: productApi.reducer,
-      [storeApi.reducerPath]: storeApi.reducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({serializableCheck: false})
-        .concat(cityApi.middleware)
-        .concat(cartApi.middleware)
-        .concat(orderApi.middleware)
-        .concat(categoryApi.middleware)
-        .concat(productApi.middleware)
-        .concat(storeApi.middleware),
-    devTools: true,
+configureStore({
+  reducer: {
+    [cityApi.reducerPath]: cityApi.reducer,
+    [cartApi.reducerPath]: cartApi.reducer,
+    [orderApi.reducerPath]: orderApi.reducer,
+    [categoryApi.reducerPath]: categoryApi.reducer,
+    [productApi.reducerPath]: productApi.reducer,
+    [storeApi.reducerPath]: storeApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({serializableCheck: false})
+      .concat(cityApi.middleware)
+      .concat(cartApi.middleware)
+      .concat(orderApi.middleware)
+      .concat(categoryApi.middleware)
+      .concat(productApi.middleware)
+      .concat(storeApi.middleware),
+  devTools: true,
 });
 
 
