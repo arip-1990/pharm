@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V1\Statistic;
+namespace App\Http\Controllers\Panel\Statistic;
 
 use App\Models\VisitStatistic;
 use App\Http\Resources\StatisticResource;

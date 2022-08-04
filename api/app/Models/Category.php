@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Kalnoy\Nestedset\NodeTrait;
@@ -15,9 +16,9 @@ use Kalnoy\Nestedset\NodeTrait;
  * @property string $description
  * @property int|null $parent_id
  *
- * @property Category $parent
- * @property Category[] $children
- * @property Attribute[] $attributes
+ * @property ?Category $parent
+ * @property Collection<Category> $children
+ * @property Collection<Attribute> $attributes
  */
 class Category extends Model
 {

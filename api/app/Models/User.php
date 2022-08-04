@@ -32,7 +32,6 @@ use Ramsey\Uuid\Uuid;
  * @property Carbon|null $deleted_at
  *
  * @property Collection<Order> $orders
- * @property Collection<CartItem> $cartItems
  * @property Limit $priceLimit
  */
 class User extends Authenticatable
@@ -109,11 +108,6 @@ class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class)->orderByDesc('id');
-    }
-
-    public function cartItems(): HasMany
-    {
-        return $this->hasMany(CartItem::class);
     }
 
     public function priceLimit(): HasOne

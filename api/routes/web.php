@@ -4,12 +4,13 @@ use App\Http\Controllers\Auth;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Category;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\ImShopController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\Product;
 use App\Http\Controllers\Order;
 use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
-use App\Http\Controllers\V1;
+use App\Http\Controllers\Panel;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,37 +29,38 @@ Route::prefix('1c')->group(function () {
 });
 
 Route::post('/pay', [PayController::class, 'handle']);
+Route::get('/imshop', [ImShopController::class, 'handle']);
 
 Route::prefix('v1')->group(function () {
-    Route::post('/login', [V1\Auth\LoginController::class, 'handle']);
+    Route::post('/login', [Panel\Auth\LoginController::class, 'handle']);
 
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/logout', [V1\Auth\LogoutController::class, 'handle']);
-        Route::get('/user', [V1\User\IndexController::class, 'handle']);
+        Route::post('/logout', [Panel\Auth\LogoutController::class, 'handle']);
+        Route::get('/user', [Panel\User\IndexController::class, 'handle']);
 
         Route::prefix('product')->group(function () {
-            Route::get('/', [V1\Product\IndexController::class, 'handle']);
-            Route::get('/{product}', [V1\Product\ShowController::class, 'handle']);
-            Route::put('/attributes/{product}', [V1\Product\UpdateAttributesController::class, 'handle']);
-            Route::put('/description/{product}', [V1\Product\UpdateDescriptionController::class, 'handle']);
-            Route::put('/{product}', [V1\Product\UpdateController::class, 'handle']);
-            Route::post('/upload/{product}', [V1\Product\UploadController::class, 'handle']);
-            Route::delete('/upload/{photo}', [V1\Product\DeletePhotoController::class, 'handle']);
+            Route::get('/', [Panel\Product\IndexController::class, 'handle']);
+            Route::get('/{product}', [Panel\Product\ShowController::class, 'handle']);
+            Route::put('/attributes/{product}', [Panel\Product\UpdateAttributesController::class, 'handle']);
+            Route::put('/description/{product}', [Panel\Product\UpdateDescriptionController::class, 'handle']);
+            Route::put('/{product}', [Panel\Product\UpdateController::class, 'handle']);
+            Route::post('/upload/{product}', [Panel\Product\UploadController::class, 'handle']);
+            Route::delete('/upload/{photo}', [Panel\Product\DeletePhotoController::class, 'handle']);
         });
 
         Route::prefix('order')->group(function () {
-            Route::get('/', [V1\Order\IndexController::class, 'handle']);
-            Route::get('/{order}', [V1\Order\ShowController::class, 'handle']);
+            Route::get('/', [Panel\Order\IndexController::class, 'handle']);
+            Route::get('/{order}', [Panel\Order\ShowController::class, 'handle']);
         });
 
         Route::prefix('offer')->group(function () {
-            Route::get('/', [V1\Offer\IndexController::class, 'handle']);
-            Route::get('/{product}', [V1\Offer\ShowController::class, 'handle']);
+            Route::get('/', [Panel\Offer\IndexController::class, 'handle']);
+            Route::get('/{product}', [Panel\Offer\ShowController::class, 'handle']);
         });
 
-        Route::get('/category', [V1\Category\IndexController::class, 'handle']);
-        Route::get('/statistic', [V1\Statistic\IndexController::class, 'handle']);
-        Route::get('/attribute', [V1\Attribute\IndexController::class, 'handle']);
+        Route::get('/category', [Panel\Category\IndexController::class, 'handle']);
+        Route::get('/statistic', [Panel\Statistic\IndexController::class, 'handle']);
+        Route::get('/attribute', [Panel\Attribute\IndexController::class, 'handle']);
     });
 });
 
