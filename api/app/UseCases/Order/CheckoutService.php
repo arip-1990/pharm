@@ -67,7 +67,7 @@ class CheckoutService
         return $order;
     }
 
-    public function paymentSberbank(Order $order, string $redirectUrl): string
+    public function paySber(Order $order, string $redirectUrl): string
     {
         $curl = curl_init();
         $config =  config('app.env') === 'production' ? config('data.pay.sber.prod') : config('data.pay.sber.test');
