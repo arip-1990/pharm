@@ -19,20 +19,18 @@ return [
     'pay' => [
         'sber' => [
             'prod' => [
-                'prefix_number' => 'order_',
                 'url' => 'https://securepayments.sberbank.ru/payment/rest/register.do',
                 'statusUrl' => 'https://securepayments.sberbank.ru/payment/rest/getOrderStatus.do',
                 'refundUrl' => 'https://securepayments.sberbank.ru/payment/rest/refund.do',
-                'username' => '366express-api',
-                'password' => '9RML$ZMjN@',
+                'username' => 'p571008484-api',
+                'password' => 'dp77zR1F%cBl',
             ],
             'test' => [
-                'prefix_number' => 'test-order_',
                 'url' => 'https://3dsec.sberbank.ru/payment/rest/register.do',
                 'statusUrl' => 'https://3dsec.sberbank.ru/payment/rest/getOrderStatus.do',
                 'refundUrl' => 'https://3dsec.sberbank.ru/payment/rest/refund.do',
-                'username' => '366express-api',
-                'password' => '366express',
+                'username' => 't571008484-api',
+                'password' => 'VqXHTSQ3',
             ],
         ],
     ],

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
-    public function __construct(private CartService $cartService) {}
+    public function __construct(private readonly CartService $cartService) {}
 
     public function checkout(CheckoutRequest $request): Order
     {
@@ -82,7 +82,7 @@ class CheckoutService
             CURLOPT_POSTFIELDS => http_build_query([
                 'userName'      => $username,
                 'password'      => $password,
-                'orderNumber'   => $config['prefix_number'] . $order->id,
+                'orderNumber'   => $order->id,
                 'amount'        => $order->getTotalCost() * 100,
                 'returnUrl'     => $redirectUrl,
             ])
