@@ -21,6 +21,8 @@ const Header: FC = () => {
   const [favorites] = useLocalStorage<string[]>("favorites", []);
   const { data: cartItems } = useFetchCartQuery();
 
+  console.log(isAuth);
+
   useEffect(() => {
     let total = 0;
     cartItems?.forEach((item) => (total += item.quantity));

@@ -53,6 +53,7 @@ class PosService
 
     private function buildXml(string $data): string
     {
+        $orgName = config('data.loyalty.test.org_name');
         $tmp = '<?xml version="1.0" encoding="utf-8"?>
             <soap:Envelope
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -66,7 +67,7 @@ class PosService
         $tmp .= $data;
 
         $tmp .= '</request>
-            <orgName>Loyalty</orgName>
+            <orgName>' . $orgName . '</orgName>
             </ProcessRequest>
             </soap:Body>
             </soap:Envelope>';

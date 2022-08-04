@@ -21,7 +21,7 @@ use Kalnoy\Nestedset\NodeTrait;
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
- * @property Category $parent
+ * @property ?Category $parent
  * @property Collection<Category> $children
  * @property Collection<Attribute> $attributes
  */

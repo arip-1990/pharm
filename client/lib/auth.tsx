@@ -1,4 +1,4 @@
-import { useState, createContext, ReactNode, FC } from "react";
+import { useState, createContext, ReactNode, FC, useEffect } from "react";
 import { IUser } from "../models/IUser";
 import axios from "axios";
 import api, { API_URL } from "./api";
@@ -9,7 +9,6 @@ export interface ContextProps {
   login: (login: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: IUser, isAuth?: boolean) => void;
-  checkAuth: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<ContextProps | undefined>(undefined);
@@ -25,6 +24,24 @@ const Auth: FC<Props> = ({ children }) => {
   }>({ user: null, isAuth: null });
   const user = authState.user;
   const isAuth = authState.isAuth;
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (isAuth === null) {
+        try {
+          await revalidate();
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            if (error.response && error.response.status === 401) {
+              setAuthState({ user: null, isAuth: false });
+            }
+          }
+        }
+      }
+    };
+
+    checkAuth();
+  }, [authState]);
 
   const csrf = () => axios.get(`${API_URL}/sanctum/csrf-cookie`);
 
@@ -64,7 +81,7 @@ const Auth: FC<Props> = ({ children }) => {
   const revalidate = () =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        const { data } = await api.get<IUser>("", { maxRedirects: 0 });
+        const { data } = await api.get<IUser>("/user", { maxRedirects: 0 });
 
         setUser(data);
         resolve();
@@ -84,36 +101,9 @@ const Auth: FC<Props> = ({ children }) => {
       }
     });
 
-  const checkAuth = () =>
-    new Promise<boolean>(async (resolve, reject) => {
-      if (isAuth === null) {
-        // The status is null if we haven't checked it, so we have to make a request.
-        try {
-          await revalidate();
-          return resolve(true);
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            if (error.response && error.response.status === 401) {
-              // If there's a 401 error the user is not signed in.
-              setAuthState({ user: null, isAuth: false });
-              return resolve(false);
-            } else {
-              // If there's any other error, something has gone wrong.
-              return reject(error);
-            }
-          } else {
-            return reject(error);
-          }
-        }
-      } else {
-        // If it has been checked with the server before, we can just return the state.
-        return resolve(isAuth);
-      }
-    });
-
   return (
     <AuthContext.Provider
-      value={{ user, isAuth, login, logout, setUser, checkAuth }}
+      value={{ user, isAuth, login, logout, setUser }}
       children={children}
     />
   );

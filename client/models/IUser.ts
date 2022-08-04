@@ -1,12 +1,15 @@
+import { IStore } from "./IStore";
+
 export interface IUser {
     id: string;
     firstName: string;
-    lastName: string;
+    lastName: string | null;
     middleName: string | null;
-    phone: string | null;
-    email: string | null;
-    post: string;
-    role: string;
-    stores: { id: string; name: string; }[];
+    email: string;
+    phone: string;
+    gender: string;
+    birthDate: moment.Moment | null;
+    emailVerified: boolean;
+    phoneVerified: boolean;
     isAuth: boolean;
 }

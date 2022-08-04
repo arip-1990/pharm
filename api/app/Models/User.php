@@ -34,7 +34,6 @@ use Laravel\Sanctum\HasApiTokens;
  * @property ?Role $role
  * @property Collection<Grant> $grants
  * @property Collection<Order> $orders
- * @property Collection<CartItem> $cartItems
  * @property Limit $priceLimit
  */
 class User extends Authenticatable
@@ -49,11 +48,6 @@ class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class)->orderByDesc('id');
-    }
-
-    public function cartItems(): HasMany
-    {
-        return $this->hasMany(CartItem::class);
     }
 
     public function priceLimit(): HasOne

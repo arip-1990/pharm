@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V1\Attribute;
+namespace App\Http\Controllers\Panel\Attribute;
 
 use App\Http\Resources\AttributeResource;
 use App\Models\Attribute;

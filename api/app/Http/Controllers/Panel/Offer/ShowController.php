@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V1\Offer;
+namespace App\Http\Controllers\Panel\Offer;
 
 use App\Http\Resources\OfferResource;
 use App\Models\Product;
