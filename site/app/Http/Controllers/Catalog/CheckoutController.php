@@ -63,7 +63,7 @@ class CheckoutController extends Controller
         $order = $this->orderService->checkout($request);
 
         if ((int)$request->get('payment') === Order::PAYMENT_TYPE_SBER) {
-            return redirect($this->orderService->paymentSberbank($order, route('checkout.finish', $order, true)));
+            return redirect($this->orderService->paymentSber($order, route('checkout.finish', $order, true)));
         }
 
         return redirect()->route('checkout.finish', $order);

@@ -71,17 +71,14 @@ class CheckoutService
     {
         $curl = curl_init();
         $config =  config('app.env') === 'production' ? config('data.pay.sber.prod') : config('data.pay.sber.test');
-        $url = $config['url'];
-        $username = $config['username'];
-        $password = $config['password'];
 
         curl_setopt_array($curl, [
-            CURLOPT_URL => $url,
+            CURLOPT_URL => $config['url'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => http_build_query([
-                'userName'      => $username,
-                'password'      => $password,
+                'userName'      => $config['username'],
+                'password'      => $config['password'],
                 'orderNumber'   => $order->id,
                 'amount'        => $order->getTotalCost() * 100,
                 'returnUrl'     => $redirectUrl,
