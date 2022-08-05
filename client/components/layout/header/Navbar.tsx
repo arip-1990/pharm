@@ -40,7 +40,7 @@ const Navbar: FC = () => {
             </Link>
           </Nav.Item>
           <Nav.Item className="text-md-center">
-            <Link href="/deliveryBooking">
+            <Link href="/delivery-booking">
               <a
                 className={classNames("nav-link", {
                   active: router.pathname.startsWith("/deliveryBooking"),

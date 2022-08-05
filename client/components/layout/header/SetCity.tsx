@@ -32,7 +32,7 @@ const SetCity: FC<Props> = ({ className }) => {
               <Dropdown.Item
                 key={item.id}
                 href="#"
-                eventKey={item.id}
+                eventKey={item.name}
                 active={city === item.name}
               >
                 {item.name}

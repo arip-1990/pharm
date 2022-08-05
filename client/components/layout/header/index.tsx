@@ -12,6 +12,7 @@ import { useFetchCartQuery } from "../../../lib/cartService";
 import { SetCity } from "./SetCity";
 import axios from "axios";
 import { useAuth } from "../../../hooks/useAuth";
+import api from "../../../lib/api";
 
 const Header: FC = () => {
   const [loginType, setLoginType] = useState<"login" | "register">("login");
@@ -20,8 +21,6 @@ const Header: FC = () => {
   const [totalCart, setTotalCart] = useState<number>(0);
   const [favorites] = useLocalStorage<string[]>("favorites", []);
   const { data: cartItems } = useFetchCartQuery();
-
-  console.log(isAuth);
 
   useEffect(() => {
     let total = 0;
@@ -41,15 +40,25 @@ const Header: FC = () => {
   };
 
   const handleRegister = async (values: {
+    cardNum: string;
+    lastName: string;
+    firstName: string;
+    middleName: string;
     email: string;
-    name: string;
     phone: string;
+    birthDate: string;
+    gender: number;
     password: string;
     rule: number;
   }) => {
-    // const result = await signIn(values.email, values.password);
-    console.log(values);
-    // if (result.signedIn) setShowModal(false);
+    try {
+      const result = await api.post("register", { ...values });
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setShowModal(false);
+    }
   };
 
   const handleSignIn = (e: MouseEvent) => {

@@ -16,7 +16,7 @@ class PopularController
     public function handle(Request $request): JsonResponse
     {
         $productIds = Offer::query()->select('product_id')
-            ->whereCity($request->get('city', $request->cookie('city', City::query()->find(1)?->name)))
+            ->whereCity($request->cookie('city', City::query()->find(1)?->name))
             ->groupBy('product_id')->get()->pluck('product_id');
 
         $popularIds = ProductStatistic::query()->select('id')->whereIn('id', $productIds)

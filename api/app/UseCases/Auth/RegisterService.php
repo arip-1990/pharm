@@ -6,7 +6,6 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use App\UseCases\PosService;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Hash;
 use Ramsey\Uuid\Uuid;
 
 class RegisterService
@@ -26,12 +25,16 @@ class RegisterService
         try {
             $data = $this->posService->getBalance($request->get('phone'));
             dd($data);
+            throw new \DomainException('Регистрация продолжена не будет, клиент с таким мобильным уже существует');
         }
         catch (\DomainException $e) {}
 
         if ($request->has('CardNumber')) {
             $token = $this->phoneRegister($request->validated());
             $request->session()->put('token', $token);
+        }
+        else {
+
         }
     }
 
@@ -45,18 +48,22 @@ class RegisterService
             'EmailAddress' => $data['email'],
             'Firstname' => $data['firstName'],
             'Lastname' => $data['lastName'],
+            'MiddleName' => $data['middleName'],
             'Password' => $data['password'],
             'BirthDate' => $data['birthDate'],
             'GenderCode' => $data['gender'],
+            'AllowNotification' => false,
+            'AllowEmail' => false,
+            'AllowSms' => false,
+            'AgreeToTerms' => true,
             'PartnerId' => $partnerId
         ];
 
         $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $data = json_decode($response->getBody());
 
         if ($response->getStatusCode() !== 200)
             throw new \DomainException($response->getBody()->getContents());
-
-        $token = json_decode($response->getBody())['token'];
 
         User::query()->create([
             'id' => Uuid::uuid4()->toString(),
@@ -65,12 +72,12 @@ class RegisterService
             'first_name' => $data['firstName'],
             'last_name' => $data['lastName'],
             'middle_name' => $data['middleName'],
-            'password' => Hash::make($data['password']),
+            'password' => $data['password'],
             'birth_date' => $data['birthDate'],
             'gender' => $data['gender'],
-            'token' => $token,
+            'token' => $data['value'],
         ]);
 
-        return $token;
+        return $data['value'];
     }
 }

@@ -15,7 +15,7 @@ class IndexController
     public function handle(Request $request, Category $category = null): JsonResource
     {
         $productIds = Offer::query()->select('product_id')
-            ->whereCity($request->get('city', City::query()->find(1)))
+            ->whereCity($request->cookie('city', City::query()->find(1)?->name))
             ->groupBy('product_id')->get()->pluck('product_id');
         $query = Product::query()->whereIn('id', $productIds);
         if ($category) {
