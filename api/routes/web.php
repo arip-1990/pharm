@@ -4,10 +4,10 @@ use App\Http\Controllers\Auth;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Category;
 use App\Http\Controllers\CityController;
-use App\Http\Controllers\ImShopController;
+use App\Http\Controllers\FeedController;
+use App\Http\Controllers\Order;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\Product;
-use App\Http\Controllers\Order;
 use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
 use App\Http\Controllers\Panel;
@@ -25,11 +25,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('1c')->group(function () {
+    Route::get('/feed', [FeedController::class, 'handle']);
     Route::post('/order', [Order\UpdateController::class, 'handle'])->middleware('auth.basic.once');
 });
 
 Route::post('/pay', [PayController::class, 'handle']);
-Route::get('/imshop', [ImShopController::class, 'handle']);
 
 Route::prefix('v1')->group(function () {
     Route::post('/login', [Panel\Auth\LoginController::class, 'handle']);
