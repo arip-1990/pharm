@@ -12,6 +12,7 @@ use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
 use App\Http\Controllers\Panel;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +28,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/test', function () {
 //    $service = new \App\UseCases\PosService();
 //    $data = $service->getBalance('79289844468');
-    dd(simplexml_load_string('<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><ProcessRequestResponse xmlns="http://loyalty.manzanagroup.ru/loyalty.xsd"><ProcessRequestResult><BalanceResponse><TransactionID>-9223372036196744461</TransactionID><RequestID>1001</RequestID><Processed>2022-08-05T20:26:32.223</Processed><ReturnCode>80061</ReturnCode><Message>В системе отсутствует активная или новая карта с заданным номером мобильного телефона</Message></BalanceResponse></ProcessRequestResult></ProcessRequestResponse></soap:Body></soap:Envelope>'));
 });
 
 Route::prefix('1c')->group(function () {

@@ -21,7 +21,7 @@ export const productApi = createApi({
           params: {page: args.page}
         }),
       }),
-      getProduct: builder.query<IProduct, {slug: string}>({
+      getProduct: builder.query<IProduct, string>({
         query: (slug) => ({url: 'catalog/product/' + slug}),
       })
     }),
