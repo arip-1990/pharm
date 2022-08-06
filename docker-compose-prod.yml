@@ -165,7 +165,7 @@ services:
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
-      FILESYSTEM_DRIVER: public
+      FILESYSTEM_DISK: public
       BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
