@@ -2,13 +2,19 @@ import Layout from "../../components/layout";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { FC, useCallback, useEffect, useState } from "react";
-import { IProduct } from "../../models/IProduct";
 import defaultImage from "../../assets/images/default.png";
 import { useLocalStorage } from "react-use-storage";
-import { getProduct } from "../../lib/catalog";
 import Accordion from "../../components/accordion";
 import Zoom from "../../components/zoom";
 import Cart from "../../components/cart";
+import {
+  getProduct,
+  getRunningOperationPromises,
+  useGetProductQuery,
+} from "../../lib/productService";
+import { wrapper } from "../../lib/store";
+import api from "../../lib/api";
+import { useRouter } from "next/router";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -31,11 +37,11 @@ const isFavorite = (id: string) => {
   );
 };
 
-type Props = {
-  product: IProduct;
-};
+const Product: FC = () => {
+  const router = useRouter();
+  const { slug } = router.query;
+  const { data: product } = useGetProductQuery(slug);
 
-const Product: FC<Props> = ({ product }) => {
   return (
     <Layout>
       <Head>
@@ -228,16 +234,16 @@ const Product: FC<Props> = ({ product }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context
-) => {
-  const slug = context.query.slug as string;
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async ({ req }) => {
+    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
 
-  const product = await getProduct(slug);
+    store.dispatch(getProduct.initiate());
 
-  return {
-    props: { product },
-  };
-};
+    await Promise.all(getRunningOperationPromises());
+
+    return { props: {} };
+  }
+);
 
 export default Product;

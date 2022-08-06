@@ -13,7 +13,7 @@ class FeedController
         $data = [];
         Product::query()->whereIn('code', $request->get('codes', []))->each(function (Product $product) use (&$data) {
             $data[] = [
-                'Картинки' => $product->checkedPhotos->map(fn($photo) => $photo->getUrl()),
+                'Картинки' => $product->photos->map(fn($photo) => $photo->getUrl()),
                 'Состав' => $product->getValue(30),
                 'Фармакологическое действие' => $product->getValue(31),
                 'Показания' => $product->getValue(32),

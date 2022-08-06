@@ -16,41 +16,41 @@ class Photo extends Model
 {
     use SoftDeletes;
 
-    const DEFAULT_FILE = '/images/default.png';
-
     const TYPE_PICTURE = 0;
     const TYPE_CERTIFICATE = 1;
 
     protected $fillable = ['type', 'product_id', 'sort'];
 
+    public function getSize(): array
+    {
+        $data = [0, 0];
+        if (Storage::exists('images/original/' . $this->file)) {
+            list($width, $height) = getimagesize(Storage::path('images/original/' . $this->file));
+            $data = [$width, $height];
+        }
+
+        return $data;
+    }
+
     public function getUrl(): ?string
     {
-        $file = $this->getFilePath();
-        return $file ? url("storage/$file", secure: false) : null;
-    }
-
-    public function getFilePath(): ?string
-    {
-        foreach (Storage::files("images/original/{$this->product_id}") as $file) {
-            $exp = explode('/', $file);
-            if ((string)$this->id === explode('.', array_pop($exp))[0])
-                return $file;
-        }
+        if (Storage::exists('images/original/' . $this->file))
+            return Storage::url('images/original/' . $this->file);
         return null;
     }
 
-    public function getThumbFilePath(string $type = 'thumb'): ?string
-    {
-        $type = match ($type) {
-            'cart' => 'cart',
-            default => 'thumb'
-        };
-
-        foreach (Storage::files("images/original/{$this->product_id}") as $file) {
-            $exp = explode('/', $file);
-            if ("{$type}_{$this->id}" === explode('.', array_pop($exp))[0])
-                return $file;
-        }
-        return null;
-    }
+//    public function getThumbFilePath(string $type = 'thumb'): ?string
+//    {
+//        $type = match ($type) {
+//            'cart' => 'cart',
+//            default => 'thumb'
+//        };
+//
+//        foreach (Storage::files('images/original') as $file) {
+//            $exp = explode('/', $file);
+//            if ("{$type}_{$this->id}" === explode('.', array_pop($exp))[0])
+//                return $file;
+//        }
+//        return null;
+//    }
 }

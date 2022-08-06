@@ -12,6 +12,7 @@ use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
 use App\Http\Controllers\Panel;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/test', function () {
+//    $service = new \App\UseCases\PosService();
+//    $data = $service->getBalance('79289844468');
+});
 
 Route::prefix('1c')->group(function () {
     Route::get('/feed', [FeedController::class, 'handle']);
