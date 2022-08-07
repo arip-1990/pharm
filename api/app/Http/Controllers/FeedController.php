@@ -11,7 +11,7 @@ class FeedController
     public function handle(Request $request): JsonResponse
     {
         $data = [];
-        Product::query()->whereIn('code', $request->get('codes', []))->each(function (Product $product) use (&$data) {
+        Product::query()->whereIn('code', $request->post('codes', []))->each(function (Product $product) use (&$data) {
             $data[] = [
                 'Картинки' => $product->photos->map(fn($photo) => $photo->getUrl()),
                 'Состав' => $product->getValue(30),
@@ -26,6 +26,6 @@ class FeedController
             ];
         });
 
-        return new JsonResponse($data);
+        return new JsonResponse($data, options: JSON_UNESCAPED_UNICODE);
     }
 }

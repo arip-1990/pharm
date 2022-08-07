@@ -30,9 +30,9 @@ Route::get('/test', function () {
 //    $data = $service->getBalance('79289844468');
 });
 
-Route::prefix('1c')->group(function () {
-    Route::get('/feed', [FeedController::class, 'handle']);
-    Route::post('/order', [Order\UpdateController::class, 'handle'])->middleware('auth.basic.once');
+Route::group(['prefix' => '1c'], function () {
+    Route::post('/feed', [FeedController::class, 'handle']);
+    Route::post('/order', [Order\UpdateController::class, 'handle']);
 });
 
 Route::post('/pay', [PayController::class, 'handle']);
