@@ -13,13 +13,12 @@ import {
   useGetStoreQuery,
 } from "../../lib/storeService";
 import { useRouter } from "next/router";
+import api from "../../lib/api";
 
 const Store: FC = () => {
   const router = useRouter();
   const { slug } = router.query;
-  const { data, isFetching } = useGetStoreQuery(
-    typeof slug === "string" ? slug : slug[0]
-  );
+  const { data } = useGetStoreQuery(String(slug));
 
   return (
     <Layout>
@@ -106,8 +105,11 @@ const Store: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
-    store.dispatch(getStore.initiate());
+  (store) => async ({ req, params }) => {
+    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    const { slug } = params;
+
+    store.dispatch(getStore.initiate(String(slug)));
 
     await Promise.all(getRunningOperationPromises());
 

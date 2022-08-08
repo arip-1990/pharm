@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Product;
+namespace App\Http\Controllers\Catalog;
 
+use App\Http\Resources\OfferResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
@@ -11,6 +12,9 @@ class ProductController extends Controller
 {
     public function handle(Product $product): JsonResponse
     {
-        return new JsonResponse(new ProductResource($product));
+        return new JsonResponse([
+            'product' => new ProductResource($product),
+            'offers' => OfferResource::collection($product->offers)
+        ]);
     }
 }

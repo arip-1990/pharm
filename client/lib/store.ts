@@ -5,7 +5,7 @@ import {cartApi} from "./cartService";
 import { categoryApi } from "./categoryService";
 import { cityApi } from "./cityService";
 import { orderApi } from "./orderService";
-import { productApi } from "./productService";
+import { catalogApi } from "./catalogService";
 import { storeApi } from "./storeService";
 
 const makeStore = () =>
@@ -15,7 +15,7 @@ configureStore({
     [cartApi.reducerPath]: cartApi.reducer,
     [orderApi.reducerPath]: orderApi.reducer,
     [categoryApi.reducerPath]: categoryApi.reducer,
-    [productApi.reducerPath]: productApi.reducer,
+    [catalogApi.reducerPath]: catalogApi.reducer,
     [storeApi.reducerPath]: storeApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -24,7 +24,7 @@ configureStore({
       .concat(cartApi.middleware)
       .concat(orderApi.middleware)
       .concat(categoryApi.middleware)
-      .concat(productApi.middleware)
+      .concat(catalogApi.middleware)
       .concat(storeApi.middleware),
   devTools: true,
 });

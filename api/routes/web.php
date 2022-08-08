@@ -7,7 +7,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\Order;
 use App\Http\Controllers\PayController;
-use App\Http\Controllers\Product;
+use App\Http\Controllers\Catalog;
 use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
 use App\Http\Controllers\Panel;
@@ -74,11 +74,11 @@ Route::prefix('v2')->group(function () {
     Route::get('/city', [CityController::class, 'handle']);
 
     Route::prefix('catalog')->group(function () {
-        Route::get('/sale', [Product\PopularController::class, 'handle']);
-        Route::get('/search', [Product\PopularController::class, 'handle']);
-        Route::get('/popular', [Product\PopularController::class, 'handle']);
-        Route::get('/product/{product}', [Product\ProductController::class, 'handle']);
-        Route::get('/{category?}', [Product\IndexController::class, 'handle']);
+        Route::get('/sale', [Catalog\PopularController::class, 'handle']);
+        Route::get('/search', [Catalog\PopularController::class, 'handle']);
+        Route::get('/popular', [Catalog\PopularController::class, 'handle']);
+        Route::get('/product/{product}', [Catalog\ProductController::class, 'handle']);
+        Route::get('/{category?}', [Catalog\IndexController::class, 'handle']);
     });
 
     Route::prefix('category')->group(function () {

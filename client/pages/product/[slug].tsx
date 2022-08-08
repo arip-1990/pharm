@@ -11,7 +11,7 @@ import {
   getProduct,
   getRunningOperationPromises,
   useGetProductQuery,
-} from "../../lib/productService";
+} from "../../lib/catalogService";
 import { wrapper } from "../../lib/store";
 import api from "../../lib/api";
 import { useRouter } from "next/router";
@@ -40,12 +40,12 @@ const isFavorite = (id: string) => {
 const Product: FC = () => {
   const router = useRouter();
   const { slug } = router.query;
-  const { data: product } = useGetProductQuery(slug);
+  const { data } = useGetProductQuery(String(slug));
 
   return (
     <Layout>
       <Head>
-        <title>{product.name}</title>
+        <title>{data?.product.name}</title>
       </Head>
 
       <Accordion>
@@ -56,34 +56,34 @@ const Product: FC = () => {
             itemType="https://schema.org/Product"
           >
             <div className="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
-              {product.photos.length ? (
-                <Zoom src={product.photos[0].url} alt="product.name" />
+              {data?.product.photos.length ? (
+                <Zoom src={data?.product.photos[0].url} alt="product.name" />
               ) : (
                 <img
                   className="mw-100 m-auto"
                   itemProp="image"
                   src={defaultImage.src}
-                  alt={product.name}
+                  alt={data?.product.name}
                 />
               )}
 
-              {isFavorite(product.id)}
+              {isFavorite(data?.product.id)}
             </div>
 
             <div className="col-12 col-lg-9 d-flex flex-column">
               <div className="row">
                 <div className="col-12 col-lg-8 col-xxl-9">
                   <h4 className="text-center mb-3" itemProp="name">
-                    {product.name}
+                    {data?.product.name}
                   </h4>
                 </div>
               </div>
 
               <div className="row" style={{ minHeight: "50%" }}>
                 <div className="col-12 col-lg-8 col-xxl-9 mb-3 mb-lg-0">
-                  {product.attributes.length ? (
+                  {data?.product.attributes.length ? (
                     <div style={{ background: "#e6eded", padding: "0.75rem" }}>
-                      {product.attributes
+                      {data?.product.attributes
                         .filter((item) =>
                           [
                             "Производитель",
@@ -110,7 +110,7 @@ const Product: FC = () => {
                   ) : null}
                 </div>
                 <div className="col-12 col-lg-4 col-xxl-3 d-flex flex-column justify-content-evenly align-items-end">
-                  {product.totalOffer ? (
+                  {data?.offers ? (
                     <>
                       <h5
                         className="price"
@@ -123,12 +123,12 @@ const Product: FC = () => {
                           <span
                             style={{ fontSize: "1.75rem", fontWeight: 600 }}
                           >
-                            {product.minPrice}
+                            {data?.offers[0].price}
                           </span>{" "}
                           &#8381;
                         </p>
                       </h5>
-                      <Cart productId={product.id} />
+                      <Cart productId={data?.product.id} />
                     </>
                   ) : (
                     <h4 className="text-center">Нет в наличии</h4>
@@ -141,12 +141,9 @@ const Product: FC = () => {
           <Accordion.Body>
             <Accordion>
               <div className="description">
-                {product.description ? (
+                {data?.product.description ? (
                   <Accordion.Item className="description-item">
-                    <Accordion.Header
-                      as="h6"
-                      className="description-item_title"
-                    >
+                    <Accordion.Header className="description-item_title">
                       Описание
                     </Accordion.Header>
                     <Accordion.Body
@@ -155,14 +152,14 @@ const Product: FC = () => {
                     >
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: product.description,
+                          __html: data?.product.description,
                         }}
                       />
                     </Accordion.Body>
                   </Accordion.Item>
                 ) : null}
 
-                {product.attributes.map((item) => (
+                {data?.product.attributes.map((item) => (
                   <Accordion.Item key={item.id} className="description-item">
                     <Accordion.Header className="description-item_title">
                       {item.name}
@@ -182,7 +179,7 @@ const Product: FC = () => {
         </Accordion.Item>
       </Accordion>
 
-      {product.totalOffer ? (
+      {data?.offers ? (
         <>
           <div
             className="row p-2 fw-bold d-md-flex m-0"
@@ -198,7 +195,7 @@ const Product: FC = () => {
             <div className="col-md-2 text-center">Количество</div>
           </div>
 
-          {[].map((item) => {
+          {data?.offers.map((item) => {
             if (item.store) {
               return (
                 <div
@@ -210,7 +207,9 @@ const Product: FC = () => {
                   </div>
                   <div className="col-12 col-md-3 text-md-center">
                     <b className="d-md-none">Время работы: </b>
-                    {item.store.schedule}
+                    <span
+                      dangerouslySetInnerHTML={{ __html: item.store.schedule }}
+                    />
                   </div>
                   <div className="col-12 col-md-2 text-md-center">
                     <b className="d-md-none">Цена: </b>
@@ -235,10 +234,11 @@ const Product: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async ({ req }) => {
+  (store) => async ({ req, params }) => {
     if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    const { slug } = params;
 
-    store.dispatch(getProduct.initiate());
+    store.dispatch(getProduct.initiate(String(slug)));
 
     await Promise.all(getRunningOperationPromises());
 

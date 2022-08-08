@@ -1,4 +1,3 @@
-import moment from "moment";
 import { ICategory } from "./ICategory";
 
 interface IAttribute {
@@ -25,8 +24,4 @@ export interface IProduct {
   marked: boolean;
   recipe: boolean;
   attributes: IAttribute[];
-  minPrice: number;
-  totalOffer: number;
-  createdAt: moment.Moment;
-  updatedAt: moment.Moment;
 }

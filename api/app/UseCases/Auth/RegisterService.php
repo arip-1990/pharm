@@ -42,13 +42,15 @@ class RegisterService
     {
         $url = config('data.loyalty.test.url.lk') . '/Identity/RequestAdvancedPhoneEmailRegistration';
         $partnerId = config('data.loyalty.test.partner_id');
-        $data = [
+
+        $name = explode(' ', $data['name']);
+        $tmp = [
             'CardNumber' => $data['cardNumber'],
             'MobilePhone' => $data['phone'],
             'EmailAddress' => $data['email'],
-            'Firstname' => $data['firstName'],
-            'Lastname' => $data['lastName'],
-            'MiddleName' => $data['middleName'],
+            'Firstname' => count($name) > 1 ? trim($name[1]) : trim($name[0]),
+            'Lastname' => count($name) > 1 ? trim($name[0]) : null,
+            'MiddleName' => $name[2] ?? null,
             'Password' => $data['password'],
             'BirthDate' => $data['birthDate'],
             'GenderCode' => $data['gender'],
@@ -59,7 +61,7 @@ class RegisterService
             'PartnerId' => $partnerId
         ];
 
-        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $tmp])]);
         $data = json_decode($response->getBody());
 
         if ($response->getStatusCode() !== 200)
@@ -67,14 +69,14 @@ class RegisterService
 
         User::query()->create([
             'id' => Uuid::uuid4()->toString(),
-            'phone' => $data['phone'],
-            'email' => $data['email'],
-            'first_name' => $data['firstName'],
-            'last_name' => $data['lastName'],
-            'middle_name' => $data['middleName'],
-            'password' => $data['password'],
-            'birth_date' => $data['birthDate'],
-            'gender' => $data['gender'],
+            'phone' => $tmp['MobilePhone'],
+            'email' => $tmp['EmailAddress'],
+            'first_name' => $tmp['Firstname'],
+            'last_name' => $tmp['Lastname'],
+            'middle_name' => $tmp['MiddleName'],
+            'password' => $tmp['Password'],
+            'birth_date' => $tmp['BirthDate'],
+            'gender' => $tmp['GenderCode'],
             'token' => $data['value'],
         ]);
 

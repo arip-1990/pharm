@@ -75,16 +75,15 @@ const paginate = (
 };
 
 const Paginate: FC<Props> = ({ current, total, pageSize = 12 }) => {
-  const pages = paginate(total, current, pageSize);
   const router = useRouter();
-
-  console.log(router);
+  const pages = paginate(total, current, pageSize);
+  const path = router.asPath.split("?")[0];
 
   return pages && pages.endPage > 1 ? (
     <nav>
       <ul className="pagination justify-content-center">
         <li className={classNames("page-item", { disabled: current == 1 })}>
-          <Link href={`${router.asPath}?page=${current - 1 || 1}`}>
+          <Link href={`${path}?page=${current - 1 || 1}`}>
             <a className="page-link" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
@@ -95,7 +94,7 @@ const Paginate: FC<Props> = ({ current, total, pageSize = 12 }) => {
             key={item}
             className={classNames("page-item", { active: current == item })}
           >
-            <Link href={`${router.asPath}?page=${item}`}>
+            <Link href={`${path}?page=${item}`}>
               <a className="page-link" aria-label="Previous">
                 <span aria-hidden="true">{item}</span>
               </a>
@@ -107,7 +106,7 @@ const Paginate: FC<Props> = ({ current, total, pageSize = 12 }) => {
             disabled: current == pages.totalPages,
           })}
         >
-          <Link href={`${router.asPath}?page=${current + 1}`}>
+          <Link href={`${path}?page=${current + 1}`}>
             <a className="page-link" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
             </a>

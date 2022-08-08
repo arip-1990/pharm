@@ -1,13 +1,8 @@
-export interface IItem {
-  store: { id: string, name: string, slug: string };
-  price: number;
-  quantity: number;
-}
+import { IStore } from "./IStore";
 
 export interface IOffer {
-  id: string,
-  name: string,
-  slug: string,
-  code: number,
-  items: IItem[];
+  id: number,
+  price: number,
+  quantity: number,
+  store: IStore
 }

@@ -4,8 +4,11 @@ import moment from "moment";
 import Logo from "../../../assets/images/logo_min.svg";
 import { FC } from "react";
 import styles from "./Footer.module.scss";
+import { useAuth } from "../../../hooks/useAuth";
 
 const Footer: FC = () => {
+  const { isAuth } = useAuth();
+
   return (
     <Container as="footer" className={styles.footer}>
       <Row className={styles.ofer}>
@@ -77,21 +80,15 @@ const Footer: FC = () => {
           <ul>
             <li>
               <h4>
-                {/* @auth()
-                                    <a href="{{ route('profile') }}">Личный кабинет</a>
-                                @else
-                                    <a href="{{ route('profile') }}" data-toggle="modal" data-target="login">Личный кабинет</a>
-                                @endauth */}
+                <Link href="/profile">
+                  <a>Личный кабинет</a>
+                </Link>
               </h4>
             </li>
             <li>
-              <a
-                href="{{ route('register') }}"
-                data-toggle="modal"
-                data-target="register"
-              >
-                Регистрация
-              </a>
+              <Link href="/loyalty">
+                <a>Программа лояльности</a>
+              </Link>
             </li>
             <li>
               <Link href="/favorite">

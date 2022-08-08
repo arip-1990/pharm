@@ -7,7 +7,7 @@ import {
   fetchPopularProducts,
   useFetchPopularProductsQuery,
   getRunningOperationPromises,
-} from "../lib/productService";
+} from "../lib/catalogService";
 import Head from "next/head";
 import axios from "axios";
 

@@ -2,7 +2,6 @@
 
 namespace App\UseCases;
 
-use App\Models\CartItem;
 use App\Models\Store;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;

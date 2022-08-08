@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { BaseQueryFn } from '@reduxjs/toolkit/query';
 
 export const API_URL = 'http://api.pharm.test';
@@ -27,6 +27,7 @@ unknown
     } catch (error) {
         if (axios.isAxiosError(error))
             return {error: { status: error.response.status, data: error.response.data }};
+        return error;
     }
 }
 

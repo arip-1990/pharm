@@ -1,6 +1,6 @@
 import Layout from "../../components/layout";
 import Card from "../../components/card";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../../models/ICategory";
 import saleImage from "../../assets/images/sale-icon.png";
@@ -10,11 +10,11 @@ import Paginate from "../../components/Paginate";
 import { useRouter } from "next/router";
 import { wrapper } from "../../lib/store";
 import {
-  fetchCategories,
+  fetchProducts,
   getRunningOperationPromises,
-  useFetchCategoriesQuery,
-} from "../../lib/categoryService";
-import { fetchProducts, useFetchProductsQuery } from "../../lib/productService";
+  useFetchProductsQuery,
+} from "../../lib/catalogService";
+import api from "../../lib/api";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -54,10 +54,11 @@ const generateCategory = (category: ICategory) => {
 
 const Catalog: FC = () => {
   const router = useRouter();
-  const { slug } = router.query;
-  const [pagination, setPagination] = useState<number>(1);
-  const { data: categories } = useFetchCategoriesQuery();
-  const { data: products } = useFetchProductsQuery({ page: pagination });
+  const { slug, page } = router.query;
+  const { data } = useFetchProductsQuery({
+    category: String(slug),
+    page: Number(page),
+  });
 
   return (
     <Layout>
@@ -70,12 +71,12 @@ const Catalog: FC = () => {
                 Распродажа
               </a>
             </li>
-            {categories?.map((item) => generateCategory(item))}
+            {data?.categories.map((item) => generateCategory(item))}
           </ul>
         </nav>
 
         <div className="col-md-9 mt-3 mt-md-0">
-          {products?.data.length ? (
+          {data?.products.length ? (
             <>
               <div
                 className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4"
@@ -83,7 +84,7 @@ const Catalog: FC = () => {
                 itemType="https://schema.org/ItemList"
               >
                 <link itemProp="url" href="/products" />
-                {products?.data.map((product) => (
+                {data?.products.map((product) => (
                   <div key={product.id} className="col-10 offset-1 offset-sm-0">
                     <Card product={product} />
                   </div>
@@ -92,8 +93,8 @@ const Catalog: FC = () => {
               <div className="row mt-3">
                 <div className="col">
                   <Paginate
-                    current={products?.meta.current_page}
-                    total={products?.meta.total}
+                    current={data?.meta.current_page}
+                    total={data?.meta.total}
                   />
                 </div>
               </div>
@@ -108,9 +109,13 @@ const Catalog: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
-    store.dispatch(fetchCategories.initiate());
-    store.dispatch(fetchProducts.initiate());
+  (store) => async ({ req, params }) => {
+    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    const { page, slug } = params;
+
+    store.dispatch(
+      fetchProducts.initiate({ category: String(slug), page: Number(page) })
+    );
 
     await Promise.all(getRunningOperationPromises());
 

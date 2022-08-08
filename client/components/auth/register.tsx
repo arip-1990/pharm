@@ -3,9 +3,7 @@ import { useFormik } from "formik";
 interface PropsType {
   onSubmit: (values: {
     cardNum: string;
-    lastName: string;
-    firstName: string;
-    middleName: string;
+    name: string;
     email: string;
     phone: string;
     birthDate: string;
@@ -19,9 +17,7 @@ const Register = ({ onSubmit }: PropsType) => {
   const formik = useFormik({
     initialValues: {
       cardNum: "",
-      lastName: "",
-      firstName: "",
-      middleName: "",
+      name: "",
       email: "",
       phone: "",
       birthDate: "",
@@ -51,42 +47,16 @@ const Register = ({ onSubmit }: PropsType) => {
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="lastName" className="form-label">
-          Фамилия
+        <label htmlFor="name" className="form-label">
+          ФИО
         </label>
         <input
-          id="lastName"
-          name="lastName"
+          id="name"
+          name="name"
           type="text"
           className="form-control"
           onChange={formik.handleChange}
-          value={formik.values.lastName}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="firstName" className="form-label">
-          Имя
-        </label>
-        <input
-          id="firstName"
-          name="firstName"
-          type="text"
-          className="form-control"
-          onChange={formik.handleChange}
-          value={formik.values.firstName}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="middleName" className="form-label">
-          Отчество
-        </label>
-        <input
-          id="middleName"
-          name="middleName"
-          type="text"
-          className="form-control"
-          onChange={formik.handleChange}
-          value={formik.values.middleName}
+          value={formik.values.name}
         />
       </div>
       <div className="mb-3">

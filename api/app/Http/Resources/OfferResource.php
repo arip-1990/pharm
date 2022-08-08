@@ -9,20 +9,12 @@ class OfferResource extends JsonResource
 {
     public function toArray($request): array
     {
+        /** @var Offer $this */
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'code' => $this->code,
-            'items' => $this->offers->map(fn(Offer $item) => [
-                'store' => [
-                    'id' => $item->store->id,
-                    'name' => $item->store->name,
-                    'slug' => $item->store->slug
-                ],
-                'price' => $item->price,
-                'quantity' => $item->quantity
-            ])
+            'price' => $this->price,
+            'quantity' => $this->quantity,
+            'store' => new StoreResource($this->store)
         ];
     }
 }
