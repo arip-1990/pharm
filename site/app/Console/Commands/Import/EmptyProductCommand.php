@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Models\Photo;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class EmptyProductCommand extends \Illuminate\Console\Command
@@ -28,7 +28,6 @@ class EmptyProductCommand extends \Illuminate\Console\Command
                 $product = Product::query()->where('code', (int)$row[0])
                     ->where('status', Product::STATUS_DRAFT)->first();
                 if ($product) {
-//                    $checkedPhotos = !$product->photos()->where('status', Photo::STATUS_CHECKED)->count();
                     if ($photo = (string)$row[6]) {
                         try {
                             $info = pathinfo($photo);
@@ -76,7 +75,7 @@ class EmptyProductCommand extends \Illuminate\Console\Command
                 }
             }
         }
-        catch (\RuntimeException $e) {
+        catch (Exception|\RuntimeException $e) {
             $this->error($e->getMessage());
             return 1;
         }

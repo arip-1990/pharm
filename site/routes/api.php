@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/pay', [Api\PayController::class, 'handle']);
+Route::post('/pay', [Api\PayController::class, 'handle']);
 
 Route::prefix('v1')->group(function () {
     Route::post('/login', [Api\V1\Auth\LoginController::class, 'handle']);
