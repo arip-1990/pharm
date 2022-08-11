@@ -8,7 +8,7 @@ use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Store;
-use App\Http\Requests\Catalog\CheckoutRequest;
+use App\Http\Requests\Order\CheckoutRequest;
 use App\UseCases\CartService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;

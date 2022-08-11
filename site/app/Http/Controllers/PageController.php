@@ -68,4 +68,11 @@ class PageController extends Controller
         $cartService = $this->cartService;
         return view('pages.rules-remotely', compact('title', 'cartService'));
     }
+
+    public function loyalty(): View
+    {
+        $title = ' | Программа лояльности';
+        $cartService = $this->cartService;
+        return view('pages.loyalty', compact('title', 'cartService'));
+    }
 }

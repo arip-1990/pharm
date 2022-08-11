@@ -52,6 +52,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/', [Api\V1\Order\IndexController::class, 'handle']);
             Route::get('/{order}', [Api\V1\Order\ShowController::class, 'handle']);
             Route::get('/{order}/items', [Api\V1\Order\ShowItemsController::class, 'handle']);
+            Route::get('/{order}/send-data', [Api\V1\Order\SendDataController::class, 'handle']);
         });
 
         Route::prefix('offer')->group(function () {

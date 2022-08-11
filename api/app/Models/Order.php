@@ -64,7 +64,7 @@ class Order extends Model
         $item->payment_type = $paymentType;
         $item->delivery_type = $deliveryType;
         $item->cost = $cost;
-        $item->addStatus(Status::STATUS_ACCEPTED, Status::STATE_SUCCESS);
+        $item->addStatus(\App\Models\Status\Order::STATUS_ACCEPTED, Status::STATE_SUCCESS);
         return $item;
     }
 
@@ -74,7 +74,7 @@ class Order extends Model
             throw new \DomainException('Заказ уже оплачен.');
 
         $this->sber_id = $sberId;
-        $this->addStatus(Status::STATUS_PAID);
+        $this->addStatus(\App\Models\Status\Order::STATUS_PAID);
     }
 
     public function sent(): void
@@ -82,7 +82,7 @@ class Order extends Model
         if ($this->isSend())
             throw new \DomainException('Заказ уже отправлен.');
 
-        $this->addStatus(Status::STATUS_SENT_IN_1C);
+        $this->addStatus(\App\Models\Status\Order::STATUS_SENT_IN_1C);
         OrderSend::dispatch($this);
     }
 
@@ -91,10 +91,10 @@ class Order extends Model
         if ($this->isConfirmed())
             throw new \DomainException('Заказ уже подтвержден.');
 
-        $this->addStatus(Status::STATUS_CONFIRMED);
+        $this->addStatus(\App\Models\Status\Order::STATUS_CONFIRMED);
     }
 
-    public function cancel(string $reason = null, string $status = Status::STATUS_CANCELLED): void
+    public function cancel(string $reason = null, \App\Models\Status\Order $status = \App\Models\Status\Order::STATUS_CANCELLED): void
     {
         if ($this->status === $status)
             throw new \DomainException('Заказ уже отменен.');
@@ -108,7 +108,7 @@ class Order extends Model
         if ($this->isAssembled())
             throw new \DomainException('Заказ уже собран.');
 
-        $this->addStatus(Status::STATUS_ASSEMBLED_PHARMACY);
+        $this->addStatus(\App\Models\Status\Order::STATUS_ASSEMBLED_PHARMACY);
     }
 
     public function partlyRefund(): void
@@ -116,7 +116,7 @@ class Order extends Model
         if ($this->isPartlyRefund())
             throw new \DomainException('Заказ уже возмещен.');
 
-        $this->addStatus(Status::STATUS_PARTLY_REFUND);
+        $this->addStatus(\App\Models\Status\Order::STATUS_PARTLY_REFUND);
         OrderPayPartlyRefund::dispatch($this);
     }
 
@@ -125,7 +125,7 @@ class Order extends Model
         if ($this->isFullRefund())
             throw new \DomainException('Заказ уже возмещен.');
 
-        $this->addStatus(Status::STATUS_FULL_REFUND);
+        $this->addStatus(\App\Models\Status\Order::STATUS_FULL_REFUND);
         OrderPayFullRefund::dispatch($this);
     }
 
@@ -145,67 +145,67 @@ class Order extends Model
 
     public function isPay(): bool
     {
-        return $this->inStatus(Status::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
-                return $status->equal(Status::STATUS_PAID) and $status->state === Status::STATE_SUCCESS;
+        return $this->inStatus(\App\Models\Status\Order::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
+                return $status->equal(\App\Models\Status\Order::STATUS_PAID) and $status->state === Status::STATE_SUCCESS;
             });
     }
 
     public function isSend(): bool
     {
-        return $this->inStatus(Status::STATUS_SENT_IN_1C);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_SENT_IN_1C);
     }
 
     public function isAccepted(): bool
     {
-        return $this->inStatus(Status::STATUS_ACCEPTED);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_ACCEPTED);
     }
 
     public function isConfirmed(): bool
     {
-        return $this->inStatus(Status::STATUS_CONFIRMED);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_CONFIRMED);
     }
 
     public function isCancelled(): bool
     {
-        return $this->inStatus(Status::STATUS_CANCELLED);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_CANCELLED);
     }
 
     public function isAssembled(): bool
     {
-        return $this->inStatus(Status::STATUS_ASSEMBLED_PHARMACY);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_ASSEMBLED_PHARMACY);
     }
 
     public function isReceived(): bool
     {
-        return $this->inStatus(Status::STATUS_RECEIVED_BY_CLIENT);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_RECEIVED_BY_CLIENT);
     }
 
     public function isDisbanded(): bool
     {
-        return $this->inStatus(Status::STATUS_DISBANDED);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_DISBANDED);
     }
 
     public function isReturned(): bool
     {
-        return $this->inStatus(Status::STATUS_RETURN_BY_COURIER);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_RETURN_BY_COURIER);
     }
 
     public function isPartlyRefund(): bool
     {
-        return $this->inStatus(Status::STATUS_PARTLY_REFUND);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_PARTLY_REFUND);
     }
 
     public function isFullRefund(): bool
     {
-        return $this->inStatus(Status::STATUS_FULL_REFUND);
+        return $this->inStatus(\App\Models\Status\Order::STATUS_FULL_REFUND);
     }
 
-    public function inStatus(string $status): bool
+    public function inStatus(\App\Models\Status\Order $status): bool
     {
         return $this->statuses->pluck('value')->contains($status);
     }
 
-    public function addStatus(string $value, int $state = Status::STATE_WAIT): void
+    public function addStatus(\App\Models\Status\Order $value, int $state = Status::STATE_WAIT): void
     {
         $statuses = $this->statuses;
         $status = new Status($value, Carbon::now());

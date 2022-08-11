@@ -37,6 +37,10 @@ Route::group(['prefix' => '1c'], function () {
 
 Route::post('/pay', [PayController::class, 'handle']);
 
+Route::prefix('order')->group(function () {
+    Route::post('/', [Order\CheckoutController::class, 'handle']);
+});
+
 Route::prefix('v1')->group(function () {
     Route::post('/login', [Panel\Auth\LoginController::class, 'handle']);
 

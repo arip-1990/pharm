@@ -48,6 +48,10 @@ Breadcrumbs::for('rulesRemotely', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('Правила дистанционной торговли ЛС', route('rulesRemotely'));
 });
+Breadcrumbs::for('loyalty', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('Программа лояльности', route('loyalty'));
+});
 
 // Cabinet
 Breadcrumbs::for('profile', function (BreadcrumbTrail $trail) {
