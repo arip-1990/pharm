@@ -3,9 +3,9 @@ import Image from "next/image";
 import { IProduct } from "../../models/IProduct";
 import defaultImage from "../../assets/images/default.png";
 import { useLocalStorage } from "react-use-storage";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
 import styles from "./Card.module.scss";
-import { useAddCartMutation, useFetchCartQuery } from "../../lib/cartService";
+import { ICart } from "../../models/ICart";
 
 const isRecipe = (recipe: boolean) => {
   const classess = [styles.card_mod];
@@ -47,13 +47,20 @@ type Props = {
 };
 
 const Card: FC<Props> = ({ product }) => {
+  const [carts, setCarts] = useLocalStorage<ICart[]>("cart", []);
   const [inCart, setInCart] = useState<boolean>(false);
-  const { data: cartItems } = useFetchCartQuery();
-  const [addCart] = useAddCartMutation();
 
   useEffect(() => {
-    setInCart(cartItems?.some((item) => item.product.id === product.id));
-  }, [cartItems]);
+    setInCart(carts?.some((item) => item.product.id === product.id));
+  }, [carts]);
+
+  const handleAddCart = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    if (!inCart) {
+      setCarts([...carts, { product, quantity: 1 }]);
+    }
+  };
 
   return (
     <div
@@ -87,12 +94,12 @@ const Card: FC<Props> = ({ product }) => {
         </h6>
 
         <div>
-          {product.totalOffer ? (
+          {product.totalOffers ? (
             <>
               <p className={styles.card_marker}>
                 <i className="fas fa-map-marker-alt" />
-                {`В наличии в ${product.totalOffer} ` +
-                  (product.totalOffer === 1 ? "аптеке" : "аптеках")}
+                {`В наличии в ${product.totalOffers} ` +
+                  (product.totalOffers === 1 ? "аптеке" : "аптеках")}
               </p>
               <div
                 itemProp="offers"
@@ -113,7 +120,7 @@ const Card: FC<Props> = ({ product }) => {
 
           <button
             className={styles.card_button}
-            onClick={() => addCart(product.id)}
+            onClick={handleAddCart}
             disabled={inCart}
           >
             {inCart ? "Добавлено" : "Добавить в корзину"}

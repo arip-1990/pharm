@@ -62,12 +62,12 @@ const Catalog: FC = () => {
       <div className="row">
         <nav className="col-md-3">
           <ul className="category">
-            <li className="sale">
+            {/* <li className="sale">
               <a href="/catalog/sale">
                 <Image width={36} height={36} src={saleImage} alt="" />
                 Распродажа
               </a>
-            </li>
+            </li> */}
             {data?.categories.map((item) => generateCategory(item))}
           </ul>
         </nav>
@@ -92,6 +92,7 @@ const Catalog: FC = () => {
                   <Paginate
                     current={data?.meta.current_page}
                     total={data?.meta.total}
+                    pageSize={data?.meta.per_page}
                   />
                 </div>
               </div>
@@ -108,9 +109,9 @@ const Catalog: FC = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, params }) => {
     if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
-    const page = params?.page || 1;
+    const page = Number(params?.page) || 1;
 
-    store.dispatch(fetchProducts.initiate({ page: Number(page) }));
+    store.dispatch(fetchProducts.initiate({ page }));
 
     await Promise.all(getRunningOperationPromises());
 

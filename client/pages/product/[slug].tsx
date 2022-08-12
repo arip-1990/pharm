@@ -128,7 +128,7 @@ const Product: FC = () => {
                           &#8381;
                         </p>
                       </h5>
-                      <Cart productId={data?.product.id} />
+                      <Cart product={data?.product} />
                     </>
                   ) : (
                     <h4 className="text-center">Нет в наличии</h4>

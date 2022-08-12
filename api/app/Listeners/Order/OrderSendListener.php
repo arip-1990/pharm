@@ -2,15 +2,14 @@
 
 namespace App\Listeners\Order;
 
-use App\Models\Exception;
-use App\Models\Order;
-use App\Models\Status;
 use App\Events\Order\OrderSend;
 use App\Mail\Order\CreateOrder;
+use App\Models\Exception;
+use App\Models\Order;
+use App\Models\Status\Status;
 use App\UseCases\Order\GenerateDataService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 
 class OrderSendListener implements ShouldQueue

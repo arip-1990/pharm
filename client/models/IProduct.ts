@@ -24,4 +24,6 @@ export interface IProduct {
   marked: boolean;
   recipe: boolean;
   attributes: IAttribute[];
+  minPrice: number;
+  totalOffers: number;
 }

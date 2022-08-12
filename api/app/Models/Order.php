@@ -6,6 +6,9 @@ use App\Casts\StatusCollection;
 use App\Events\Order\OrderPayFullRefund;
 use App\Events\Order\OrderPayPartlyRefund;
 use App\Events\Order\OrderSend;
+use App\Models\Status\OrderState;
+use App\Models\Status\OrderStatus;
+use App\Models\Status\Status;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $payment_type
  * @property int $delivery_type
  * @property float $cost
- * @property string $status
+ * @property OrderStatus $status
  * @property ?string $note
  * @property ?string $cancel_reason
  * @property ?string $sber_id
@@ -62,7 +65,7 @@ class Order extends Model
         $item->payment_type = $paymentType;
         $item->delivery_type = $deliveryType;
         $item->cost = $cost;
-        $item->addStatus(Status::STATUS_ACCEPTED, Status::STATE_SUCCESS);
+        $item->addStatus(OrderStatus::STATUS_ACCEPTED, OrderState::STATE_SUCCESS);
         return $item;
     }
 
@@ -72,7 +75,7 @@ class Order extends Model
             throw new \DomainException('Заказ уже оплачен.');
 
         $this->sber_id = $sberId;
-        $this->addStatus(Status::STATUS_PAID);
+        $this->addStatus(OrderStatus::STATUS_PAID);
     }
 
     public function sent(): void
@@ -80,7 +83,7 @@ class Order extends Model
         if ($this->isSend())
             throw new \DomainException('Заказ уже отправлен.');
 
-        $this->addStatus(Status::STATUS_SENT_IN_1C);
+        $this->addStatus(OrderStatus::STATUS_SENT_IN_1C);
         OrderSend::dispatch($this);
     }
 
@@ -89,10 +92,10 @@ class Order extends Model
         if ($this->isConfirmed())
             throw new \DomainException('Заказ уже подтвержден.');
 
-        $this->addStatus(Status::STATUS_CONFIRMED);
+        $this->addStatus(OrderStatus::STATUS_CONFIRMED);
     }
 
-    public function cancel(string $reason = null, string $status = Status::STATUS_CANCELLED): void
+    public function cancel(string $reason = null, OrderStatus $status = OrderStatus::STATUS_CANCELLED): void
     {
         if ($this->status === $status)
             throw new \DomainException('Заказ уже отменен.');
@@ -106,7 +109,7 @@ class Order extends Model
         if ($this->isAssembled())
             throw new \DomainException('Заказ уже собран.');
 
-        $this->addStatus(Status::STATUS_ASSEMBLED_PHARMACY);
+        $this->addStatus(OrderStatus::STATUS_ASSEMBLED_PHARMACY);
     }
 
     public function partlyRefund(): void
@@ -114,7 +117,7 @@ class Order extends Model
         if ($this->isPartlyRefund())
             throw new \DomainException('Заказ уже возмещен.');
 
-        $this->addStatus(Status::STATUS_PARTLY_REFUND);
+        $this->addStatus(OrderStatus::STATUS_PARTLY_REFUND);
         OrderPayPartlyRefund::dispatch($this);
     }
 
@@ -123,7 +126,7 @@ class Order extends Model
         if ($this->isFullRefund())
             throw new \DomainException('Заказ уже возмещен.');
 
-        $this->addStatus(Status::STATUS_FULL_REFUND);
+        $this->addStatus(OrderStatus::STATUS_FULL_REFUND);
         OrderPayFullRefund::dispatch($this);
     }
 
@@ -143,67 +146,67 @@ class Order extends Model
 
     public function isPay(): bool
     {
-        return $this->inStatus(Status::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
-                return $status->equal(Status::STATUS_PAID) and $status->state === Status::STATE_SUCCESS;
+        return $this->inStatus(OrderStatus::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
+                return $status->equal(OrderStatus::STATUS_PAID) and $status->state === OrderState::STATE_SUCCESS;
             });
     }
 
     public function isSend(): bool
     {
-        return $this->inStatus(Status::STATUS_SENT_IN_1C);
+        return $this->inStatus(OrderStatus::STATUS_SENT_IN_1C);
     }
 
     public function isAccepted(): bool
     {
-        return $this->inStatus(Status::STATUS_ACCEPTED);
+        return $this->inStatus(OrderStatus::STATUS_ACCEPTED);
     }
 
     public function isConfirmed(): bool
     {
-        return $this->inStatus(Status::STATUS_CONFIRMED);
+        return $this->inStatus(OrderStatus::STATUS_CONFIRMED);
     }
 
     public function isCancelled(): bool
     {
-        return $this->inStatus(Status::STATUS_CANCELLED);
+        return $this->inStatus(OrderStatus::STATUS_CANCELLED);
     }
 
     public function isAssembled(): bool
     {
-        return $this->inStatus(Status::STATUS_ASSEMBLED_PHARMACY);
+        return $this->inStatus(OrderStatus::STATUS_ASSEMBLED_PHARMACY);
     }
 
     public function isReceived(): bool
     {
-        return $this->inStatus(Status::STATUS_RECEIVED_BY_CLIENT);
+        return $this->inStatus(OrderStatus::STATUS_RECEIVED_BY_CLIENT);
     }
 
     public function isDisbanded(): bool
     {
-        return $this->inStatus(Status::STATUS_DISBANDED);
+        return $this->inStatus(OrderStatus::STATUS_DISBANDED);
     }
 
     public function isReturned(): bool
     {
-        return $this->inStatus(Status::STATUS_RETURN_BY_COURIER);
+        return $this->inStatus(OrderStatus::STATUS_RETURN_BY_COURIER);
     }
 
     public function isPartlyRefund(): bool
     {
-        return $this->inStatus(Status::STATUS_PARTLY_REFUND);
+        return $this->inStatus(OrderStatus::STATUS_PARTLY_REFUND);
     }
 
     public function isFullRefund(): bool
     {
-        return $this->inStatus(Status::STATUS_FULL_REFUND);
+        return $this->inStatus(OrderStatus::STATUS_FULL_REFUND);
     }
 
-    public function inStatus(string $status): bool
+    public function inStatus(OrderStatus $status): bool
     {
         return $this->statuses->pluck('value')->contains($status);
     }
 
-    public function addStatus(string $value, int $state = Status::STATE_WAIT): void
+    public function addStatus(OrderStatus $value, OrderState $state = OrderState::STATE_WAIT): void
     {
         $statuses = $this->statuses;
         $status = new Status($value, Carbon::now());
@@ -213,7 +216,7 @@ class Order extends Model
         $this->status = $value;
     }
 
-    public function changeStatusState(int $state): void
+    public function changeStatusState(OrderState $state): void
     {
         foreach ($this->statuses as $status) {
             if ($status->equal($this->status)) {

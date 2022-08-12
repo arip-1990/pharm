@@ -2,7 +2,7 @@
 
 namespace App;
 
-use \App\Models\Status;
+use App\Models\Status\Status;
 use Illuminate\Support\Collection;
 
 class Helper

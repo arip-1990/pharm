@@ -2,7 +2,7 @@
 
 namespace App\Casts;
 
-use App\Models\Status;
+use App\Models\Status\Status;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Collection;

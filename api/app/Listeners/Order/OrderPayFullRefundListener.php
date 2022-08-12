@@ -2,12 +2,11 @@
 
 namespace App\Listeners\Order;
 
+use App\Events\Order\OrderPayFullRefund;
 use App\Models\Exception;
 use App\Models\Order;
-use App\Models\Status;
-use App\Events\Order\OrderPayFullRefund;
+use App\Models\Status\Status;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderPayFullRefundListener implements ShouldQueue
 {

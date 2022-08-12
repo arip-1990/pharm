@@ -3,11 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Offer;
-use App\Models\Order;
 use App\Models\Product;
-use App\Models\Status;
-use App\Models\User;
-use App\Models\VisitStatistic;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;

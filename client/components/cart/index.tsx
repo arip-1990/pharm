@@ -1,50 +1,59 @@
-import { FC, MouseEvent, useEffect, useState } from "react";
+import { ChangeEvent, FC, MouseEvent, useEffect, useState } from "react";
 import { ICart } from "../../models/ICart";
-import {
-  useAddCartMutation,
-  useChangeCartMutation,
-  useFetchCartQuery,
-} from "../../lib/cartService";
+import { useLocalStorage } from "react-use-storage";
+import { IProduct } from "../../models/IProduct";
 
 type Props = {
-  productId: string;
+  product: IProduct;
   style?: object;
 };
 
-const Cart: FC<Props> = ({ productId, style }) => {
-  const { data } = useFetchCartQuery();
-  const [addCart] = useAddCartMutation();
-  const [changeCart] = useChangeCartMutation();
-  const [cart, setCart] = useState<ICart>();
+const Cart: FC<Props> = ({ product, style }) => {
+  const [carts, setCarts] = useLocalStorage<ICart[]>("cart", []);
+  const [quantity, setQuantity] = useState<number>(0);
 
   useEffect(() => {
-    if (data?.length) {
-      data.forEach((item) => {
-        if (item.product.id === productId) {
-          setCart(item);
+    if (carts.length) {
+      carts.forEach((item) => {
+        if (item.product.id === product.id) {
+          setQuantity(item.quantity);
           return;
         }
       });
     }
-  }, [data]);
+  }, []);
 
-  const handleChangeCart = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    const quantity =
-      e.currentTarget.innerText === "+" ? cart.quantity + 1 : cart.quantity - 1;
+  const changeCart = (item: number) => {
+    let newCarts: ICart[] = [];
+    if (item >= 0 && item <= 10) {
+      if (item === 0) {
+        newCarts = carts.filter((cart) => cart.product.id !== product.id);
+      } else {
+        newCarts = carts.map((cart) => {
+          if (cart.product.id === product.id) cart.quantity = item;
+          return cart;
+        });
+      }
 
-    try {
-      await changeCart({ id: productId, quantity }).unwrap();
-      setCart((item) => ({ ...item, quantity }));
-    } catch (error) {
-      console.log(error);
+      if (!quantity) newCarts.push({ product, quantity: item });
+      setCarts(newCarts);
+      setQuantity(item);
     }
   };
 
-  if (cart) {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    changeCart(Number(e.target.value));
+  };
+
+  const handleClickChange = (e: MouseEvent<HTMLButtonElement>) => {
+    changeCart(e.currentTarget.innerText === "+" ? quantity + 1 : quantity - 1);
+  };
+
+  if (quantity > 0) {
     return (
       <div className="input-group input-product" style={style}>
-        <button className="btn btn-outline-primary" onClick={handleChangeCart}>
+        <button className="btn btn-outline-primary" onClick={handleClickChange}>
           -
         </button>
         <input
@@ -52,9 +61,10 @@ const Cart: FC<Props> = ({ productId, style }) => {
           className="form-control input-number"
           min={1}
           max={10}
-          value={cart.quantity}
+          value={quantity}
+          onChange={handleChange}
         />
-        <button className="btn btn-outline-primary" onClick={handleChangeCart}>
+        <button className="btn btn-outline-primary" onClick={handleClickChange}>
           +
         </button>
       </div>
@@ -62,11 +72,7 @@ const Cart: FC<Props> = ({ productId, style }) => {
   }
 
   return (
-    <a
-      className="btn btn-primary"
-      style={style}
-      onClick={() => addCart(productId)}
-    >
+    <a className="btn btn-primary" style={style} onClick={() => changeCart(1)}>
       Добавить в корзину
     </a>
   );

@@ -13,10 +13,13 @@ import {
   getRunningOperationPromises,
   useFetchStoresQuery,
 } from "../lib/storeService";
+import { useRouter } from "next/router";
+import api from "../lib/api";
 
 const Store: FC = () => {
-  const [pagination, setPagination] = useState<number>(1);
-  const { data, isFetching } = useFetchStoresQuery(pagination);
+  const router = useRouter();
+  const { page } = router.query;
+  const { data, isFetching } = useFetchStoresQuery(Number(page) || 1);
 
   const getDefaultTextGenerator = useCallback((subpath: string) => {
     return (
@@ -87,15 +90,21 @@ const Store: FC = () => {
           </div>
         ))}
 
-        <Paginate current={data?.meta.current_page} total={data?.meta.total} />
+        <Paginate
+          current={data?.meta.current_page}
+          total={data?.meta.total}
+          pageSize={data.meta.per_page}
+        />
       </Page>
     </Layout>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async () => {
-    store.dispatch(fetchStores.initiate());
+  (store) => async ({ req, params }) => {
+    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    const page = Number(params?.page) || 1;
+    store.dispatch(fetchStores.initiate(page));
 
     await Promise.all(getRunningOperationPromises());
 

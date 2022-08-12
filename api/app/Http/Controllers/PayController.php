@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Exception;
 use App\Models\Order;
-use App\Models\Status;
+use App\Models\Status\Status;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redis;

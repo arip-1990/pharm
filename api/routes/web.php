@@ -1,18 +1,17 @@
 <?php
 
 use App\Http\Controllers\Auth;
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\Catalog;
 use App\Http\Controllers\Category;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\Offer;
 use App\Http\Controllers\Order;
+use App\Http\Controllers\Panel;
 use App\Http\Controllers\PayController;
-use App\Http\Controllers\Catalog;
 use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
-use App\Http\Controllers\Panel;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +36,7 @@ Route::prefix('1c')->group(function () {
 
 Route::post('/pay', [PayController::class, 'handle']);
 
-Route::prefix('v1')->group(function () {
+Route::prefix('panel')->group(function () {
     Route::post('/login', [Panel\Auth\LoginController::class, 'handle']);
 
     Route::middleware('auth:sanctum')->group(function () {
@@ -70,42 +69,45 @@ Route::prefix('v1')->group(function () {
     });
 });
 
-Route::prefix('v2')->group(function () {
-    Route::get('/city', [CityController::class, 'handle']);
+Route::get('/city', [CityController::class, 'handle']);
 
-    Route::prefix('catalog')->group(function () {
-        Route::get('/sale', [Catalog\PopularController::class, 'handle']);
-        Route::get('/search', [Catalog\PopularController::class, 'handle']);
-        Route::get('/popular', [Catalog\PopularController::class, 'handle']);
-        Route::get('/product/{product}', [Catalog\ProductController::class, 'handle']);
-        Route::get('/{category?}', [Catalog\IndexController::class, 'handle']);
-    });
+Route::prefix('catalog')->group(function () {
+    Route::get('/sale', [Catalog\PopularController::class, 'handle']);
+    Route::get('/search', [Catalog\PopularController::class, 'handle']);
+    Route::get('/popular', [Catalog\PopularController::class, 'handle']);
+    Route::get('/product/{product}', [Catalog\ProductController::class, 'handle']);
+    Route::get('/{category?}', [Catalog\IndexController::class, 'handle']);
+});
 
-    Route::prefix('category')->group(function () {
-        Route::get('/', [Category\IndexController::class, 'handle']);
-    });
+Route::prefix('category')->group(function () {
+    Route::get('/', [Category\IndexController::class, 'handle']);
+});
 
-    Route::prefix('store')->group(function () {
-        Route::get('/', [Store\IndexController::class, 'handle']);
-        Route::get('/{store}', [Store\ShowController::class, 'handle']);
-    });
+Route::prefix('store')->group(function () {
+    Route::get('/', [Store\IndexController::class, 'handle']);
+    Route::get('/{store}', [Store\ShowController::class, 'handle']);
+});
 
-    Route::prefix('cart')->group(function () {
-        Route::get('/', [CartController::class, 'index']);
-        Route::post('/{id}', [CartController::class, 'store']);
-        Route::put('/{id}', [CartController::class, 'update']);
-        Route::delete('/{id}', [CartController::class, 'delete']);
-    });
+Route::prefix('offer')->group(function () {
+    Route::get('/{product}', [Offer\IndexController::class, 'handle']);
+});
 
-    Route::post('/login', [Auth\LoginController::class, 'handle']);
-    Route::post('/register', [Auth\RegisterController::class, 'handle']);
+Route::post('/login', [Auth\LoginController::class, 'handle']);
+Route::post('/register', [Auth\RegisterController::class, 'handle']);
+
+Route::prefix('checkout')->group(function () {
+    Route::get('/', [Order\Checkout\IndexController::class, 'handle']);
+    Route::get('/store', [Order\Checkout\StoreController::class, 'handle']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [User\IndexController::class, 'handle']);
     Route::post('/logout', [Auth\LogoutController::class, 'handle']);
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user', [User\IndexController::class, 'handle']);
-
-        Route::prefix('order')->group(function () {
-            Route::get('/', [Order\IndexController::class, 'index']);
-        });
+    Route::prefix('order')->group(function () {
+        Route::get('/', [Order\IndexController::class, 'index']);
     });
+
+
 });
+

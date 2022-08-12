@@ -8,11 +8,11 @@ import cart from "../../../assets/images/cart.png";
 import { FC, MouseEvent, useEffect, useState } from "react";
 import { Login, Register } from "../../auth";
 import { useLocalStorage } from "react-use-storage";
-import { useFetchCartQuery } from "../../../lib/cartService";
 import { SetCity } from "./SetCity";
 import axios from "axios";
 import { useAuth } from "../../../hooks/useAuth";
 import api from "../../../lib/api";
+import { ICart } from "../../../models/ICart";
 
 const Header: FC = () => {
   const [loginType, setLoginType] = useState<"login" | "register">("login");
@@ -20,13 +20,13 @@ const Header: FC = () => {
   const { isAuth, login } = useAuth();
   const [totalCart, setTotalCart] = useState<number>(0);
   const [favorites] = useLocalStorage<string[]>("favorites", []);
-  const { data: cartItems } = useFetchCartQuery();
+  const [carts] = useLocalStorage<ICart[]>("cart", []);
 
   useEffect(() => {
     let total = 0;
-    cartItems?.forEach((item) => (total += item.quantity));
+    carts?.forEach((item) => (total += item.quantity));
     setTotalCart(total);
-  }, [cartItems]);
+  }, [carts]);
 
   const handleLogin = async (values: { login: string; password: string }) => {
     try {
@@ -41,9 +41,7 @@ const Header: FC = () => {
 
   const handleRegister = async (values: {
     cardNum: string;
-    lastName: string;
-    firstName: string;
-    middleName: string;
+    name: string;
     email: string;
     phone: string;
     birthDate: string;

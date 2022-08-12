@@ -2,13 +2,12 @@
 
 namespace App\Listeners\Order;
 
+use App\Events\Order\OrderDelivery;
 use App\Models\Exception;
 use App\Models\Order;
-use App\Models\Status;
-use App\Events\Order\OrderDelivery;
+use App\Models\Status\Status;
 use App\UseCases\Order\GenerateDataService;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderDeliveryListener implements ShouldQueue
 {

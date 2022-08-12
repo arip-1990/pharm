@@ -2,22 +2,23 @@
 
 namespace App\UseCases\Order;
 
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\StoreResource;
 use App\Models\CartItem;
+use App\Models\City;
 use App\Models\OrderDelivery;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Store;
 use App\Http\Requests\Catalog\CheckoutRequest;
-use App\UseCases\CartService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
-    public function __construct(private readonly CartService $cartService) {}
-
     public function checkout(CheckoutRequest $request): Order
     {
         $this->cartService->setStore(Store::query()->find($request['store']));
@@ -99,5 +100,45 @@ class CheckoutService
         $order->pay($response['orderId']);
         $order->save();
         return $response['formUrl'];
+    }
+
+    public function getStores(Request $request): array
+    {
+        $carts = $request->collect();
+        if (!count($carts))
+            throw new \DomainException('Нет товаров в корзине');
+
+        $stores = [];
+        Offer::query()->whereIn('product_id', $carts->keys())
+            ->whereCity($request->cookie('city', City::query()->find(1)?->name))
+            ->each(function (Offer $offer) use ($carts, &$stores) {
+                $cartQuantity = (int)$carts[$offer->product_id];
+                $stores[$offer->store_id]['store'] = new StoreResource($offer->store);
+                $stores[$offer->store_id]['products'][] = [
+                    'price' => $offer->price,
+                    'quantity' => min($cartQuantity, $offer->quantity),
+                    'product' => new ProductResource($offer->product)
+                ];
+            });
+        usort($stores, function ($a, $b) {
+            $res = count($b['products']) - count($a['products']);
+            if ($res) return $res;
+            else {
+                $price_a = 0;
+                $price_b = 0;
+                $quantity_a = 0;
+                $quantity_b = 0;
+                for ($i = 0; $i < count($a['products']); $i++) {
+                    $quantity_a = $a['products'][$i]['quantity'];
+                    $quantity_b = $b['products'][$i]['quantity'];
+                    $price_a += $quantity_a * $a['products'][$i]['price'];
+                    $price_b += $quantity_b * $b['products'][$i]['price'];
+                }
+                $res = $quantity_b - $quantity_a;
+                return $res ?: $price_a - $price_b;
+            }
+        });
+
+        return $stores;
     }
 }

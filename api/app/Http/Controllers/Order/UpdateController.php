@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Order;
 
 use App\Models\Order;
-use App\Models\Status;
+use App\Models\Status\OrderStatus;
 use App\UseCases\Order\RefundService;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
 class UpdateController extends Controller
 {
-    public function __construct(private RefundService $refundService) {}
+    public function __construct(private readonly RefundService $service) {}
 
     private function isValidEditOrderXML($xml): bool
     {
@@ -56,21 +56,21 @@ class UpdateController extends Controller
         }
 
         switch ($xml->order->status) {
-            case Status::STATUS_ASSEMBLED_PHARMACY:
+            case OrderStatus::STATUS_ASSEMBLED_PHARMACY:
                 $order->assembled();
                 break;
-            case Status::STATUS_CANCELLED:
-            case Status::STATUS_DISBANDED:
-            case Status::STATUS_RETURN_BY_COURIER:
+            case OrderStatus::STATUS_CANCELLED:
+            case OrderStatus::STATUS_DISBANDED:
+            case OrderStatus::STATUS_RETURN_BY_COURIER:
                 $order->cancel(status: $xml->order->status);
-                $this->refundService->fullRefund($order);
+                $this->service->fullRefund($order);
                 break;
             default:
                 $order->addStatus($xml->order->status);
         }
 
         if (isset($xml->order->products->product) and ($order->isAssembled() or $order->isReceived()))
-            $this->refundService->partlyRefund($order, $xml->order->products->product);
+            $this->service->partlyRefund($order, $xml->order->products->product);
 
         try {
             $order->save();

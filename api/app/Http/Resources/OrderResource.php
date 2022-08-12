@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource

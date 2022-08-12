@@ -65,12 +65,12 @@ const Catalog: FC = () => {
       <div className="row">
         <nav className="col-md-3">
           <ul className="category">
-            <li className="sale">
+            {/* <li className="sale">
               <a href="/catalog/sale">
                 <Image width={36} height={36} src={saleImage} alt="" />
                 Распродажа
               </a>
-            </li>
+            </li> */}
             {data?.categories.map((item) => generateCategory(item))}
           </ul>
         </nav>

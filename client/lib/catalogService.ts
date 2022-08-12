@@ -14,7 +14,7 @@ export const catalogApi = createApi({
       }
     },
     endpoints: (builder) => ({
-      fetchPopularProducts: builder.query<any, void>({
+      fetchPopularProducts: builder.query<IProduct[], void>({
         query: () => ({url: '/catalog/popular'}),
       }),
       fetchProducts: builder.query<ICatalog, {page: number, category?: string}>({
