@@ -1,19 +1,21 @@
-import { FC, HTMLAttributes, ReactNode } from "react";
-import styles from "./Accordion.module.scss";
+import { ElementType, forwardRef, HTMLAttributes, useContext } from "react";
+import { AccordionItemContext } from "./Context";
+import AccordionCollapse from "./Collapse";
 
 interface Props extends HTMLAttributes<HTMLElement> {
-  children?: ReactNode;
+  as?: ElementType;
 }
 
-const Body: FC<Props> = ({ className, children }, ...props) => {
-  let classes = [styles.accordionItem_body, styles.collapsed];
-  if (className) classes = classes.concat(className.split(" "));
+const Body = forwardRef<HTMLElement, Props>(
+  ({ as: Component = "div", className, ...props }, ref) => {
+    const { eventKey } = useContext(AccordionItemContext);
 
-  return (
-    <div className={classes.join(" ")} {...props}>
-      {children}
-    </div>
-  );
-};
+    return (
+      <AccordionCollapse eventKey={eventKey}>
+        <Component ref={ref} {...props} className={className} />
+      </AccordionCollapse>
+    );
+  }
+);
 
 export default Body;

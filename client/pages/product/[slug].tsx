@@ -49,7 +49,7 @@ const Product: FC = () => {
       </Head>
 
       <Accordion>
-        <Accordion.Item>
+        <Accordion.Item eventKey="attributes">
           <article
             className="row justify-content-center mb-3"
             itemScope
@@ -142,7 +142,10 @@ const Product: FC = () => {
             <Accordion>
               <div className="description">
                 {data?.product.description ? (
-                  <Accordion.Item className="description-item">
+                  <Accordion.Item
+                    eventKey="description"
+                    className="description-item"
+                  >
                     <Accordion.Header className="description-item_title">
                       Описание
                     </Accordion.Header>
@@ -160,7 +163,11 @@ const Product: FC = () => {
                 ) : null}
 
                 {data?.product.attributes.map((item) => (
-                  <Accordion.Item key={item.id} className="description-item">
+                  <Accordion.Item
+                    key={item.id}
+                    eventKey={item.id.toString()}
+                    className="description-item"
+                  >
                     <Accordion.Header className="description-item_title">
                       {item.name}
                     </Accordion.Header>

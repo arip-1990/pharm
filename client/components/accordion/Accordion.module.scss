@@ -1,47 +1,69 @@
 .accordion {
   position: relative;
 
-  &Item {
+  &-item {
     &_header {
+      display: flex;
+      align-items: center;
       font-weight: 700;
       text-decoration: none;
       transition: background-color 0.5s ease-in-out;
 
-      &::after {
-        content: '\e803';
+      &::after,
+      &::before {
+        display: inline-block;
         font-family: 'icon';
         transition: transform 0.35s ease;
+        transform: rotate(-180deg);
       }
 
-      &.active {
+      &:not(.accordion-item_header__left-icon) {
         &::after {
-          transform: rotate(-180deg);
+          content: "\e803";
+        }
+
+        &__icon-plus::after {
+          content: "+";
+        }
+      }
+
+      &__left-icon::before {
+        content: "\e803";
+        margin-right: 0.5rem;
+
+        &.accordion-item_header__icon-plus::before {
+          content: "+";
+        }
+      }
+
+      &__icon-plus {
+        &::after,
+        &::before {
+          font-size: 1.5em;
+          line-height: 0.5em;
+          transform: rotate(-225deg);
+          transition: transform 0.35s ease-in-out;
+        }
+
+        &.collapsed {
+          background-color:#dae1e1;
+        }
+      }
+
+      &.collapsed {
+        &::after,
+        &::before {
+          transform: rotate(0);
         }
       }
     }
 
-    div.accordionItem_header {
-      display: flex;
+    div.accordion-item_header {
       justify-content: space-between;
       background-color: rgba($color: #dae1e1, $alpha: 0.5);
-
-      &::after {
-        content: "+";
-        font-size: 1.5em;
-        line-height: 0.5em;
-        transition: transform 0.3s ease-in-out;
-      }
     
       &:hover {
         background-color: #dae1e1;
-      }
-  
-      &.active {
-        background-color:#dae1e1;
-  
-        &::after {
-          transform: rotate(-225deg);
-        }
       }
     }
   
@@ -51,7 +73,7 @@
       font-size: 1rem;
       line-height: 1.5;
       overflow: hidden;
-      transition: 1s;
+      transition: 0.8s;
       transition-property: max-height, padding;
   
       &.collapsed {

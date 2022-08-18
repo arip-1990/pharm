@@ -1,19 +1,28 @@
-import { FC, HTMLAttributes, ReactNode } from "react";
+import { ElementType, forwardRef, HTMLAttributes, useMemo } from "react";
 import styles from "./Accordion.module.scss";
+import { AccordionItemContext, AccordionItemContextValue } from "./Context";
 
 interface Props extends HTMLAttributes<HTMLElement> {
-  children?: ReactNode;
+  as?: ElementType;
+  eventKey: string;
 }
 
-const Item: FC<Props> = ({ children, className, ...props }) => {
-  let classes = [styles.accordionItem];
-  if (className) classes = classes.concat(className.split(" "));
+const Item = forwardRef<HTMLElement, Props>(
+  ({ as: Component = "div", className, eventKey, ...props }, ref) => {
+    let classes = [styles["accordion-item"]];
+    if (className) classes = classes.concat(className.split(" "));
 
-  return (
-    <div className={classes.join(" ")} {...props}>
-      {children}
-    </div>
-  );
-};
+    const contextValue = useMemo<AccordionItemContextValue>(
+      () => ({ eventKey }),
+      [eventKey]
+    );
+
+    return (
+      <AccordionItemContext.Provider value={contextValue}>
+        <Component ref={ref} {...props} className={classes.join(" ")} />
+      </AccordionItemContext.Provider>
+    );
+  }
+);
 
 export default Item;

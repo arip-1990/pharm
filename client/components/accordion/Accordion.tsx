@@ -1,56 +1,40 @@
-import { FC, MouseEvent, ReactNode, useEffect, useRef } from "react";
+import { HTMLAttributes, forwardRef, useMemo, ElementType } from "react";
 import styles from "./Accordion.module.scss";
+import {
+  AccordionContext,
+  AccordionEventKey,
+  AccordionSelectCallback,
+} from "./Context";
+import { useUncontrolled } from "uncontrollable";
 
-type Props = {
-  children?: ReactNode;
-};
+interface Props extends Omit<HTMLAttributes<HTMLElement>, "onSelect"> {
+  as?: ElementType;
+  activeKey?: AccordionEventKey;
+  defaultActiveKey?: AccordionEventKey;
+  onSelect?: AccordionSelectCallback;
+}
 
-const Accordion: FC<Props> = ({ children }) => {
-  const accordionRef = useRef<HTMLDivElement>(null);
+const Accordion = forwardRef<HTMLElement, Props>((props, ref) => {
+  const {
+    as: Component = "div",
+    activeKey,
+    className,
+    onSelect,
+    ...controlledProps
+  } = useUncontrolled(props, { activeKey: "onSelect" });
+  let classes = [styles.accordion];
+  if (className) classes = classes.concat(className.split(" "));
 
-  useEffect(() => {
-    if (accordionRef.current) {
-      accordionRef.current.addEventListener("click", handleCollapse);
-    }
-
-    return () =>
-      accordionRef.current?.removeEventListener("click", handleCollapse);
-  }, []);
-
-  const toggleClass = (element: HTMLElement | Element, className: string) => {
-    element.classList.contains(className)
-      ? element.classList.remove(className)
-      : element.classList.add(className);
-  };
-
-  const handleCollapse = (e: MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-    if (target.classList.contains(styles.accordionItem_header)) {
-      e.stopPropagation();
-      e.preventDefault();
-
-      const content = target
-        .closest("." + styles.accordionItem)
-        .querySelector("." + styles.accordionItem_body);
-      toggleClass(target, styles.active);
-      if (content.classList.contains(styles.collapsed)) {
-        if (content.classList.contains(styles.animateOut)) {
-          content.classList.remove(styles.animateOut);
-        }
-        content.classList.add(styles.animateIn);
-      } else {
-        content.classList.remove(styles.animateIn);
-        content.classList.add(styles.animateOut);
-      }
-      toggleClass(content, styles.collapsed);
-    }
-  };
+  const contextValue = useMemo(
+    () => ({ activeEventKey: activeKey, onSelect }),
+    [activeKey, onSelect]
+  );
 
   return (
-    <div ref={accordionRef} className={styles.accordion}>
-      {children}
-    </div>
+    <AccordionContext.Provider value={contextValue}>
+      <Component ref={ref} {...controlledProps} className={classes.join(" ")} />
+    </AccordionContext.Provider>
   );
-};
+});
 
 export default Accordion;

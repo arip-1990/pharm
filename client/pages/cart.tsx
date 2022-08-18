@@ -1,15 +1,23 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import Layout from "../components/layout";
 import defaultImage from "../assets/images/default.png";
 import Link from "next/link";
 import Head from "next/head";
 import BaseCart from "../components/cart";
 import { useLocalStorage } from "react-use-storage";
+import { useMountedState } from "react-use";
 import { ICart } from "../models/ICart";
 
 const Cart: FC = () => {
   const [carts] = useLocalStorage<ICart[]>("cart", []);
-  let totalAmount = 0;
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const isMounted = useMountedState();
+
+  useEffect(() => {
+    let tmp = 0;
+    carts.forEach((cart) => (tmp += cart.product.minPrice * cart.quantity));
+    setTotalAmount(tmp);
+  }, [carts]);
 
   return (
     <Layout>
@@ -29,10 +37,8 @@ const Cart: FC = () => {
             <div className="col-2 text-center">Количество</div>
             <div className="col-1 text-center" />
           </div>
-          {carts?.map((cart) => {
-            totalAmount += cart.product.minPrice * cart.quantity;
-
-            return (
+          {isMounted() &&
+            carts.map((cart) => (
               <div
                 key={cart.product.id}
                 className="row align-items-center product"
@@ -71,8 +77,7 @@ const Cart: FC = () => {
                 </div>
                 <span className="col-2 col-md-1 cart-remove" />
               </div>
-            );
-          })}
+            ))}
 
           <div className="row align-items-center mt-3">
             <p className="col-12 col-md-8">

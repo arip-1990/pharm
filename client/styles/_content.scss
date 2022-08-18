@@ -232,18 +232,7 @@
     &_title {
       display: flex;
       align-items: center;
-
-      &:not(.collapsed) h6::before {
-        transform: rotate(-180deg);
-      }
-
-      h6::before {
-        content: "\e803";
-        display: inline-block;
-        font-family: "icon";
-        transition: transform 0.35s ease;
-        margin-right: 0.5rem;
-      }
+      background: #fff !important;
 
       * {
         font-weight: 600;
@@ -429,6 +418,10 @@
     padding: 1rem;
     margin: 0.25rem 0;
     cursor: pointer;
+
+    &::after, &::before {
+      content: none !important;
+    }
 
     &:focus,
     &:focus-within {

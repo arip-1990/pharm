@@ -1,14 +1,15 @@
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, MouseEvent, useEffect, useState } from "react";
 import { useLocalStorage } from "react-use-storage";
 import api from "../../lib/api";
 import { ICart } from "../../models/ICart";
 import defaultImage from "../../assets/images/default.png";
 import Layout from "../../components/layout";
+import Accordion from "../../components/accordion";
 
 const Store: FC = () => {
   const router = useRouter();
-  const [carts] = useLocalStorage<ICart[]>("cart", []);
+  const [carts, setCarts] = useLocalStorage<ICart[]>("cart", []);
   const [loading, setLoading] = useState<boolean>(false);
   const [stores, setStores] = useState<any[]>([]);
 
@@ -31,6 +32,23 @@ const Store: FC = () => {
     fetchStores();
   }, []);
 
+  const handleStore = (e: MouseEvent<HTMLButtonElement>, storeId: string) => {
+    e.stopPropagation();
+
+    let newCarts = [];
+    stores.forEach((store) => {
+      if (store.store.id === storeId) {
+        newCarts = store.products.map((product) => ({
+          product: product.product,
+          quantity: product.quantity,
+          price: product.price,
+        }));
+      }
+    });
+    setCarts(newCarts);
+    router.push(`/cart/checkout/${storeId}`);
+  };
+
   return (
     <Layout>
       <div className="row">
@@ -39,7 +57,7 @@ const Store: FC = () => {
         </div>
         <div className="col-2 text-center">Наличие</div>
 
-        <div className="accordion">
+        <Accordion>
           {stores.map((store) => {
             let price = 0;
             store.products.forEach((product) => {
@@ -47,30 +65,33 @@ const Store: FC = () => {
             });
 
             return (
-              <div key={store.store.id} className="store-item">
-                <div className="store-item_title">
+              <Accordion.Item
+                key={store.store.id}
+                eventKey={store.store.id}
+                className="store-item"
+              >
+                <Accordion.Header className="store-item_title">
                   <h6 className="col-7">{store.store.name}</h6>
                   <p className="col-2 text-center text-primary">
-                    {store.products.lenght} из $total товаров
+                    {store.products.length} из {carts.length} товаров
                   </p>
                   <p className="col-1 text-end">{price} &#8381;</p>
                   <p className="col-2 text-end">
-                    <a
-                      href="{{ route('checkout', ['store'=> $store['store']->id]) }}"
+                    <button
                       className="btn btn-primary"
+                      onClick={(e) => handleStore(e, store.store.id)}
                     >
                       Выбрать аптеку
-                    </a>
+                    </button>
                   </p>
-                </div>
-                <div
-                  id="collapse-{{ $store['store']->id }}"
-                  className="collapse"
-                  data-bs-parent=".accordion"
-                >
-                  <div className="description-item_body row align-items-center">
+                </Accordion.Header>
+                <Accordion.Body>
+                  <div className="description-item_body">
                     {store.products.map((product) => (
-                      <div key={product.product.id}>
+                      <div
+                        key={product.product.id}
+                        className="row align-items-center"
+                      >
                         <img
                           className="col-1"
                           src={product.product.photos[0]?.url || defaultImage}
@@ -84,11 +105,11 @@ const Store: FC = () => {
                       </div>
                     ))}
                   </div>
-                </div>
-              </div>
+                </Accordion.Body>
+              </Accordion.Item>
             );
           })}
-        </div>
+        </Accordion>
       </div>
     </Layout>
   );
