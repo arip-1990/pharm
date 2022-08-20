@@ -70,7 +70,7 @@ const Store: FC = () => {
                 eventKey={store.store.id}
                 className="store-item"
               >
-                <Accordion.Header className="store-item_title">
+                <Accordion.Header className="store-item_title" icon="left">
                   <h6 className="col-7">{store.store.name}</h6>
                   <p className="col-2 text-center text-primary">
                     {store.products.length} из {carts.length} товаров

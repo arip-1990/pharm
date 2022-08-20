@@ -21,6 +21,8 @@ type CustomEventHandler = EventHandler<SyntheticEvent>;
 interface Props extends HTMLAttributes<HTMLElement> {
   as?: ElementType;
   children?: ReactNode;
+  icon?: "left" | "right";
+  iconType?: "plus" | "arrow";
 }
 
 const useAccordionButton = (
@@ -38,7 +40,17 @@ const useAccordionButton = (
 };
 
 const Header = forwardRef<HTMLElement, Props>(
-  ({ as: Component = "div", className, onClick, ...props }, ref) => {
+  (
+    {
+      as: Component = "div",
+      icon = "right",
+      iconType = "arrow",
+      className,
+      onClick,
+      ...props
+    },
+    ref
+  ) => {
     const { activeEventKey } = useContext(AccordionContext);
     const { eventKey } = useContext(AccordionItemContext);
     const accordionOnClick = useAccordionButton(eventKey, onClick);
@@ -52,7 +64,12 @@ const Header = forwardRef<HTMLElement, Props>(
         className={classNames(
           styles["accordion-item_header"],
           className,
-          !isAccordionItemSelected(activeEventKey, eventKey) && styles.collapsed
+          !isAccordionItemSelected(activeEventKey, eventKey) &&
+            styles.collapsed,
+          {
+            ".accordion-item_header__left-icon": icon === "left",
+            ".accordion-item_header__icon-plus": iconType === "plus",
+          }
         )}
       />
     );

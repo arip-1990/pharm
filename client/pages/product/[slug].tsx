@@ -146,7 +146,10 @@ const Product: FC = () => {
                     eventKey="description"
                     className="description-item"
                   >
-                    <Accordion.Header className="description-item_title">
+                    <Accordion.Header
+                      className="description-item_title"
+                      iconType="plus"
+                    >
                       Описание
                     </Accordion.Header>
                     <Accordion.Body
@@ -168,7 +171,10 @@ const Product: FC = () => {
                     eventKey={item.id.toString()}
                     className="description-item"
                   >
-                    <Accordion.Header className="description-item_title">
+                    <Accordion.Header
+                      className="description-item_title"
+                      iconType="plus"
+                    >
                       {item.name}
                     </Accordion.Header>
                     <Accordion.Body className="description-item_body">
