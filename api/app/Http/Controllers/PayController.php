@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Exception;
 use App\Models\Order;
-use App\Models\Status\Status;
+use App\Models\Status\OrderState;
+use App\Models\Status\OrderStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redis;
@@ -38,23 +39,23 @@ class PayController
 
     private function checkStatus(Order $order, string $operation, int $status): void
     {
-        if ($order->status === Status::STATUS_PAID) {
+        if ($order->status === OrderStatus::STATUS_PAID) {
             switch ($operation) {
                 case 'deposited':
                     if ($status === 1) {
-                        $order->changeStatusState(Status::STATE_SUCCESS);
+                        $order->changeStatusState(OrderState::STATE_SUCCESS);
                         $order->sent();
                     }
                     elseif ($status === 0) {
-                        $order->changeStatusState(Status::STATE_ERROR);
+                        $order->changeStatusState(OrderState::STATE_ERROR);
                     }
                     break;
                 case 'reversed':
-                    $order->changeStatusState(Status::STATE_ERROR);
+                    $order->changeStatusState(OrderState::STATE_ERROR);
                     Exception::create($order->id, 'pay', 'Оплата отменена')->save();
                     break;
                 case 'declinedByTimeout':
-                    $order->changeStatusState(Status::STATE_ERROR);
+                    $order->changeStatusState(OrderState::STATE_ERROR);
                     Exception::create($order->id, 'pay', 'Истек время ожидания оплаты')->save();
                     break;
             }

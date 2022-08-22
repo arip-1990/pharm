@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Redis;
-use Predis\Client;
 
 class RedisSubscribe extends Command
 {
@@ -14,11 +13,13 @@ class RedisSubscribe extends Command
 
     public function handle(): int
     {
-        $redis = new Client('tcp://' . env('REDIS_HOST', '127.0.0.1') . ':' . env('REDIS_PORT', '6379'));
-        Redis::subscribe(['update'], function (string $data) use ($redis) {
+        $client = Redis::connection()->client();
+        Redis::connection('subscribe')->subscribe(['update'], function (string $data) use ($client) {
             $message = '';
+            $type = 'update';
             try {
                 $data = json_decode($data, true);
+                $client->publish("bot:test", json_encode(['chatId' => $data['chatId'], 'message' => 'Начинаем выполнение запроса...']));
                 switch ($data['type']) {
                     case 'category':
                         $code = Artisan::call('import:category');
@@ -37,7 +38,8 @@ class RedisSubscribe extends Command
                         $message = $code ? 'Произошла ошибка при обновлении аптек' : 'Аптеки успешно обновлены';
                         break;
                     case 'test':
-                        $code = Artisan::call('test');
+                        $type = 'test';
+                        $code = Artisan::call('send:order', ['order' => $data['order']]);
                         $message = $code ? 'Произошла ошибка при обработке запроса' : 'Запрос обработан успешно';
                 }
             }
@@ -45,7 +47,7 @@ class RedisSubscribe extends Command
                 $message = $exception->getMessage();
             }
 
-            $redis->publish('bot:update', json_encode(['chatId' => $data['chatId'], 'message' => $message]));
+            $client->publish("bot:{$type}", json_encode(['chatId' => $data['chatId'], 'message' => $message]));
         });
 
         return 0;

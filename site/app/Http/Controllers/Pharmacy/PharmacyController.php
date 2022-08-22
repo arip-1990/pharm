@@ -12,7 +12,7 @@ class PharmacyController extends Controller
     public function index(Request $request): View
     {
         $title = ' | Точки самовывоза';
-        $paginator = Store::query()->active()->where('address', 'like', $this->city . '%')->paginate(20);
+        $paginator = Store::query()->active()->where('name', 'like', '%' . $this->city . '%')->paginate(20);
         $cartService = $this->cartService;
 
         return view('pharmacy.index', compact('title', 'paginator', 'cartService'));

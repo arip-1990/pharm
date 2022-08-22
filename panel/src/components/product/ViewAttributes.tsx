@@ -5,7 +5,6 @@ import { Table, Editor } from "..";
 import { IProduct } from "../../models/IProduct";
 import { useUpdateAttributesProductMutation } from "../../services/ProductService";
 import { useFetchAttributesQuery } from "../../services/AttributeService";
-import { IAttribute } from "../../models/IAttribute";
 
 interface PropsAttributeType {
   visible: boolean;

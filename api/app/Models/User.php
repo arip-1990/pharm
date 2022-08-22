@@ -42,8 +42,13 @@ class User extends Authenticatable
 
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id', 'name', 'email', 'phone', 'password'];
+    protected $fillable = ['id', 'first_name', 'last_name', 'middle_name', 'email', 'phone', 'gender', 'birth_date', 'token', 'password'];
     protected $hidden = ['password'];
+    protected $casts = [
+        'birth_date' => 'datetime',
+        'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
+    ];
 
     public function orders(): HasMany
     {

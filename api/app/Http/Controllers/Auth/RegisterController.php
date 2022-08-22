@@ -13,10 +13,10 @@ class RegisterController
     public function handle(RegisterRequest $request): JsonResponse
     {
         try {
-            $this->service->handle($request);
+            $this->service->requestRegister($request);
         }
         catch (\DomainException $e) {
-            return new JsonResponse($e->getMessage());
+            return new JsonResponse($e->getMessage(), 500);
         }
 
         return new JsonResponse();

@@ -242,7 +242,7 @@
                                 @endauth
                             </h4>
                         </li>
-                        <li><a href="{{ route('register') }}" data-toggle="modal"  data-target="register">Регистрация</a></li>
+                        <li><a href="{{ route('loyalty') }}">Программа лояльности</a></li>
                         <li><a href="{{ route('favorite') }}">Отложенные товары</a></li>
                         <li><a href="{{ route('processingPersonalData') }}">Обработка персональных данных</a></li>
                         <li><a href="{{ route('privacyPolicy') }}">Политика конфиденциальности</a></li>

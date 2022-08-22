@@ -2,22 +2,27 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
  * @property int $type
  * @property string $file
- * @property string $product_id
  * @property int $sort
  * @property int $status
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property ?Carbon $deleted_at
  *
  * @property Product $product
  */
 class Photo extends Model
 {
+    use SoftDeletes;
+
     const DEFAULT_FILE = '/images/default.png';
 
     const TYPE_PICTURE = 0;
@@ -46,11 +51,6 @@ class Photo extends Model
         return null;
     }
 
-    public function product(): BelongsTo
-    {
-        return $this->belongsTo(Product::class);
-    }
-
 //    public function getThumbFilePath(string $type = 'thumb'): ?string
 //    {
 //        $type = match ($type) {
@@ -58,7 +58,7 @@ class Photo extends Model
 //            default => 'thumb'
 //        };
 //
-//        foreach (Storage::files("images/original/{$this->product_id}") as $file) {
+//        foreach (Storage::files('images/original') as $file) {
 //            $exp = explode('/', $file);
 //            if ("{$type}_{$this->id}" === explode('.', array_pop($exp))[0])
 //                return $file;

@@ -24,7 +24,7 @@ export interface IProduct {
   marked: boolean;
   recipe: boolean;
   sale: boolean;
-  status: boolean;
+  status: number;
   offers: boolean;
   attributes: IAttribute[];
   createdAt: moment.Moment;

@@ -23,7 +23,7 @@ class PosService
         ]);
     }
 
-    public function getBalance(string $phone): \SimpleXMLElement
+    public function getBalance(string $phone, bool $sendCode = false, string $validationCode = null): array
     {
         $url = config('data.loyalty.test.url.pos');
         $organization = config('data.loyalty.test.organization');
@@ -38,25 +38,26 @@ class PosService
             <BusinessUnit>' . $businessUnit . '</BusinessUnit>
             <POS>' . $pos . '</POS>
             <MobilePhone>
-            <Number>+' . $phone . '</Number>
-            <SendCode>1</SendCode>
-            </MobilePhone>
-            </BalanceRequest>';
+            <Number>+' . $phone . '</Number>';
+
+        if ($validationCode) $data .= '<ValidationCode>' . $validationCode . '</ValidationCode>';
+        elseif ($sendCode) $data .= '<SendCode>1</SendCode>';
+
+        $data .= '</MobilePhone></BalanceRequest>';
 
         $response = $this->client->post($url, ['body' => $this->buildXml($data)]);
 
         if ($response->getStatusCode() !== 200)
             throw new \DomainException('Ошибка получения баланса');
 
-        dd($response->getBody()->getContents());
         $xml = simplexml_load_string($response->getBody()->getContents());
         if ($xml === false)
             throw new \DomainException('Ошибка парсинга xml');
 
-        return $xml;
+        return (array)$xml->children('soap', true)->Body->children()->ProcessRequestResponse->ProcessRequestResult->BalanceResponse;
     }
 
-    public function createCard(User $user): void
+    public function createCard(string $phone, string $email, string $firstName, string $lastName = null, string $middleName = null, Carbon $birthDate = null): array
     {
         $url = config('data.loyalty.test.url.pos');
         $organization = config('data.loyalty.test.organization');
@@ -73,8 +74,8 @@ class PosService
             <POS>' . $pos . '</POS>
             <AwardType>ContactUpdate</AwardType>
             <ContactID>
-              <MobilePhone>' . $user->phone . '</MobilePhone>
-              <Email>' . $user->email . '</Email>
+              <MobilePhone>+' . $phone . '</MobilePhone>
+              <Email>' . $email . '</Email>
             </ContactID>
             <CreateCard>
               <CreateCard>1</CreateCard>
@@ -82,16 +83,16 @@ class PosService
             </CreateCard>
             <Attribute>
               <Key>firstname</Key>
-              <Value>' . $user->first_name . '</Value>
+              <Value>' . $firstName . '</Value>
             </Attribute>';
-        if ($user->last_name) {
-            $data .= '<Attribute><Key>lastname</Key><Value>' . $user->last_name . '</Value></Attribute>';
+        if ($lastName) {
+            $data .= '<Attribute><Key>lastname</Key><Value>' . $lastName . '</Value></Attribute>';
         }
-        if ($user->middle_name) {
-            $data .= '<Attribute><Key>middlename</Key><Value>' . $user->middle_name . '</Value></Attribute>';
+        if ($middleName) {
+            $data .= '<Attribute><Key>middlename</Key><Value>' . $middleName . '</Value></Attribute>';
         }
-        if ($user->birth_date) {
-            $data .= '<Attribute><Key>birthdate</Key><Value>' . $user->birth_date->format('Y-m-d\TH:i:sP') . '</Value></Attribute>';
+        if ($birthDate) {
+            $data .= '<Attribute><Key>birthdate</Key><Value>' . $birthDate->format('Y-m-d\TH:i:sP') . '</Value></Attribute>';
         }
 
         $data .= '</ContactInfoUpdateRequest>';
@@ -101,8 +102,11 @@ class PosService
         if ($response->getStatusCode() !== 200)
             throw new \DomainException('Ошибка получения баланса');
 
-        if (!$xml = simplexml_load_string($response->getBody()->getContents()))
+        $xml = simplexml_load_string($response->getBody()->getContents());
+        if ($xml === false)
             throw new \DomainException('Ошибка парсинга xml');
+
+        return (array)$xml->children('soap', true)->Body->children()->ProcessRequestResponse->ProcessRequestResult->BonusResponse;
     }
 
     private function buildXml(string $data): string

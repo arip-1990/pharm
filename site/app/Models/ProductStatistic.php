@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $orders
  * @property int $cancellations
  * @property float $rating
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
  * @property User $user
  */

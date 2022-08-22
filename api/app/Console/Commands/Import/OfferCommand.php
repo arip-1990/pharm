@@ -42,19 +42,17 @@ class OfferCommand extends Command
         $delFields = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
+            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
-
-            if ($price <= 0 or $quantity < 1 or !$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*'))
-                continue;
-
             $storeId = (string)$item->store_uuid;
             $delFields[] = [$storeId, $product->id];
             $fields[] = [
                 'store_id' => $storeId,
                 'product_id' => $product->id,
-                'price' => $price,
-                'quantity' => $quantity
+                'price' => max($price, 0),
+                'quantity' => max($quantity, 0)
             ];
             $i++;
 
@@ -79,17 +77,15 @@ class OfferCommand extends Command
         $fields = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
+            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
-
-            if ($price <= 0 or $quantity < 1 or !$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*'))
-                continue;
-
             $fields[] = [
                 'store_id' => (string)$item->store_uuid,
                 'product_id' => $product->id,
-                'price' => $price,
-                'quantity' => $quantity
+                'price' => max($price, 0),
+                'quantity' => max($quantity, 0)
             ];
             $i++;
 
@@ -112,17 +108,14 @@ class OfferCommand extends Command
         $fields = [];
         $i = 0;
         foreach ($data->offers->offer as $item) {
+            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
-
-            if ($price <= 0 or $quantity < 1 or !$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*'))
-                continue;
-
             $fields[] = [
                 'store_id' => (string)$item->store_uuid,
                 'product_id' => $product->id,
-                'price' => $price,
-                'quantity' => $quantity
+                'price' => max($price, 0),
+                'quantity' => max($quantity, 0)
             ];
             $i++;
 

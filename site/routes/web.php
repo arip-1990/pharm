@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Offer\ImShopController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Cabinet\IndexController as CabinetController;
@@ -39,6 +38,7 @@ Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('p
 Route::get('/rent', [PageController::class, 'rent'])->name('rent');
 Route::get('/return', [PageController::class, 'return'])->name('return');
 Route::get('/rules-remotely', [PageController::class, 'rulesRemotely'])->name('rulesRemotely');
+Route::get('/loyalty', [PageController::class, 'loyalty'])->name('loyalty');
 
 Route::prefix('auth')->group(function () {
     Route::get('/login', fn() => back());

@@ -17,56 +17,46 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * @property string $id
- * @property string $name
+ * @property string $first_name
+ * @property ?string $last_name
+ * @property ?string $middle_name
  * @property string $email
  * @property string $phone
  * @property string $password
- * @property int $role
- * @property string|null $confirm_token
- * @property string|null $reset_token
- * @property string|null $remember_token
- * @property Carbon|null $email_verified_at
- * @property Carbon|null $phone_verified_at
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon|null $deleted_at
+ * @property int $gender
+ * @property ?Carbon $birth_date
+ * @property ?string $token
+ * @property ?string $session
+ * @property ?Carbon $email_verified_at
+ * @property ?Carbon $phone_verified_at
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property ?Carbon $deleted_at
  *
+ * @property ?Role $role
+ * @property Collection<Grant> $grants
  * @property Collection<Order> $orders
- * @property Collection<CartItem> $cartItems
- * @property Collection<ModerationProduct> $moderationProducts
  * @property Limit $priceLimit
  */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    const ROLE_USER = 10;
-    const ROLE_REVIEWER = 20;
-    const ROLE_OPERATOR = 30;
-    const ROLE_MODERATOR = 40;
-    const ROLE_ADMIN = 50;
-
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id', 'name', 'email', 'phone', 'password'];
-    protected $hidden = ['password', 'remember_token'];
-
-    public static function rolesList(): array
-    {
-        return [
-            self::ROLE_USER,
-            self::ROLE_REVIEWER,
-            self::ROLE_OPERATOR,
-            self::ROLE_MODERATOR,
-            self::ROLE_ADMIN
-        ];
-    }
+    protected $fillable = ['id', 'first_name', 'last_name', 'middle_name', 'email', 'phone', 'gender', 'birth_date', 'token', 'password'];
+    protected $hidden = ['password'];
+    protected $casts = [
+        'birth_date' => 'datetime',
+        'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
+    ];
 
     public static function new(string $name, string $email): self
     {
         return static::create([
             'id' => Uuid::uuid4()->toString(),
-            'name' => $name,
+            'first_name' => $name,
             'email' => $email,
             'password' => Hash::make(Str::random()),
         ]);
@@ -76,7 +66,7 @@ class User extends Authenticatable
     {
         return static::create([
             'id' => Uuid::uuid4()->toString(),
-            'name' => $name,
+            'first_name' => $name,
             'email' => $email,
             'phone' => $phone,
             'password' => Hash::make($password),
@@ -89,17 +79,6 @@ class User extends Authenticatable
             throw new \DomainException('User is already verified.');
 
         $this->update(['confirm_token' => null]);
-    }
-
-    public function changeRole(int $role): void
-    {
-        if (!array_key_exists($role, self::rolesList()))
-            throw new \InvalidArgumentException('Undefined role "' . $role . '"');
-
-        if ($this->role === $role)
-            throw new \DomainException('Role is already assigned.');
-
-        $this->update(['role' => $role]);
     }
 
     public function validatePassword(string $password): bool

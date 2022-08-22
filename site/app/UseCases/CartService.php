@@ -124,31 +124,11 @@ class CartService
     {
         if (!$this->items->count()) {
             $this->items = session('cartItems', new Collection());
-
-            if (Auth::check())
-                $this->items = $this->items->concat(Auth::user()->cartItems);
         }
     }
 
     private function saveItems(): void
     {
-        if (Auth::check()) {
-            session()->forget('cartItems');
-
-            if ($this->items->count()) {
-                Auth::user()->cartItems()->each(function (CartItem $item) {
-                    if (!$this->items->pluck('id')->contains($item->id)) {
-                        $item->delete();
-                    }
-                });
-                Auth::user()->cartItems()->saveMany($this->items);
-            }
-            else {
-                Auth::user()->cartItems()->delete();
-            }
-        }
-        else {
-            session(['cartItems' => $this->items]);
-        }
+        session(['cartItems' => $this->items]);
     }
 }

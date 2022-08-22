@@ -3,13 +3,14 @@ import { useFormik } from "formik";
 interface PropsType {
   onSubmit: (values: {
     cardNum: string;
-    name: string;
+    lastName: string;
+    firstName: string;
+    middleName: string;
     email: string;
     phone: string;
     birthDate: string;
     gender: number;
     password: string;
-    rule: number;
   }) => void;
 }
 
@@ -17,16 +18,16 @@ const Register = ({ onSubmit }: PropsType) => {
   const formik = useFormik({
     initialValues: {
       cardNum: "",
-      name: "",
+      lastName: "",
+      firstName: "",
+      middleName: "",
       email: "",
       phone: "",
       birthDate: "",
       gender: 0,
       password: "",
-      rule: 0,
     },
     onSubmit: (values) => {
-      console.log(values);
       onSubmit(values);
     },
   });
@@ -47,16 +48,42 @@ const Register = ({ onSubmit }: PropsType) => {
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="name" className="form-label">
-          ФИО
+        <label htmlFor="lastName" className="form-label">
+          Фамилия
         </label>
         <input
-          id="name"
-          name="name"
+          id="lastName"
+          name="lastName"
           type="text"
           className="form-control"
           onChange={formik.handleChange}
-          value={formik.values.name}
+          value={formik.values.lastName}
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="firstName" className="form-label">
+          Имя
+        </label>
+        <input
+          id="firstName"
+          name="firstName"
+          type="text"
+          className="form-control"
+          onChange={formik.handleChange}
+          value={formik.values.firstName}
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="middleName" className="form-label">
+          Отчество
+        </label>
+        <input
+          id="middleName"
+          name="middleName"
+          type="text"
+          className="form-control"
+          onChange={formik.handleChange}
+          value={formik.values.middleName}
         />
       </div>
       <div className="mb-3">
@@ -126,38 +153,6 @@ const Register = ({ onSubmit }: PropsType) => {
           onChange={formik.handleChange}
           value={formik.values.password}
         />
-      </div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          name="news"
-          id="news"
-        />
-        <label
-          className="form-check-label"
-          htmlFor="news"
-          style={{ fontSize: "0.85rem" }}
-        >
-          Да, я соглашаюсь получать новости и информацию об акциях
-        </label>
-      </div>
-      <div className="form-check">
-        <input
-          id="rule"
-          name="rule"
-          type="checkbox"
-          className="form-check-input"
-          onChange={formik.handleChange}
-          value={formik.values.rule}
-        />
-        <label
-          className="form-check-label"
-          htmlFor="rule"
-          style={{ fontSize: "0.85rem" }}
-        >
-          Я согласен с правилами сайта
-        </label>
       </div>
       <div className="row mt-3">
         <div className="col text-center">

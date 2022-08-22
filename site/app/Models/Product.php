@@ -14,28 +14,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $id
- * @property int|null $category_id
  * @property string $name
  * @property string $slug
  * @property int $code
- * @property string|null $barcode
- * @property string|null $description
+ * @property ?string $barcode
+ * @property ?string $description
  * @property bool $marked
  * @property bool $recipe
  * @property bool $sale
  * @property int $status
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property ?Carbon $deleted_at
  *
- * @property Category|null $category
+ * @property ?Category $category
  * @property Collection<Photo> $photos
  * @property Collection<Photo> $checkedPhotos
  * @property Collection<Photo> $certificates
  * @property Collection<Offer> $offers
  * @property Collection<Value> $values
- * @property ProductStatistic|null $statistic
- * @property ModerationProduct|null $moderation
+ * @property ?ProductStatistic $statistic
  */
 class Product extends Model
 {
@@ -100,11 +98,12 @@ class Product extends Model
     public function scopeActive(Builder $query, string $city = null): Builder
     {
         return $query->whereHas('offers', function (Builder $query) use ($city) {
-            $query->where('quantity', '>', 0);
+            $query->where('quantity', '>', 0)
+                ->join('stores', 'offers.store_id', '=', 'stores.id')
+                ->where('status', Store::STATUS_ACTIVE);
+
             if ($city) {
-                $query->join('stores', 'offers.store_id', '=', 'stores.id')
-                    ->where('status', Store::STATUS_ACTIVE)
-                    ->where('stores.address', 'like', $city . '%');
+                $query->where('stores.name', 'like', '%' . $city . '%');
             }
         });
     }

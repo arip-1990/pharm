@@ -116,6 +116,10 @@ const Order: React.FC = () => {
     selectedKeys[0] &&
       setFilters({
         ...filters,
+        pagination: {
+          ...filters.pagination,
+          current: 1,
+        },
         search: { text: selectedKeys[0], column: dataIndex },
       });
   };

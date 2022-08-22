@@ -11,21 +11,23 @@ class FeedController
     public function handle(Request $request): JsonResponse
     {
         $data = [];
-        Product::query()->whereIn('code', $request->get('codes', []))->each(function (Product $product) use (&$data) {
+        Product::query()->whereIn('code', $request->post('codes', []))->each(function (Product $product) use (&$data) {
             $data[] = [
-                'Картинки' => $product->photos->map(fn($photo) => $photo->getUrl()),
-                'Состав' => $product->getValue(30),
-                'Фармакологическое действие' => $product->getValue(31),
+                'Код' => $product->code,
+                'Картинка' => $product->photos()->first()?->getUrl(),
+                'Описание' => $product->description,
                 'Показания' => $product->getValue(32),
-                'Применение при беременности и кормлении грудью' => $product->getValue(33),
-                'Противопоказания' => $product->getValue(34),
-                'Побочные действия' => $product->getValue(35),
                 'Назначение' => $product->getValue(45),
+                'Состав' => $product->getValue(30),
+                'ФармакологическоеДействие' => $product->getValue(31),
+                'Противопоказания' => $product->getValue(34),
+                'ПобочныеДействия' => $product->getValue(35),
                 'Взаимодействие' => $product->getValue(47),
-                'Передозировка' => $product->getValue(48)
+                'Передозировка' => $product->getValue(48),
+                'ПрименениеПриБеременности' => $product->getValue(33)
             ];
         });
 
-        return new JsonResponse($data);
+        return new JsonResponse($data, options: JSON_UNESCAPED_UNICODE);
     }
 }

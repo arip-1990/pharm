@@ -2,6 +2,7 @@
 
 namespace App\UseCases\Order;
 
+use App\Http\Requests\Order\CheckoutRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StoreResource;
 use App\Models\CartItem;
@@ -11,7 +12,6 @@ use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Store;
-use App\Http\Requests\Catalog\CheckoutRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -68,21 +68,18 @@ class CheckoutService
         return $order;
     }
 
-    public function paymentSberbank(Order $order, string $redirectUrl): string
+    public function paySber(Order $order, string $redirectUrl): string
     {
         $curl = curl_init();
         $config =  config('app.env') === 'production' ? config('data.pay.sber.prod') : config('data.pay.sber.test');
-        $url = $config['url'];
-        $username = $config['username'];
-        $password = $config['password'];
 
         curl_setopt_array($curl, [
-            CURLOPT_URL => $url,
+            CURLOPT_URL => $config['url'],
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => http_build_query([
-                'userName'      => $username,
-                'password'      => $password,
+                'userName'      => $config['username'],
+                'password'      => $config['password'],
                 'orderNumber'   => $order->id,
                 'amount'        => $order->getTotalCost() * 100,
                 'returnUrl'     => $redirectUrl,

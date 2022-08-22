@@ -10,12 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $status
  * @property string $type
- * @property string|null $comment
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property ?string $comment
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
+ * @property ?User $user
  * @property Product $product
- * @property User|null $user
  */
 class ModerationProduct extends Model
 {

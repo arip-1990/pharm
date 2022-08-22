@@ -31,15 +31,11 @@ const Home: FC = () => {
         itemType="https://schema.org/ItemList"
       >
         <link itemProp="url" href="/" />
-        {isFetching ? (
-          <span>loading</span>
-        ) : (
-          data?.map((product) => (
-            <div key={product.id} className="col-10 offset-1 offset-sm-0">
-              <Card product={product} />
-            </div>
-          ))
-        )}
+        {data?.map((product) => (
+          <div key={product.id} className="col-10 offset-1 offset-sm-0">
+            <Card product={product} />
+          </div>
+        ))}
       </div>
     </Layout>
   );

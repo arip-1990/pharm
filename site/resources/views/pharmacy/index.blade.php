@@ -17,23 +17,23 @@
             @foreach ($paginator as $store)
                 <div class="row address">
                     <div class="col-12 col-md-5 text-center text-md-start">
-                        <span>{{ trim(str_replace(explode(',', $store->address)[0] . ',', '', $store->name)) }}</span>
+                        <span>{{ trim($store->name) }}</span>
                     </div>
                     <div class="col-12 col-md-4 col-lg-3 text-center">
-                        {!! \App\Helper::formatSchedule($store->schedule) !!}
+                        {!! \App\Helper::formatSchedule($store->schedule->toArray()) !!}
                     </div>
                     <div class="col-12 col-md-3 col-lg-2 text-center text-md-end">
                         {{ \App\Helper::formatPhone($store->phone) }}
                     </div>
                     <div class="col-12 col-lg-2 d-flex justify-content-end position-relative">
-                        <!-- div class="{{ $store->delivery ? 'store-delivery_icon' : '' }}"></div -->
+                        <!-- div class="//$store->delivery ? 'store-delivery_icon' : ''"></div -->
                         <a href="{{ route('pharmacy.show', ['store' => $store]) }}" class="btn btn-sm btn-primary">Посмотреть</a>
                     </div>
                 </div>
 
                 @php
                     if ($store->lat and $store->lon) {
-                        $cordinates[] = [$store->lat, $store->lon];
+                        $cordinates[] = $store->location->coordinate;
                         $mapInfo[] = [$store->name, $store->phone];
                     }
                 @endphp

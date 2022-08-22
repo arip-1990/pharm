@@ -124,7 +124,7 @@
                         <span style="font-weight: 600">{{ $offer->store->name }}</span>
                     </div>
                     <div class="col-12 col-md-3 text-md-center">
-                        <b class="d-md-none">Время работы: </b>{!! \App\Helper::formatSchedule($offer->store->schedule) !!}
+                        <b class="d-md-none">Время работы: </b>{!! \App\Helper::formatSchedule($offer->store->schedule->toArray()) !!}
                     </div>
                     <div class="col-12 col-md-2 text-md-center">
                         <b class="d-md-none">Цена: </b>

@@ -6,27 +6,34 @@ import Logo from "../../../assets/images/logo.svg";
 import heart from "../../../assets/images/heart.png";
 import cart from "../../../assets/images/cart.png";
 import { FC, MouseEvent, useEffect, useState } from "react";
-import { Login, Register } from "../../auth";
-import { useLocalStorage } from "react-use-storage";
+import { Login, Register, CheckSms } from "../../auth";
 import { SetCity } from "./SetCity";
 import axios from "axios";
 import { useAuth } from "../../../hooks/useAuth";
 import api from "../../../lib/api";
 import { ICart } from "../../../models/ICart";
+import { useLocalStorage } from "react-use-storage";
+import { IProduct } from "../../../models/IProduct";
+import { useAlert } from "../../../hooks/useAlert";
 
 const Header: FC = () => {
-  const [loginType, setLoginType] = useState<"login" | "register">("login");
+  const [loginType, setLoginType] = useState<"login" | "register" | "checkSms">(
+    "login"
+  );
   const [showModal, setShowModal] = useState<boolean>(false);
   const { isAuth, login } = useAuth();
-  const [totalCart, setTotalCart] = useState<number>(0);
-  const [favorites] = useLocalStorage<string[]>("favorites", []);
   const [carts] = useLocalStorage<ICart[]>("cart", []);
+  const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
+  const [totalCart, setTotalCart] = useState<number>(0);
+  const [totalFavorite, setTotalFavorite] = useState<number>(0);
+  const { addAlert } = useAlert();
 
   useEffect(() => {
     let total = 0;
     carts?.forEach((item) => (total += item.quantity));
     setTotalCart(total);
-  }, [carts]);
+    setTotalFavorite(favorites.length);
+  }, [carts, favorites]);
 
   const handleLogin = async (values: { login: string; password: string }) => {
     try {
@@ -41,7 +48,9 @@ const Header: FC = () => {
 
   const handleRegister = async (values: {
     cardNum: string;
-    name: string;
+    lastName: string;
+    firstName: string;
+    middleName: string;
     email: string;
     phone: string;
     birthDate: string;
@@ -50,12 +59,24 @@ const Header: FC = () => {
     rule: number;
   }) => {
     try {
-      const result = await api.post("register", { ...values });
-      console.log(result);
+      await api.post("register", { ...values });
+      setLoginType("checkSms");
     } catch (error) {
-      console.log(error);
-    } finally {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response.data);
+        addAlert("danger", String(error.response.data));
+      } else console.log(error);
       setShowModal(false);
+    }
+  };
+
+  const handleCheckSms = async (values: { smsCode: string }) => {
+    try {
+      await api.post("checkSms", { ...values });
+      setShowModal(false);
+    } catch (error) {
+      if (axios.isAxiosError(error)) console.log(error.response.data);
+      else console.log(error);
     }
   };
 
@@ -85,7 +106,7 @@ const Header: FC = () => {
         </Col>
       </Row>
 
-      <div className="empty-box"></div>
+      <div className="empty-box" />
       <div className="fixed-box">
         <Row className="container align-items-center p-0 mx-auto">
           <Col xs={6} sm={6} md={4} lg={3} className="me-auto me-lg-0">
@@ -101,11 +122,7 @@ const Header: FC = () => {
             lg={{ span: 7, order: 0 }}
             className="mt-3 mt-lg-0"
           >
-            <form
-              className="search"
-              action="{{ route('catalog.search') }}"
-              autoComplete="off"
-            >
+            <form className="search">
               <input
                 type="search"
                 name="q"
@@ -126,7 +143,7 @@ const Header: FC = () => {
           >
             <a className="fav" href="/favorite">
               <span style={{ display: "inline-block", position: "relative" }}>
-                <span className="quantity">{favorites.length}</span>
+                <span className="quantity">{totalFavorite}</span>
                 <Image src={heart} height={30} />
               </span>
               <br />
@@ -163,31 +180,37 @@ const Header: FC = () => {
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            <h5 className="modal-title">
-              {loginType === "login" ? "Войти" : "Регистрация"}
-            </h5>
-          </Modal.Title>
-        </Modal.Header>
+        {loginType !== "checkSms" ? (
+          <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title-vcenter">
+              <h5 className="modal-title">
+                {loginType === "login" ? "Войти" : "Регистрация"}
+              </h5>
+            </Modal.Title>
+          </Modal.Header>
+        ) : null}
         <Modal.Body>
           {loginType === "login" ? (
             <Login onSubmit={handleLogin} />
-          ) : (
+          ) : loginType === "register" ? (
             <Register onSubmit={handleRegister} />
+          ) : (
+            <CheckSms onSubmit={handleCheckSms} />
           )}
         </Modal.Body>
-        <Modal.Footer className="justify-content-center">
-          <a
-            href="#"
-            className="text-primary"
-            onClick={() =>
-              setLoginType(loginType === "login" ? "register" : "login")
-            }
-          >
-            {loginType === "login" ? "Зарегистрироваться" : "Войти"}
-          </a>
-        </Modal.Footer>
+        {loginType !== "checkSms" ? (
+          <Modal.Footer className="justify-content-center">
+            <a
+              href="#"
+              className="text-primary"
+              onClick={() =>
+                setLoginType(loginType === "login" ? "register" : "login")
+              }
+            >
+              {loginType === "login" ? "Зарегистрироваться" : "Войти"}
+            </a>
+          </Modal.Footer>
+        ) : null}
       </Modal>
     </Container>
   );

@@ -118,7 +118,7 @@ const Order: React.FC = () => {
           : filters.order.direction,
       },
       pagination: {
-        current: pag.current || filters.pagination.current,
+        current: tmp.length ? 1 : pag.current || filters.pagination.current,
         pageSize: pag.pageSize || filters.pagination.pageSize,
       },
     } as StorageType);

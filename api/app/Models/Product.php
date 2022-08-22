@@ -39,8 +39,9 @@ class Product extends Model
 {
     use SoftDeletes, Sluggable;
 
-    const STATUS_DRAFT = false;
-    const STATUS_ACTIVE = true;
+    const STATUS_DRAFT = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_MODERATION = 2;
 
     public string $abc = '';
     public $incrementing = false;

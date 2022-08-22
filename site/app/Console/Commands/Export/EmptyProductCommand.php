@@ -16,9 +16,9 @@ class EmptyProductCommand extends Command
 {
     protected $signature = 'export:emptyProduct {type=photo}';
     protected $description = 'Export products with
-                                {photo (default) : has photos}
-                                {not-photo : empty photos}
-                                {description : empty description}';
+                                {photo (default): has photos}
+                                {no-photo: empty photos}
+                                {description: empty description}';
 
     public function handle(): int
     {
@@ -27,7 +27,7 @@ class EmptyProductCommand extends Command
         try {
             if ($this->argument('type') === 'description')
                 $this->description();
-            elseif ($this->argument('type') === 'not-photo')
+            elseif ($this->argument('type') === 'no-photo')
                 $this->photos();
             else
                 $this->photos(true);
@@ -46,7 +46,7 @@ class EmptyProductCommand extends Command
         $date = Carbon::now();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Products');
+        $sheet->setTitle('Товары');
         $sheet->setCellValue('A1', 'Код');
         $sheet->setCellValue('B1', 'Наименование');
         $sheet->setCellValue('C1', 'Ссылка');
@@ -76,8 +76,7 @@ class EmptyProductCommand extends Command
             'f1bd373d-da63-11ec-80f4-ac1f6bd1d36d',
             'f4ecaaea-b427-11ec-80f3-ac1f6bd1d36d',
             '6c463751-da64-11ec-80f4-ac1f6bd1d36d'
-        ]))
-            ->has('values', '<', 5)->chunk(1000, function ($products) use ($sheet, &$i) {
+        ]))->has('values', '<', 5)->chunk(1000, function ($products) use ($sheet, &$i) {
             /** @var Product $product */
             foreach ($products as $product) {
                 if (!$product->getValue(1) or !$product->getValue(3) or !$product->getValue(30)) {
@@ -90,8 +89,9 @@ class EmptyProductCommand extends Command
             }
         });
 
+        $date = Carbon::now();
         $writer = new Xlsx($spreadsheet);
-        $writer->save(Storage::path('Товары без описания ' . $date->format('d-m-Y') . '.xlsx'));
+        $writer->save(Storage::path("Товары без описания {$date->format('d-m-Y')}.xlsx"));
     }
 
     private function photos($hasPhotos = false): void
@@ -126,7 +126,7 @@ class EmptyProductCommand extends Command
             $sheet->setCellValue('B' . ($i + 2), $product->name);
             $sheet->setCellValue('C' . ($i + 2), route('catalog.product', ['product' => $product]));
         }
-
+        
         if ($hasPhotos) $fileName = 'Товары с фото ' . $date->format('d-m-Y') . '.xlsx';
         else $fileName = 'Товары без фото ' . $date->format('d-m-Y') . '.xlsx';
 

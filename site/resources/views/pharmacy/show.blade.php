@@ -19,7 +19,7 @@
             @endif
 
             <h5><b>Режим работы:</b></h5>
-            <span>{!! \App\Helper::formatSchedule($store->schedule, true) !!}</span>
+            <span>{!! \App\Helper::formatSchedule($store->schedule->toArray(), true) !!}</span>
 
             <h5><b>Доставка:</b></h5>
             <span>{{ $store->delivery ? 'Есть' : 'Нет' }}</span>
@@ -38,7 +38,7 @@
     $coordinates = [];
     if ($store->lat and $store->lon) {
         $mapInfo[] = [$store->name, $store->phone];
-        $coordinates[] = [$store->lat, $store->lon];
+        $coordinates[] = $store->location->coordinate;
     }
 @endphp
 

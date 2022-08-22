@@ -16,27 +16,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
- * @property int $user_id
- * @property string $store_id
  * @property int $payment_type
  * @property int $delivery_type
  * @property float $cost
- * @property string $status
- * @property string|null $note
- * @property string|null $cancel_reason
- * @property string|null $sber_id
- * @property string|null $yandex_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property Status $status
+ * @property ?string $note
+ * @property ?string $cancel_reason
+ * @property ?string $sber_id
+ * @property ?string $yandex_id
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property ?Carbon $deleted_at
  *
- * @property Delivery $delivery
- * @property Store $store
  * @property User $user
+ * @property OrderDelivery $orderDelivery
+ * @property ?Store $store
  *
  * @property Collection<Status> $statuses
  * @property Collection<OrderItem> $items
- * @property Collection<Archive> $archives
  *
  * @property Exception $lastException
  * @property Collection<Exception> $exceptions
@@ -147,8 +144,8 @@ class Order extends Model
     public function isPay(): bool
     {
         return $this->inStatus(Status::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
-            return $status->equal(Status::STATUS_PAID) and $status->state === Status::STATE_SUCCESS;
-        });
+                return $status->equal(Status::STATUS_PAID) and $status->state === Status::STATE_SUCCESS;
+            });
     }
 
     public function isSend(): bool

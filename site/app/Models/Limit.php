@@ -8,19 +8,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property string $ip
- * @property int $user_id
  * @property int $limit
  * @property int $requests
- * @property Carbon|null $expires
- * @property Carbon|null $last_request
+ * @property ?Carbon $expires
+ * @property ?Carbon $last_request
  *
- * @property User|null $user
+ * @property ?User $user
  */
 class Limit extends Model
 {
     public $timestamps = false;
     public $incrementing = false;
 
+    protected $keyType = 'string';
     protected $primaryKey = 'ip';
     protected $casts = [
         'expires' => 'datetime',

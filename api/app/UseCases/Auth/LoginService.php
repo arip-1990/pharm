@@ -24,19 +24,18 @@ class LoginService
         $url = config('data.loyalty.test.url.lk') . '/Identity/AdvancedPhoneEmailLogin';
         $partnerId = config('data.loyalty.test.partner_id');
         $data = [
-            'PhoneOrEmail' => $request->get('login'),
+            'PhoneOrEmail' => '+' . $request->get('login'),
             'Password' => $request->get('password'),
             'PartnerId' => $partnerId
         ];
 
         $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
-
         if ($response->getStatusCode() !== 200)
             throw new \DomainException($response->getBody()->getContents());
 
         $data = json_decode($response->getBody());
         if (!$user = User::query()->find($data['Id']))
-            throw new \DomainException('Пользователя не найден');
+            throw new \DomainException('Пользователь не найден');
 
         $user->update(['session' => $data['SessionId']]);
         Auth::login($user);

@@ -18,7 +18,7 @@
                         <tbody>
                         <tr>
                             <th scope="row">ФИО</th>
-                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->first_name }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Почта</th>

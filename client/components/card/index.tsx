@@ -2,10 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { IProduct } from "../../models/IProduct";
 import defaultImage from "../../assets/images/default.png";
-import { useLocalStorage } from "react-use-storage";
 import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
 import styles from "./Card.module.scss";
 import { ICart } from "../../models/ICart";
+import { useLocalStorage } from "react-use-storage";
 
 const isRecipe = (recipe: boolean) => {
   const classess = [styles.card_mod];
@@ -21,17 +21,21 @@ const isRecipe = (recipe: boolean) => {
   );
 };
 
-const isFavorite = (id: string) => {
+const isFavorite = (product: IProduct) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  const [favorites, setFavorites] = useLocalStorage<string[]>("favorites", []);
+  const [favorites, setFavorites] = useLocalStorage<IProduct[]>(
+    "favorites",
+    []
+  );
 
   useEffect(() => {
-    setIsFavorite(favorites.includes(id));
+    setIsFavorite(favorites.some((item) => item.id === product.id));
   }, [favorites]);
 
   const handleFavorite = useCallback(() => {
-    if (isFavorite) setFavorites(favorites.filter((item) => item !== id));
-    else setFavorites([...favorites, id]);
+    if (isFavorite)
+      setFavorites(favorites.filter((item) => item.id !== product.id));
+    else setFavorites([...favorites, product]);
   }, [isFavorite]);
 
   return (
@@ -82,7 +86,7 @@ const Card: FC<Props> = ({ product }) => {
         />
       </div>
 
-      {isFavorite(product.id)}
+      {isFavorite(product)}
 
       <div className={styles.card_body}>
         <h6>

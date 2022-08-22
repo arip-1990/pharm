@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property string $store_id
- * @property string $product_id
  * @property float $price
  * @property int $quantity
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
  * @property Store $store
  * @property Product $product
@@ -21,8 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Offer extends Model
 {
-    public $timestamps = false;
-
     public function edit(float $price, int $quantity): void
     {
         $this->price = $price;
@@ -57,8 +56,8 @@ class Offer extends Model
     public function scopeWhereCity(Builder $query, string $city): Builder
     {
         return $query->join('stores', 'offers.store_id', '=', 'stores.id')
-            ->where('status', Store::STATUS_ACTIVE)
-            ->where('stores.address', 'like', $city . '%');
+            ->where('stores.status', true)
+            ->where('stores.name', 'like', '%' . $city . '%');
     }
 
     public function scopeWhereInMultiple(Builder $query, array $columns, array $values): Builder

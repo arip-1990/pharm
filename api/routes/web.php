@@ -24,14 +24,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
+//Route::get('/test', function () {
 //    $service = new \App\UseCases\PosService();
-//    $data = $service->getBalance('79289844468');
+//    $data = $service->createCard(\App\Models\User::query()->find('f629f99e-8355-46db-8bc2-6acaeb843774'));
+//    dd($data);
+//});
+
+Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
+    Route::post('/feed', [FeedController::class, 'handle']);
+    Route::post('/order', [Order\UpdateController::class, 'handle']);
 });
 
-Route::prefix('1c')->group(function () {
-    Route::get('/feed', [FeedController::class, 'handle']);
-    Route::post('/order', [Order\UpdateController::class, 'handle'])->middleware('auth.basic.once');
+Route::prefix('order')->group(function () {
+    Route::post('/', [Order\CheckoutController::class, 'handle']);
 });
 
 Route::post('/pay', [PayController::class, 'handle']);
@@ -94,6 +99,7 @@ Route::prefix('offer')->group(function () {
 
 Route::post('/login', [Auth\LoginController::class, 'handle']);
 Route::post('/register', [Auth\RegisterController::class, 'handle']);
+Route::post('/checkSms', [Auth\VerifyPhoneController::class, 'handle']);
 
 Route::prefix('checkout')->group(function () {
     Route::get('/', [Order\Checkout\IndexController::class, 'handle']);
@@ -107,7 +113,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('order')->group(function () {
         Route::get('/', [Order\IndexController::class, 'index']);
     });
-
-
 });
 

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Kalnoy\Nestedset\NodeTrait;
@@ -12,12 +14,15 @@ use Kalnoy\Nestedset\NodeTrait;
  * @property int $id
  * @property string $name
  * @property string $slug
- * @property string $description
- * @property int|null $parent_id
+ * @property string|null $description
+ * @property int $sort
+ * @property ?string $picture
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
  *
- * @property Category $parent
- * @property Category[] $children
- * @property Attribute[] $attributes
+ * @property ?Category $parent
+ * @property Collection<Category> $children
+ * @property Collection<Attribute> $attributes
  */
 class Category extends Model
 {

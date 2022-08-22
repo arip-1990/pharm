@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Catalog;
 
-use App\Mail\Order\CreateOrder;
 use App\Models\CartItem;
 use App\Models\Offer;
 use App\Models\Order;
@@ -16,7 +15,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
 
 class CheckoutController extends Controller
 {
@@ -63,7 +61,7 @@ class CheckoutController extends Controller
         $order = $this->orderService->checkout($request);
 
         if ((int)$request->get('payment') === Order::PAYMENT_TYPE_SBER) {
-            return redirect($this->orderService->paymentSberbank($order, route('checkout.finish', $order, true)));
+            return redirect($this->orderService->paymentSber($order, route('checkout.finish', $order, true)));
         }
 
         return redirect()->route('checkout.finish', $order);

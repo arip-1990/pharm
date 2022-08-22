@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
+use App\Models\City;
 use App\UseCases\CartService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -22,10 +22,10 @@ class Controller extends BaseController
     {
         $this->cartService = new CartService();
         try {
-            $this->city = Cookie::get('city', config('data.city')[0]);
+            $this->city = Cookie::get('city', City::query()->find(1)?->name);
         }
         catch (\Exception $exception) {
-            $this->city = config('data.city')[0];
+            $this->city = City::query()->find(1)?->name;
         }
     }
 
