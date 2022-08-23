@@ -203,7 +203,7 @@ services:
       SESSION_LIFETIME: 120
       SESSION_DOMAIN: '.xn--12080-6ve4g.xn--p1ai'
       SANCTUM_STATEFUL_DOMAINS: '*.xn--12080-6ve4g.xn--p1ai'
-      CORS_ORIGIN: https://panel.xn--12080-6ve4g.xn--p1ai
+      CORS_ORIGIN: 'https://panel.xn--12080-6ve4g.xn--p1ai|https://test.xn--12080-6ve4g.xn--p1ai'
       REDIS_HOST: redis
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.mail.ru
@@ -223,7 +223,7 @@ services:
         parallelism: 1
         delay: 5s
 
-  site-migration:
+  api-migration:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       DB_CONNECTION: pgsql

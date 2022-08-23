@@ -30,14 +30,14 @@ class StoreCommand extends Command
                     'name' => (string)$item->title,
                     'slug' => SlugService::createSlug(Store::class, 'slug', (string)$item->title),
                     'phone' => (string)$item->phone ?: null,
-                    'address' => (string)$item->address ?: null,
-                    'lon' => (string)$cord->lon ?: null,
-                    'lat' => (string)$cord->lat ?: null,
+//                    'address' => (string)$item->address ?: null,
+//                    'lon' => (string)$cord->lon ?: null,
+//                    'lat' => (string)$cord->lat ?: null,
                     'schedule' => json_encode($schedules, JSON_UNESCAPED_UNICODE)
                 ];
             }
 
-            Store::query()->upsert($fields, 'id', ['name', 'slug', 'phone', 'lon', 'lat', 'schedule']);
+            Store::query()->upsert($fields, 'id', ['name', 'slug', 'phone', 'schedule']);
         }
         catch (\RuntimeException $e) {
             $this->error($e->getMessage());

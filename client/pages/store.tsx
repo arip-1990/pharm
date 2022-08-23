@@ -1,9 +1,9 @@
 import { GetServerSideProps } from "next";
 import { Map, YMaps, Clusterer, Placemark } from "@pbe/react-yandex-maps";
-import { FC, useState, useCallback } from "react";
+import { FC, useCallback } from "react";
 import Layout from "../components/layout";
 import Page from "../components/page";
-import Paginate from "../components/Paginate";
+import Pagination from "../components/pagination";
 import Link from "next/link";
 import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
@@ -55,17 +55,17 @@ const Store: FC = () => {
                 gridSize: 80,
               }}
             >
-              {/* {data?.data.map((item) => (
+              {data?.data.map((item) => (
                 <Placemark
                   key={item.id}
-                  geometry={item.coordinate}
+                  geometry={item.location.coordinate}
                   properties={{
                     balloonContentHeader: item.name,
                     balloonContentBody: item.phone,
                   }}
                   options={{ preset: "islands#violetIcon" }}
                 />
-              ))} */}
+              ))}
             </Clusterer>
           </Map>
         </YMaps>
@@ -83,17 +83,17 @@ const Store: FC = () => {
               {item.phone}
             </div>
             <div className="col-12 col-lg-2 d-flex justify-content-end position-relative">
-              <Link href={`store/${item.slug}`}>
+              <Link href={`/store/${item.slug}`}>
                 <a className="btn btn-sm btn-primary">Посмотреть</a>
               </Link>
             </div>
           </div>
         ))}
 
-        <Paginate
-          current={data?.meta.current_page}
-          total={data?.meta.total}
-          pageSize={data.meta.per_page}
+        <Pagination
+          currentPage={data?.meta.current_page}
+          totalCount={data?.meta.total}
+          pageSize={data?.meta.per_page}
         />
       </Page>
     </Layout>
@@ -104,6 +104,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
   (store) => async ({ req, params }) => {
     if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
     const page = Number(params?.page) || 1;
+
     store.dispatch(fetchStores.initiate(page));
 
     await Promise.all(getRunningOperationPromises());

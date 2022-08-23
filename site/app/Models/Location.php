@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Location extends Model
 {
+    protected $fillable = ['coordinate', 'city_id', 'street_id'];
+
+    protected $casts = [
+        'coordinate' => AsCollection::class
+    ];
+
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);

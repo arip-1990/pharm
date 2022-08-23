@@ -21,8 +21,6 @@ const Breadcrumbs: FC<Props> = ({
 }) => {
   const router = useRouter();
 
-  console.log(router.query);
-
   const breadcrumbs = useMemo(() => {
     const asPathNestedRoutes = generatePathParts(router.asPath);
     const pathnameNestedRoutes = generatePathParts(router.pathname);

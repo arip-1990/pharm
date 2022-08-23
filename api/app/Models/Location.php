@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property Collection $coordinate
+ * @property ?string $prefix
+ * @property ?int $type
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
@@ -18,6 +20,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Location extends Model
 {
+    const TYPE_AVENUE = 0;
+    const TYPE_STREET = 1;
+    const TYPE_LANE = 2;
+
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);

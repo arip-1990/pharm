@@ -24,7 +24,7 @@
                             <h4>Точка самовывоза</h4>
                             <p><b class="text-secondary">Адрес самовывоза: </b>{{ $order->store->address }}</p>
                             <p><b class="text-secondary">Мобильный телефон: </b>{{ \App\Helper::formatPhone($order->store->phone) }}</p>
-                            <p><b class="text-secondary">Время работы: </b>{!! \App\Helper::formatSchedule($order->store->schedule) !!}</p>
+                            <p><b class="text-secondary">Время работы: </b>{!! \App\Helper::formatSchedule($order->store->schedule->toArray()) !!}</p>
                             <p><b class="text-secondary">Способ оплаты: </b>{{ $order->payment_type === \App\Models\Order::PAYMENT_TYPE_SBER ? 'картой' : 'наличными' }}</p>
                             <p><b class="text-secondary">Сумма заказа: </b>{{ $order->getTotalCost() }}&#8381;</p>
                         </li>

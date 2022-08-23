@@ -6,7 +6,7 @@ import { ICategory } from "../../models/ICategory";
 import saleImage from "../../assets/images/sale-icon.png";
 import Image from "next/image";
 import Link from "next/link";
-import Paginate from "../../components/Paginate";
+import Pagination from "../../components/pagination";
 import { useRouter } from "next/router";
 import { wrapper } from "../../lib/store";
 import {
@@ -92,9 +92,10 @@ const Catalog: FC = () => {
               </div>
               <div className="row mt-3">
                 <div className="col">
-                  <Paginate
-                    current={data?.meta.current_page}
-                    total={data?.meta.total}
+                  <Pagination
+                    currentPage={data?.meta.current_page}
+                    totalCount={data?.meta.total}
+                    pageSize={data?.meta.per_page}
                   />
                 </div>
               </div>

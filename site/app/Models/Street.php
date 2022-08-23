@@ -24,6 +24,8 @@ class Street extends Model
     const TYPE_STREET = 1;
     const TYPE_LANE = 2;
 
+    protected $fillable = ['name', 'house', 'prefix', 'type'];
+
     public function locations(): HasMany
     {
         return $this->hasMany(Location::class);

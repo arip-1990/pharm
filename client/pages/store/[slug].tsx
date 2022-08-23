@@ -34,7 +34,7 @@ const Store: FC = () => {
               width="100%"
               height={400}
               defaultState={{
-                center: [0, 0], //data?.coordinate,
+                center: data.location.coordinate,
                 zoom: 17,
                 behaviors: ["default", "scrollZoom"],
               }}
@@ -46,14 +46,14 @@ const Store: FC = () => {
                   gridSize: 80,
                 }}
               >
-                {/* <Placemark
-                  geometry={data?.coordinate}
+                <Placemark
+                  geometry={data.location.coordinate}
                   properties={{
                     balloonContentHeader: data?.name,
                     balloonContentBody: data?.phone,
                   }}
                   options={{ preset: "islands#violetIcon" }}
-                /> */}
+                />
               </Clusterer>
             </Map>
           </YMaps>

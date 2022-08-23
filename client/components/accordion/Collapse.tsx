@@ -11,9 +11,6 @@ const AccordionCollapse = forwardRef<HTMLDivElement, Props>(
   ({ className, children, eventKey, ...props }, ref) => {
     const { activeEventKey } = useContext(AccordionContext);
 
-    console.log(activeEventKey);
-    console.log(eventKey);
-
     return (
       <div
         ref={ref}

@@ -1,4 +1,4 @@
-import { FC, MouseEvent, useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 
 type Props = {
   src: string;
@@ -8,16 +8,12 @@ type Props = {
 const Zoom: FC<Props> = ({ src, alt }) => {
   const zoomRef = useRef<HTMLElement>(null);
 
-  const moveHandle = (event: MouseEvent<HTMLElement>) => {
-    const zoomer = event.currentTarget;
+  const moveHandle = (event: MouseEvent) => {
+    const zoomer = event.target as HTMLElement;
     let offsetX = 0,
       offsetY = 0;
-    event.offsetX
-      ? (offsetX = event.offsetX)
-      : (offsetX = event.touches[0].pageX);
-    event.offsetY
-      ? (offsetY = event.offsetY)
-      : (offsetX = event.touches[0].pageX);
+    event.offsetX ? (offsetX = event.offsetX) : (offsetX = event.pageX); // (offsetX = event.touches[0].pageX);
+    event.offsetY ? (offsetY = event.offsetY) : (offsetX = event.pageX); // (offsetX = event.touches[0].pageX);
     zoomer.style.backgroundPosition =
       (offsetX / zoomer.offsetWidth) * 100 +
       "% " +
@@ -25,9 +21,10 @@ const Zoom: FC<Props> = ({ src, alt }) => {
       "%";
   };
 
-  const leaveHandle = () =>
-    (zoomRef.current.style =
-      "background-image: " + zoomRef.current.style.backgroundImage);
+  const leaveHandle = () => {
+    zoomRef.current.style.backgroundImage =
+      "zoomRef.current.style.backgroundImage";
+  };
 
   useEffect(() => {
     if (zoomRef.current) {

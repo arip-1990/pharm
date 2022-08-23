@@ -21,9 +21,9 @@ class CheckoutRequest extends FormRequest
             'city' => 'required_if:delivery,1',
             'street' => 'required_if:delivery,1',
             'house' => 'required_if:delivery,1',
-            'entrance' => 'nullable|number',
-            'floor' => 'nullable|number',
-            'apartment' => 'nullable|number',
+            'entrance' => 'nullable|numeric',
+            'floor' => 'nullable|numeric',
+            'apartment' => 'nullable|numeric',
             'service_to_door' => 'boolean',
         ];
     }

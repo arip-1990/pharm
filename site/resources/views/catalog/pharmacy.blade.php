@@ -24,7 +24,7 @@
                             {{ $price }} &#8381;
                         </p>
                         <p class="col-2 text-end">
-                            <a href="{{ route('checkout', ['store'=> $store['store']->id]) }}" class="btn btn-primary">Выбрать аптеку</a>
+                            <a href="{{ route('checkout', ['store'=> $store['store']->slug]) }}" class="btn btn-primary">Выбрать аптеку</a>
                         </p>
                     </div>
                     <div id="collapse-{{ $store['store']->id }}" class="collapse" data-bs-parent=".accordion">

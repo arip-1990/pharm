@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { FC, MouseEvent } from "react";
-import { useSanctum } from "react-sanctum";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import styles from "./Sidebar.module.scss";
+import { useAuth } from "../../hooks/useAuth";
 
 type Props = {
   className?: string;
@@ -11,13 +11,13 @@ type Props = {
 
 const Sidebar: FC<Props> = ({ className }) => {
   const router = useRouter();
-  const { signOut } = useSanctum();
+  const { logout } = useAuth();
   let classes = [];
   if (className) classes = classes.concat(className.split(" "));
 
   const handleSignOut = (e: MouseEvent) => {
     e.preventDefault();
-    signOut();
+    logout();
   };
 
   return (

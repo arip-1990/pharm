@@ -1,9 +1,9 @@
-import { ElementType, forwardRef, HTMLAttributes, useContext } from "react";
+import { forwardRef, HTMLAttributes, useContext } from "react";
 import { AccordionItemContext } from "./Context";
 import AccordionCollapse from "./Collapse";
 
 interface Props extends HTMLAttributes<HTMLElement> {
-  as?: ElementType;
+  as?: any;
 }
 
 const Body = forwardRef<HTMLElement, Props>(

@@ -4,11 +4,13 @@ namespace App\UseCases\Order;
 
 use App\Models\CartItem;
 use App\Models\Delivery;
+use App\Models\Location;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Store;
 use App\Http\Requests\Catalog\CheckoutRequest;
+use App\Models\Street;
 use App\UseCases\CartService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -46,17 +48,25 @@ class CheckoutService
             $order->items()->saveMany($items);
 
         if ($request->get('delivery') == Order::DELIVERY_TYPE_COURIER) {
+            $tmpStreet = trim(str_ireplace(['ул', 'ул.', 'улица', 'улица.', 'пр', 'пр.', 'проспект', 'проспект.'], '', $request->get('street')));
+            $house = trim($request->get('house'));
+
+            $street = Street::query()->where('name', 'like', $tmpStreet)->where('house', $house)->first();
+            if (!$street) {
+                $street = Street::query()->create(['name' => $tmpStreet, 'house' => $house, 'prefix' => 'ул', 'type' => Street::TYPE_STREET]);
+            }
+            $location = Location::query()->firstOrCreate(['city_id' => $request->get('city'), 'street_id' => $street->id]);
+
             $delivery = Delivery::create(
-                $request->get('city'),
                 [
-                    'street' => $request->get('street'),
-                    'house' => $request->get('house'),
                     'entrance' => $request->get('entrance'),
                     'floor' => $request->get('floor'),
                     'apartment' => $request->get('apartment')
                 ],
                 $request->get('service_to_door', false)
             );
+
+            $delivery->location()->associate($location);
             $order->delivery()->save($delivery);
         }
 

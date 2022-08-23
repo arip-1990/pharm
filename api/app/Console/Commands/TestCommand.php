@@ -22,18 +22,6 @@ class TestCommand extends Command
 
     public function handle(): int
     {
-//        try {
-//            Order::all()->each(function (Order $order) {
-//                $order->statuses->each(function (Status $status) {
-//                    $status->state = Status::STATE_SUCCESS;
-//                });
-//                $order->save();
-//            });
-//        }
-//        catch (\RuntimeException $e) {
-//            $this->error($e->getMessage());
-//        }
-
         $this->info('Процесс завершена!');
         return 0;
     }

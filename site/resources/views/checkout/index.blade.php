@@ -5,6 +5,7 @@
 @section('content')
     {{ \Diglactic\Breadcrumbs\Breadcrumbs::render('checkout', $store) }}
 
+{{--    @dd($errors)--}}
     <h1 class="text-center">Оформление заказа</h1>
     <form method="post" class="row row-cols-1 checkout">
         @csrf
@@ -46,12 +47,12 @@
                             <div class="col-sm-3 offset-xl-1">
                                 <label for="city" class="form-label">Город</label>
                                 <select class="form-select" id="city" name="city" aria-label="Город">
-                                    @php $city = Illuminate\Support\Facades\Cookie::get('city', config('data.city')[0]) @endphp
-                                    @foreach (config('data.city') as $item)
-                                        @if($city == $item)
-                                            <option value="{{$item}}" selected>{{$item}}</option>
+                                    @php $city = Illuminate\Support\Facades\Cookie::get('city', \App\Models\City::query()->find(1)->name) @endphp
+                                    @foreach (\App\Models\City::query()->whereNull('parent_id')->get() as $item)
+                                        @if($city === $item->name)
+                                            <option value="{{$item->id}}" selected>{{$item->name}}</option>
                                         @else
-                                            <option value="{{$item}}">{{$item}}</option>
+                                            <option value="{{$item->id}}">{{$item->name}}</option>
                                         @endif
                                     @endforeach
                                 </select>

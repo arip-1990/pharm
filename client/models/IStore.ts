@@ -1,3 +1,5 @@
+import { ILocation } from "./ILocation";
+
 export interface IStore {
   id: string;
   slug: string;
@@ -7,4 +9,5 @@ export interface IStore {
   route?: string;
   delivery: boolean;
   status: boolean;
+  location: ILocation;
 }

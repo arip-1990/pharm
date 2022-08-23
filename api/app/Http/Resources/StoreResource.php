@@ -28,6 +28,7 @@ class StoreResource extends JsonResource
             'route' => $this->route,
             'delivery' => $this->delivery,
             'status' => $this->status,
+            'location' => new LocationResource($this->location)
         ];
     }
 }

@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import {
-  ElementType,
   EventHandler,
   forwardRef,
   HTMLAttributes,
@@ -19,7 +18,7 @@ import styles from "./Accordion.module.scss";
 type CustomEventHandler = EventHandler<SyntheticEvent>;
 
 interface Props extends HTMLAttributes<HTMLElement> {
-  as?: ElementType;
+  as?: any;
   children?: ReactNode;
   icon?: "left" | "right";
   iconType?: "plus" | "arrow";
@@ -67,8 +66,8 @@ const Header = forwardRef<HTMLElement, Props>(
           !isAccordionItemSelected(activeEventKey, eventKey) &&
             styles.collapsed,
           {
-            ".accordion-item_header__left-icon": icon === "left",
-            ".accordion-item_header__icon-plus": iconType === "plus",
+            "accordion-item_header__left-icon": icon === "left",
+            "accordion-item_header__icon-plus": iconType === "plus",
           }
         )}
       />

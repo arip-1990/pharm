@@ -36,9 +36,9 @@
 @php
     $mapInfo = [];
     $coordinates = [];
-    if ($store->lat and $store->lon) {
+    if ($store->location->coordinate->count()) {
         $mapInfo[] = [$store->name, $store->phone];
-        $coordinates[] = $store->location->coordinate;
+        $coordinates[] = $store->location->coordinate->toArray();
     }
 @endphp
 
@@ -48,7 +48,7 @@
         ymaps.ready(function () {
             const map_info = {!! json_encode($mapInfo, JSON_UNESCAPED_UNICODE) !!};
             const myMap = new ymaps.Map('map', {
-                center: [<?= $store->lat ?>, <?= $store->lon ?>],
+                center: [<?= $store->location->coordinate[0] ?? null ?>, <?= $store->location->coordinate[1] ?? null ?>],
                 zoom: 17,
                 behaviors: ['default', 'scrollZoom']
             }, {
@@ -66,7 +66,7 @@
                 balloonContentBody: map_info[index][1],
             }),
             getPointOptions = () => ({preset: 'islands#violetIcon'}),
-            points = {!! json_encode($coordinates, JSON_UNESCAPED_UNICODE) !!},
+            points = {!! json_encode($coordinates) !!},
             geoObjects = [];
 
             for(let i = 0, len = points.length; i < len; i++) {

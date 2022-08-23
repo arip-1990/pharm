@@ -27,7 +27,7 @@ module.exports = {
   },
 
   images: {
-    domains: ['api.pharm.test'],
+    domains: ['api.pharm.test', 'api.120на80.рф'],
     // formats: ['image/webp', 'image/jpeg', 'image/png', 'image/gif'],
   },
 };

@@ -32,8 +32,8 @@
                 </div>
 
                 @php
-                    if ($store->lat and $store->lon) {
-                        $cordinates[] = $store->location->coordinate;
+                    if ($store->location->coordinate->count()) {
+                        $cordinates[] = $store->location->coordinate->toArray();
                         $mapInfo[] = [$store->name, $store->phone];
                     }
                 @endphp

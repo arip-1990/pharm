@@ -123,6 +123,7 @@ build-bot:
 build-api:
 	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-api:${IMAGE_TAG} api
 	docker --log-level=debug build --pull --file=api/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG} api
+	docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG} api
 
 build-site:
 	docker --log-level=debug build --pull --file=site/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-site:${IMAGE_TAG} site
@@ -133,7 +134,8 @@ build-site:
 push: push-client push-panel push-parser push-bot push-api push-site
 
 push-client:
-	docker push ${REGISTRY}/pharm-panel:${IMAGE_TAG}
+	docker push ${REGISTRY}/pharm-client:${IMAGE_TAG}
+	docker push ${REGISTRY}/pharm-client-node:${IMAGE_TAG}
 
 push-panel:
 	docker push ${REGISTRY}/pharm-panel:${IMAGE_TAG}
@@ -147,6 +149,7 @@ push-bot:
 push-api:
 	docker push ${REGISTRY}/pharm-api:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG}
+	docker push ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
 
 push-site:
 	docker push ${REGISTRY}/pharm-site:${IMAGE_TAG}

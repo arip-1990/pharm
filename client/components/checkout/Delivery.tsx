@@ -1,36 +1,55 @@
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, useCallback, useState } from "react";
 import { useCookies } from "react-cookie";
 import classNames from "classnames";
 import Accordion from "../accordion";
 
 type Props = {
   recipe: boolean;
-  defaultValue?: number;
+  defaultValue?: string;
+  deliveryValues?: {
+    city?: string;
+    street?: string;
+    house?: string;
+    entrance?: string;
+    floor?: string;
+    apt?: string;
+    service_to_door?: boolean;
+  };
+  onChange?: (e: any) => void;
 };
 
-const Delivery: FC<Props> = ({ recipe, defaultValue = 0 }) => {
+const Delivery: FC<Props> = ({
+  recipe,
+  defaultValue = "0",
+  deliveryValues,
+  onChange,
+}) => {
   const [{ city }] = useCookies(["city"]);
-  const [value, setValue] = useState<number>(defaultValue);
+  const [value, setValue] = useState<string>(defaultValue);
 
-  const handleChecked = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(e.target.value));
-  };
+  const handleChecked = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setValue(e.target.value);
+      onChange(e);
+    },
+    [defaultValue]
+  );
 
   return (
-    <Accordion defaultActiveKey={defaultValue.toString()}>
+    <Accordion activeKey={value}>
       <Accordion.Item eventKey="0">
         <div className="row">
           <div className="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
             <Accordion.Header
               as="label"
-              className={classNames("radio-button", { active: value === 0 })}
+              className={classNames("radio-button", { active: value === "0" })}
             >
               <input
                 type="radio"
                 name="delivery"
                 className="radio-button_pin"
-                value={0}
-                checked={value === 0}
+                value="0"
+                checked={value === "0"}
                 onChange={handleChecked}
               />
               <p className="radio-button_text">
@@ -50,14 +69,14 @@ const Delivery: FC<Props> = ({ recipe, defaultValue = 0 }) => {
           <div className="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
             <Accordion.Header
               as="label"
-              className={classNames("radio-button", { active: value === 1 })}
+              className={classNames("radio-button", { active: value === "1" })}
             >
               <input
                 type="radio"
                 name="delivery"
                 className="radio-button_pin"
-                value={1}
-                checked={value === 1}
+                value="1"
+                checked={value === "1"}
                 onChange={handleChecked}
                 // disabled={recipe}
               />
@@ -83,6 +102,8 @@ const Delivery: FC<Props> = ({ recipe, defaultValue = 0 }) => {
                   className="form-control"
                   id="city"
                   defaultValue={city}
+                  value={deliveryValues.city}
+                  // onChange={onChange}
                   disabled
                 />
               </div>
@@ -95,7 +116,8 @@ const Delivery: FC<Props> = ({ recipe, defaultValue = 0 }) => {
                   className="form-control"
                   id="street"
                   placeholder="Улица"
-                  defaultValue="{{ old('street') }}"
+                  value={deliveryValues.street}
+                  onChange={onChange}
                 />
                 {/* <p style={{fontSize: '0.75rem', fontWeight: 300}} className="text-danger">Поле обязательно для заполнения.</p> */}
               </div>
@@ -108,7 +130,8 @@ const Delivery: FC<Props> = ({ recipe, defaultValue = 0 }) => {
                   className="form-control"
                   id="house"
                   placeholder="Дом"
-                  defaultValue="{{ old('house') }}"
+                  value={deliveryValues.house}
+                  onChange={onChange}
                 />
                 {/* <p style={{fontSize: '0.75rem', fontWeight: 300}} className="text-danger">Поле обязательно для заполнения.</p> */}
               </div>
@@ -123,7 +146,8 @@ const Delivery: FC<Props> = ({ recipe, defaultValue = 0 }) => {
                   className="form-control"
                   id="entrance"
                   placeholder="Подъезд"
-                  defaultValue="{{ old('entrance') }}"
+                  value={deliveryValues.entrance}
+                  onChange={onChange}
                 />
               </div>
               <div className="col-sm-4">
@@ -135,19 +159,21 @@ const Delivery: FC<Props> = ({ recipe, defaultValue = 0 }) => {
                   className="form-control"
                   id="floor"
                   placeholder="Этаж"
-                  defaultValue="{{ old('floor') }}"
+                  value={deliveryValues.floor}
+                  onChange={onChange}
                 />
               </div>
               <div className="col-sm-3">
-                <label htmlFor="apartment" className="form-label">
+                <label htmlFor="apt" className="form-label">
                   Квартира
                 </label>
                 <input
-                  name="apartment"
+                  name="apt"
                   className="form-control"
-                  id="apartment"
+                  id="apt"
                   placeholder="Квартира"
-                  defaultValue="{{ old('apartment') }}"
+                  value={deliveryValues.apt}
+                  onChange={onChange}
                 />
               </div>
             </div>
@@ -157,10 +183,14 @@ const Delivery: FC<Props> = ({ recipe, defaultValue = 0 }) => {
                   className="form-check-input"
                   type="checkbox"
                   name="service_to_door"
-                  defaultValue="{{ old('service_to_door') }}"
                   id="service_to_door"
+                  checked={deliveryValues.service_to_door}
+                  onChange={onChange}
                 />
-                <label className="form-check-label" htmlFor="service_to_door">
+                <label
+                  className="form-check-label ms-2"
+                  htmlFor="service_to_door"
+                >
                   Доставка до двери
                 </label>
               </div>

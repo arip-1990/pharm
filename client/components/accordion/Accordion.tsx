@@ -1,4 +1,4 @@
-import { HTMLAttributes, forwardRef, useMemo, ElementType } from "react";
+import { HTMLAttributes, forwardRef, useMemo } from "react";
 import styles from "./Accordion.module.scss";
 import {
   AccordionContext,
@@ -8,7 +8,7 @@ import {
 import { useUncontrolled } from "uncontrollable";
 
 interface Props extends Omit<HTMLAttributes<HTMLElement>, "onSelect"> {
-  as?: ElementType;
+  as?: any;
   activeKey?: AccordionEventKey;
   defaultActiveKey?: AccordionEventKey;
   onSelect?: AccordionSelectCallback;

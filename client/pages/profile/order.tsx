@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import Layout from "../../components/layout";
 import Sidebar from "../../components/sidebar";
 import BaseOrder from "../../components/profile/Order";
-import { useFetchOrdersQuery } from "../../services/orderService";
+import { useFetchOrdersQuery } from "../../lib/orderService";
 import Link from "next/link";
 
 const Order: FC = () => {

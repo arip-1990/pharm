@@ -12,8 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('house', 16)->nullable();
-            $table->string('prefix', 8)->nullable();
-            $table->tinyInteger('type', unsigned: true)->nullable();
             $table->timestamps();
         });
     }

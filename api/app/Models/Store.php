@@ -59,12 +59,6 @@ class Store extends Model
         return 'slug';
     }
 
-    public function setCoordinate(float $lon, float $lat): void
-    {
-        $this->lon = $lon;
-        $this->lat = $lat;
-    }
-
     public function activate(): void
     {
         if ($this->isActive())
