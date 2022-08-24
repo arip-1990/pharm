@@ -52,12 +52,12 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.panel.rule=Host(`test.xn--12080-6ve4g.xn--p1ai`)
-        - traefik.http.services.panel.loadBalancer.server.port=80
-        - traefik.http.routers.panel.middlewares=secure-headers
-        - traefik.http.routers.panel.entryPoints=https
-        - traefik.http.routers.panel.tls=true
-        - traefik.http.routers.panel.tls.certResolver=letsEncrypt
+        - traefik.http.routers.client.rule=Host(`test.xn--12080-6ve4g.xn--p1ai`)
+        - traefik.http.services.client.loadBalancer.server.port=80
+        - traefik.http.routers.client.middlewares=secure-headers
+        - traefik.http.routers.client.entryPoints=https
+        - traefik.http.routers.client.tls=true
+        - traefik.http.routers.client.tls.certResolver=letsEncrypt
       mode: replicated
       replicas: 1
       update_config:

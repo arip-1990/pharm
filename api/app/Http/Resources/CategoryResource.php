@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Category;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryResource extends JsonResource
 {
@@ -15,6 +16,7 @@ class CategoryResource extends JsonResource
             'parent' => $this->parent_id,
             'name' => $this->name,
             'slug' => $this->slug,
+            'picture' => $this->picture ? Storage::url('images/category/' . $this->picture) : null,
             'children' => CategoryResource::collection($this->children)
         ];
     }

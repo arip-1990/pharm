@@ -3,5 +3,6 @@ export interface ICategory {
     parent: number | null;
     name: string;
     slug: string;
+    picture: string | null;
     children: ICategory[];
 }

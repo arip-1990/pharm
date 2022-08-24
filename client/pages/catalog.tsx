@@ -4,7 +4,6 @@ import { FC } from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../models/ICategory";
 import saleImage from "../assets/images/sale-icon.png";
-import Image from "next/image";
 import Link from "next/link";
 import Pagination from "../components/pagination";
 import { wrapper } from "../lib/store";
@@ -21,14 +20,7 @@ const generateCategory = (category: ICategory) => {
     <li key={category.id}>
       <Link href={`/catalog/${category.slug}`}>
         <a>
-          {category.parent ? null : (
-            <Image
-              width={36}
-              height={36}
-              src={`/assets/images/category/cat_${category.id}.png`}
-              alt=""
-            />
-          )}
+          {category.picture && <img src={category.picture} alt="" />}
           {category.name}
         </a>
       </Link>
