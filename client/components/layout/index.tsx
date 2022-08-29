@@ -4,7 +4,7 @@ import Header from "./header";
 import Footer from "./footer";
 import bannerImage from "../../assets/images/banner.png";
 import Image from "next/image";
-import { useAlert } from "../../hooks/useAlert";
+import { NotificationContainer } from "react-notifications";
 
 type Props = {
   children?: ReactNode;
@@ -12,19 +12,11 @@ type Props = {
 };
 
 const Layout: FC<Props> = ({ children, banner }) => {
-  const { alerts } = useAlert();
-
   return (
     <>
       <Header />
 
-      <Container>
-        {alerts.map((alert) => (
-          <div className={`alert alert-${alert.type}`} role="alert">
-            {alert.message}
-          </div>
-        ))}
-      </Container>
+      <NotificationContainer />
 
       {banner ? (
         <Container fluid>

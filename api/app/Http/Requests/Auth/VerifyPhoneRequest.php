@@ -14,7 +14,14 @@ class VerifyPhoneRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'smsCode' => 'required|string|min:4',
+            'smsCode' => 'required|min:4',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'smsCode' => 'Код подтверждения'
         ];
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -19,9 +19,6 @@ class RegisterRequest extends FormRequest
             'phone' => 'required|unique:users|regex:/^7\d{10}$/',
             'birthDate' => 'required|date',
             'gender' => 'required|digits_between:0,2',
-            'password' => 'required|min:6|max:50',
-//            'agreeToTerms' => 'required|boolean',
-            'cardNumber' => 'nullable|max:20',
             'lastName' => 'nullable|max:50',
             'middleName' => 'nullable|max:50'
         ];
@@ -34,8 +31,6 @@ class RegisterRequest extends FormRequest
             'phone' => 'Телефон',
             'birthDate' => 'День рождения',
             'gender' => 'Пол',
-            'password' => 'Пароль',
-            'cardNumber' => 'Номер карты',
             'lastName' => 'Фамилия',
             'middleName' => 'Отчество'
         ];

@@ -52,7 +52,7 @@ const Auth: FC<Props> = ({ children }) => {
         await csrf();
 
         // Sign in.
-        await api.post("login", { login, password }, { maxRedirects: 0 });
+        await api.post("auth/login", { login, password }, { maxRedirects: 0 });
 
         // Fetch user.
         await revalidate();
@@ -66,7 +66,7 @@ const Auth: FC<Props> = ({ children }) => {
   const logout = () =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("logout");
+        await api.post("auth/logout");
         // Only sign out after the server has successfully responded.
         setAuthState({ user: null, isAuth: false });
         resolve();

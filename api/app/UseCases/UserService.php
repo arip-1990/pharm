@@ -2,6 +2,7 @@
 
 namespace App\UseCases;
 
+use App\Http\Requests\User\UpdatePasswordRequest;
 use App\Models\User;
 use GuzzleHttp\Client;
 
@@ -17,7 +18,7 @@ class UserService
         ]);
     }
 
-    public function userInfo(User $user): array
+    public function getInfo(User $user): array
     {
         $url = config('data.loyalty.test.url.lk') . '/Contact/Get';
         $data = [
@@ -26,36 +27,62 @@ class UserService
         ];
 
         $response = $this->client->get($url, ['query' => $data]);
-        if ($response->getStatusCode() !== 200)
-            throw new \DomainException($response->getBody()->getContents());
+        $data = json_decode($response->getBody(), true);
 
-        return json_decode($response->getBody(), true);
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
+        return $data;
     }
 
-    public function userUpdate(User $user, array $newData = []): string
+    public function updateInfo(User $user, array $newData = []): string
     {
         $url = config('data.loyalty.test.url.lk') . '/Contact/Update';
         $partnerId = config('data.loyalty.test.partner_id');
         $data = [
-            'MobilePhone' => '+' . ($newData['phone'] ?? $user->phone),
-            'EmailAddress' => $newData['email'] ?? $user->email,
-            'Firstname' => $newData['first_name'] ?? $user->first_name,
-            'Lastname' => $newData['last_name'] ?? $user->last_name,
-            'MiddleName' => $newData['middle_name'] ?? $user->middle_name,
-            'BirthDate' => $newData['birth_date'] ?? $user->birth_date,
-            'GenderCode' => $newData['gender'] ?? $user->gender,
-            'AllowNotification' => false,
-            'AllowEmail' => false,
-            'AllowSms' => false,
-            'AgreeToTerms' => true,
-            'PartnerId' => $partnerId
+            'Entity' => [
+                'Id' => $user->id,
+                'MobilePhone' => $user->phone,
+                'EmailAddress' => $newData['email'] ?? $user->email,
+                'Firstname' => $newData['firstName'] ?? $user->first_name,
+                'Lastname' => $newData['lastName'] ?? $user->last_name,
+                'MiddleName' => $newData['middleName'] ?? $user->middle_name,
+                'BirthDate' => $newData['birthDate'] ?? $user->birth_date?->format('Y-m-d'),
+                'GenderCode' => $newData['gender'] ?? $user->gender,
+                'MobilePhoneVerified' => true,
+                'AllowNotification' => false,
+                'AllowEmail' => false,
+                'AllowSms' => false,
+                'AgreeToTerms' => false,
+                'PartnerId' => $partnerId
+            ],
+            'SessionId' => $user->session ?? 'menageSessionId' // TODO replace
         ];
 
-        $response = $this->client->post($url, ['body' => json_encode(['parameter' => ['Entity' => $data]])]);
-        if ($response->getStatusCode() !== 200)
-            throw new \DomainException($response->getBody()->getContents());
+        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $data = json_decode($response->getBody(), true);
 
-        return json_decode($response->getBody(), true)['value'];
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
+        return $data['value'];
+    }
+
+    public function updatePassword(User $user, UpdatePasswordRequest $request): void
+    {
+        $url = config('data.loyalty.test.url.lk') . '/Identity/UpdatePassword';
+        $data = [
+            'id' => $user->id,
+            'sessionid' => $user->session,
+            'oldpassword' => $request->get('oldPassword'),
+            'password' => $request->get('password'),
+        ];
+
+        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $data = json_decode($response->getBody(), true);
+
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
     }
 
     public function setPassword(string $userId, string $password): void
@@ -69,7 +96,9 @@ class UserService
         ];
 
         $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $data = json_decode($response->getBody(), true);
+
         if ($response->getStatusCode() !== 200)
-            throw new \DomainException($response->getBody()->getContents());
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
     }
 }

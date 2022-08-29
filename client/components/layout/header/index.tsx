@@ -8,25 +8,21 @@ import cart from "../../../assets/images/cart.png";
 import { FC, MouseEvent, useEffect, useState } from "react";
 import { Login, Register, CheckSms } from "../../auth";
 import { SetCity } from "./SetCity";
-import axios from "axios";
 import { useAuth } from "../../../hooks/useAuth";
-import api from "../../../lib/api";
 import { ICart } from "../../../models/ICart";
 import { useLocalStorage } from "react-use-storage";
 import { IProduct } from "../../../models/IProduct";
-import { useAlert } from "../../../hooks/useAlert";
 
 const Header: FC = () => {
   const [loginType, setLoginType] = useState<"login" | "register" | "checkSms">(
     "login"
   );
   const [showModal, setShowModal] = useState<boolean>(false);
-  const { isAuth, login } = useAuth();
+  const { isAuth } = useAuth();
   const [carts] = useLocalStorage<ICart[]>("cart", []);
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
   const [totalCart, setTotalCart] = useState<number>(0);
   const [totalFavorite, setTotalFavorite] = useState<number>(0);
-  const { addAlert } = useAlert();
 
   useEffect(() => {
     let total = 0;
@@ -35,49 +31,20 @@ const Header: FC = () => {
     setTotalFavorite(favorites.length);
   }, [carts, favorites]);
 
-  const handleLogin = async (values: { login: string; password: string }) => {
-    try {
-      await login(values.login, values.password);
-    } catch (error) {
-      if (axios.isAxiosError(error)) console.log(error.response.data);
-      else console.log(error);
-    }
-
+  const handleLogin = (success: boolean) => {
     setShowModal(false);
   };
 
-  const handleRegister = async (values: {
-    cardNum: string;
-    lastName: string;
-    firstName: string;
-    middleName: string;
-    email: string;
-    phone: string;
-    birthDate: string;
-    gender: number;
-    password: string;
-    rule: number;
-  }) => {
-    try {
-      await api.post("register", { ...values });
+  const handleRegister = (success: boolean) => {
+    if (success) {
       setLoginType("checkSms");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error.response.data);
-        addAlert("danger", String(error.response.data));
-      } else console.log(error);
+    } else {
       setShowModal(false);
     }
   };
 
-  const handleCheckSms = async (values: { smsCode: string }) => {
-    try {
-      await api.post("checkSms", { ...values });
-      setShowModal(false);
-    } catch (error) {
-      if (axios.isAxiosError(error)) console.log(error.response.data);
-      else console.log(error);
-    }
+  const handleCheckSms = (success: boolean) => {
+    if (success) setShowModal(false);
   };
 
   const handleSignIn = (e: MouseEvent) => {

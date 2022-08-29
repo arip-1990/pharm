@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, MouseEvent, ReactNode } from "react";
+import { FC, MouseEvent, ReactNode, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import styles from "./Profile.module.scss";
 
@@ -10,10 +11,14 @@ type Props = {
 };
 
 const Profile: FC<Props> = ({ title, className, children }) => {
-  const { user, logout } = useAuth();
+  const { isAuth, user, logout } = useAuth();
   const router = useRouter();
   let classes = [styles.profile];
   if (className) classes = classes.concat(className.split(" "));
+
+  // useEffect(() => {
+  //   if (!isAuth) router.back();
+  // }, [isAuth]);
 
   const handleLogout = async (e: MouseEvent) => {
     e.preventDefault();
@@ -36,10 +41,18 @@ const Profile: FC<Props> = ({ title, className, children }) => {
         </div>
         <div className="col-9">
           <nav className={styles["profile_nav"]}>
-            <a href="#">Главная</a>
-            <a href="#">Покупки</a>
-            <a href="#">Купоны</a>
-            <a href="#">Анкета</a>
+            <Link href="/">
+              <a>Главная</a>
+            </Link>
+            <Link href="/profile/cheque">
+              <a>Покупки</a>
+            </Link>
+            <Link href="/profile/coupon">
+              <a>Купоны</a>
+            </Link>
+            <Link href="/profile">
+              <a>Анкета</a>
+            </Link>
             <a href="#" onClick={handleLogout}>
               Выход
             </a>
@@ -52,34 +65,38 @@ const Profile: FC<Props> = ({ title, className, children }) => {
         <aside className={styles["profile-sidebar"] + " col-3"}>
           <div className={styles["profile-sidebar_info"]}>
             <ul>
-              <li>
-                <b>№ карты:</b>
+              <li style={{ fontSize: "1.2rem" }}>
+                <span>№ карты:</span> {user}
               </li>
-              <li>
-                <b>Количество покупок:</b>
+              <li style={{ fontSize: "1.2rem" }}>
+                <span>Количество покупок:</span> {user?.quantity}
               </li>
-              <li>
-                <b>Получено баллов:</b>
+              <li style={{ fontSize: "1.2rem" }}>
+                <span>Получено баллов:</span>
               </li>
-              <li>
-                <b>Потрачено баллов:</b>
+              <li style={{ fontSize: "1.2rem" }}>
+                <span>Потрачено баллов:</span>
               </li>
-              <li>
-                <b>Общий баланс:</b>
+              <li style={{ fontSize: "1.2rem" }}>
+                <span>Общий баланс:</span> {user?.balance}
               </li>
-              <li>
-                <b>Активный баланс:</b>
+              <li style={{ fontSize: "1.2rem" }}>
+                <span>Активный баланс:</span> {user?.activeBalance}
               </li>
             </ul>
           </div>
           <ul>
-            <li>
-              <a href="#">Заблокировать карту</a>
+            <li style={{ fontSize: "1.1rem" }}>
+              <Link href="/profile/card-blocking">
+                <a>Заблокировать карту</a>
+              </Link>
             </li>
-            <li>
-              <a href="#">Сменить пароль</a>
+            <li style={{ fontSize: "1.1rem" }}>
+              <Link href="/profile/change-password">
+                <a>Сменить пароль</a>
+              </Link>
             </li>
-            <li>
+            <li style={{ fontSize: "1.1rem" }}>
               <a href="#">Список карт</a>
             </li>
           </ul>

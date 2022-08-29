@@ -9,6 +9,7 @@ use App\UseCases\PosService;
 use App\UseCases\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 
 class VerifyPhoneController
 {
@@ -23,28 +24,32 @@ class VerifyPhoneController
         try {
             $user = new User($request->session()->get('userData'));
 
-            if ($request->session()->has('token')) {
-                $id = $this->registerService->verifySms($request);
+            if ($token = $request->session()->get('token')) {
+                $data = $this->registerService->verifySms($request, $token);
+//                $token = $this->registerService->requestPhoneVerification($token);
+//                $request->session()->put('token', $token);
             }
             else {
                 $data = $this->posService->getBalance($user->phone, validationCode: $request->get('smsCode'));
-                if ($data['ReturnCode'] !== 0)
-                    throw new \DomainException('Проверочный код не корректный');
 
-                $id = $this->userService->userUpdate($user);
+                $id = $this->userService->updateInfo($user);
                 $this->userService->setPassword($id, $user->password);
             }
 
-            $user->id = $id;
+            $user->id = $data['id'];
+            $user->session = $data['sessionId'];
             $user->password = Hash::make($user->password);
             $user->save();
 
             $request->session()->flush();
         }
         catch (\DomainException $e) {
-            return new JsonResponse($e->getMessage(), 500);
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
         }
 
-        return new JsonResponse();
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }
 }

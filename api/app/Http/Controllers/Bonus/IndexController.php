@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Bonus;
 
+use App\Http\Resources\BonusResource;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class LogoutController
+class IndexController
 {
     public function handle(Request $request): JsonResponse
     {
-        $url = config('data.loyalty.test.url.lk') . '/Identity/Logout';
+        $url = config('data.loyalty.test.url.lk') . '/Bonus/GetAllByContact';
         $client = new Client([
             'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
             'http_errors' => false,
@@ -19,8 +19,7 @@ class LogoutController
         ]);
 
         $user = $request->user();
-        $data = ['parameter' => ['id' => $user->id, 'sessionid' => $user->session]];
-        $response = $client->post($url, ['body' => json_encode($data)]);
+        $response = $client->get($url, ['query' => ['contactid' => $user->id, 'sessionid' => $user->session]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200) {
@@ -29,11 +28,6 @@ class LogoutController
                 'message' => $data['odata.error']['message']['value']
             ], 500);
         }
-
-        $user->update(['session' => null]);
-        Auth::logout();
-        $request->session()->invalidate();
-
-        return new JsonResponse();
+        return new JsonResponse(BonusResource::collection($data['value']));
     }
 }

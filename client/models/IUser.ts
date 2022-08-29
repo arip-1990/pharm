@@ -1,5 +1,3 @@
-import { IStore } from "./IStore";
-
 export interface IUser {
     id: string;
     firstName: string;
@@ -11,5 +9,18 @@ export interface IUser {
     birthDate: moment.Moment | null;
     emailVerified: boolean;
     phoneVerified: boolean;
+    allowEmail: boolean;
+    allowSms: boolean;
+    balance: number;
+    activeBalance: number;
+    debet: number;
+    credit: number;
+    summ: number;
+    summDiscounted: number;
+    discountSumm: number;
+    quantity: number;
+    orgUnitName: string;
+    preferredOrgUnitName: string;
+    registrationDate: moment.Moment | null;
     isAuth: boolean;
 }

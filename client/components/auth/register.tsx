@@ -1,23 +1,18 @@
 import { useFormik } from "formik";
+import axios from "axios";
+import api from "../../lib/api";
+import { useNotification } from "../../hooks/useNotification";
 
 interface PropsType {
-  onSubmit: (values: {
-    cardNum: string;
-    lastName: string;
-    firstName: string;
-    middleName: string;
-    email: string;
-    phone: string;
-    birthDate: string;
-    gender: number;
-    password: string;
-  }) => void;
+  onSubmit: (success: boolean) => void;
 }
 
 const Register = ({ onSubmit }: PropsType) => {
+  const notification = useNotification();
+
   const formik = useFormik({
     initialValues: {
-      cardNum: "",
+      cardNumber: "",
       lastName: "",
       firstName: "",
       middleName: "",
@@ -27,24 +22,47 @@ const Register = ({ onSubmit }: PropsType) => {
       gender: 0,
       password: "",
     },
-    onSubmit: (values) => {
-      onSubmit(values);
+    onSubmit: async (values) => {
+      try {
+        await api.post("auth/register", { ...values });
+
+        onSubmit(true);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response.status === 422) {
+            let messages: { title: string; message: string }[] = [];
+            const err = error.response.data as {
+              message: string;
+              errors: object;
+            };
+            Object.keys(err.errors).forEach((key) => {
+              messages.push({ title: key, message: err.errors[key] });
+            });
+
+            notification("error", messages);
+          } else notification("error", error.response.data.message);
+        }
+
+        console.log(error?.response.data);
+
+        onSubmit(false);
+      }
     },
   });
 
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="mb-3">
-        <label htmlFor="cardNum" className="form-label">
+        <label htmlFor="cardNumber" className="form-label">
           Номер карты
         </label>
         <input
-          id="cardNum"
-          name="cardNum"
+          id="cardNumber"
+          name="cardNumber"
           type="text"
           className="form-control"
           onChange={formik.handleChange}
-          value={formik.values.cardNum}
+          value={formik.values.cardNumber}
         />
       </div>
       <div className="mb-3">

@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Resources\UserResource;
+use App\Http\Requests\User\UpdatePasswordRequest;
 use App\UseCases\UserService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
-class IndexController
+class UpdatePasswordController
 {
     public function __construct(private readonly UserService $service) {}
 
-    public function handle(Request $request): JsonResponse
+    public function handle(UpdatePasswordRequest $request): JsonResponse
     {
         try {
-            $data = $this->service->getInfo($request->user());
+            $this->service->updatePassword($request->user(), $request);
         }
         catch (\DomainException $e) {
             return new JsonResponse([
@@ -23,6 +22,6 @@ class IndexController
             ], 500);
         }
 
-        return new JsonResponse(new UserResource($data));
+        return new JsonResponse();
     }
 }

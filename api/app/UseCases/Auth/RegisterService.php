@@ -4,12 +4,10 @@ namespace App\UseCases\Auth;
 
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\VerifyPhoneRequest;
-use App\Models\User;
 use App\UseCases\PosService;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Hash;
-use Ramsey\Uuid\Uuid;
+use JetBrains\PhpStorm\ArrayShape;
 
 class RegisterService
 {
@@ -26,8 +24,8 @@ class RegisterService
     public function requestRegister(RegisterRequest $request): void
     {
         $data = $this->posService->getBalance($request->get('phone'));
-        if (array_key_exists('ContactID', $data))
-            throw new \DomainException('Регистрация продолжена не будет, клиент с таким мобильным уже существует');
+        if (isset($data['ContactID']))
+            throw new \DomainException('Клиент с таким мобильным уже существует');
 
         $data = $request->validated();
         $request->session()->put('userData', [
@@ -41,21 +39,14 @@ class RegisterService
             'gender' => $data['gender'],
         ]);
 
-        if ($request->has('CardNumber')) {
+        if ($request->has('cardNumber')) {
             $token = $this->phoneRegister($data);
             $request->session()->put('token', $token);
         }
         else {
             $phone = $data['phone'];
-            $data = $this->posService->createCard($phone, $data['email'], $data['firstName'], $data['lastName'], $data['middleName'], Carbon::parse($data['birthDate']));
-            if ($data['ReturnCode'] !== 0)
-                throw new \DomainException($data['Message']);
-
-            $request->session()->put('cardNumber', $data['CardNumber']);
-
-            $data = $this->posService->getBalance($phone, true);
-            if ($data['ReturnCode'] !== 0)
-                throw new \DomainException($data['Message']);
+            $this->posService->createCard($phone, $data['email'], $data['firstName'], $data['lastName'], $data['middleName'], Carbon::parse($data['birthDate']));
+            $this->posService->getBalance($phone, true);
         }
     }
 
@@ -65,7 +56,7 @@ class RegisterService
         $partnerId = config('data.loyalty.test.partner_id');
         $tmp = [
             'CardNumber' => $data['cardNumber'],
-            'MobilePhone' => '+' . $data['phone'],
+            'MobilePhone' => $data['phone'],
             'EmailAddress' => $data['email'],
             'Firstname' => $data['firstName'],
             'Lastname' => $data['lastName'],
@@ -81,41 +72,60 @@ class RegisterService
         ];
 
         $response = $this->client->post($url, ['body' => json_encode(['parameter' => $tmp])]);
-        if ($response->getStatusCode() !== 200)
-            throw new \DomainException($response->getBody()->getContents());
-
         $data = json_decode($response->getBody(), true);
+
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
         return $data['value'];
     }
 
-    public function verifySms(VerifyPhoneRequest $request): string
+    public function requestPhoneVerification(string $token): string
+    {
+        $url = config('data.loyalty.test.url.lk') . '/Identity/RequestMobilePhoneVerification';
+
+        $response = $this->client->post($url, ['body' => json_encode(['parameter' => ['Token' => $token]])]);
+        $data = json_decode($response->getBody(), true);
+
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
+        return $data['value'];
+    }
+
+    #[ArrayShape(['id' => "string", 'sessionId' => "string"])]
+    public function verifySms(VerifyPhoneRequest $request, string $token): array
     {
         $url = config('data.loyalty.test.url.lk') . '/Identity';
         $partnerId = config('data.loyalty.test.partner_id');
 
         $data = [
-            'Token' => $request->session()->get('token'),
+            'Token' => $token,
             'Code' => $request->get('smsCode'),
             'PartnerId' => $partnerId
         ];
 
         $response = $this->client->post($url . '/CheckSmsForRegistration', ['body' => json_encode(['parameter' => $data])]);
+        $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
-            throw new \DomainException($response->getBody()->getContents());
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
 
-        $token = json_decode($response->getBody(), true)['Token'];
         $data = [
-            'Token' =>  $token,
+            'Token' =>  $data['Token'],
             'PartnerId' => $partnerId
         ];
 
         $response = $this->client->post($url . '/AdvancedPhoneEmailRegister', ['body' => json_encode(['parameter' => $data])]);
-        if ($response->getStatusCode() !== 200)
-            throw new \DomainException($response->getBody()->getContents());
-
         $data = json_decode($response->getBody(), true);
-        return $data['Id'];
+
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
+        return [
+            'id' => $data['Id'],
+            'sessionId' => $data['SessionId']
+        ];
     }
 
 }

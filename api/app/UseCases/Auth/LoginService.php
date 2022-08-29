@@ -2,7 +2,6 @@
 
 namespace App\UseCases\Auth;
 
-use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
@@ -19,50 +18,44 @@ class LoginService
         ]);
     }
 
-    public function phoneAuth(LoginRequest $request): void
+    public function phoneAuth(string $phone, string $password): void
     {
         $url = config('data.loyalty.test.url.lk') . '/Identity/AdvancedPhoneEmailLogin';
         $partnerId = config('data.loyalty.test.partner_id');
         $data = [
-            'PhoneOrEmail' => '+' . $request->get('login'),
-            'Password' => $request->get('password'),
+            'PhoneOrEmail' => $phone,
+            'Password' => $password,
             'PartnerId' => $partnerId
         ];
 
         $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
-        if ($response->getStatusCode() !== 200)
-            throw new \DomainException($response->getBody()->getContents());
+        $data = json_decode($response->getBody(), true);
 
-        $data = json_decode($response->getBody());
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
         if (!$user = User::query()->find($data['Id']))
             throw new \DomainException('Пользователь не найден');
 
         $user->update(['session' => $data['SessionId']]);
         Auth::login($user);
-        $request->session()->regenerate();
     }
 
-    public function loginAuth(LoginRequest $request): void
+    public function loginAuth(string $login, string $password): void
     {
         $url = config('data.loyalty.test.url.lk') . '/Identity/Login';
-        $partnerId = config('data.loyalty.test.partner_id');
-        $data = [
-            'Login' => $request->get('login'),
-            'Password' => $request->get('password'),
-            'PartnerId' => $partnerId
-        ];
+        $data = ['Login' => $login, 'Password' => $password];
 
         $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
-            throw new \DomainException($response->getBody()->getContents());
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
 
-        $data = json_decode($response->getBody());
         if (!$user = User::query()->find($data['Id']))
             throw new \DomainException('Пользователя не найден');
 
         $user->update(['session' => $data['SessionId']]);
         Auth::login($user);
-        $request->session()->regenerate();
     }
 }

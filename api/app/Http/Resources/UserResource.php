@@ -30,6 +30,7 @@ class UserResource extends JsonResource
             'summDiscounted' => $this->SummDiscounted,
             'discountSumm' => $this->DiscountSumm,
             'quantity' => $this->Quantity,
+            'orgUnitName' => $this->OrgUnitName,
             'preferredOrgUnitName' => $this->PreferredOrgUnitName,
             'registrationDate' => $this->RegistrationDate,
         ];

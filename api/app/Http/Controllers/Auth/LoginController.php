@@ -13,10 +13,14 @@ class LoginController
     public function handle(LoginRequest $request): JsonResponse
     {
         try {
-            $this->service->phoneAuth($request);
+            $this->service->phoneAuth($request->get('login'), $request->get('password'));
+            $request->session()->regenerate();
         }
         catch (\DomainException $e) {
-            return new JsonResponse(json_decode($e->getMessage(), true));
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
         }
 
         return new JsonResponse();

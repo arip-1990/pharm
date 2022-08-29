@@ -1,15 +1,30 @@
 import { useFormik } from "formik";
 import { FC } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import axios from "axios";
+import { useNotification } from "../../hooks/useNotification";
 
 type Props = {
-  onSubmit: (values: { login: string; password: string }) => void;
+  onSubmit: (success: boolean) => void;
 };
 
 const Login: FC<Props> = ({ onSubmit }) => {
+  const { login } = useAuth();
+  const notification = useNotification();
+
   const formik = useFormik({
     initialValues: { login: "", password: "" },
-    onSubmit: (values) => {
-      onSubmit(values);
+    onSubmit: async (values) => {
+      try {
+        await login(values.login, values.password);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          notification("error", error.response.data.message);
+        }
+        console.log(error?.response.data);
+      }
+
+      onSubmit(true);
     },
   });
 

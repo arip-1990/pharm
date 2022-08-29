@@ -1,15 +1,30 @@
 import { useFormik } from "formik";
 import { FC } from "react";
+import axios from "axios";
+import api from "../../lib/api";
+import { useNotification } from "../../hooks/useNotification";
 
 type Props = {
-  onSubmit: (values: { smsCode: string }) => void;
+  onSubmit: (success: boolean) => void;
 };
 
 const CheckSms: FC<Props> = ({ onSubmit }) => {
+  const notification = useNotification();
+
   const formik = useFormik({
     initialValues: { smsCode: "" },
-    onSubmit: (values) => {
-      onSubmit(values);
+    onSubmit: async ({ smsCode }) => {
+      try {
+        await api.post("auth/checkSms", { smsCode });
+        onSubmit(true);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          notification("error", error.response.data.message);
+        }
+
+        console.log(error?.response.data);
+        onSubmit(false);
+      }
     },
   });
 
