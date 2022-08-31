@@ -2,31 +2,26 @@
 
 namespace App\Http\Controllers\Auth;
 
-use GuzzleHttp\Client;
+use App\UseCases\Auth\LoginService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class LogoutController
 {
+    public function __construct(private readonly LoginService $service) {}
+
     public function handle(Request $request): JsonResponse
     {
-        $url = config('data.loyalty.test.url.lk') . 'Identity/Logout';
-        $client = new Client([
-            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-            'http_errors' => false,
-            'verify' => false
-        ]);
-
-        $user = Auth::user();
-        $data = ['parameter' => ['id' => $user->id, 'sessionid' => $user->session]];
-        $response = $client->post($url, ['body' => json_encode($data)]);
-        if ($response->getStatusCode() !== 200)
-            return new JsonResponse(json_decode($response->getBody()), $response->getStatusCode());
-
-        $user->update(['session' => null]);
-        Auth::logout();
-        $request->session()->invalidate();
+        try {
+            $this->service->logout($request->user());
+            $request->session()->invalidate();
+        }
+        catch (\DomainException $e) {
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
+        }
 
         return new JsonResponse();
     }

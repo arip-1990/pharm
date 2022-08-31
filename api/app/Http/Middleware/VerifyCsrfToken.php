@@ -15,6 +15,9 @@ class VerifyCsrfToken extends Middleware
         '1c/order',
         '1c/feed',
         'order',
-        'pay'
+        'pay',
+
+        // TODO delete
+        'auth/register'
     ];
 }

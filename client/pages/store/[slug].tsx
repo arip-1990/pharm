@@ -1,6 +1,5 @@
 import Layout from "../../components/layout";
 import Head from "next/head";
-import { Map, YMaps, Clusterer, Placemark } from "@pbe/react-yandex-maps";
 import { GetServerSideProps } from "next";
 import { FC } from "react";
 import Page from "../../components/page";
@@ -14,6 +13,7 @@ import {
 } from "../../lib/storeService";
 import { useRouter } from "next/router";
 import api from "../../lib/api";
+import Map from "../../components/Map";
 
 const Store: FC = () => {
   const router = useRouter();
@@ -29,34 +29,16 @@ const Store: FC = () => {
 
       <Page className="row">
         <div className="col-12 col-md-6">
-          <YMaps query={{ apikey: "de8de84b-e8b4-46c9-ba10-4cf2911deebf" }}>
-            <Map
-              width="100%"
-              height={400}
-              defaultState={{
-                center: data.location.coordinate,
-                zoom: 17,
-                behaviors: ["default", "scrollZoom"],
-              }}
-            >
-              <Clusterer
-                options={{
-                  preset: "islands#invertedVioletClusterIcons",
-                  groupByCoordinates: false,
-                  gridSize: 80,
-                }}
-              >
-                <Placemark
-                  geometry={data.location.coordinate}
-                  properties={{
-                    balloonContentHeader: data?.name,
-                    balloonContentBody: data?.phone,
-                  }}
-                  options={{ preset: "islands#violetIcon" }}
-                />
-              </Clusterer>
-            </Map>
-          </YMaps>
+          <Map
+            center={data.location.coordinate}
+            points={[
+              {
+                title: data.name,
+                description: data.phone,
+                coordinates: data.location.coordinate,
+              },
+            ]}
+          />
         </div>
 
         <div className="col-12 col-md-6">

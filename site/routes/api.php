@@ -18,7 +18,7 @@ Route::post('/pay', [Api\PayController::class, 'handle']);
 
 Route::prefix('v1')->group(function () {
     Route::post('/login', [Api\V1\Auth\LoginController::class, 'handle']);
-    
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/auth', [Api\V1\Auth\IndexController::class, 'handle']);
         Route::post('/logout', [Api\V1\Auth\LogoutController::class, 'handle']);

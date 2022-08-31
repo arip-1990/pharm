@@ -2,6 +2,7 @@ import { useState, createContext, ReactNode, FC, useEffect } from "react";
 import { IUser } from "../models/IUser";
 import axios from "axios";
 import api, { API_URL } from "./api";
+import moment from "moment";
 
 export interface ContextProps {
   user: null | IUser;
@@ -52,7 +53,7 @@ const Auth: FC<Props> = ({ children }) => {
         await csrf();
 
         // Sign in.
-        await api.post("login", { login, password }, { maxRedirects: 0 });
+        await api.post("auth/login", { login, password }, { maxRedirects: 0 });
 
         // Fetch user.
         await revalidate();
@@ -66,7 +67,7 @@ const Auth: FC<Props> = ({ children }) => {
   const logout = () =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("logout");
+        await api.post("auth/logout");
         // Only sign out after the server has successfully responded.
         setAuthState({ user: null, isAuth: false });
         resolve();
@@ -75,8 +76,13 @@ const Auth: FC<Props> = ({ children }) => {
       }
     });
 
-  const setUser = (user: IUser, isAuth: boolean = true) =>
+  const setUser = (user: IUser, isAuth: boolean = true) => {
+    if (user.birthDate) user.birthDate = moment(user.birthDate);
+    if (user.registrationDate)
+      user.registrationDate = moment(user.registrationDate);
+
     setAuthState({ user, isAuth });
+  };
 
   const revalidate = () =>
     new Promise<void>(async (resolve, reject) => {

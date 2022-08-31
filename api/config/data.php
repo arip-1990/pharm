@@ -58,6 +58,7 @@ return [
             'url' => [
                 'pos' => 'http://seredinacrm4.ru:8083/posprocessing.asmx',
                 'lk' => 'http://seredinacrm4.ru:1011/CustomerOfficeService',
+                'manager' => 'http://seredinacrm4.ru:1012/ManagerOfficeService',
                 'admin' => 'http://seredinacrm4.ru:1013/AdministratorOfficeService'
             ],
             'organization' => '00001', // идентификатор организации
@@ -68,7 +69,11 @@ return [
             'password' => 'E9JxGqe2Z',
             'id_task_card' => 'integr2',
             'partner_id' => 'BE4205A0-1EC0-E611-80B5-001DD8B75065',
-            'session_id' => 'A35B9DCA-1947-407B-8079-86AF61E2A2C5' // сессия администратора
+            'session_id' => 'A35B9DCA-1947-407B-8079-86AF61E2A2C5', // сессия администратора
+            'manager' => [
+                'login' => 'integer',
+                'password' => '9LuwK8NvVjx6jw',
+            ]
         ]
     ]
 ];

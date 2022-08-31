@@ -187,7 +187,7 @@ services:
     image: ${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
-      APP_URL: https://120на80.рф
+      APP_URL: https://api.120на80.рф
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql
@@ -284,7 +284,7 @@ services:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
-      APP_URL: https://120на80.рф
+      APP_URL: https://api.120на80.рф
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql
@@ -322,7 +322,7 @@ services:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
-      APP_URL: https://120на80.рф
+      APP_URL: https://api.120на80.рф
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql
@@ -357,7 +357,7 @@ services:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
-      APP_URL: https://120на80.рф
+      APP_URL: https://api.120на80.рф
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql

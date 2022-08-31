@@ -1,15 +1,19 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import Layout from "../../../components/layout";
 import Sidebar from "../../../components/sidebar";
 import { useGetOrderQuery } from "../../../lib/orderService";
 import defaultImage from "../../../assets/images/default.png";
 import { useAuth } from "../../../hooks/useAuth";
 import { useMountedState } from "react-use";
+import { useRouter } from "next/router";
 
 const Order: FC<{ id: number }> = ({ id }) => {
   const { user } = useAuth();
   const isMounted = useMountedState();
   const { data: order } = useGetOrderQuery(id);
+  const router = useRouter();
+
+  useEffect(() => router.back(), []);
 
   return (
     <Layout>

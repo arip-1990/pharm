@@ -1,4 +1,8 @@
-import { IStore } from "./IStore";
+type Card = {
+    number: string;
+    chargedBonus: number;
+    writeoffBonus: number;
+}
 
 export interface IUser {
     id: string;
@@ -11,5 +15,19 @@ export interface IUser {
     birthDate: moment.Moment | null;
     emailVerified: boolean;
     phoneVerified: boolean;
+    allowEmail: boolean;
+    allowSms: boolean;
+    balance: number;
+    activeBalance: number;
+    debet: number;
+    credit: number;
+    summ: number;
+    summDiscounted: number;
+    discountSumm: number;
+    quantity: number;
+    orgUnitName: string;
+    preferredOrgUnitName: string;
+    registrationDate: moment.Moment | null;
+    card: Card;
     isAuth: boolean;
 }

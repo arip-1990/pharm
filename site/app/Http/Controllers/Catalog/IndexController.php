@@ -105,7 +105,7 @@ class IndexController extends Controller
             /** @var Limit $limit */
             if ($limit = Limit::query()->where('ip', $ip)->first()) {
                 if ($limit->isExpired())
-                    throw new \DomainException('Исчерпан лимит на просмотр цен');
+                    return new JsonResponse('Исчерпан лимит на просмотр цен', 500);
             }
             else
                 $limit = Limit::create($ip);

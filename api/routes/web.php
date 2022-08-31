@@ -1,9 +1,13 @@
 <?php
 
 use App\Http\Controllers\Auth;
+use App\Http\Controllers\Bonus;
+use App\Http\Controllers\Card;
 use App\Http\Controllers\Catalog;
 use App\Http\Controllers\Category;
+use App\Http\Controllers\Cheque;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\Coupon;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\Offer;
 use App\Http\Controllers\Order;
@@ -24,11 +28,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/test', function () {
-//    $service = new \App\UseCases\PosService();
-//    $data = $service->createCard(\App\Models\User::query()->find('f629f99e-8355-46db-8bc2-6acaeb843774'));
-//    dd($data);
-//});
+//Route::get('/test', function () {});
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
     Route::post('/feed', [FeedController::class, 'handle']);
@@ -97,18 +97,47 @@ Route::prefix('offer')->group(function () {
     Route::get('/{product}', [Offer\IndexController::class, 'handle']);
 });
 
-Route::post('/login', [Auth\LoginController::class, 'handle']);
-Route::post('/register', [Auth\RegisterController::class, 'handle']);
-Route::post('/checkSms', [Auth\VerifyPhoneController::class, 'handle']);
-
 Route::prefix('checkout')->group(function () {
     Route::get('/', [Order\Checkout\IndexController::class, 'handle']);
     Route::get('/store', [Order\Checkout\StoreController::class, 'handle']);
 });
 
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [Auth\LoginController::class, 'handle']);
+    Route::post('/register', [Auth\RegisterController::class, 'handle']);
+    Route::post('/set-password', [Auth\SetPasswordController::class, 'handle']);
+
+    Route::prefix('verify')->group(function () {
+        Route::get('/phone', [Auth\Verify\RequestPhoneVerifyController::class, 'handle']);
+        Route::post('/phone', [Auth\Verify\VerifyPhoneController::class, 'handle']);
+    });
+
+    Route::post('/logout', [Auth\LogoutController::class, 'handle'])->middleware('auth:sanctum');
+});
+
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', [User\IndexController::class, 'handle']);
-    Route::post('/logout', [Auth\LogoutController::class, 'handle']);
+    Route::prefix('user')->group(function () {
+        Route::get('/', [User\IndexController::class, 'handle']);
+        Route::put('/update', [User\UpdateController::class, 'handle']);
+        Route::put('/update-password', [User\UpdatePasswordController::class, 'handle']);
+    });
+
+    Route::prefix('card')->group(function () {
+        Route::get('/', [Card\IndexController::class, 'handle']);
+        Route::put('/block/{cardId}', [Card\BlockController::class, 'handle']);
+    });
+
+    Route::prefix('cheque')->group(function () {
+        Route::get('/', [Cheque\IndexController::class, 'handle']);
+    });
+
+    Route::prefix('bonus')->group(function () {
+        Route::get('/', [Bonus\IndexController::class, 'handle']);
+    });
+
+    Route::prefix('coupon')->group(function () {
+        Route::get('/', [Coupon\IndexController::class, 'handle']);
+    });
 
     Route::prefix('order')->group(function () {
         Route::get('/', [Order\IndexController::class, 'index']);

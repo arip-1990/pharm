@@ -42,7 +42,21 @@ class User extends Authenticatable
 
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id', 'first_name', 'last_name', 'middle_name', 'email', 'phone', 'gender', 'birth_date', 'token', 'password'];
+    protected $fillable = [
+        'id',
+        'first_name',
+        'last_name',
+        'middle_name',
+        'email',
+        'phone',
+        'gender',
+        'birth_date',
+        'token',
+        'session',
+        'password',
+        'phone_verified_at',
+        'email_verified_at'
+    ];
     protected $hidden = ['password'];
     protected $casts = [
         'birth_date' => 'datetime',

@@ -1,13 +1,17 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Layout from "../../components/layout";
 import Sidebar from "../../components/sidebar";
 import BaseOrder from "../../components/profile/Order";
 import { useFetchOrdersQuery } from "../../lib/orderService";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Order: FC = () => {
   const [page, setPage] = useState<number>(1);
   const { data: orders } = useFetchOrdersQuery({ page });
+  const router = useRouter();
+
+  useEffect(() => router.back(), []);
 
   return (
     <Layout>
