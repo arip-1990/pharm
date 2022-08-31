@@ -1,30 +1,43 @@
 import { useFormik } from "formik";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
 import { useNotification } from "../../hooks/useNotification";
+import { IMaskInput } from "react-imask";
+import { useRouter } from "next/router";
 
 type Props = {
-  onSubmit: (success: boolean) => void;
+  onSubmit: (success: boolean, other?: "checkSms" | "setPassword") => void;
 };
 
 const Login: FC<Props> = ({ onSubmit }) => {
   const { login } = useAuth();
   const notification = useNotification();
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: { login: "", password: "" },
     onSubmit: async (values) => {
+      let tmp = null;
+      setLoading(true);
+      values.login = values.login.replace(/[^0-9]/g, "");
       try {
         await login(values.login, values.password);
+        router.push("/profile");
       } catch (error) {
         if (axios.isAxiosError(error)) {
+          if (error.response.data.code === 100033) tmp = "checkSms";
+          if (error.response.data.code === 100023) tmp = "setPassword";
           notification("error", error.response.data.message);
         }
         console.log(error?.response.data);
       }
 
-      onSubmit(true);
+      if (tmp) onSubmit(false, tmp);
+      else onSubmit(true);
+
+      setLoading(false);
     },
   });
 
@@ -32,15 +45,16 @@ const Login: FC<Props> = ({ onSubmit }) => {
     <form onSubmit={formik.handleSubmit}>
       <div className="mb-3">
         <label htmlFor="login" className="form-label">
-          Логин
+          Телефон
         </label>
-        <input
+        <IMaskInput
+          mask={"+{7} (000) 000-00-00"}
           id="login"
           name="login"
-          type="text"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.login}
+          onInput={formik.handleChange}
         />
       </div>
       <div className="mb-3">
@@ -61,7 +75,7 @@ const Login: FC<Props> = ({ onSubmit }) => {
           Забыли пароль?
         </a>
         <span className="col-5 text-end">
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary" disabled={loading}>
             Войти
           </button>
         </span>

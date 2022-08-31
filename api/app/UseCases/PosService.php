@@ -2,6 +2,7 @@
 
 namespace App\UseCases;
 
+use App\Models\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
@@ -64,11 +65,38 @@ class PosService
 //            throw new \DomainException((string)$data->Message, (int)$data->ReturnCode);
         }
 
-        return (array)$data;
+        if (!$contactID = (string)$data->ContactID) {
+            return (array)$data;
+        }
+
+        return [
+            "contactID" => $contactID,
+            'cardNumber' => (string)$data->Card->CardNumber,
+            "cardBalance" => (float)$data->CardBalance,
+            "cardNormalBalance" => (float)$data->CardNormalBalance,
+            "cardStatusBalance" => (float)$data->CardStatusBalance,
+            "cardActiveBalance" => (float)$data->CardActiveBalance,
+            "cardNormalActiveBalance" => (float)$data->CardNormalActiveBalance,
+            "cardStatusActiveBalance" => (float)$data->CardStatusActiveBalance,
+            "cardSumm" => (float)$data->CardSumm,
+            "cardSummDiscounted" => (float)$data->CardSummDiscounted,
+            "cardDiscount" => (float)$data->CardDiscount,
+            "cardQuantity" => (int)$data->CardQuantity,
+            "contactPresence" => (int)$data->ContactPresence,
+//            "cardType" => $data->CardType,
+            "cardStatus" => (int)$data->CardStatus,
+            "cardCollaborationType" => (int)$data->CardCollaborationType,
+            "cardChargeType" => (int)$data->CardChargeType,
+            "cardChargedBonus" => (float)$data->CardChargedBonus,
+            "cardWriteoffBonus" => (float)$data->CardWriteoffBonus,
+            "cardChargedMoney" => (float)$data->CardChargedMoney,
+            "cardWriteoffMoney" => (float)$data->CardWriteoffMoney,
+            "cardMoneyBalance" => (float)$data->CardMoneyBalance
+        ];
     }
 
     #[ArrayShape(['contactID' => "string", 'contactPresence' => "int", 'cardNumber' => "string", 'cardType' => "string", 'cardStatus' => "int"])]
-    public function createCard(string $phone, string $email, string $firstName, string $lastName = null, string $middleName = null, Carbon $birthDate = null): array
+    public function createCard(User $user): array
     {
         $url = config('data.loyalty.test.url.pos');
         $organization = config('data.loyalty.test.organization');
@@ -86,8 +114,8 @@ class PosService
             <POS>' . $pos . '</POS>
             <AwardType>ContactUpdate</AwardType>
             <ContactID>
-              <MobilePhone>' . $phone . '</MobilePhone>
-              <Email>' . $email . '</Email>
+              <MobilePhone>' . $user->phone . '</MobilePhone>
+              <Email>' . $user->email . '</Email>
             </ContactID>
             <CreateCard>
               <CreateCard>1</CreateCard>
@@ -95,16 +123,16 @@ class PosService
             </CreateCard>
             <Attribute>
               <Key>firstname</Key>
-              <Value>' . $firstName . '</Value>
+              <Value>' . $user->first_name . '</Value>
             </Attribute>';
-        if ($lastName) {
-            $data .= '<Attribute><Key>lastname</Key><Value>' . $lastName . '</Value></Attribute>';
+        if ($user->last_name) {
+            $data .= '<Attribute><Key>lastname</Key><Value>' . $user->last_name . '</Value></Attribute>';
         }
-        if ($middleName) {
-            $data .= '<Attribute><Key>middlename</Key><Value>' . $middleName . '</Value></Attribute>';
+        if ($user->middle_name) {
+            $data .= '<Attribute><Key>middlename</Key><Value>' . $user->middle_name . '</Value></Attribute>';
         }
-        if ($birthDate) {
-            $data .= '<Attribute><Key>birthdate</Key><Value>' . $birthDate->format('Y-m-d\TH:i:s') . '</Value></Attribute>';
+        if ($user->birth_date) {
+            $data .= '<Attribute><Key>birthdate</Key><Value>' . $user->birth_date->format('Y-m-d\TH:i:s') . '</Value></Attribute>';
         }
 
         $data .= '</ContactInfoUpdateRequest>';

@@ -17,11 +17,11 @@ class CardService
         ]);
     }
 
-    public function getAll(User $user): array
+    public function getAll(User $user)
     {
-        $url = config('data.loyalty.test.url.lk') . 'Card/GetAllByContact';
+        $url = config('data.loyalty.test.url.lk') . '/Card/GetAllByContact';
 
-        $response = $this->client->get($url, ['query' => ['sessionid' => $user->session, 'contactid' => $user->id]]);
+        $response = $this->client->get($url, ['query' => "contactid='{$user->id}'&sessionid='{$user->session}'"]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -32,14 +32,14 @@ class CardService
 
     public function block(User $user, string $cardId): void
     {
-        $url = config('data.loyalty.test.url.lk') . 'Contact/BlockCard';
+        $url = config('data.loyalty.test.url.lk') . '/Contact/BlockCard';
         $data = [
             'Id' => $user->id,
             'CardId' => $cardId,
             'SessionId' => $user->session
         ];
 
-        $response = $this->client->post($url, ['body' => ['parameter' => json_encode($data)]]);
+        $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)

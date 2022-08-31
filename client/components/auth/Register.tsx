@@ -2,6 +2,8 @@ import { useFormik } from "formik";
 import axios from "axios";
 import api from "../../lib/api";
 import { useNotification } from "../../hooks/useNotification";
+import { useState } from "react";
+import { IMaskInput } from "react-imask";
 
 interface PropsType {
   onSubmit: (success: boolean) => void;
@@ -9,6 +11,7 @@ interface PropsType {
 
 const Register = ({ onSubmit }: PropsType) => {
   const notification = useNotification();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const formik = useFormik({
     initialValues: {
@@ -23,6 +26,8 @@ const Register = ({ onSubmit }: PropsType) => {
       password: "",
     },
     onSubmit: async (values) => {
+      setLoading(true);
+      values.phone = values.phone.replace(/[^0-9]/g, "");
       try {
         await api.post("auth/register", { ...values });
 
@@ -46,6 +51,7 @@ const Register = ({ onSubmit }: PropsType) => {
         console.log(error?.response.data);
 
         onSubmit(false);
+        setLoading(false);
       }
     },
   });
@@ -121,10 +127,10 @@ const Register = ({ onSubmit }: PropsType) => {
         <label htmlFor="phone" className="form-label">
           Мобильный телефон
         </label>
-        <input
+        <IMaskInput
+          mask={"+{7} (000) 000-00-00"}
           id="phone"
           name="phone"
-          type="text"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.phone}
@@ -174,7 +180,7 @@ const Register = ({ onSubmit }: PropsType) => {
       </div>
       <div className="row mt-3">
         <div className="col text-center">
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary" disabled={loading}>
             Зарегистрироваться
           </button>
         </div>

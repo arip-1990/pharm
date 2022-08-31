@@ -16,9 +16,9 @@ const Profile: FC<Props> = ({ title, className, children }) => {
   let classes = [styles.profile];
   if (className) classes = classes.concat(className.split(" "));
 
-  // useEffect(() => {
-  //   if (!isAuth) router.back();
-  // }, [isAuth]);
+  useEffect(() => {
+    if (isAuth === false) router.back();
+  }, [isAuth]);
 
   const handleLogout = async (e: MouseEvent) => {
     e.preventDefault();
@@ -66,16 +66,16 @@ const Profile: FC<Props> = ({ title, className, children }) => {
           <div className={styles["profile-sidebar_info"]}>
             <ul>
               <li style={{ fontSize: "1.2rem" }}>
-                <span>№ карты:</span> {user}
+                <span>№ карты:</span> {user?.card.number}
               </li>
               <li style={{ fontSize: "1.2rem" }}>
                 <span>Количество покупок:</span> {user?.quantity}
               </li>
               <li style={{ fontSize: "1.2rem" }}>
-                <span>Получено баллов:</span>
+                <span>Получено баллов:</span> {user?.card.chargedBonus}
               </li>
               <li style={{ fontSize: "1.2rem" }}>
-                <span>Потрачено баллов:</span>
+                <span>Потрачено баллов:</span> {user?.card.writeoffBonus}
               </li>
               <li style={{ fontSize: "1.2rem" }}>
                 <span>Общий баланс:</span> {user?.balance}
@@ -87,7 +87,7 @@ const Profile: FC<Props> = ({ title, className, children }) => {
           </div>
           <ul>
             <li style={{ fontSize: "1.1rem" }}>
-              <Link href="/profile/card-blocking">
+              <Link href="/profile/card/block">
                 <a>Заблокировать карту</a>
               </Link>
             </li>
@@ -97,7 +97,9 @@ const Profile: FC<Props> = ({ title, className, children }) => {
               </Link>
             </li>
             <li style={{ fontSize: "1.1rem" }}>
-              <a href="#">Список карт</a>
+              <Link href="/profile/card">
+                <a>Список карт</a>
+              </Link>
             </li>
           </ul>
         </aside>

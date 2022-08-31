@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Bonus;
+use App\Http\Controllers\Card;
 use App\Http\Controllers\Catalog;
 use App\Http\Controllers\Category;
 use App\Http\Controllers\Cheque;
 use App\Http\Controllers\CityController;
-use App\Http\Controllers\Card;
+use App\Http\Controllers\Coupon;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\Offer;
 use App\Http\Controllers\Order;
@@ -27,13 +28,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-//    $client = new \GuzzleHttp\Client([
-//        'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-//        'http_errors' => false,
-//        'verify' => false
-//    ]);
-});
+//Route::get('/test', function () {});
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
     Route::post('/feed', [FeedController::class, 'handle']);
@@ -110,7 +105,12 @@ Route::prefix('checkout')->group(function () {
 Route::prefix('auth')->group(function () {
     Route::post('/login', [Auth\LoginController::class, 'handle']);
     Route::post('/register', [Auth\RegisterController::class, 'handle']);
-    Route::post('/checkSms', [Auth\VerifyPhoneController::class, 'handle']);
+    Route::post('/set-password', [Auth\SetPasswordController::class, 'handle']);
+
+    Route::prefix('verify')->group(function () {
+        Route::get('/phone', [Auth\Verify\RequestPhoneVerifyController::class, 'handle']);
+        Route::post('/phone', [Auth\Verify\VerifyPhoneController::class, 'handle']);
+    });
 
     Route::post('/logout', [Auth\LogoutController::class, 'handle'])->middleware('auth:sanctum');
 });
@@ -124,7 +124,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('card')->group(function () {
         Route::get('/', [Card\IndexController::class, 'handle']);
-        Route::post('/block/{cardId}', [Card\BlockController::class, 'handle']);
+        Route::put('/block/{cardId}', [Card\BlockController::class, 'handle']);
     });
 
     Route::prefix('cheque')->group(function () {
@@ -136,7 +136,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('coupon')->group(function () {
-        Route::get('/', [Bonus\IndexController::class, 'handle']);
+        Route::get('/', [Coupon\IndexController::class, 'handle']);
     });
 
     Route::prefix('order')->group(function () {

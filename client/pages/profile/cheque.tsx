@@ -1,24 +1,22 @@
-import { useRouter } from "next/router";
 import { FC } from "react";
 import Layout from "../../components/layout";
 import BaseProfile from "../../components/profile";
 import BaseCheque from "../../components/profile/Cheque";
 import Bonus from "../../components/profile/Bonus";
-import { useAuth } from "../../hooks/useAuth";
+import { useFetchChequesQuery } from "../../lib/chequeService";
+import { useFetchBonusesQuery } from "../../lib/bonusService";
 
 const Cheque: FC = () => {
-  const { user } = useAuth();
-  const router = useRouter();
-
-  console.log(user);
+  const { data: cheques } = useFetchChequesQuery();
+  const { data: bonuses } = useFetchBonusesQuery();
 
   return (
     <Layout>
       <BaseProfile>
         <h4>Покупки</h4>
-        <BaseCheque className="mb-3" data={[]} />
+        {cheques && <BaseCheque className="mb-3" data={cheques} />}
         <h4>Подарочные бонусы</h4>
-        <Bonus data={[]} />
+        {bonuses && <Bonus data={bonuses} />}
       </BaseProfile>
     </Layout>
   );

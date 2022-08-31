@@ -1,3 +1,9 @@
+type Card = {
+    number: string;
+    chargedBonus: number;
+    writeoffBonus: number;
+}
+
 export interface IUser {
     id: string;
     firstName: string;
@@ -22,5 +28,6 @@ export interface IUser {
     orgUnitName: string;
     preferredOrgUnitName: string;
     registrationDate: moment.Moment | null;
+    card: Card;
     isAuth: boolean;
 }

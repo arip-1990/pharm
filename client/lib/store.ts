@@ -7,6 +7,10 @@ import { orderApi } from "./orderService";
 import { catalogApi } from "./catalogService";
 import { storeApi } from "./storeService";
 import { offerApi } from "./offerService";
+import { cardApi } from "./cardService";
+import { chequeApi } from "./chequeService";
+import { bonusApi } from "./bonusService";
+import { couponApi } from "./couponService";
 
 const makeStore = () =>
 configureStore({
@@ -17,6 +21,10 @@ configureStore({
     [catalogApi.reducerPath]: catalogApi.reducer,
     [storeApi.reducerPath]: storeApi.reducer,
     [offerApi.reducerPath]: offerApi.reducer,
+    [cardApi.reducerPath]: cardApi.reducer,
+    [chequeApi.reducerPath]: chequeApi.reducer,
+    [bonusApi.reducerPath]: bonusApi.reducer,
+    [couponApi.reducerPath]: couponApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({serializableCheck: false})
@@ -25,7 +33,11 @@ configureStore({
       .concat(categoryApi.middleware)
       .concat(catalogApi.middleware)
       .concat(storeApi.middleware)
-      .concat(offerApi.middleware),
+      .concat(offerApi.middleware)
+      .concat(cardApi.middleware)
+      .concat(chequeApi.middleware)
+      .concat(bonusApi.middleware)
+      .concat(couponApi.middleware),
   devTools: true,
 });
 

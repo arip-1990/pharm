@@ -3,5 +3,5 @@ export interface ILocation {
   city: string;
   street: string;
   house: string;
-  coordinate: number[];
+  coordinate: [number, number];
 }

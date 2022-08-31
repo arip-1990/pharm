@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { FC } from "react";
 import Layout from "../components/layout";
 import BaseProfile from "../components/profile";
@@ -6,9 +5,6 @@ import { useAuth } from "../hooks/useAuth";
 
 const Profile: FC = () => {
   const { user } = useAuth();
-  const router = useRouter();
-
-  console.log(user);
 
   return (
     <Layout>
@@ -38,7 +34,7 @@ const Profile: FC = () => {
             style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
           >
             <span style={{ fontWeight: 600 }}>Дата рождения:</span>{" "}
-            {user?.birthDate?.format("d.m.Y")}
+            {user?.birthDate?.format("DD.MM.Y")}
           </div>
           <div
             className="col-12"
@@ -52,7 +48,7 @@ const Profile: FC = () => {
             style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
           >
             <span style={{ fontWeight: 600 }}>Дата регистрации:</span>{" "}
-            {user?.registrationDate?.format("d.m.Y")}
+            {user?.registrationDate?.format("DD.MM.Y")}
           </div>
           <div
             className="col-12"

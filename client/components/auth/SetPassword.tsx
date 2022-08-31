@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { FC } from "react";
+import { FC, useState } from "react";
 import axios from "axios";
 import api from "../../lib/api";
 import { useNotification } from "../../hooks/useNotification";
@@ -8,14 +8,16 @@ type Props = {
   onSubmit: (success: boolean) => void;
 };
 
-const CheckSms: FC<Props> = ({ onSubmit }) => {
+const SetPassword: FC<Props> = ({ onSubmit }) => {
   const notification = useNotification();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const formik = useFormik({
-    initialValues: { smsCode: "" },
-    onSubmit: async ({ smsCode }) => {
+    initialValues: { password: "" },
+    onSubmit: async ({ password }) => {
+      setLoading(true);
       try {
-        await api.post("auth/checkSms", { smsCode });
+        await api.post("auth/set-password", { password });
         onSubmit(true);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -25,31 +27,32 @@ const CheckSms: FC<Props> = ({ onSubmit }) => {
         console.log(error?.response.data);
         onSubmit(false);
       }
+      setLoading(false);
     },
   });
 
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="mb-3">
-        <label htmlFor="checkSms" className="form-label">
-          Код подтверждения
+        <label htmlFor="password" className="form-label">
+          Укажите пароль
         </label>
         <input
-          id="checkSms"
-          name="checkSms"
+          id="password"
+          name="password"
           type="text"
           className="form-control"
           onChange={formik.handleChange}
-          value={formik.values.smsCode}
+          value={formik.values.password}
         />
       </div>
       <div className="text-center">
-        <button type="submit" className="btn btn-primary">
-          Подтвердить телефон
+        <button type="submit" className="btn btn-primary" disabled={loading}>
+          Подтвердить
         </button>
       </div>
     </form>
   );
 };
 
-export default CheckSms;
+export default SetPassword;

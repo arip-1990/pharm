@@ -17,8 +17,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class OrderDelivery extends Model
 {
-    const DELIVERY_PRICE = 150;
-
     public static function create(array $address, bool $serviceToDoor, float $deliveryPrice = null): self
     {
         $delivery = new self();
@@ -26,7 +24,7 @@ class OrderDelivery extends Model
         $delivery->floor = $address['floor'] ?? null;
         $delivery->apartment = $address['apartment'] ?? null;
         $delivery->service_to_door = $serviceToDoor;
-        $delivery->delivery_price = $deliveryPrice ?? self::DELIVERY_PRICE;
+        $delivery->delivery_price = $deliveryPrice ?? 0;
         return $delivery;
     }
 

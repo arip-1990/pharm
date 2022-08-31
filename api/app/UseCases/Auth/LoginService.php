@@ -28,7 +28,7 @@ class LoginService
             'PartnerId' => $partnerId
         ];
 
-        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -46,7 +46,7 @@ class LoginService
         $url = config('data.loyalty.test.url.lk') . '/Identity/Login';
         $data = ['Login' => $login, 'Password' => $password];
 
-        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -57,5 +57,20 @@ class LoginService
 
         $user->update(['session' => $data['SessionId']]);
         Auth::login($user);
+    }
+
+    public function logout(User $user): void
+    {
+        $url = config('data.loyalty.test.url.lk') . '/Identity/Logout';
+        $data = ['id' => $user->id, 'sessionid' => $user->session];
+
+        $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
+        $data = json_decode($response->getBody(), true);
+
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
+        $user->update(['session' => null]);
+        Auth::guard('web')->logout();
     }
 }

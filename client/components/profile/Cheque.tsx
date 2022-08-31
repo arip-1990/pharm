@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { ICheque } from "../../models/ICheque";
+import styles from "./Table.module.scss";
 
 type Props = {
   data: ICheque[];
@@ -7,13 +8,13 @@ type Props = {
 };
 
 const Cheque: FC<Props> = ({ data, className }) => {
+  let classes = [styles.table];
+  if (className) classes = classes.concat(className.split(" "));
+
   return (
-    <table className={className}>
+    <table className={classes.join(" ")}>
       <colgroup>
-        <col
-          style={{ width: 110, border: "1px solid #ccc", padding: "0.5rem" }}
-          span={8}
-        />
+        <col style={{ width: 110 }} />
       </colgroup>
       <thead>
         <tr>
@@ -30,14 +31,14 @@ const Cheque: FC<Props> = ({ data, className }) => {
       <tbody>
         {data.map((item) => (
           <tr key={item.id}>
-            <td>{item.createdAt.format("d.m.Y")}</td>
-            <td>{item.id}</td>
-            <td>{item.company}</td>
-            <td>{item.store}</td>
-            <td>{item.accruedBonuses}</td>
-            <td>{item.deductedBonuses}</td>
-            <td>{item.amount}</td>
-            <td>{item.discountedAmount}</td>
+            <td>{item.date.format("d.m.Y")}</td>
+            <td>{item.number}</td>
+            <td>{}</td>
+            <td>{item.orgUnitName}</td>
+            <td>{item.bonus}</td>
+            <td>{item.paidByBonus}</td>
+            <td>{item.summ}</td>
+            <td>{item.summDiscounted}</td>
           </tr>
         ))}
       </tbody>

@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { IBonus } from "../../models/IBonus";
+import styles from "./Table.module.scss";
 
 type Props = {
   data: IBonus[];
@@ -7,11 +8,11 @@ type Props = {
 };
 
 const Bonus: FC<Props> = ({ data, className }) => {
+  let classes = [styles.table];
+  if (className) classes = classes.concat(className.split(" "));
+
   return (
-    <table className={className}>
-      <colgroup>
-        <col style={{ border: "1px solid #ccc", padding: "0.5rem" }} span={5} />
-      </colgroup>
+    <table className={classes.join(" ")}>
       <thead>
         <tr>
           <th>Дата операции</th>
@@ -24,11 +25,11 @@ const Bonus: FC<Props> = ({ data, className }) => {
       <tbody>
         {data.map((item) => (
           <tr key={item.id}>
-            <td>{item.createdAt.format("d.m.Y")}</td>
-            <td>{item.company}</td>
-            <td>{item.accruedBonuses}</td>
-            <td>{item.activatedAt.format("d.m.Y")}</td>
-            <td>{item.expiredAt.format("d.m.Y")}</td>
+            <td>{item.createdDate.format("d.m.Y")}</td>
+            <td>{item.campaignName}</td>
+            <td>{item.debet}</td>
+            <td>{item.actualStart.format("d.m.Y")}</td>
+            <td>{item.actualEnd.format("d.m.Y")}</td>
           </tr>
         ))}
       </tbody>

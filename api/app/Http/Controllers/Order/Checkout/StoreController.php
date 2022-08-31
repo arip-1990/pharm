@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Order\Checkout;
 use App\UseCases\Order\CheckoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class StoreController
 {
@@ -19,7 +18,7 @@ class StoreController
             return new JsonResponse($stores);
         }
         catch (\DomainException $e) {
-            return new JsonResponse($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse($e->getMessage(), 500);
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Requests\User\UpdatePasswordRequest;
-use App\UseCases\UserService;
+use App\UseCases\User\UserService;
 use Illuminate\Http\JsonResponse;
 
 class UpdatePasswordController

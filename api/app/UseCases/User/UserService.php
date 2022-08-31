@@ -1,16 +1,18 @@
 <?php
 
-namespace App\UseCases;
+namespace App\UseCases\User;
 
 use App\Http\Requests\User\UpdatePasswordRequest;
 use App\Models\User;
+use App\UseCases\ManagerService;
+use App\UseCases\PosService;
 use GuzzleHttp\Client;
 
 class UserService
 {
     private Client $client;
 
-    public function __construct() {
+    public function __construct(private readonly ManagerService $managerService, private readonly PosService $posService) {
         $this->client = new Client([
             'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
             'http_errors' => false,
@@ -21,16 +23,17 @@ class UserService
     public function getInfo(User $user): array
     {
         $url = config('data.loyalty.test.url.lk') . '/Contact/Get';
-        $data = [
-            'id' => $user->id,
-            'sessionid' => $user->session,
-        ];
 
-        $response = $this->client->get($url, ['query' => $data]);
+        $response = $this->client->get($url, ['query' => "id='{$user->id}'&sessionid='{$user->session}'"]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
             throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
+        $balance = $this->posService->getBalance($user->phone);
+        $data['cardNumber'] = $balance['cardNumber'];
+        $data['cardChargedBonus'] = $balance['cardChargedBonus'];
+        $data['cardWriteoffBonus'] = $balance['cardWriteoffBonus'];
 
         return $data;
     }
@@ -39,6 +42,8 @@ class UserService
     {
         $url = config('data.loyalty.test.url.lk') . '/Contact/Update';
         $partnerId = config('data.loyalty.test.partner_id');
+        if (!$user->session) $manager = $this->managerService->login();
+
         $data = [
             'Entity' => [
                 'Id' => $user->id,
@@ -56,10 +61,10 @@ class UserService
                 'AgreeToTerms' => false,
                 'PartnerId' => $partnerId
             ],
-            'SessionId' => $user->session ?? 'menageSessionId' // TODO replace
+            'SessionId' => $user->session ?? $manager['sessionId']
         ];
 
-        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -78,7 +83,7 @@ class UserService
             'password' => $request->get('password'),
         ];
 
-        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -90,12 +95,12 @@ class UserService
         $url = config('data.loyalty.test.url.admin') . '/User/CreatePassword';
         $sessionId = config('data.loyalty.test.session_id');
         $data = [
-            'SessionId' => $sessionId,
             'Id' => $userId,
             'Password' => $password,
+            'SessionId' => $sessionId
         ];
 
-        $response = $this->client->post($url, ['body' => json_encode(['parameter' => $data])]);
+        $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)

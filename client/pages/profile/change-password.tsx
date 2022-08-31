@@ -1,74 +1,114 @@
-import { useFormik } from "formik";
-import { useRouter } from "next/router";
+import axios from "axios";
+import { Formik, FormikHelpers, useField } from "formik";
 import { FC } from "react";
 import Layout from "../../components/layout";
 import BaseProfile from "../../components/profile";
-import { useAuth } from "../../hooks/useAuth";
+import api from "../../lib/api";
+import { useNotification } from "../../hooks/useNotification";
+
+const TextField = ({ label, ...props }: any) => {
+  const [field, meta, helpers] = useField(props);
+  const style = {
+    width: "100%",
+    marginTop: "0.25rem",
+    fontSize: "0.85rem",
+    color: "#dc3545",
+  };
+
+  return (
+    <>
+      <label htmlFor={field.name} className="form-label">
+        {label}
+      </label>
+      <input className="form-control" id={field.name} {...field} {...props} />
+      {meta.touched && meta.error ? (
+        <div style={style}>{meta.error}</div>
+      ) : null}
+    </>
+  );
+};
 
 const ChangePassword: FC = () => {
-  const { user } = useAuth();
-  const router = useRouter();
+  const notification = useNotification();
 
-  console.log(user);
+  const handleSubmit = async (values: any, actions: FormikHelpers<any>) => {
+    try {
+      await api.put("user/update-password", { ...values });
+      actions.resetForm();
+      notification("success", "Пароль изменен");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response.data.code === 100023)
+          notification("error", error.response.data.message);
+      }
 
-  const formik = useFormik({
-    initialValues: { oldPassword: "", password: "", confirmedPassword: "" },
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
+      console.log(error?.response.data);
+    }
+  };
+
+  const handleValidate = (values: any) => {
+    const errors = {
+      oldPassword: "",
+      password: "",
+      password_confirmation: "",
+    };
+    if (
+      values.password_confirmation &&
+      values.password_confirmation !== values.password
+    ) {
+      errors.password_confirmation = "Пароли не совпадают";
+    }
+    return errors;
+  };
 
   return (
     <Layout>
       <BaseProfile title="Изменить пароль">
-        <form onSubmit={formik.handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="oldPassword" className="form-label">
-              Старый пароль
-            </label>
-            <input
-              id="oldPassword"
-              name="oldPassword"
-              type="password"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.oldPassword}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Новый пароль
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.password}
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="confirmedPassword" className="form-label">
-              Повторить новый пароль
-            </label>
-            <input
-              id="confirmedPassword"
-              name="confirmedPassword"
-              type="password"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.confirmedPassword}
-            />
-          </div>
-          <div className="row align-items-center">
-            <span className="col-5 text-end">
-              <button type="submit" className="btn btn-primary">
-                Сохранить
-              </button>
-            </span>
-          </div>
-        </form>
+        <Formik
+          initialValues={{
+            oldPassword: "",
+            password: "",
+            password_confirmation: "",
+          }}
+          onSubmit={handleSubmit}
+          validate={handleValidate}
+        >
+          {({ isValid, handleSubmit }) => (
+            <form
+              onSubmit={handleSubmit}
+              style={{ maxWidth: 320, margin: "auto" }}
+            >
+              <div className="mb-3">
+                <TextField
+                  type="password"
+                  name="oldPassword"
+                  label="Старый пароль"
+                />
+              </div>
+              <div className="mb-3">
+                <TextField
+                  type="password"
+                  name="password"
+                  label="Новый пароль"
+                />
+              </div>
+              <div className="mb-3">
+                <TextField
+                  type="password"
+                  name="password_confirmation"
+                  label="Повторить новый пароль"
+                />
+              </div>
+              <div className="row align-items-center">
+                <span className="col-5 text-end">
+                  <button type="submit" className="btn btn-primary">
+                    Сохранить
+                  </button>
+                </span>
+              </div>
+            </form>
+          )}
+        </Formik>
       </BaseProfile>
     </Layout>
   );

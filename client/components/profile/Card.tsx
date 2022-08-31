@@ -1,17 +1,40 @@
-import { FC } from "react";
+import { FC, MouseEvent } from "react";
+import { useBlockCardMutation } from "../../lib/cardService";
 import { ICard } from "../../models/ICard";
+import styles from "./Table.module.scss";
 
 type Props = {
   data: ICard[];
   className?: string;
 };
 
+const getStatusCard = (status: number) => {
+  switch (status) {
+    case 1:
+      return "Новый";
+    case 2:
+      return "Активный";
+    case 3:
+      return "Блокирована";
+    case 5:
+      return "Закрыта";
+    case 6:
+      return "Завершена";
+  }
+};
+
 const Card: FC<Props> = ({ data, className }) => {
+  const [blockCard] = useBlockCardMutation();
+  let classes = [styles.table];
+  if (className) classes = classes.concat(className.split(" "));
+
+  const handleBlock = (e: MouseEvent, cardId: string) => {
+    e.preventDefault();
+    blockCard(cardId);
+  };
+
   return (
-    <table className={className}>
-      <colgroup>
-        <col style={{ border: "1px solid #ccc", padding: "0.5rem" }} span={4} />
-      </colgroup>
+    <table className={classes.join(" ")}>
       <thead>
         <tr>
           <th>Статус карты</th>
@@ -23,10 +46,18 @@ const Card: FC<Props> = ({ data, className }) => {
       <tbody>
         {data.map((item) => (
           <tr key={item.id}>
-            <td>{item.statusCode}</td>
-            <td>{item.expiryDate.format("d.m.Y")}</td>
+            <td>{getStatusCard(item.statusCode)}</td>
+            <td>{item.expiryDate.format("DD.MM.Y[г]")}</td>
             <td>{item.cardType}</td>
-            <td>{"Активировать" || "Заблокировать"}</td>
+            <td>
+              {item.statusCode === 1 || item.statusCode === 2 ? (
+                <a href="#" onClick={(e) => handleBlock(e, item.id)}>
+                  Заблокировать
+                </a>
+              ) : (
+                "Активировать"
+              )}
+            </td>
           </tr>
         ))}
       </tbody>

@@ -2,12 +2,22 @@ import Link from "next/link";
 import { Container, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import Logo from "../../../assets/images/logo_min.svg";
-import { FC } from "react";
-import styles from "./Footer.module.scss";
+import { FC, MouseEvent, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
+import Auth from "../../auth";
+
+import styles from "./Footer.module.scss";
 
 const Footer: FC = () => {
   const { isAuth } = useAuth();
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const handleProfile = (e: MouseEvent) => {
+    if (isAuth === false) {
+      e.preventDefault();
+      setShowModal(true);
+    }
+  };
 
   return (
     <Container as="footer" className={styles.footer}>
@@ -81,7 +91,7 @@ const Footer: FC = () => {
             <li>
               <h4>
                 <Link href="/profile">
-                  <a>Личный кабинет</a>
+                  <a onClick={handleProfile}>Личный кабинет</a>
                 </Link>
               </h4>
             </li>
@@ -135,6 +145,8 @@ const Footer: FC = () => {
           ИМЕЮТСЯ ПРОТИВОПОКАЗАНИЯ. НЕОБХОДИМА КОНСУЛЬТАЦИЯ СПЕЦИАЛИСТА.
         </div>
       </Row>
+
+      <Auth show={showModal} onHide={() => setShowModal(false)} />
     </Container>
   );
 };
