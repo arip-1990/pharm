@@ -133,6 +133,7 @@ const Register = ({ onSubmit }: PropsType) => {
           name="phone"
           className="form-control"
           onChange={formik.handleChange}
+          onInput={formik.handleChange}
           value={formik.values.phone}
         />
       </div>

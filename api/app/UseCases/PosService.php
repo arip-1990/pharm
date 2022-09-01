@@ -138,7 +138,6 @@ class PosService
         $data .= '</ContactInfoUpdateRequest>';
 
         $response = $this->client->post($url, ['body' => $this->buildXml($data)]);
-
         if ($response->getStatusCode() !== 200)
             throw new \DomainException('Ошибка получения баланса');
 

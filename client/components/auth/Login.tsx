@@ -53,8 +53,8 @@ const Login: FC<Props> = ({ onSubmit }) => {
           name="login"
           className="form-control"
           onChange={formik.handleChange}
-          value={formik.values.login}
           onInput={formik.handleChange}
+          value={formik.values.login}
         />
       </div>
       <div className="mb-3">

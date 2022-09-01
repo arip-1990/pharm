@@ -8,6 +8,7 @@ use App\Models\User;
 use App\UseCases\PosService;
 use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
+use Ramsey\Uuid\Uuid;
 
 class RegisterService
 {
@@ -24,11 +25,13 @@ class RegisterService
     public function requestRegister(RegisterRequest $request): void
     {
         $data = $this->posService->getBalance($request->get('phone'));
-        if (isset($data['ContactID']))
+        if (isset($data['contactID']))
             throw new \DomainException('Существует контакт с таким телефоном');
 
         $data = $request->validated();
         $user = User::query()->firstOrNew(['phone' => $data['phone'], 'email' => $data['email']]);
+
+        $user->id = $user->id ?: Uuid::uuid4()->toString();
         $user->phone = $data['phone'];
         $user->email = $data['email'];
         $user->first_name = $data['firstName'];

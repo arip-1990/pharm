@@ -22,10 +22,10 @@ class Controller extends BaseController
     {
         $this->cartService = new CartService();
         try {
-            // $this->city = Cookie::get('city', City::query()->find(1)?->name);
+             $this->city = Cookie::get('city', City::query()->find(1)?->name);
         }
         catch (\Exception $exception) {
-            // $this->city = City::query()->find(1)?->name;
+             $this->city = City::query()->find(1)?->name;
         }
     }
 

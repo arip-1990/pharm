@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import { FC, MouseEvent, useEffect, useState } from "react";
 import axios from "axios";
-import { useTimer } from "react-timer-hook";
+import { useTimer } from "use-timer";
 import api from "../../lib/api";
 import { useNotification } from "../../hooks/useNotification";
 
@@ -13,26 +13,23 @@ const CheckSms: FC<Props> = ({ onSubmit }) => {
   const notification = useNotification();
   const [loading, setLoading] = useState<boolean>(false);
   const [attempt, setAttempt] = useState<number>(2);
-  const [expiryTime, setExpiryTime] = useState(new Date());
-  const { seconds, isRunning, start } = useTimer({
-    expiryTimestamp: expiryTime,
+  const [expiryTime, setExpiryTime] = useState<number>(30);
+  const { time, start, status } = useTimer({
+    initialTime: expiryTime,
+    endTime: 0,
+    timerType: "DECREMENTAL",
   });
-
-  console.log(seconds);
 
   useEffect(() => {
     if (attempt) {
-      const sec = attempt === 2 ? 30 : 60;
-      const date = new Date();
-      date.setSeconds(expiryTime.getSeconds() + sec);
-      setExpiryTime(date);
+      setExpiryTime(attempt === 2 ? 30 : 60);
       start();
     }
   }, [attempt]);
 
   const handleResendSms = async (e: MouseEvent) => {
     e.preventDefault();
-    if (!isRunning) {
+    if (status === "STOPPED") {
       try {
         await api.get("auth/verify/phone");
         setAttempt(attempt - 1);
@@ -83,9 +80,13 @@ const CheckSms: FC<Props> = ({ onSubmit }) => {
         />
       </div>
       {/* <div className="text-center mb-2">
-        <a href="#" onClick={handleResendSms}>
-          Повторно отправить код {seconds || null}
-        </a>
+        {status === "RUNNING" ? (
+          <span>Повторно отправить код {time || null}</span>
+        ) : (
+          <a href="#" onClick={handleResendSms}>
+            Повторно отправить код
+          </a>
+        )}
       </div> */}
       <div className="text-center">
         <button type="submit" className="btn btn-primary" disabled={loading}>
