@@ -18,19 +18,21 @@ Route::post('/pay', [Api\PayController::class, 'handle']);
 
 Route::prefix('v1')->group(function () {
     Route::post('/login', [Api\V1\Auth\LoginController::class, 'handle']);
-    Route::prefix('deliveries')->group(function () {
-        Route::POST('/', [Api\V1\Delivery\IndexController::class, 'handle']);
-    });
-    Route::prefix('payments')->group(function () {
-        Route::POST('/', [Api\V1\Payment\IndexController::class, 'handle']);
-    });
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/auth', [Api\V1\Auth\IndexController::class, 'handle']);
         Route::post('/logout', [Api\V1\Auth\LogoutController::class, 'handle']);
 
+        Route::prefix('deliveries')->group(function () {
+            Route::POST('/', [Api\V1\Delivery\IndexController::class, 'handle']);
+        });
+        Route::prefix('payments')->group(function () {
+            Route::POST('/', [Api\V1\Payment\IndexController::class, 'handle']);
+        });
         Route::prefix('user')->group(function () {
             Route::get('/', [Api\V1\User\IndexController::class, 'handle']);
             Route::get('/{user}', [Api\V1\User\ShowController::class, 'handle']);
+            Route::patch('/', [Api\V1\User\UpdateController::class, 'handle']);
         });
 
         Route::prefix('product')->group(function () {
