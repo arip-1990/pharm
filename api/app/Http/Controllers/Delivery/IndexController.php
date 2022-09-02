@@ -13,7 +13,7 @@ class IndexController extends Controller
     public function handle(DeliveryRequest $request): JsonResponse
     {
         return new JsonResponse([
-            'deliveries' => DeliveryResource::customCollection( DeliveryType::all(), $request->validated() )
+            'deliveries' => DeliveryResource::customCollection(DeliveryType::all(), $request->validated())
         ]);
     }
 }

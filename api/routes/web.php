@@ -8,11 +8,13 @@ use App\Http\Controllers\Category;
 use App\Http\Controllers\Cheque;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\Coupon;
+use App\Http\Controllers\Delivery;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\Offer;
 use App\Http\Controllers\Order;
 use App\Http\Controllers\Panel;
 use App\Http\Controllers\PayController;
+use App\Http\Controllers\Payment;
 use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
 use Illuminate\Support\Facades\Route;
@@ -118,8 +120,17 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('user')->group(function () {
         Route::get('/', [User\IndexController::class, 'handle']);
+        Route::patch('/', [User\UpdateController::class, 'handle']);
         Route::put('/update', [User\UpdateController::class, 'handle']);
         Route::put('/update-password', [User\UpdatePasswordController::class, 'handle']);
+    });
+
+    Route::prefix('deliveries')->group(function () {
+        Route::post('/', [Delivery\IndexController::class, 'handle']);
+    });
+
+    Route::prefix('payments')->group(function () {
+        Route::post('/', [Payment\IndexController::class, 'handle']);
     });
 
     Route::prefix('card')->group(function () {

@@ -16,9 +16,7 @@ const Register = ({ onSubmit }: PropsType) => {
   const formik = useFormik({
     initialValues: {
       cardNumber: "",
-      lastName: "",
-      firstName: "",
-      middleName: "",
+      fullName: "",
       email: "",
       phone: "",
       birthDate: "",
@@ -59,78 +57,38 @@ const Register = ({ onSubmit }: PropsType) => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="mb-3">
-        <label htmlFor="cardNumber" className="form-label">
-          Номер карты
-        </label>
         <input
-          id="cardNumber"
           name="cardNumber"
-          type="text"
+          placeholder="Номер карты"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.cardNumber}
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="lastName" className="form-label">
-          Фамилия
-        </label>
         <input
-          id="lastName"
-          name="lastName"
-          type="text"
+          name="fullName"
+          placeholder="*ФИО"
           className="form-control"
           onChange={formik.handleChange}
-          value={formik.values.lastName}
+          value={formik.values.fullName}
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="firstName" className="form-label">
-          Имя
-        </label>
         <input
-          id="firstName"
-          name="firstName"
-          type="text"
-          className="form-control"
-          onChange={formik.handleChange}
-          value={formik.values.firstName}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="middleName" className="form-label">
-          Отчество
-        </label>
-        <input
-          id="middleName"
-          name="middleName"
-          type="text"
-          className="form-control"
-          onChange={formik.handleChange}
-          value={formik.values.middleName}
-        />
-      </div>
-      <div className="mb-3">
-        <label htmlFor="email" className="form-label">
-          Email
-        </label>
-        <input
-          id="email"
           name="email"
           type="email"
+          placeholder="*Email"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.email}
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="phone" className="form-label">
-          Мобильный телефон
-        </label>
         <IMaskInput
           mask={"+{7} (000) 000-00-00"}
-          id="phone"
           name="phone"
+          placeholder="*Мобильный телефон"
           className="form-control"
           onChange={formik.handleChange}
           onInput={formik.handleChange}
@@ -138,25 +96,19 @@ const Register = ({ onSubmit }: PropsType) => {
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="birthDate" className="form-label">
-          Дата рождения
-        </label>
         <input
-          id="birthDate"
           name="birthDate"
           type="date"
+          placeholder="*Дата рождения"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.birthDate}
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="gender" className="form-label">
-          Пол
-        </label>
         <select
-          id="gender"
           name="gender"
+          placeholder="Пол"
           className="form-select"
           onChange={formik.handleChange}
           value={formik.values.gender}
@@ -167,13 +119,10 @@ const Register = ({ onSubmit }: PropsType) => {
         </select>
       </div>
       <div className="mb-3">
-        <label htmlFor="password" className="form-label">
-          Пароль
-        </label>
         <input
-          id="password"
           name="password"
           type="password"
+          placeholder="*Пароль"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.password}

@@ -14,7 +14,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'firstName' => 'required|max:50',
+            'fullName' => 'required',
             'email' => 'required|email|max:100',
             'phone' => 'required|regex:/^7\d{10}$/',
             'birthDate' => 'required|date',
@@ -22,22 +22,18 @@ class RegisterRequest extends FormRequest
             'password' => 'required|min:6|max:50',
 //            'agreeToTerms' => 'required|boolean',
             'cardNumber' => 'nullable|max:20',
-            'lastName' => 'nullable|max:50',
-            'middleName' => 'nullable|max:50'
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'firstName' => 'Имя',
+            'fullName' => 'ФИО',
             'phone' => 'Телефон',
             'birthDate' => 'День рождения',
             'gender' => 'Пол',
             'password' => 'Пароль',
-            'cardNumber' => 'Номер карты',
-            'lastName' => 'Фамилия',
-            'middleName' => 'Отчество'
+            'cardNumber' => 'Номер карты'
         ];
     }
 }

@@ -13,7 +13,7 @@ class UpdateController
     public function handle(UpdateRequest $request): JsonResponse
     {
         try {
-            $data = $this->service->updateInfo($request->user(), $request->validated());
+            $this->service->updateInfo($request->user(), $request->validated());
         }
         catch (\DomainException $e) {
             return new JsonResponse([

@@ -25,11 +25,11 @@ class PhoneVerifyService
 
         $manager = $this->managerService->login();
         $data = $this->posService->getBalance($phone);
-        if (!isset($data['ContactID']))
+        if (!isset($data['contactID']))
             throw new \DomainException('Нет клиента с таким номером');
 
         $data = [
-            'Id' => $data['ContactID'],
+            'Id' => $data['contactID'],
             'SessionId' => $manager['sessionId'],
             'PartnerId' => $partnerId
         ];

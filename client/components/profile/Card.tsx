@@ -47,7 +47,7 @@ const Card: FC<Props> = ({ data, className }) => {
         {data.map((item) => (
           <tr key={item.id}>
             <td>{getStatusCard(item.statusCode)}</td>
-            <td>{item.expiryDate.format("DD.MM.Y[г]")}</td>
+            <td>{item.expiryDate.format("DD.MM.Y")}</td>
             <td>{item.cardType}</td>
             <td>
               {item.statusCode === 1 || item.statusCode === 2 ? (

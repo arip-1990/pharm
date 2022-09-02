@@ -31,12 +31,17 @@ class RegisterService
         $data = $request->validated();
         $user = User::query()->firstOrNew(['phone' => $data['phone'], 'email' => $data['email']]);
 
+        $fullName = explode(' ', $data['fullName']);
+        $firstName = $fullName[1] ?? $fullName[0];
+        $lastName = isset($fullName[1]) ? $fullName[0] : null;
+        $middleName = $fullName[2] ?? null;
+
         $user->id = $user->id ?: Uuid::uuid4()->toString();
         $user->phone = $data['phone'];
         $user->email = $data['email'];
-        $user->first_name = $data['firstName'];
-        $user->last_name = $data['lastName'];
-        $user->middle_name = $data['middleName'];
+        $user->first_name = $firstName;
+        $user->last_name = $lastName;
+        $user->middle_name = $middleName;
         $user->password = $data['password'];
         $user->birth_date = $data['birthDate'];
         $user->gender = $data['gender'];

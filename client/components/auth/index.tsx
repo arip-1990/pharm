@@ -57,22 +57,7 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
   };
 
   return (
-    <Modal
-      size="sm"
-      show={openModal || show}
-      onHide={onHide}
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      {loginType !== "checkSms" && loginType !== "setPassword" ? (
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            <h5 className="modal-title">
-              {loginType === "login" ? "Войти" : "Регистрация"}
-            </h5>
-          </Modal.Title>
-        </Modal.Header>
-      ) : null}
+    <Modal size="sm" show={openModal || show} onHide={onHide} centered>
       <Modal.Body>
         {loginType === "login" ? (
           <Login onSubmit={handleLogin} />

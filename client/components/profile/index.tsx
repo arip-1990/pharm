@@ -17,14 +17,14 @@ const Profile: FC<Props> = ({ title, className, children }) => {
   if (className) classes = classes.concat(className.split(" "));
 
   useEffect(() => {
-    if (isAuth === false) router.back();
+    if (isAuth === false) router.push("/");
   }, [isAuth]);
 
   const handleLogout = async (e: MouseEvent) => {
     e.preventDefault();
     try {
       await logout();
-      router.push("/");
+      // router.push("/");
     } catch (error) {
       console.log(error);
     }
