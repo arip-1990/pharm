@@ -141,7 +141,7 @@ const Footer: FC = () => {
       </Row>
 
       <Row>
-        <div className="text-center box-warning">
+        <div className={styles["box-warning"]}>
           ИМЕЮТСЯ ПРОТИВОПОКАЗАНИЯ. НЕОБХОДИМА КОНСУЛЬТАЦИЯ СПЕЦИАЛИСТА.
         </div>
       </Row>

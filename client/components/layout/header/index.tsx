@@ -12,10 +12,13 @@ import { ICart } from "../../../models/ICart";
 import { useLocalStorage } from "react-use-storage";
 import { IProduct } from "../../../models/IProduct";
 import Auth from "../../auth";
+import { useFormik } from "formik";
+import { useRouter } from "next/router";
 
 const Header: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const { isAuth } = useAuth();
+  const router = useRouter();
   const [carts] = useLocalStorage<ICart[]>("cart", []);
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
   const [totalCart, setTotalCart] = useState<number>(0);
@@ -32,6 +35,13 @@ const Header: FC = () => {
     e.preventDefault();
     setShowModal(true);
   };
+
+  const formik = useFormik({
+    initialValues: { q: "" },
+    onSubmit: ({ q }) => {
+      if (q.length >= 3) router.push(`/search?q=${q}`);
+    },
+  });
 
   return (
     <Container as="header" className="my-3">
@@ -70,12 +80,14 @@ const Header: FC = () => {
             lg={{ span: 7, order: 0 }}
             className="mt-3 mt-lg-0"
           >
-            <form className="search">
+            <form className="search" onSubmit={formik.handleSubmit}>
               <input
                 type="search"
                 name="q"
                 className="form-control"
                 placeholder="Введите: название препарата, производителя, действующее вещество"
+                onChange={formik.handleChange}
+                value={formik.values.q}
               />
               <button type="submit" className="btn btn-primary btn-search">
                 Найти

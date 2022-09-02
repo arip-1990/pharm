@@ -34,13 +34,9 @@ const SetPassword: FC<Props> = ({ onSubmit }) => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="mb-3">
-        <label htmlFor="password" className="form-label">
-          Укажите пароль
-        </label>
         <input
-          id="password"
           name="password"
-          type="text"
+          placeholder="*Укажите пароль"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.password}

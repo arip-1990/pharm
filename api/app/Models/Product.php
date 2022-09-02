@@ -95,9 +95,19 @@ class Product extends Model
         return $this->status == self::STATUS_DRAFT;
     }
 
-    protected function scopeActive(Builder $query): Builder
+    protected function scopeActive(Builder $query, string $city = null): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE);
+        $query->where('status', self::STATUS_ACTIVE);
+        if ($city) {
+            $query->whereHas('offers', function (Builder $query) use ($city) {
+                $query->where('quantity', '>', 0)
+                    ->join('stores', 'offers.store_id', '=', 'stores.id')
+                    ->where('status', Store::STATUS_ACTIVE)
+                    ->where('stores.name', 'like', '%' . $city . '%');
+            });
+        }
+
+        return $query;
     }
 
     public function changeCategory(int $categoryId): void

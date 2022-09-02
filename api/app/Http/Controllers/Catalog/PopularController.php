@@ -25,7 +25,7 @@ class PopularController
         $categoryIds = Category::query()->whereIn('id', [536, 556])->get()
             ->map(fn(Category $category) => $category->descendants->pluck('id'))->collapse()->push(536, 556);
 
-        $products = Product::query()->whereNotIn('category_id', $categoryIds)
+        $products = Product::active()->whereNotIn('category_id', $categoryIds)
             ->whereIn('id', $popularIds)->take(12)->get();
 
         return new JsonResponse(ProductResource::collection($products));

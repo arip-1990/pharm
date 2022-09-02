@@ -28,6 +28,11 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
     }
   }, []);
 
+  const handleHide = () => {
+    setLoginType("login");
+    onHide();
+  };
+
   const handleLogin = (
     success: boolean,
     other: "checkSms" | "setPassword" = null
@@ -47,8 +52,9 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
     }
   };
 
-  const handleCheckSms = (success: boolean) => {
+  const handleCheckSms = (success: boolean, setPassword: boolean = false) => {
     if (success) onHide();
+    else if (setPassword) setLoginType("setPassword");
   };
 
   const handleSetPassword = (success: boolean, setPassword?: boolean) => {
@@ -57,7 +63,7 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
   };
 
   return (
-    <Modal size="sm" show={openModal || show} onHide={onHide} centered>
+    <Modal size="sm" show={openModal || show} onHide={handleHide} centered>
       <Modal.Body>
         {loginType === "login" ? (
           <Login onSubmit={handleLogin} />

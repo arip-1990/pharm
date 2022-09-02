@@ -13,18 +13,14 @@ const CheckSms: FC<Props> = ({ onSubmit }) => {
   const notification = useNotification();
   const [loading, setLoading] = useState<boolean>(false);
   const [attempt, setAttempt] = useState<number>(2);
-  const [expiryTime, setExpiryTime] = useState<number>(30);
   const { time, start, status } = useTimer({
-    initialTime: expiryTime,
+    initialTime: 60,
     endTime: 0,
     timerType: "DECREMENTAL",
   });
 
   useEffect(() => {
-    if (attempt) {
-      setExpiryTime(attempt === 2 ? 30 : 60);
-      start();
-    }
+    if (attempt) start();
   }, [attempt]);
 
   const handleResendSms = async (e: MouseEvent) => {
@@ -67,13 +63,9 @@ const CheckSms: FC<Props> = ({ onSubmit }) => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="mb-2">
-        <label htmlFor="smsCode" className="form-label">
-          Код подтверждения
-        </label>
         <input
-          id="smsCode"
           name="smsCode"
-          type="text"
+          placeholder="*Код подтверждения"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.smsCode}

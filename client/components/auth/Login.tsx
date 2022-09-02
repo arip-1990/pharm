@@ -44,13 +44,10 @@ const Login: FC<Props> = ({ onSubmit }) => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="mb-3">
-        <label htmlFor="login" className="form-label">
-          Телефон
-        </label>
         <IMaskInput
           mask={"+{7} (000) 000-00-00"}
-          id="login"
           name="login"
+          placeholder="*Телефон"
           className="form-control"
           onChange={formik.handleChange}
           onInput={formik.handleChange}
@@ -58,13 +55,10 @@ const Login: FC<Props> = ({ onSubmit }) => {
         />
       </div>
       <div className="mb-3">
-        <label htmlFor="password" className="form-label">
-          Пароль
-        </label>
         <input
-          id="password"
           name="password"
           type="password"
+          placeholder="*Пароль"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.password}

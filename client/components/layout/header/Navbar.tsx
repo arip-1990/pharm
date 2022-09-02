@@ -43,11 +43,23 @@ const Navbar: FC = () => {
             <Link href="/delivery-booking">
               <a
                 className={classNames("nav-link", {
-                  active: router.pathname.startsWith("/deliveryBooking"),
+                  active: router.pathname.startsWith("/delivery-booking"),
                 })}
                 tabIndex={0}
               >
                 <i className="icon-truck" /> Доставка/бронирование
+              </a>
+            </Link>
+          </Nav.Item>
+          <Nav.Item className="text-md-center">
+            <Link href="/loyalty">
+              <a
+                className={classNames("nav-link", {
+                  active: router.pathname.startsWith("/loyalty"),
+                })}
+                tabIndex={0}
+              >
+                <i className="" /> Программа лояльности
               </a>
             </Link>
           </Nav.Item>

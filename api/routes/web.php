@@ -79,8 +79,8 @@ Route::prefix('panel')->group(function () {
 Route::get('/city', [CityController::class, 'handle']);
 
 Route::prefix('catalog')->group(function () {
-    Route::get('/sale', [Catalog\PopularController::class, 'handle']);
-    Route::get('/search', [Catalog\PopularController::class, 'handle']);
+//    Route::get('/sale', [Catalog\PopularController::class, 'handle']);
+    Route::get('/search', [Catalog\SearchController::class, 'handle']);
     Route::get('/popular', [Catalog\PopularController::class, 'handle']);
     Route::get('/product/{product}', [Catalog\ProductController::class, 'handle']);
     Route::get('/{category?}', [Catalog\IndexController::class, 'handle']);

@@ -12,7 +12,7 @@ class UserService
 {
     private Client $client;
 
-    public function __construct(private readonly ManagerService $managerService, private readonly PosService $posService) {
+    public function __construct(private readonly ManagerService $managerService) {
         $this->client = new Client([
             'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
             'http_errors' => false,
@@ -20,20 +20,15 @@ class UserService
         ]);
     }
 
-    public function getInfo(User $user): array
+    public function getInfo(string $id, string $sessionId): array
     {
         $url = config('data.loyalty.test.url.lk') . '/Contact/Get';
 
-        $response = $this->client->get($url, ['query' => "id='{$user->id}'&sessionid='{$user->session}'"]);
+        $response = $this->client->get($url, ['query' => "id='{$id}'&sessionid='{$sessionId}'"]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
             throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
-
-        $balance = $this->posService->getBalance($user->phone);
-        $data['cardNumber'] = $balance['cardNumber'];
-        $data['cardChargedBonus'] = $balance['cardChargedBonus'];
-        $data['cardWriteoffBonus'] = $balance['cardWriteoffBonus'];
 
         return $data;
     }

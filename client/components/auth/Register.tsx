@@ -108,12 +108,11 @@ const Register = ({ onSubmit }: PropsType) => {
       <div className="mb-3">
         <select
           name="gender"
-          placeholder="Пол"
           className="form-select"
           onChange={formik.handleChange}
           value={formik.values.gender}
         >
-          <option value={0}>Не указан</option>
+          <option value={0}>Выберите пол</option>
           <option value={1}>Мужской</option>
           <option value={2}>Женский</option>
         </select>
