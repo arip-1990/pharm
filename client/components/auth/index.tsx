@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import Login from "./Login";
 import Register from "./Register";
@@ -22,35 +22,44 @@ interface Props {
 }
 
 const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
-  const [loginType, setLoginType] = useState<AuthType>(type);
-  const [openModal, setOpenModal] = useState<boolean>(show);
+  const [modal, setModal] = useState<{ open: boolean; type: AuthType }>({
+    open: show,
+    type,
+  });
   const router = useRouter();
 
   useEffect(() => {
     const path = router.asPath.split("#");
     if (path.length > 1 && ["login", "register"].includes(path[1])) {
       const hash = path[1] as AuthType;
-      setLoginType(hash);
-      setOpenModal(true);
+      setModal({ open: true, type: hash });
     }
   }, []);
 
-  const handleHide = () => {
-    setLoginType("login");
-    onHide();
-  };
+  const handleHide = useCallback(() => {
+    setModal((item) => ({ ...item, open: false }));
+    show && onHide();
+  }, [show]);
+
+  const handleSwitchAuth = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    setModal((item) => ({
+      ...item,
+      type: item.type === "login" ? "register" : "login",
+    }));
+  }, []);
 
   const handleLogin = (
     success: boolean,
     other: "verifyPhone" | "setPassword" = null
   ) => {
-    if (other) setLoginType(other);
+    if (other) setModal((item) => ({ ...item, type: other }));
     else if (success) onHide();
   };
 
   const handleRegister = (success: boolean) => {
     if (success) {
-      setLoginType("verifyPhone");
+      setModal((item) => ({ ...item, type: "verifyPhone" }));
     } else {
       onHide();
     }
@@ -61,11 +70,12 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
     setPassword: boolean = false
   ) => {
     if (success) onHide();
-    else if (setPassword) setLoginType("setPassword");
+    else if (setPassword)
+      setModal((item) => ({ ...item, type: "setPassword" }));
   };
 
   const handleSetPassword = (success: boolean, setPassword?: boolean) => {
-    if (setPassword) setLoginType("setPassword");
+    if (setPassword) setModal((item) => ({ ...item, type: "setPassword" }));
     else if (success) onHide();
   };
 
@@ -73,12 +83,12 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
     success: boolean,
     verifyPhone: boolean = false
   ) => {
-    if (verifyPhone) setLoginType("verifyPhone");
-    else if (success) setLoginType("login");
+    if (verifyPhone) setModal((item) => ({ ...item, type: "verifyPhone" }));
+    else if (success) setModal((item) => ({ ...item, type: "login" }));
   };
 
   const getAuthForm = () => {
-    switch (loginType) {
+    switch (modal.type) {
       case "register":
         return <Register onSubmit={handleRegister} />;
       case "verifyPhone":
@@ -91,7 +101,9 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
         return (
           <Login
             onSubmit={handleLogin}
-            onResetPassword={() => setLoginType("resetPassword")}
+            onResetPassword={() =>
+              setModal((item) => ({ ...item, type: "resetPassword" }))
+            }
           />
         );
     }
@@ -101,21 +113,15 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
     <Modal
       dialogClassName={styles.dialog}
       contentClassName={styles.auth}
-      show={openModal || show}
+      show={modal.open || show}
       onHide={handleHide}
       centered
     >
       <Modal.Body style={{ padding: "3rem" }}>{getAuthForm()}</Modal.Body>
-      {["login", "register"].includes(loginType) ? (
+      {["login", "register"].includes(modal.type) ? (
         <Modal.Footer className="justify-content-center">
-          <a
-            href="#"
-            className="text-primary"
-            onClick={() =>
-              setLoginType(loginType === "login" ? "register" : "login")
-            }
-          >
-            {loginType === "login" ? "Зарегистрироваться" : "Войти"}
+          <a href="#" className="text-primary" onClick={handleSwitchAuth}>
+            {modal.type === "login" ? "Зарегистрироваться" : "Войти"}
           </a>
         </Modal.Footer>
       ) : null}

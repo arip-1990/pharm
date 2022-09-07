@@ -28,10 +28,20 @@ const TextField = ({ label, ...props }: any) => {
   );
 };
 
+interface Values {
+  oldPassword: string;
+  password: string;
+  password_confirmation: string;
+}
+
 const ChangePassword: FC = () => {
   const notification = useNotification();
 
-  const handleSubmit = async (values: any, actions: FormikHelpers<any>) => {
+  const handleChangePassword = async (
+    values: Values,
+    actions: FormikHelpers<Values>
+  ) => {
+    console.log(values);
     try {
       await api.put("user/update-password", { ...values });
       actions.resetForm();
@@ -44,9 +54,10 @@ const ChangePassword: FC = () => {
 
       console.log(error?.response.data);
     }
+    actions.setSubmitting(false);
   };
 
-  const handleValidate = (values: any) => {
+  const handleValidate = (values: Values) => {
     const errors = {
       oldPassword: "",
       password: "",
@@ -70,10 +81,10 @@ const ChangePassword: FC = () => {
             password: "",
             password_confirmation: "",
           }}
-          onSubmit={handleSubmit}
+          onSubmit={handleChangePassword}
           validate={handleValidate}
         >
-          {({ isValid, handleSubmit }) => (
+          {({ isValid, isSubmitting, handleSubmit }) => (
             <form
               onSubmit={handleSubmit}
               style={{ maxWidth: 320, margin: "auto" }}
@@ -101,7 +112,11 @@ const ChangePassword: FC = () => {
               </div>
               <div className="row align-items-center">
                 <span className="col-5 text-end">
-                  <button type="submit" className="btn btn-primary">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={isSubmitting}
+                  >
                     Сохранить
                   </button>
                 </span>

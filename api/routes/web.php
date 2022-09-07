@@ -34,6 +34,9 @@ Route::get('/test', function () {
 //    $service = new \App\UseCases\PosService();
 //    $data = $service->getBalance('79887811011');
 //    dd($data);
+//    $service = new \App\UseCases\User\UserService(new \App\UseCases\ManagerService());
+//    $data = $service->getInfo('721781a0-020c-ed11-80cb-001dd8b75065', 'cf5cf407-6c67-45ae-9446-b1edb01c6955');
+//    dd($data);
 });
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {

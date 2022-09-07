@@ -15,7 +15,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'firstName' => 'required|max:50',
-            'email' => 'required|email|max:100|unique:users',
+            'email' => 'nullable|email|max:100|unique:users',
             'phone' => 'required|unique:users|regex:/^7\d{10}$/',
             'birthDate' => 'required|date',
             'gender' => 'required|digits_between:0,2',

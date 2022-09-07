@@ -38,7 +38,7 @@ class RegisterService
 
         $user->id = $user->id ?: Uuid::uuid4()->toString();
         $user->phone = $data['phone'];
-        $user->email = $data['email'];
+        $user->email = $data['email'] ?? null;
         $user->first_name = $firstName;
         $user->last_name = $lastName;
         $user->middle_name = $middleName;

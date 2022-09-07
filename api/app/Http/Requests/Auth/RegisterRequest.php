@@ -15,7 +15,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'fullName' => 'required|string',
-            'email' => 'required|email|max:100',
+            'email' => 'nullable|email|max:100',
             'phone' => 'required|regex:/^7\d{10}$/',
             'birthDate' => 'required|date',
             'gender' => 'required|digits_between:0,2',

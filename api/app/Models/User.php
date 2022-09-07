@@ -18,7 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $first_name
  * @property ?string $last_name
  * @property ?string $middle_name
- * @property string $email
+ * @property ?string $email
  * @property string $phone
  * @property string $password
  * @property int $gender
