@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useCookies } from "react-cookie";
+import { COOKIE_DOMAIN } from "../../../lib/api";
 import { useFetchCitiesQuery } from "../../../lib/cityService";
 
 type Props = {
@@ -8,15 +9,19 @@ type Props = {
 };
 
 const SetCity: FC<Props> = ({ className }) => {
-  const [{ city }, setCity] = useCookies(["city"]);
+  const [{ city }, setCookie] = useCookies(["city"]);
   const { data } = useFetchCitiesQuery();
   let classes = ["menu-city"];
   if (className) classes = classes.concat(className.split(" "));
 
+  const handleSetCity = async (newCity: string) => {
+    setCookie("city", newCity, { domain: COOKIE_DOMAIN });
+  };
+
   if (data) {
     return (
       <div className={classes.join(" ")}>
-        <Dropdown onSelect={(eventKey) => setCity("city", eventKey)}>
+        <Dropdown onSelect={(eventKey) => handleSetCity(eventKey)}>
           <span>Ваш город:</span>
           <Dropdown.Toggle
             variant="success"
@@ -44,7 +49,7 @@ const SetCity: FC<Props> = ({ className }) => {
           <h5 className="w-100 mb-3">Ваш город {data[0].name}?</h5>
           <button
             className="btn btn-primary btn-sm"
-            onClick={() => setCity("city", data[0].name)}
+            onClick={() => handleSetCity(data[0].name)}
           >
             Да, все верно
           </button>

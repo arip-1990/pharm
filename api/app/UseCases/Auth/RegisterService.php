@@ -25,7 +25,7 @@ class RegisterService
     public function requestRegister(RegisterRequest $request): void
     {
         $data = $this->posService->getBalance($request->get('phone'));
-        if (isset($data['contactID']))
+        if (isset($data['ContactID']))
             throw new \DomainException('Существует контакт с таким телефоном');
 
         $data = $request->validated();

@@ -1,6 +1,6 @@
 import Layout from "../components/layout";
 import Card from "../components/card";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../models/ICategory";
 import saleImage from "../assets/images/sale-icon.png";
@@ -13,7 +13,8 @@ import {
   useFetchProductsQuery,
 } from "../lib/catalogService";
 import { useRouter } from "next/router";
-import api from "../lib/api";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -47,7 +48,16 @@ const generateCategory = (category: ICategory) => {
 const Catalog: FC = () => {
   const router = useRouter();
   const { page } = router.query;
-  const { data } = useFetchProductsQuery({ page: Number(page) || 1 });
+  const [{ city }] = useCookies(["city"]);
+  const { data, isFetching, refetch } = useFetchProductsQuery({
+    page: Number(page) || 1,
+  });
+
+  useEffect(() => {
+    const path = router.asPath.split("?")[0];
+    if (Number(page) > 1) router.push(path);
+    else refetch();
+  }, [city]);
 
   return (
     <Layout>
@@ -100,7 +110,8 @@ const Catalog: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, params }) => {
-    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
+
     const page = Number(params?.page) || 1;
 
     store.dispatch(fetchProducts.initiate({ page }));

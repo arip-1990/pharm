@@ -2,11 +2,18 @@ import { FC, useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import Login from "./Login";
 import Register from "./Register";
-import CheckSms from "./CheckSms";
+import VerifyPhone from "./VerifyPhone";
 import SetPassword from "./SetPassword";
 import { useRouter } from "next/router";
+import styles from "./Auth.module.scss";
+import ResetPassword from "./resetPassword";
 
-type AuthType = "login" | "register" | "checkSms" | "setPassword";
+type AuthType =
+  | "login"
+  | "register"
+  | "verifyPhone"
+  | "setPassword"
+  | "resetPassword";
 
 interface Props {
   show: boolean;
@@ -35,24 +42,24 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
 
   const handleLogin = (
     success: boolean,
-    other: "checkSms" | "setPassword" = null
+    other: "verifyPhone" | "setPassword" = null
   ) => {
-    if (other) {
-      setLoginType(other);
-    } else {
-      onHide();
-    }
+    if (other) setLoginType(other);
+    else if (success) onHide();
   };
 
   const handleRegister = (success: boolean) => {
     if (success) {
-      setLoginType("checkSms");
+      setLoginType("verifyPhone");
     } else {
       onHide();
     }
   };
 
-  const handleCheckSms = (success: boolean, setPassword: boolean = false) => {
+  const handleVerifyPhone = (
+    success: boolean,
+    setPassword: boolean = false
+  ) => {
     if (success) onHide();
     else if (setPassword) setLoginType("setPassword");
   };
@@ -62,20 +69,44 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
     else if (success) onHide();
   };
 
+  const handleReseetPassword = (
+    success: boolean,
+    verifyPhone: boolean = false
+  ) => {
+    if (verifyPhone) setLoginType("verifyPhone");
+    else if (success) setLoginType("login");
+  };
+
+  const getAuthForm = () => {
+    switch (loginType) {
+      case "register":
+        return <Register onSubmit={handleRegister} />;
+      case "verifyPhone":
+        return <VerifyPhone onSubmit={handleVerifyPhone} />;
+      case "setPassword":
+        return <SetPassword onSubmit={handleSetPassword} />;
+      case "resetPassword":
+        return <ResetPassword onSubmit={handleReseetPassword} />;
+      default:
+        return (
+          <Login
+            onSubmit={handleLogin}
+            onResetPassword={() => setLoginType("resetPassword")}
+          />
+        );
+    }
+  };
+
   return (
-    <Modal size="sm" show={openModal || show} onHide={handleHide} centered>
-      <Modal.Body>
-        {loginType === "login" ? (
-          <Login onSubmit={handleLogin} />
-        ) : loginType === "register" ? (
-          <Register onSubmit={handleRegister} />
-        ) : loginType === "checkSms" ? (
-          <CheckSms onSubmit={handleCheckSms} />
-        ) : (
-          <SetPassword onSubmit={handleSetPassword} />
-        )}
-      </Modal.Body>
-      {loginType !== "checkSms" && loginType !== "setPassword" ? (
+    <Modal
+      dialogClassName={styles.dialog}
+      contentClassName={styles.auth}
+      show={openModal || show}
+      onHide={handleHide}
+      centered
+    >
+      <Modal.Body style={{ padding: "3rem" }}>{getAuthForm()}</Modal.Body>
+      {["login", "register"].includes(loginType) ? (
         <Modal.Footer className="justify-content-center">
           <a
             href="#"

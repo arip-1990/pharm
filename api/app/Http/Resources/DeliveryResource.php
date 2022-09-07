@@ -22,7 +22,6 @@ class DeliveryResource extends JsonResource
     public function toArray($request)
     {
         /** @var DeliveryType $this */
-
         $nowDate = Carbon::now()->locale('ru_RU');
         $data = [
             'id' => $this->slug_id,
@@ -39,7 +38,7 @@ class DeliveryResource extends JsonResource
         if ($data['type'] == 'pickup') {
             $data['locations'] = PickupLocationResource::collection(PickupLocation::where('city', self::$data['addressData']['city'])->get());
         }
-        if ($data['type'] == 'delivery') {
+        elseif ($data['type'] == 'delivery') {
             $data['dateIntervals'] = [
                 'id' => $nowDate->format('y-m-d'),
                 "title" => $nowDate->translatedFormat('d M'),

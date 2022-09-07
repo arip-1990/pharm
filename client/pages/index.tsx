@@ -1,6 +1,6 @@
 import Layout from "../components/layout";
 import Card from "../components/card";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { wrapper } from "../lib/store";
 import {
@@ -9,10 +9,14 @@ import {
   getRunningOperationPromises,
 } from "../lib/catalogService";
 import Head from "next/head";
+import { useCookies } from "react-cookie";
 import axios from "axios";
 
 const Home: FC = () => {
-  const { data, isFetching } = useFetchPopularProductsQuery();
+  const [{ city }] = useCookies(["city"]);
+  const { data, isFetching, refetch } = useFetchPopularProductsQuery();
+
+  useEffect(() => refetch(), [city]);
 
   return (
     <Layout banner>
@@ -43,7 +47,7 @@ const Home: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req }) => {
-    if (req) axios.defaults.headers.get.Cookie = req.headers.cookie;
+    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
 
     store.dispatch(fetchPopularProducts.initiate());
 

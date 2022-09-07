@@ -1,15 +1,16 @@
 import { useFormik } from "formik";
 import { FC, useState } from "react";
 import axios from "axios";
-import api from "../../lib/api";
-import { useNotification } from "../../hooks/useNotification";
-import styles from "./Auth.module.scss";
+import api from "../../../lib/api";
+import { useNotification } from "../../../hooks/useNotification";
+
+import styles from "../Auth.module.scss";
 
 type Props = {
   onSubmit: (success: boolean) => void;
 };
 
-const SetPassword: FC<Props> = ({ onSubmit }) => {
+const ChangePassword: FC<Props> = ({ onSubmit }) => {
   const notification = useNotification();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -18,7 +19,7 @@ const SetPassword: FC<Props> = ({ onSubmit }) => {
     onSubmit: async ({ password }) => {
       setLoading(true);
       try {
-        await api.post("auth/set-password", { password });
+        await api.post("auth/reset/password", { password });
         onSubmit(true);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -37,7 +38,8 @@ const SetPassword: FC<Props> = ({ onSubmit }) => {
       <div className="mb-3">
         <input
           name="password"
-          placeholder="*Укажите пароль"
+          type="password"
+          placeholder="*Введите новый пароль"
           className="form-control"
           onChange={formik.handleChange}
           value={formik.values.password}
@@ -52,4 +54,4 @@ const SetPassword: FC<Props> = ({ onSubmit }) => {
   );
 };
 
-export default SetPassword;
+export default ChangePassword;

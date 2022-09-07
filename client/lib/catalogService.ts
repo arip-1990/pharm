@@ -1,9 +1,9 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { HYDRATE } from "next-redux-wrapper";
 import { ICatalog } from '../models/ICatalog';
 import { IOffer } from '../models/IOffer';
 import { IProduct } from '../models/IProduct';
-import { apiBaseQuery } from './api';
+import { apiBaseQuery, API_URL } from './api';
 
 export const catalogApi = createApi({
     reducerPath: 'catalogApi',

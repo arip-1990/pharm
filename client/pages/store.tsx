@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import Layout from "../components/layout";
 import Page from "../components/page";
 import Pagination from "../components/pagination";
@@ -13,13 +13,21 @@ import {
   useFetchStoresQuery,
 } from "../lib/storeService";
 import { useRouter } from "next/router";
-import api from "../lib/api";
 import Map from "../components/Map";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const Store: FC = () => {
   const router = useRouter();
   const { page } = router.query;
-  const { data, isFetching } = useFetchStoresQuery(Number(page) || 1);
+  const [{ city }] = useCookies(["city"]);
+  const { data, isFetching, refetch } = useFetchStoresQuery(Number(page) || 1);
+
+  useEffect(() => {
+    const path = router.asPath.split("?")[0];
+    if (Number(page) > 1) router.push(path);
+    else refetch();
+  }, [city]);
 
   const getDefaultTextGenerator = useCallback((subpath: string) => {
     return (
@@ -82,7 +90,8 @@ const Store: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, params }) => {
-    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
+
     const page = Number(params?.page) || 1;
 
     store.dispatch(fetchStores.initiate(page));

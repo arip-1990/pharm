@@ -3,12 +3,12 @@ import { Container, Row } from "react-bootstrap";
 import Header from "./header";
 import Footer from "./footer";
 import bannerImage from "../../assets/images/banner.png";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { NotificationContainer } from "react-notifications";
 
 type Props = {
   children?: ReactNode;
-  banner?: boolean;
+  banner?: boolean | ReactNode;
 };
 
 const Layout: FC<Props> = ({ children, banner }) => {
@@ -19,9 +19,9 @@ const Layout: FC<Props> = ({ children, banner }) => {
       <NotificationContainer />
 
       {banner ? (
-        <Container fluid>
-          <Row>
-            <Image src={bannerImage} />
+        <Container fluid={banner === true}>
+          <Row style={{ justifyContent: "center" }}>
+            {typeof banner === "boolean" ? <Image src={bannerImage} /> : banner}
           </Row>
         </Container>
       ) : null}

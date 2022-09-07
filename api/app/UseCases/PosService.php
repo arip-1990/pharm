@@ -65,9 +65,8 @@ class PosService
 //            throw new \DomainException((string)$data->Message, (int)$data->ReturnCode);
         }
 
-        if (!$contactID = (string)$data->ContactID) {
-            return (array)$data;
-        }
+        $data->CardNumber = $data->Card->CardNumber;
+        return (array)$data;
 
         return [
             "contactID" => $contactID,

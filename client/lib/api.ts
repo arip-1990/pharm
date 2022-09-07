@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { BaseQueryFn } from '@reduxjs/toolkit/query';
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.120на80.рф';
+export const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_COOKIE_DOMAIN || '.xn--12080-6ve4g.xn--p1ai';
 
 const instance = axios.create({
     baseURL: API_URL,

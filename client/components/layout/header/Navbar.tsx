@@ -15,7 +15,7 @@ const Navbar: FC = () => {
 
       <BaseNavbar.Collapse id="navbarCollapse">
         <Nav className="m-md-0 ">
-          <Nav.Item className="sale text-md-center">
+          <Nav.Item className="text-md-center">
             <Link href="/catalog">
               <a
                 className={classNames("nav-link", {

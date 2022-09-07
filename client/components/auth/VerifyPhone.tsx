@@ -4,6 +4,7 @@ import axios from "axios";
 import { useTimer } from "use-timer";
 import api from "../../lib/api";
 import { useNotification } from "../../hooks/useNotification";
+import styles from "./Auth.module.scss";
 
 type Props = {
   onSubmit: (success: boolean, setPassword?: boolean) => void;
@@ -80,8 +81,8 @@ const CheckSms: FC<Props> = ({ onSubmit }) => {
           </a>
         )}
       </div> */}
-      <div className="text-center">
-        <button type="submit" className="btn btn-primary" disabled={loading}>
+      <div className="text-center mt-4">
+        <button type="submit" className={styles.button} disabled={loading}>
           Подтвердить телефон
         </button>
       </div>

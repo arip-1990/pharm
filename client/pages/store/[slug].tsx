@@ -12,8 +12,8 @@ import {
   useGetStoreQuery,
 } from "../../lib/storeService";
 import { useRouter } from "next/router";
-import api from "../../lib/api";
 import Map from "../../components/Map";
+import axios from "axios";
 
 const Store: FC = () => {
   const router = useRouter();
@@ -88,7 +88,8 @@ const Store: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, params }) => {
-    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
+
     const { slug } = params;
 
     store.dispatch(getStore.initiate(String(slug)));

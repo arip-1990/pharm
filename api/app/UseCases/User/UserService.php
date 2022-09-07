@@ -5,7 +5,6 @@ namespace App\UseCases\User;
 use App\Http\Requests\User\UpdatePasswordRequest;
 use App\Models\User;
 use App\UseCases\ManagerService;
-use App\UseCases\PosService;
 use GuzzleHttp\Client;
 
 class UserService

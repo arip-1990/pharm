@@ -41,14 +41,15 @@ class LoginService
             $data = $this->userService->getInfo($data['Id'], $data['SessionId']);
             $user = User::query()->create([
                 'id' => $data['Id'],
-                'firstName' => $data['FirstName'],
-                'lastName' => $data['LastName'],
-                'middleName' => $data['MiddleName'],
+                'first_name' => $data['FirstName'],
+                'last_name' => $data['LastName'],
+                'middle_name' => $data['MiddleName'],
                 'email' => $data['EmailAddress'],
                 'phone' => $data['MobilePhone'],
                 'gender' => $data['GenderCode'],
-                'birthDate' => Carbon::parse($data['BirthDate']),
-                'session' => $session
+                'birth_date' => Carbon::parse($data['BirthDate']),
+                'session' => $session,
+                'password' => ''
             ]);
         }
         else $user->update(['session' => $session]);

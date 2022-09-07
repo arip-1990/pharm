@@ -14,7 +14,7 @@ class IndexController extends Controller
     public function handle(Request $request): JsonResource
     {
         $city = City::query()->where('name', $request->cookie('city'))->first() ?? City::query()->find(1);
-        $stores = Store::query()->whereIn('location_id', $city->locations->pluck('id'))->paginate(15);
+        $stores = Store::active()->whereIn('location_id', $city->locations->pluck('id'))->paginate(15);
         return StoreResource::collection($stores);
     }
 }

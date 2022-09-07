@@ -6,7 +6,7 @@ use App\Http\Controllers\Card;
 use App\Http\Controllers\Catalog;
 use App\Http\Controllers\Category;
 use App\Http\Controllers\Cheque;
-use App\Http\Controllers\CityController;
+use App\Http\Controllers\City;
 use App\Http\Controllers\Coupon;
 use App\Http\Controllers\Delivery;
 use App\Http\Controllers\FeedController;
@@ -30,15 +30,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/test', function () {});
+Route::get('/test', function () {
+//    $service = new \App\UseCases\PosService();
+//    $data = $service->getBalance('79887811011');
+//    dd($data);
+});
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
     Route::post('/feed', [FeedController::class, 'handle']);
     Route::post('/order', [Order\UpdateController::class, 'handle']);
-});
-
-Route::prefix('order')->group(function () {
-    Route::post('/', [Order\CheckoutController::class, 'handle']);
 });
 
 Route::post('/pay', [PayController::class, 'handle']);
@@ -76,7 +76,10 @@ Route::prefix('panel')->group(function () {
     });
 });
 
-Route::get('/city', [CityController::class, 'handle']);
+Route::prefix('city')->group(function () {
+    Route::get('/', [City\IndexController::class, 'handle']);
+    Route::post('/', [City\StoreController::class, 'handle']);
+});
 
 Route::prefix('catalog')->group(function () {
 //    Route::get('/sale', [Catalog\PopularController::class, 'handle']);
@@ -104,10 +107,28 @@ Route::prefix('checkout')->group(function () {
     Route::get('/store', [Order\Checkout\StoreController::class, 'handle']);
 });
 
+Route::prefix('deliveries')->group(function () {
+    Route::post('/', [Delivery\IndexController::class, 'handle']);
+});
+
+Route::prefix('payments')->group(function () {
+    Route::post('/', [Payment\IndexController::class, 'handle']);
+});
+
+Route::prefix('order')->group(function () {
+    Route::post('/', [Order\CheckoutController::class, 'handle']);
+});
+
 Route::prefix('auth')->group(function () {
     Route::post('/login', [Auth\LoginController::class, 'handle']);
     Route::post('/register', [Auth\RegisterController::class, 'handle']);
     Route::post('/set-password', [Auth\SetPasswordController::class, 'handle']);
+
+    Route::prefix('reset')->group(function () {
+        Route::get('/password', [Auth\Reset\RequestChangePasswordController::class, 'handle']);
+        Route::post('/password', [Auth\Reset\ChangePasswordController::class, 'handle']);
+        Route::post('/password/validate', [Auth\Reset\ValidateTempPasswordController::class, 'handle']);
+    });
 
     Route::prefix('verify')->group(function () {
         Route::get('/phone', [Auth\Verify\RequestPhoneVerifyController::class, 'handle']);
@@ -123,14 +144,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/', [User\UpdateController::class, 'handle']);
         Route::put('/update', [User\UpdateController::class, 'handle']);
         Route::put('/update-password', [User\UpdatePasswordController::class, 'handle']);
-    });
-
-    Route::prefix('deliveries')->group(function () {
-        Route::post('/', [Delivery\IndexController::class, 'handle']);
-    });
-
-    Route::prefix('payments')->group(function () {
-        Route::post('/', [Payment\IndexController::class, 'handle']);
     });
 
     Route::prefix('card')->group(function () {

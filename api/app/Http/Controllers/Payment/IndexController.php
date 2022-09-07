@@ -12,8 +12,7 @@ class IndexController extends Controller
 {
     public function handle(PaymentRequest $request): JsonResponse
     {
-        $query = Payment::query();
-        $payments = $query->paginate($request->get('pageSize', 10));
+        $payments = Payment::query()->paginate($request->get('pageSize', 10));
         return new JsonResponse([
             'payments' => PaymentResource::collection($payments)
         ]);

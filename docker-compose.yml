@@ -32,6 +32,7 @@ services:
       context: client/docker/dev/node
     environment:
       NEXT_PUBLIC_API_URL: http://api.pharm.test
+      NEXT_PUBLIC_COOKIE_DOMAIN: '.pharm.test'
     volumes:
       - ./client:/app
     command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn dev"

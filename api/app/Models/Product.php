@@ -97,17 +97,14 @@ class Product extends Model
 
     protected function scopeActive(Builder $query, string $city = null): Builder
     {
-        $query->where('status', self::STATUS_ACTIVE);
-        if ($city) {
-            $query->whereHas('offers', function (Builder $query) use ($city) {
-                $query->where('quantity', '>', 0)
-                    ->join('stores', 'offers.store_id', '=', 'stores.id')
-                    ->where('status', Store::STATUS_ACTIVE)
-                    ->where('stores.name', 'like', '%' . $city . '%');
-            });
-        }
+//        $query->where('status', self::STATUS_ACTIVE);
+        return $query->whereHas('offers', function (Builder $query) use ($city) {
+            $query->where('quantity', '>', 0)
+                ->join('stores', 'offers.store_id', '=', 'stores.id')
+                ->where('status', Store::STATUS_ACTIVE);
 
-        return $query;
+            if ($city) $query->where('stores.name', 'like', '%' . $city . '%');
+        });
     }
 
     public function changeCategory(int $categoryId): void

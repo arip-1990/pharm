@@ -13,8 +13,8 @@ import {
   useGetProductQuery,
 } from "../../lib/catalogService";
 import { wrapper } from "../../lib/store";
-import api from "../../lib/api";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -248,7 +248,8 @@ const Product: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, params }) => {
-    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
+
     const { slug } = params;
 
     store.dispatch(getProduct.initiate(String(slug)));

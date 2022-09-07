@@ -13,11 +13,11 @@ import {
   useSearchProductsQuery,
 } from "../lib/catalogService";
 import { useRouter } from "next/router";
-import api from "../lib/api";
 import {
   fetchCategories,
   useFetchCategoriesQuery,
 } from "../lib/categoryService";
+import axios from "axios";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -108,7 +108,8 @@ const Search: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, params }) => {
-    if (req) api.defaults.headers.get.Cookie = req.headers.cookie;
+    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
+
     const page = Number(params?.page) || 1;
     const q = String(params?.q) || "";
 

@@ -1,16 +1,14 @@
 <?php
 
-namespace App\UseCases\User;
+namespace App\UseCases\Auth;
 
-use App\UseCases\ManagerService;
-use App\UseCases\PosService;
 use GuzzleHttp\Client;
 
-class PhoneVerifyService
+class PasswordService
 {
     private Client $client;
 
-    public function __construct(private readonly ManagerService $managerService, private readonly PosService $posService) {
+    public function __construct() {
         $this->client = new Client([
             'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
             'http_errors' => false,
@@ -18,19 +16,12 @@ class PhoneVerifyService
         ]);
     }
 
-    public function requestVerify(string $phone): string
+    public function requestResetPassword(string $phone): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/Contact/SendSmsForMobilePhoneVerification';
+        $url = config('data.loyalty.test.url.lk') . '/User/RequestPasswordChange';
         $partnerId = config('data.loyalty.test.partner_id');
-
-        $manager = $this->managerService->login();
-        $data = $this->posService->getBalance($phone);
-        if (!isset($data['ContactID']))
-            throw new \DomainException('Нет клиента с таким номером');
-
         $data = [
-            'Id' => $data['ContactID'],
-            'SessionId' => $manager['sessionId'],
+            'PhoneOrEmail' => $phone,
             'PartnerId' => $partnerId
         ];
 
@@ -43,15 +34,12 @@ class PhoneVerifyService
         return $data['value'];
     }
 
-    public function verifyPhone(string $token, string $smsCode): string
+    public function validateTempPassword(string $token, string $password): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/Contact/VerifyMobilePhone';
-        $manager = $this->managerService->login();
-
+        $url = config('data.loyalty.test.url.lk') . '/User/ValidateTempPassword';
         $data = [
-            'Code' => $smsCode,
             'Token' => $token,
-            'SessionId' => $manager['sessionId']
+            'TemporaryPassword' => $password
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
@@ -62,4 +50,20 @@ class PhoneVerifyService
 
         return $data['value'];
     }
+
+    public function changePassword(string $token, string $password): void
+    {
+        $url = config('data.loyalty.test.url.lk') . '/User/ChangePassword';
+        $data = [
+            'Token' => $token,
+            'Password' => $password
+        ];
+
+        $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
+        $data = json_decode($response->getBody(), true);
+
+        if ($response->getStatusCode() !== 200)
+            throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+    }
+
 }

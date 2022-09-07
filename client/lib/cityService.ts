@@ -7,9 +7,16 @@ export const cityApi = createApi({
     baseQuery: apiBaseQuery(),
     endpoints: (builder) => ({
       fetchCities: builder.query<ICity[], void>({
-        query: () => ({url: '/city'}),
+        query: () => ({url: '/city'})
+      }),
+      setCity: builder.mutation<void, string>({
+        query: (city) => ({
+          url: '/city',
+          method: 'post',
+          data: {city}
+        })
       })
     }),
   })
 
-export const { useFetchCitiesQuery } = cityApi;
+export const { useFetchCitiesQuery, useSetCityMutation } = cityApi;
