@@ -1,89 +1,228 @@
-import { useFormik } from "formik";
-import { FC, MouseEvent, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import axios from "axios";
+import { FormikErrors, FormikHelpers, useFormik } from "formik";
+import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import { useNotification } from "../../hooks/useNotification";
+import api from "../../lib/api";
 import { IMaskInput } from "react-imask";
-import { useRouter } from "next/router";
-import styles from "./Auth.module.scss";
 
-type Props = {
-  onSubmit: (success: boolean, other?: "verifyPhone" | "setPassword") => void;
-  onResetPassword: () => void;
+import styles from "./Auth.module.scss";
+import classNames from "classnames";
+import { useRouter } from "next/router";
+
+type LoginType = "login" | "verifyPhone" | "setPassword";
+
+interface Values {
+  login: string;
+  password: string;
+  smsCode: string;
+}
+
+interface Props {
+  switchAuthType: (type: "register" | "resetPassword") => void;
+  onHide: () => void;
+}
+
+const ErrorField: FC<{ name: string; errors: FormikErrors<Values> }> = ({
+  name,
+  errors,
+}) => {
+  const style = {
+    width: "100%",
+    marginTop: "0.25rem",
+    fontSize: "0.85rem",
+    color: "#dc3545",
+  };
+
+  return errors[name] ? <div style={style}>{errors[name]}</div> : null;
 };
 
-const Login: FC<Props> = ({ onSubmit, onResetPassword }) => {
+const Login: FC<Props> = ({ switchAuthType, onHide }) => {
   const { login } = useAuth();
+  const [active, setActive] = useState<boolean>(false);
+  const [type, setType] = useState<LoginType>("login");
   const notification = useNotification();
-  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
+  useEffect(() => {
+    addEventListener("mouseup", handleUp);
+
+    return () => removeEventListener("mouseup", handleUp);
+  }, []);
+
   const formik = useFormik({
-    initialValues: { login: "", password: "" },
-    onSubmit: async (values) => {
-      let tmp = null;
-      setLoading(true);
-      values.login = values.login.replace(/[^0-9]/g, "");
+    initialValues: { login: "", password: "", smsCode: "" },
+    onSubmit: async (values: Values, actions: FormikHelpers<Values>) => {
       try {
-        await login(values.login, values.password);
-        router.push("/profile");
+        if (type === "login") await handleLogin(values);
+        else if (type === "verifyPhone") {
+          await handleVerifyPhone(values);
+          notification("success", "Телефон подтвержден");
+        } else if (type === "setPassword") {
+          await handleSetPassword(values);
+          notification("success", "Пароль установлен успешно");
+        }
+
+        // router.push("/profile");
+        onHide();
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          if (error.response.data.code === 100033) tmp = "verifyPhone";
-          if (error.response.data.code === 100023) tmp = "setPassword";
-          notification("error", error.response.data.message);
+          if (error.response.data.code === 100033) setType("verifyPhone");
+          else if (error.response.data.code === 100023) setType("setPassword");
+
+          if (error.response.status === 422) {
+            for (const [key, value] of Object.entries(
+              error.response.data?.errors || {}
+            )) {
+              if (key in values) {
+                actions.setFieldError(key, value[0]);
+              }
+            }
+          } else notification("error", error.response.data.message);
         }
         console.log(error?.response.data);
       }
 
-      if (tmp) onSubmit(false, tmp);
-      else onSubmit(true);
-
-      setLoading(false);
+      actions.resetForm();
+      actions.setSubmitting(false);
     },
   });
 
-  const handleClickReset = (e: MouseEvent) => {
-    e.preventDefault();
-    onResetPassword();
+  const handleLogin = async (values: Values) =>
+    new Promise<void>(async (resolve, reject) => {
+      values.login = values.login.replace(/[^0-9]/g, "");
+      try {
+        await login(values.login, values.password);
+        return resolve();
+      } catch (error) {
+        return reject(error);
+      }
+    });
+
+  const handleVerifyPhone = async (values: Values) =>
+    new Promise<void>(async (resolve, reject) => {
+      try {
+        await api.post("auth/verify/phone", { smsCode: values.smsCode });
+        return resolve();
+      } catch (error) {
+        return reject(error);
+      }
+    });
+
+  const handleSetPassword = async (values: Values) =>
+    new Promise<void>(async (resolve, reject) => {
+      try {
+        await api.post("auth/set-password", { password: values.password });
+        return resolve();
+      } catch (error) {
+        return reject(error);
+      }
+    });
+
+  const getTitle = () => {
+    switch (type) {
+      case "verifyPhone":
+        return "Подтверждение телефона";
+      case "setPassword":
+        return "Установка пароля";
+      default:
+        return "Войти";
+    }
   };
+
+  const generateForm = () => {
+    let form = [];
+    switch (type) {
+      case "verifyPhone":
+        form = [
+          <div key="smsCode" className="mb-3">
+            <input
+              name="smsCode"
+              placeholder="*Код подтверждения"
+              className="form-control"
+              onChange={formik.handleChange}
+              value={formik.values.smsCode}
+              required
+            />
+            <ErrorField name="smsCode" errors={formik.errors} />
+          </div>,
+        ];
+        break;
+      case "setPassword":
+        form = [
+          <div key="password" className="mb-3">
+            <input
+              name="password"
+              placeholder="*Укажите пароль"
+              className="form-control"
+              onChange={formik.handleChange}
+              value={formik.values.password}
+              required
+            />
+            <ErrorField name="password" errors={formik.errors} />
+          </div>,
+        ];
+        break;
+      default:
+        form = [
+          <div key="login" className="mb-3">
+            <IMaskInput
+              mask={"+{7} (000) 000-00-00"}
+              name="login"
+              placeholder="*Телефон"
+              className="form-control"
+              onChange={formik.handleChange}
+              onInput={formik.handleChange}
+              value={formik.values.login}
+              required
+            />
+            <ErrorField name="login" errors={formik.errors} />
+          </div>,
+          <div key="password" className="mb-3">
+            <input
+              name="password"
+              type="password"
+              placeholder="*Пароль"
+              className="form-control"
+              onChange={formik.handleChange}
+              value={formik.values.password}
+              required
+            />
+            <ErrorField name="password" errors={formik.errors} />
+          </div>,
+        ];
+    }
+
+    return form;
+  };
+
+  const handleDown = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    if (e.button === 0) setActive(true);
+  }, []);
+
+  const handleUp = useCallback(() => setActive(false), []);
 
   return (
     <div>
-      <h2 className="text-center mb-4">Войти</h2>
+      <h2 className="text-center mb-4">{getTitle()}</h2>
       <form onSubmit={formik.handleSubmit}>
-        <div className="mb-3">
-          <IMaskInput
-            mask={"+{7} (000) 000-00-00"}
-            name="login"
-            placeholder="*Телефон"
-            className="form-control"
-            onChange={formik.handleChange}
-            onInput={formik.handleChange}
-            value={formik.values.login}
-          />
-        </div>
-        <div className="mb-3">
-          <input
-            name="password"
-            type="password"
-            placeholder="*Пароль"
-            className="form-control"
-            onChange={formik.handleChange}
-            value={formik.values.password}
-          />
-        </div>
-        <div className="row align-items-center mt-4">
+        {generateForm()}
+
+        {type === "login" ? (
           <div className="col-7">
-            <a href="#" onClick={handleClickReset}>
+            <a href="#" onClick={() => switchAuthType("resetPassword")}>
               Забыли пароль?
             </a>
           </div>
-          <span className="col-5 text-end">
-            <button type="submit" className={styles.button} disabled={loading}>
-              Войти
-            </button>
-          </span>
+        ) : null}
+
+        <div className="text-center mt-4">
+          <button
+            type="submit"
+            className={classNames(styles.button, { [styles.active]: active })}
+            onMouseDown={handleDown}
+            disabled={formik.isSubmitting}
+          />
         </div>
       </form>
     </div>

@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, MouseEvent, ReactNode, useEffect } from "react";
@@ -8,9 +9,15 @@ type Props = {
   title?: string;
   className?: string;
   children?: ReactNode;
+  contentClassName?: string;
 };
 
-const Profile: FC<Props> = ({ title, className, children }) => {
+const Profile: FC<Props> = ({
+  title,
+  className,
+  children,
+  contentClassName,
+}) => {
   const { isAuth, user, logout } = useAuth();
   const router = useRouter();
   let classes = [styles.profile];
@@ -103,8 +110,13 @@ const Profile: FC<Props> = ({ title, className, children }) => {
             </li>
           </ul>
         </aside>
+
         <div className="col-9">
-          <article className={styles["profile-content"]}>{children}</article>
+          <article
+            className={classNames(styles["profile-content"], contentClassName)}
+          >
+            {children}
+          </article>
         </div>
       </div>
     </section>

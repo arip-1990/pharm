@@ -14,11 +14,14 @@ class StoreController
     {
         try {
             $stores = $this->service->getStores($request);
-
-            return new JsonResponse($stores);
         }
         catch (\DomainException $e) {
-            return new JsonResponse($e->getMessage(), 500);
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
         }
+
+        return new JsonResponse($stores);
     }
 }

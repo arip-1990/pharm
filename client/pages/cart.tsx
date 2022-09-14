@@ -1,23 +1,39 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import Layout from "../components/layout";
 import defaultImage from "../assets/images/default.png";
 import Link from "next/link";
 import Head from "next/head";
 import BaseCart from "../components/cart";
 import { useLocalStorage } from "react-use-storage";
-import { useMountedState } from "react-use";
 import { ICart } from "../models/ICart";
+import Auth from "../components/auth";
+import { useRouter } from "next/router";
+import { useAuth } from "../hooks/useAuth";
+import { useNotification } from "../hooks/useNotification";
+import { useMounted } from "../hooks/useMounted";
 
 const Cart: FC = () => {
+  const { isAuth } = useAuth();
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [carts] = useLocalStorage<ICart[]>("cart", []);
   const [totalAmount, setTotalAmount] = useState<number>(0);
-  const isMounted = useMountedState();
+  const notification = useNotification();
+  const isMounted = useMounted();
+  const router = useRouter();
 
   useEffect(() => {
     let tmp = 0;
     carts.forEach((cart) => (tmp += cart.product.minPrice * cart.quantity));
     setTotalAmount(tmp);
   }, [carts]);
+
+  const handleCheckout = useCallback(() => {
+    if (isAuth) router.push("/cart/store");
+    else {
+      setOpenModal(true);
+      notification("error", "Авторизуйтесь для оформления заказа");
+    }
+  }, [isAuth]);
 
   return (
     <Layout>
@@ -94,9 +110,9 @@ const Cart: FC = () => {
 
           <div className="row align-items-center mt-3">
             <div className="col-12 col-sm-6 order-sm-1 text-center text-md-end">
-              <Link href="/cart/store">
-                <a className="btn btn-primary">Оформить заказ</a>
-              </Link>
+              <a href="#" className="btn btn-primary" onClick={handleCheckout}>
+                Оформить заказ
+              </a>
             </div>
 
             <div className="col-12 col-sm-6 text-center text-md-start mt-3 mt-md-0">
@@ -107,6 +123,8 @@ const Cart: FC = () => {
           </div>
         </div>
       </div>
+
+      <Auth show={openModal} onHide={() => setOpenModal(false)} />
     </Layout>
   );
 };

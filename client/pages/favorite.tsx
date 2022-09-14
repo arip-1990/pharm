@@ -1,15 +1,15 @@
 import Head from "next/head";
 import Link from "next/link";
 import { FC } from "react";
-import { useMountedState } from "react-use";
 import { useLocalStorage } from "react-use-storage";
 import Layout from "../components/layout";
 import { IProduct } from "../models/IProduct";
 import defaultImage from "../assets/images/default.png";
+import { useMounted } from "../hooks/useMounted";
 
 const Favorite: FC = () => {
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
-  const isMounted = useMountedState();
+  const isMounted = useMounted();
 
   return (
     <Layout>

@@ -114,17 +114,4 @@ class Helper
 
         return ['lon' => (float)$lon, 'lat' => (float)$lat];
     }
-
-    public static function getStatusInfo(string $status): string
-    {
-        return match ($status) {
-            Status::STATUS_ACCEPTED => '<span class="text-success">Принят</span>',
-            Status::STATUS_ASSEMBLED_PHARMACY => '<span class="text-success">Заказ собран</span>',
-            Status::STATUS_RECEIVED_BY_CLIENT => '<span class="text-success">Заказ получен</span>',
-            Status::STATUS_CAUSED_BY_DELIVERY => '<span class="text-muted">Вызвана доставка</span>',
-            Status::STATUS_CANCELLED, Status::STATUS_DISBANDED => '<span class="text-danger">Отменен</span>',
-            Status::STATUS_FULL_REFUND, Status::STATUS_RETURN_BY_COURIER => '<span class="text-danger">Возврат</span>',
-            default => '<span class="text-muted">В обработке</span>',
-        };
-    }
 }

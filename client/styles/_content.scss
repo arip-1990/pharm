@@ -53,10 +53,6 @@
         background-image: url(../assets/images/content/warning-red.svg);
       }
 
-      &__appointment > .card-mod_icon {
-        background-image: url(../assets/images/content/warning-orange.svg);
-      }
-
       .store-delivery_icon,
       &__delivery > .card-mod_icon {
         background-image: url(../assets/images/content/delivery.svg);
@@ -92,11 +88,6 @@
 
         &.card-mod__prescription > .card-mod_text {
           transform: translateX(-124px);
-        }
-
-        &.card-mod__appointment > .card-mod_text {
-          max-width: 174px;
-          transform: translateX(-190px);
         }
 
         &.card-mod__delivery > .card-mod_text {
@@ -256,7 +247,7 @@
   background: #f2f2f2;
   border-top: 2px solid #27bfc1;
   border-bottom: 2px solid #27bfc1;
-  padding: 2rem 5.5rem;
+  padding: 1rem;
   margin: 0;
 
   p {
@@ -477,49 +468,39 @@
   }
 }
 
-.loyalty-banner {
-  position: relative;
-  min-height: 414px;
-  background: transparent;
-  background-image: url(../assets/images/loyalty.jpg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
+ul, ol {
+  li {
+    text-indent: 0;
+  }
+}
 
-  .button {
-    position: absolute;
-    left: 108px;
-    bottom: 41px;
-    display: inline-block;
-    width: 307px;
-    height: 55px;
-    font-weight: 600;
-    line-height: 1.5;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
-    cursor: pointer;
-    user-select: none;
-    background-color: #d63517;
-    border: 1px solid #d63517;
-    padding: 0.5rem 2.5rem;
-    font-size: 1rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+ul.list_item__dashed {
+  li {
+    list-style-type: '-';
+  }
+}
 
-    &:not(:disabled) {
-      cursor: pointer;
-    }
+@media (min-width: 576px) {
+  .page {
+    padding: 2rem;
+  }
 
-    &:hover {
-      background-color: darken($color: #d63517, $amount: 5);
-      border-color: darken($color: #d63517, $amount: 5);
-    }
+  .favorite-toggle {
+    left: 1.5rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .page {
+    padding: 2rem 3rem;
   }
 }
 
 @media (min-width: 1200px) {
+  .page {
+    padding: 2rem 5.5rem;
+  }
+
   .card.product {
     .cart-add {
       font-size: 1.25rem;
@@ -535,11 +516,5 @@
         height: 200px;
       }
     }
-  }
-}
-
-@media (min-width: 576px) {
-  .favorite-toggle {
-    left: 1.5rem;
   }
 }

@@ -23,9 +23,14 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.client.rule=Host(`client.pharm.test`)
-      - traefik.http.routers.client.entryPoints=http
-      - traefik.http.services.client.loadBalancer.server.port=80
+      - traefik.http.routers.site.rule=Host(`pharm.test`) || Host(`www.pharm.test`)
+      - traefik.http.routers.site.entryPoints=http
+      - traefik.http.routers.site.service=site_main
+      - traefik.http.services.site_main.loadBalancer.server.port=80
+      - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
+      - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
+      - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
+      - traefik.http.routers.site.middlewares=site-redirect
 
   client-node:
     build:
@@ -73,110 +78,6 @@ services:
     volumes:
       - ./panel:/app
 
-  site:
-    build:
-      context: site/docker
-      dockerfile: dev/nginx/Dockerfile
-    volumes:
-      - ./site:/app
-      - uploads:/app/storage/app/public
-    networks:
-      - traefik-public
-      - default
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.http.routers.site.rule=Host(`pharm.test`) || Host(`www.pharm.test`)
-      - traefik.http.routers.site.entryPoints=http
-      - traefik.http.routers.site.service=site_main
-      - traefik.http.services.site_main.loadBalancer.server.port=80
-      - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
-      - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
-      - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
-      - traefik.http.routers.site.middlewares=site-redirect
-
-  site-php-fpm:
-    build:
-      context: site/docker
-      dockerfile: dev/php-fpm/Dockerfile
-    environment:
-      APP_NAME: Сеть аптек 120/80
-      APP_URL: http://pharm.test
-      APP_ENV: local
-      APP_DEBUG: true
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
-      DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
-      DB_DATABASE: app
-      DB_USERNAME: app
-      DB_PASSWORD: secret
-      BROADCAST_DRIVER: redis
-      CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      SESSION_DRIVER: redis
-      SESSION_LIFETIME: 120
-      SESSION_DOMAIN: '.pharm.test'
-      SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
-      CORS_ORIGIN: 'http://panel.pharm.test|http://client.pharm.test'
-      REDIS_HOST: redis
-      REDIS_CLIENT: predis
-      MAIL_HOST: mailer
-      MAIL_FROM_ADDRESS: info@pharm.test
-      MAIL_FROM_NAME: Сеть аптек 120/80
-      FILESYSTEM_DRIVER: public
-      ELASTICSEARCH_HOST: elasticsearch
-    volumes:
-      - ./site:/app
-      - uploads:/app/storage/app/public
-
-  site-php-cli:
-    build:
-      context: site/docker
-      dockerfile: dev/php-cli/Dockerfile
-    environment:
-      APP_NAME: Сеть аптек 120/80
-      APP_URL: http://pharm.test
-      APP_ENV: local
-      APP_DEBUG: true
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
-      DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
-      DB_DATABASE: app
-      DB_USERNAME: app
-      DB_PASSWORD: secret
-      BROADCAST_DRIVER: redis
-      CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      SESSION_DRIVER: redis
-      SESSION_LIFETIME: 120
-      SESSION_DOMAIN: '.pharm.test'
-      SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
-      REDIS_HOST: redis
-      REDIS_CLIENT: predis
-      MAIL_HOST: mailer
-      MAIL_FROM_ADDRESS: info@pharm.test
-      MAIL_FROM_NAME: Сеть аптек 120/80
-      FILESYSTEM_DRIVER: public
-      ELASTICSEARCH_HOST: elasticsearch
-    volumes:
-      - ./site:/app
-      - uploads:/app/storage/app/public
-
-  site-node:
-    build:
-      context: site/docker/dev/node
-    volumes:
-      - ./site:/app
-    command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn watch"
-
-  site-node-cli:
-    build:
-      context: site/docker/dev/node
-    volumes:
-      - ./site:/app
-
   api:
     build:
       context: api/docker
@@ -217,7 +118,7 @@ services:
       SESSION_LIFETIME: 120
       SESSION_DOMAIN: '.pharm.test'
       SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
-      CORS_ORIGIN: 'http://panel.pharm.test|http://client.pharm.test'
+      CORS_ORIGIN: 'http://panel.pharm.test|http://pharm.test'
       REDIS_HOST: redis
       REDIS_CLIENT: predis
       MAIL_HOST: mailer
@@ -247,10 +148,6 @@ services:
       BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
-      SESSION_DRIVER: redis
-      SESSION_LIFETIME: 120
-      SESSION_DOMAIN: '.pharm.test'
-      SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
       REDIS_HOST: redis
       REDIS_CLIENT: predis
       MAIL_HOST: mailer

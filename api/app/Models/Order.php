@@ -57,7 +57,7 @@ class Order extends Model
     const DELIVERY_TYPE_PICKUP = 0;
     const DELIVERY_TYPE_COURIER = 1;
 
-    public static function create(string $userId, string $storeId, int $paymentType, float $cost, bool $deliveryType = false): self
+    public static function create(string $userId, string $storeId, int $paymentType, float $cost, int $deliveryType): self
     {
         $item = new static();
         $item->user_id = $userId;

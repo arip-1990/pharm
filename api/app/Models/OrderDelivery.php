@@ -17,12 +17,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class OrderDelivery extends Model
 {
-    public static function create(array $address, bool $serviceToDoor, float $deliveryPrice = null): self
+    public $timestamps = false;
+
+    public static function create(int $entrance = null, int $floor = null, int $apartment = null, bool $serviceToDoor = false, float $deliveryPrice = null): self
     {
         $delivery = new self();
-        $delivery->entrance = $address['entrance'] ?? null;
-        $delivery->floor = $address['floor'] ?? null;
-        $delivery->apartment = $address['apartment'] ?? null;
+        $delivery->entrance = $entrance;
+        $delivery->floor = $floor;
+        $delivery->apartment = $apartment;
         $delivery->service_to_door = $serviceToDoor;
         $delivery->delivery_price = $deliveryPrice ?? 0;
         return $delivery;

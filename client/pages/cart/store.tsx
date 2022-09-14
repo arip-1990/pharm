@@ -23,7 +23,7 @@ const Store: FC = () => {
         params[cart.product.id] = cart.quantity;
       });
       try {
-        const { data } = await api.get("checkout/store", { params });
+        const { data } = await api.post("/order/checkout/store", { ...params });
         setStores(data);
       } catch (error) {}
       setLoading(false);

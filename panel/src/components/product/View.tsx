@@ -24,12 +24,12 @@ const View: React.FC = () => {
     data: product,
     isFetching: fetchProductLoading,
   } = useFetchProductQuery(slug || "", { skip: !slug });
-  const { data: offers, isFetching: fetchOffersLoading } = useFetchOfferQuery(
-    slug || "",
-    {
-      skip: !slug,
-    }
-  );
+  // const { data: offers, isFetching: fetchOffersLoading } = useFetchOfferQuery(
+  //   slug || "",
+  //   {
+  //     skip: !slug,
+  //   }
+  // );
 
   return (
     <Row gutter={[32, 32]}>
@@ -68,10 +68,10 @@ const View: React.FC = () => {
         <Card title="Аптеки">
           <Table
             size="small"
-            loading={fetchOffersLoading}
+            loading={fetchProductLoading}
             pagination={false}
             columns={offerColumns}
-            dataSource={offers?.items.map((item) => ({
+            dataSource={product?.offers.map((item) => ({
               key: item.store.id,
               name: item.store.name,
               quantity: item.quantity,

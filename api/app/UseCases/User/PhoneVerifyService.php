@@ -2,36 +2,28 @@
 
 namespace App\UseCases\User;
 
+use App\UseCases\LoyaltyService;
 use App\UseCases\ManagerService;
 use App\UseCases\PosService;
-use GuzzleHttp\Client;
 
-class PhoneVerifyService
+class PhoneVerifyService extends LoyaltyService
 {
-    private Client $client;
-
     public function __construct(private readonly ManagerService $managerService, private readonly PosService $posService) {
-        $this->client = new Client([
-            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-            'http_errors' => false,
-            'verify' => false
-        ]);
+        parent::__construct();
     }
 
     public function requestVerify(string $phone): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/Contact/SendSmsForMobilePhoneVerification';
-        $partnerId = config('data.loyalty.test.partner_id');
-
+        $url = $this->urls['lk'] . '/Contact/SendSmsForMobilePhoneVerification';
         $manager = $this->managerService->login();
         $data = $this->posService->getBalance($phone);
-        if (!isset($data['ContactID']))
+        if (!isset($data['contactID']))
             throw new \DomainException('Нет клиента с таким номером');
 
         $data = [
-            'Id' => $data['ContactID'],
+            'Id' => $data['contactID'],
             'SessionId' => $manager['sessionId'],
-            'PartnerId' => $partnerId
+            'PartnerId' => $this->config['partner_id']
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
@@ -45,7 +37,7 @@ class PhoneVerifyService
 
     public function verifyPhone(string $token, string $smsCode): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/Contact/VerifyMobilePhone';
+        $url = $this->urls['lk'] . '/Contact/VerifyMobilePhone';
         $manager = $this->managerService->login();
 
         $data = [

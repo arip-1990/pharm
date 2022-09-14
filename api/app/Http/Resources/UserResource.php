@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helper;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +16,7 @@ class UserResource extends JsonResource
             'lastName' => $this['LastName'],
             'middleName' => $this['MiddleName'],
             'email' => $this['EmailAddress'],
-            'phone' => $this['MobilePhone'],
+            'phone' => Helper::formatPhone($this['MobilePhone'], true),
             'gender' => $this['GenderCode'],
             'birthDate' => Carbon::parse($this['BirthDate']),
             'emailVerified' => $this['EmailVerified'],

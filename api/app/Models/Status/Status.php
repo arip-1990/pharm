@@ -6,11 +6,11 @@ use Carbon\Carbon;
 
 class Status
 {
-    public OrderStatus $value;
+    public Order $value;
     public OrderState $state;
     public Carbon $created_at;
 
-    public function __construct(OrderStatus $value, Carbon $created_at, OrderState $state = OrderState::STATE_WAIT)
+    public function __construct(Order $value, Carbon $created_at, OrderState $state = OrderState::STATE_WAIT)
     {
         $this->value = $value;
         $this->state = $state;

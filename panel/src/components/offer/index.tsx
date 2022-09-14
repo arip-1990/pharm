@@ -184,7 +184,7 @@ const Order: React.FC = () => {
               key: item.slug,
               code: item.code,
               name: item.name,
-              stores: item.items.length,
+              stores: item.offers.length,
             }))}
             onChange={handleChange}
             pagination={{

@@ -1,55 +1,70 @@
 import { ChangeEvent, FC, useCallback, useState } from "react";
-import { useCookies } from "react-cookie";
 import classNames from "classnames";
 import Accordion from "../accordion";
+import { FormikErrors } from "formik";
 
-type Props = {
+interface Props {
   recipe: boolean;
-  defaultValue?: string;
+  defaultValue?: number;
   deliveryValues?: {
     city?: string;
     street?: string;
     house?: string;
-    entrance?: string;
-    floor?: string;
-    apt?: string;
+    entrance?: number;
+    floor?: number;
+    apt?: number;
     service_to_door?: boolean;
   };
+  errors: FormikErrors<any>;
   onChange?: (e: any) => void;
+}
+
+const ErrorField: FC<{ name: string; errors: FormikErrors<any> }> = ({
+  name,
+  errors,
+}) => {
+  const style = {
+    width: "100%",
+    marginTop: "0.25rem",
+    fontSize: "0.85rem",
+    color: "#dc3545",
+  };
+
+  return errors[name] ? <div style={style}>{errors[name]}</div> : null;
 };
 
 const Delivery: FC<Props> = ({
   recipe,
-  defaultValue = "0",
+  defaultValue = 0,
   deliveryValues,
+  errors,
   onChange,
 }) => {
-  const [{ city }] = useCookies(["city"]);
-  const [value, setValue] = useState<string>(defaultValue);
+  const [value, setValue] = useState<number>(defaultValue);
 
   const handleChecked = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      setValue(e.target.value);
+      setValue(Number(e.target.value));
       onChange(e);
     },
     [defaultValue]
   );
 
   return (
-    <Accordion activeKey={value}>
+    <Accordion activeKey={value.toString()}>
       <Accordion.Item eventKey="0">
         <div className="row">
           <div className="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
             <Accordion.Header
               as="label"
-              className={classNames("radio-button", { active: value === "0" })}
+              className={classNames("radio-button", { active: value === 0 })}
             >
               <input
                 type="radio"
                 name="delivery"
                 className="radio-button_pin"
-                value="0"
-                checked={value === "0"}
+                value={0}
+                checked={value === 0}
                 onChange={handleChecked}
               />
               <p className="radio-button_text">
@@ -69,16 +84,16 @@ const Delivery: FC<Props> = ({
           <div className="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
             <Accordion.Header
               as="label"
-              className={classNames("radio-button", { active: value === "1" })}
+              className={classNames("radio-button", { active: value === 1 })}
             >
               <input
                 type="radio"
                 name="delivery"
                 className="radio-button_pin"
-                value="1"
-                checked={value === "1"}
+                value={1}
+                checked={value === 1}
                 onChange={handleChecked}
-                // disabled={recipe}
+                disabled={recipe}
               />
               <p className="radio-button_text">
                 Доставка<span>Указать адрес доставки.</span>
@@ -101,9 +116,7 @@ const Delivery: FC<Props> = ({
                   name="city"
                   className="form-control"
                   id="city"
-                  defaultValue={city}
-                  value={deliveryValues.city}
-                  // onChange={onChange}
+                  defaultValue={deliveryValues.city}
                   disabled
                 />
               </div>
@@ -119,7 +132,7 @@ const Delivery: FC<Props> = ({
                   value={deliveryValues.street}
                   onChange={onChange}
                 />
-                {/* <p style={{fontSize: '0.75rem', fontWeight: 300}} className="text-danger">Поле обязательно для заполнения.</p> */}
+                <ErrorField name="street" errors={errors} />
               </div>
               <div className="col-sm-2">
                 <label htmlFor="house" className="form-label">
@@ -133,7 +146,7 @@ const Delivery: FC<Props> = ({
                   value={deliveryValues.house}
                   onChange={onChange}
                 />
-                {/* <p style={{fontSize: '0.75rem', fontWeight: 300}} className="text-danger">Поле обязательно для заполнения.</p> */}
+                <ErrorField name="house" errors={errors} />
               </div>
             </div>
             <div className="row my-3">
@@ -149,6 +162,7 @@ const Delivery: FC<Props> = ({
                   value={deliveryValues.entrance}
                   onChange={onChange}
                 />
+                <ErrorField name="entrance" errors={errors} />
               </div>
               <div className="col-sm-4">
                 <label htmlFor="floor" className="form-label">
@@ -162,6 +176,7 @@ const Delivery: FC<Props> = ({
                   value={deliveryValues.floor}
                   onChange={onChange}
                 />
+                <ErrorField name="floor" errors={errors} />
               </div>
               <div className="col-sm-3">
                 <label htmlFor="apt" className="form-label">
@@ -175,6 +190,7 @@ const Delivery: FC<Props> = ({
                   value={deliveryValues.apt}
                   onChange={onChange}
                 />
+                <ErrorField name="apt" errors={errors} />
               </div>
             </div>
             <div className="row">
@@ -193,6 +209,7 @@ const Delivery: FC<Props> = ({
                 >
                   Доставка до двери
                 </label>
+                <ErrorField name="service_to_door" errors={errors} />
               </div>
             </div>
           </>

@@ -2,16 +2,16 @@
 
 namespace App\UseCases\Order;
 
-use App\Http\Requests\Order\CheckoutRequest;
+use App\Http\Requests;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StoreResource;
-use App\Models\CartItem;
 use App\Models\City;
+use App\Models\Location;
 use App\Models\OrderDelivery;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Store;
+use App\Models\Street;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -19,53 +19,113 @@ use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
-    public function checkout(CheckoutRequest $request): Order
+    public function checkoutWeb(Requests\Order\CheckoutRequest $request): Order
     {
-        $this->cartService->setStore(Store::query()->find($request['store']));
-        $order = Order::create(
-            Auth::id(),
-            $this->cartService->getStore()->id,
-            $request->get('payment'),
-            $this->cartService->getTotalAmount(),
-            $request->get('delivery'),
-        );
+        $data = $request->validated();
+        $order = Order::create(Auth::id(), $data['store'], $data['payment'], $data['price'], $data['delivery']);
 
-        DB::transaction(function () use ($order, $request) {
+        DB::transaction(function () use ($order, $data) {
+            $items = new Collection();
             $offers = new Collection();
-            $items = $this->cartService->getItems()->map(function (CartItem $item) use (&$offers) {
+            foreach ($data['items'] as $item) {
                 /** @var Offer $offer */
-                $offer = Offer::query()->where('store_id', $this->cartService->getStore()->id)
-                    ->where('product_id', $item->product_id)->first();
-                $offer->checkout($item->quantity);
+                $offer = Offer::query()->where('store_id', $data['store'])->where('product_id', $item['id'])->first();
+                $offer->checkout($item['quantity']);
                 $offers->add($offer);
-
-                return OrderItem::create($item->product_id, $item->getAmount($offer->store), $item->quantity);
-            });
+                $items->add(OrderItem::create($item['id'], $item['price'], $item['quantity']));
+            }
 
             $order->save();
-
             $order->items()->saveMany($items);
 
-        if ($request->get('delivery') == Order::DELIVERY_TYPE_COURIER) {
-            $delivery = OrderDelivery::create(
-                $request->get('city'),
-                [
-                    'street' => $request->get('street'),
-                    'house' => $request->get('house'),
-                    'entrance' => $request->get('entrance'),
-                    'floor' => $request->get('floor'),
-                    'apartment' => $request->get('apartment')
-                ],
-                $request->get('service_to_door', false)
-            );
-            $order->delivery()->save($delivery);
-        }
+            if ($data['delivery'] == Order::DELIVERY_TYPE_COURIER) {
+                $delivery = OrderDelivery::create(
+                    $data['entrance'] ?? null,
+                    $data['floor'] ?? null,
+                    $data['apartment'] ?? null,
+                    $data['service_to_door']
+                );
+
+                $street = Street::query()->firstOrCreate(['name' => $data['street'], 'house' => $data['house']]);
+                $location = Location::query()->firstOrCreate(['city_id' => 1, 'street_id' => $street->id]);
+
+                $delivery->location()->associate($location);
+                $order->orderDelivery()->save($delivery);
+            }
 
             $offers->each(fn(Offer $offer) => $offer->save());
-            $this->cartService->clear();
         });
 
         return $order;
+    }
+
+    public function checkoutMobile(Requests\Mobile\CheckoutRequest $request): array
+    {
+        $orders = [];
+        foreach ($request->validated('orders') as $data) {
+            $paymentType = (int)(explode('/', $data['payment'])[0] === 'card');
+            $deliveryType = (int)(explode('/', $data['delivery'])[1] === 'regular');
+            $order = Order::create($data['externalUserId'], $data['pickupLocationId'], $paymentType, $data['price'], $deliveryType);
+
+            try {
+                DB::transaction(function () use ($order, $data, $deliveryType) {
+                    $items = new Collection();
+                    $offers = new Collection();
+                    foreach ($data['items'] as $item) {
+                        /** @var Offer $offer */
+                        if (!$offer = Offer::query()->where('store_id', $data['pickupLocationId'])->where('product_id', $item['privateId'])->first())
+                            throw new \DomainException('Товар не найден');
+
+                        $offer->checkout($item['quantity']);
+                        $offers->add($offer);
+                        $items->add(OrderItem::create($item['privateId'], $item['price'], $item['quantity']));
+                    }
+
+                    $order->save();
+                    $order->items()->saveMany($items);
+
+                    if ($deliveryType == Order::DELIVERY_TYPE_COURIER) {
+                        $delivery = OrderDelivery::create(
+                            $data['entrance'] ?? null,
+                            $data['floor'] ?? null,
+                            $data['addressData']['apt'] ?? null,
+                            $data['service_to_door'] ?? false
+                        );
+
+                        $street = Street::query()->firstOrCreate(['name' => $data['addressData']['street'], 'house' => $data['addressData']['house']]);
+                        $location = Location::query()->firstOrCreate(['city_id' => 1, 'street_id' => $street->id]);
+
+                        $delivery->location()->associate($location);
+                        $order->orderDelivery()->save($delivery);
+                    }
+
+                    $offers->each(fn(Offer $offer) => $offer->save());
+                });
+            }
+            catch (\DomainException $e) {
+                $orders[] = [
+                    'id' => $order->id,
+                    'uuid' => $data['uuid'],
+                    'success' => false,
+                    'errorCode' => $e->getCode(),
+                    'errorMessage' => $e->getMessage(),
+                    'price' => $order->cost,
+                    'items' => $data['items']
+                ];
+
+                continue;
+            }
+
+            $orders[] = [
+                'id' => $order->id,
+                'uuid' => $data['uuid'],
+                'success' => true,
+                'price' => $order->cost,
+                'items' => $data['items']
+            ];
+        }
+
+        return $orders;
     }
 
     public function paySber(Order $order, string $redirectUrl): string

@@ -1,0 +1,94 @@
+.banner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 780px;
+  background-color: transparent;
+  background-image: url(../../assets/images/loyalty/banner-mobile.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  .button {
+    position: relative;
+    top: 676px;
+    display: inline-block;
+    width: 290px;
+    height: 60px;
+    background-color: transparent;
+    background-image: url(../../assets/images/loyalty/button.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border: none;
+    margin: 0 auto;
+
+    &:not(:disabled) {
+      cursor: pointer;
+    }
+
+    &.active {
+      background-image: url(../../assets/images/loyalty/button-active.svg);
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  $height : ceil(calc(720px / 2.9));
+
+  .banner {
+    height: $height;
+    background-image: url(../../assets/images/loyalty/banner.png);
+
+    .button {
+      width: 217.5px;
+      height: 45px;
+      top: $height - 66;
+      margin-left: 20px;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  $height : ceil(calc(960px / 2.9));
+
+  .banner {
+    height: $height;
+    background-image: url(../../assets/images/loyalty/banner.png);
+
+    .button {
+      width: 290px;
+      height: 60px;
+      top: $height - 86;
+      margin-left: 30px;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  $height : ceil(calc(1140px / 2.9));
+
+  .banner {
+    height: $height;
+    background-image: url(../../assets/images/loyalty/banner.png);
+
+    .button {
+      top: $height - 96;
+      margin-left: 36px;
+    }
+  }
+}
+
+@media (min-width: 1400px) {
+  $height : ceil(calc(1320px / 2.9));
+
+  .banner {
+    height: $height;
+    background-image: url(../../assets/images/loyalty/banner.png);
+
+    .button {
+      top: $height - 106;
+      margin-left: 46px;
+    }
+  }
+}

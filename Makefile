@@ -1,12 +1,12 @@
-init: init-ci site-node-ready panel-ready client-ready
-init-ci: docker-down-clear site-clear panel-clear api-clear client-clear \
+init: init-ci panel-ready client-ready
+init-ci: docker-down-clear panel-clear api-clear client-clear \
 	docker-pull docker-build docker-up \
-	site-init panel-init api-init client-init
+	panel-init api-init client-init
 up: docker-up
 down: docker-down
 restart: down up
 
-update-deps: site-composer-update site-node-upgrade panel-yarn-upgrade restart
+update-deps: api-composer-update panel-yarn-upgrade client-yarn-upgrade restart
 
 docker-up:
 	docker compose up -d
@@ -22,33 +22,6 @@ docker-pull:
 
 docker-build:
 	docker compose build --pull
-
-
-site-clear:
-	docker run --rm -v ${PWD}/site:/app -w /app alpine sh -c 'rm -rf .ready storage/framework/cache/data/* storage/framework/sessions/* storage/framework/testing/* storage/framework/views/* storage/logs/*'
-
-site-init: site-permissions site-composer-install site-node-install
-
-site-permissions:
-	docker run --rm -v ${PWD}/site:/app -w /app alpine chmod 777 -R storage bootstrap/cache
-
-site-composer-install:
-	docker compose run --rm site-php-cli composer install
-
-site-composer-update:
-	docker compose run --rm site-php-cli composer update
-
-site-backup:
-	docker compose run --rm site-postgres-backup
-
-site-node-install:
-	docker compose run --rm site-node-cli yarn install
-
-site-node-upgrade:
-	docker compose run --rm site-node-cli yarn upgrade
-
-site-node-ready:
-	docker run --rm -v ${PWD}/site:/app -w /app alpine touch .ready
 
 
 panel-clear:
@@ -105,7 +78,7 @@ api-backup:
 	docker compose run --rm api-postgres-backup
 
 
-build: build-client build-panel build-parser build-bot build-api build-site
+build: build-client build-panel build-parser build-bot build-api
 
 build-client:
 	docker --log-level=debug build --pull --file=client/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-client:${IMAGE_TAG} client
@@ -124,14 +97,9 @@ build-api:
 	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-api:${IMAGE_TAG} api
 	docker --log-level=debug build --pull --file=api/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG} api
 	docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG} api
+	docker --log-level=debug build --pull --file=api/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} api/docker/common
 
-build-site:
-	docker --log-level=debug build --pull --file=site/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-site:${IMAGE_TAG} site
-	docker --log-level=debug build --pull --file=site/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG} site
-	docker --log-level=debug build --pull --file=site/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG} site
-	docker --log-level=debug build --pull --file=site/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} site/docker/common
-
-push: push-client push-panel push-parser push-bot push-api push-site
+push: push-client push-panel push-parser push-bot push-api
 
 push-client:
 	docker push ${REGISTRY}/pharm-client:${IMAGE_TAG}
@@ -150,16 +118,11 @@ push-api:
 	docker push ${REGISTRY}/pharm-api:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
-
-push-site:
-	docker push ${REGISTRY}/pharm-site:${IMAGE_TAG}
-	docker push ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
-	docker push ${REGISTRY}/pharm-site-php-cli:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
 
 deploy:
 	ssh -o StrictHostKeyChecking=no arip@${HOST} 'docker network create --driver=overlay traefik-public || true'
-	ssh -o StrictHostKeyChecking=no arip@${HOST} 'rm -rf pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER}/logs'
+	ssh -o StrictHostKeyChecking=no arip@${HOST} 'rm -rf pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER}/logs && chmod 777 pharm_${BUILD_NUMBER}/logs'
 
 	envsubst < docker-compose-prod.yml > docker-compose-prod-env.yml
 	scp -o StrictHostKeyChecking=no docker-compose-prod-env.yml arip@${HOST}:pharm_${BUILD_NUMBER}/docker-compose.yml

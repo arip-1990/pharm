@@ -19,9 +19,9 @@ class IndexController
 
             $data = $this->service->getInfo($user->id, $user->session);
             $balance = $this->posService->getBalance($user->phone);
-            $data['cardNumber'] = $balance['CardNumber'];
-            $data['cardChargedBonus'] = $balance['CardChargedBonus'];
-            $data['cardWriteoffBonus'] = $balance['CardWriteoffBonus'];
+            $data['cardNumber'] = $balance['cardNumber'];
+            $data['cardChargedBonus'] = $balance['cardChargedBonus'];
+            $data['cardWriteoffBonus'] = $balance['cardWriteoffBonus'];
         }
         catch (\DomainException $e) {
             return new JsonResponse([

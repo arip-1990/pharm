@@ -4,18 +4,7 @@ import { FC, MouseEvent, useCallback, useState } from "react";
 import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 import Auth from "../components/auth";
-
-const Banner: FC<{ handleClick: (e: MouseEvent) => void }> = ({
-  handleClick,
-}) => {
-  return (
-    <div className="loyalty-banner">
-      <button className="button" onClick={handleClick}>
-        Заполнить форму
-      </button>
-    </div>
-  );
-};
+import BaseLoyalty from "../components/loyalty";
 
 const Loyalty: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -33,7 +22,7 @@ const Loyalty: FC = () => {
   };
 
   return (
-    <Layout banner={<Banner handleClick={handleClick} />}>
+    <Layout banner>
       <Head>
         <title>Сеть аптек 120/80 | Программа лояльности</title>
         <meta
@@ -45,7 +34,9 @@ const Loyalty: FC = () => {
 
       <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
 
-      <Page title="Программа лояльности"></Page>
+      <Page title="Программа лояльности">
+        <BaseLoyalty />
+      </Page>
 
       <Auth
         show={showModal}

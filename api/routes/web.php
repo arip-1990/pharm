@@ -9,14 +9,12 @@ use App\Http\Controllers\Cheque;
 use App\Http\Controllers\City;
 use App\Http\Controllers\Coupon;
 use App\Http\Controllers\Delivery;
-use App\Http\Controllers\FeedController;
 use App\Http\Controllers\Offer;
 use App\Http\Controllers\Order;
-use App\Http\Controllers\Panel;
-use App\Http\Controllers\PayController;
 use App\Http\Controllers\Payment;
 use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
+use App\Http\Controllers\V1;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,52 +28,77 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-//    $service = new \App\UseCases\PosService();
-//    $data = $service->getBalance('79887811011');
-//    dd($data);
-//    $service = new \App\UseCases\User\UserService(new \App\UseCases\ManagerService());
-//    $data = $service->getInfo('721781a0-020c-ed11-80cb-001dd8b75065', 'cf5cf407-6c67-45ae-9446-b1edb01c6955');
-//    dd($data);
-});
-
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
-    Route::post('/feed', [FeedController::class, 'handle']);
+    Route::post('/feed', [V1\FeedController::class, 'handle']);
     Route::post('/order', [Order\UpdateController::class, 'handle']);
 });
 
-Route::post('/pay', [PayController::class, 'handle']);
+Route::prefix('deliveries')->group(function () {
+    Route::post('/', [Delivery\IndexController::class, 'handle']);
+});
 
-Route::prefix('panel')->group(function () {
-    Route::post('/login', [Panel\Auth\LoginController::class, 'handle']);
+Route::prefix('payments')->group(function () {
+    Route::post('/', [Payment\IndexController::class, 'handle']);
+});
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/logout', [Panel\Auth\LogoutController::class, 'handle']);
-        Route::get('/user', [Panel\User\IndexController::class, 'handle']);
+Route::prefix('v1')->group(function () {
+    Route::post('/pay', [V1\PayController::class, 'handle']);
+
+    Route::prefix('mobile')->group(function () {
+        Route::post('checkout', [V1\Mobile\CheckoutController::class, 'handle']);
+    });
+
+    Route::prefix('auth')->group(function () {
+        Route::post('/login', [V1\Panel\Auth\LoginController::class, 'handle']);
+
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('/logout', [V1\Panel\Auth\LogoutController::class, 'handle']);
+            Route::get('/user', [V1\Panel\Auth\UserController::class, 'handle']);
+        });
+    });
+
+    Route::group(['prefix' => 'panel', 'middleware' => 'auth:sanctum'], function () {
+        Route::prefix('user')->group(function () {
+            Route::get('/', [V1\Panel\User\IndexController::class, 'handle']);
+            Route::get('/{user}', [V1\Panel\User\ShowController::class, 'handle']);
+            Route::patch('/', [V1\Panel\User\UpdateController::class, 'handle']);
+        });
 
         Route::prefix('product')->group(function () {
-            Route::get('/', [Panel\Product\IndexController::class, 'handle']);
-            Route::get('/{product}', [Panel\Product\ShowController::class, 'handle']);
-            Route::put('/attributes/{product}', [Panel\Product\UpdateAttributesController::class, 'handle']);
-            Route::put('/description/{product}', [Panel\Product\UpdateDescriptionController::class, 'handle']);
-            Route::put('/{product}', [Panel\Product\UpdateController::class, 'handle']);
-            Route::post('/upload/{product}', [Panel\Product\UploadController::class, 'handle']);
-            Route::delete('/upload/{photo}', [Panel\Product\DeletePhotoController::class, 'handle']);
+            Route::prefix('/upload')->group(function () {
+                Route::patch('/', [V1\Panel\Product\UpdatePhotoController::class, 'handle']);
+                Route::delete('/', [V1\Panel\Product\DeletePhotoController::class, 'handle']);
+                Route::patch('/status', [V1\Panel\Product\UpdateStatusPhotoController::class, 'handle']);
+                Route::post('/{product}', [V1\Panel\Product\UploadController::class, 'handle']);
+            });
+
+            Route::prefix('/moderation')->group(function () {
+                Route::get('/', [V1\Panel\Product\Moderation\IndexController::class, 'handle']);
+                Route::put('/{product}', [V1\Panel\Product\Moderation\UpdateController::class, 'handle']);
+            });
+
+            Route::get('/', [V1\Panel\Product\IndexController::class, 'handle']);
+            Route::get('/{product}', [V1\Panel\Product\ShowController::class, 'handle']);
+            Route::put('/attributes/{product}', [V1\Panel\Product\UpdateAttributesController::class, 'handle']);
+            Route::put('/description/{product}', [V1\Panel\Product\UpdateDescriptionController::class, 'handle']);
+            Route::put('/{product}', [V1\Panel\Product\UpdateController::class, 'handle']);
         });
 
         Route::prefix('order')->group(function () {
-            Route::get('/', [Panel\Order\IndexController::class, 'handle']);
-            Route::get('/{order}', [Panel\Order\ShowController::class, 'handle']);
+            Route::get('/', [V1\Panel\Order\IndexController::class, 'handle']);
+            Route::get('/{order}', [V1\Panel\Order\ShowController::class, 'handle']);
+            Route::get('/{order}/items', [V1\Panel\Order\ShowItemsController::class, 'handle']);
+            Route::get('/{order}/send-data', [V1\Panel\Order\SendDataController::class, 'handle']);
         });
 
         Route::prefix('offer')->group(function () {
-            Route::get('/', [Panel\Offer\IndexController::class, 'handle']);
-            Route::get('/{product}', [Panel\Offer\ShowController::class, 'handle']);
+            Route::get('/', [V1\Panel\Offer\IndexController::class, 'handle']);
+            Route::get('/{product}', [V1\Panel\Offer\ShowController::class, 'handle']);
         });
 
-        Route::get('/category', [Panel\Category\IndexController::class, 'handle']);
-        Route::get('/statistic', [Panel\Statistic\IndexController::class, 'handle']);
-        Route::get('/attribute', [Panel\Attribute\IndexController::class, 'handle']);
+        Route::get('/category', [V1\Panel\Category\IndexController::class, 'handle']);
+        Route::get('/statistic', [V1\Panel\Statistic\IndexController::class, 'handle']);
+        Route::get('/attribute', [V1\Panel\Attribute\IndexController::class, 'handle']);
     });
 });
 
@@ -103,23 +126,6 @@ Route::prefix('store')->group(function () {
 
 Route::prefix('offer')->group(function () {
     Route::get('/{product}', [Offer\IndexController::class, 'handle']);
-});
-
-Route::prefix('checkout')->group(function () {
-    Route::get('/', [Order\Checkout\IndexController::class, 'handle']);
-    Route::get('/store', [Order\Checkout\StoreController::class, 'handle']);
-});
-
-Route::prefix('deliveries')->group(function () {
-    Route::post('/', [Delivery\IndexController::class, 'handle']);
-});
-
-Route::prefix('payments')->group(function () {
-    Route::post('/', [Payment\IndexController::class, 'handle']);
-});
-
-Route::prefix('order')->group(function () {
-    Route::post('/', [Order\CheckoutController::class, 'handle']);
 });
 
 Route::prefix('auth')->group(function () {
@@ -168,6 +174,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('order')->group(function () {
         Route::get('/', [Order\IndexController::class, 'index']);
+
+        Route::prefix('checkout')->group(function () {
+            Route::post('/', [Order\Checkout\IndexController::class, 'handle']);
+            Route::post('/store', [Order\Checkout\StoreController::class, 'handle']);
+        });
     });
 });
 

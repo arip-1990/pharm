@@ -1,6 +1,6 @@
 import Layout from "../components/layout";
 import Card from "../components/card";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { wrapper } from "../lib/store";
 import {
@@ -9,12 +9,29 @@ import {
   getRunningOperationPromises,
 } from "../lib/catalogService";
 import Head from "next/head";
-import { useCookies } from "react-cookie";
-import axios from "axios";
+import api from "../lib/api";
+import { useRouter } from "next/router";
+import Auth from "../components/auth";
+import { useCookie } from "../hooks/useCookie";
+
+type AuthType = "login" | "register";
 
 const Home: FC = () => {
-  const [{ city }] = useCookies(["city"]);
+  const [authModal, setAuthModal] = useState<{
+    type: AuthType;
+    show: boolean;
+  }>({ type: "login", show: false });
+  const [city] = useCookie("city");
   const { data, isFetching, refetch } = useFetchPopularProductsQuery();
+  const router = useRouter();
+
+  useEffect(() => {
+    const path = router.asPath.split("#");
+    if (path.length > 1 && ["login", "register"].includes(path[1])) {
+      const hash = path[1] as AuthType;
+      setAuthModal({ type: hash, show: true });
+    }
+  }, []);
 
   useEffect(() => refetch(), [city]);
 
@@ -41,13 +58,19 @@ const Home: FC = () => {
           </div>
         ))}
       </div>
+
+      <Auth
+        show={authModal.show}
+        type={authModal.type}
+        onHide={() => setAuthModal((item) => ({ ...item, show: false }))}
+      />
     </Layout>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req }) => {
-    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
+    // if (req) api.defaults.headers.common.Cookie = req.headers.cookie;
 
     store.dispatch(fetchPopularProducts.initiate());
 

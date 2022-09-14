@@ -35,6 +35,7 @@ class ProductResource extends JsonResource
                 'variants' => $value->attribute->variants,
                 'value' => $value->value,
             ]),
+            'offers' => OfferResource::collection($this->offers),
             'minPrice' => $this->getPrice(),
             'totalOffers' => $this->getCountByCity($request->cookie('city', City::query()->find(1)?->name)),
             'createdAt' => $this->created_at,

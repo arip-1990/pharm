@@ -2,27 +2,15 @@
 
 namespace App\UseCases;
 
-use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
 
-class ManagerService
+class ManagerService extends LoyaltyService
 {
-    private Client $client;
-
-    public function __construct() {
-        $this->client = new Client([
-            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-            'http_errors' => false,
-            'verify' => false
-        ]);
-    }
-
     #[ArrayShape(['id' => "string", 'sessionId' => "string"])]
     public function login(): array
     {
-        $url = config('data.loyalty.test.url.manager') . '/Identity/Login';
-        $manager = config('data.loyalty.test.manager');
-        $data = ['Login' => $manager['login'], 'Password' => $manager['password']];
+        $url = $this->urls['manager'] . '/Identity/Login';
+        $data = ['Login' => $this->config['manager']['login'], 'Password' => $this->config['manager']['password']];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);

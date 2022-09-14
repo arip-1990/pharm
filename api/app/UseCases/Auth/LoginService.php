@@ -3,31 +3,25 @@
 namespace App\UseCases\Auth;
 
 use App\Models\User;
+use App\UseCases\LoyaltyService;
 use App\UseCases\User\UserService;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
-class LoginService
+class LoginService extends LoyaltyService
 {
-    private Client $client;
-
     public function __construct(private readonly UserService $userService) {
-        $this->client = new Client([
-            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-            'http_errors' => false,
-            'verify' => false
-        ]);
+        parent::__construct();
     }
 
-    public function phoneAuth(string $phone, string $password): void
+    public function phoneAuth(string $phone, string $password)
     {
-        $url = config('data.loyalty.test.url.lk') . '/Identity/AdvancedPhoneEmailLogin';
-        $partnerId = config('data.loyalty.test.partner_id');
+        $url = $this->urls['lk'] . '/Identity/AdvancedPhoneEmailLogin';
         $data = [
             'PhoneOrEmail' => $phone,
             'Password' => $password,
-            'PartnerId' => $partnerId
+            'PartnerId' => $this->config['partner_id']
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
@@ -36,30 +30,47 @@ class LoginService
         if ($response->getStatusCode() !== 200)
             throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
 
+        $orders = [];
+        $visits = [];
         $session = $data['SessionId'];
         if (!$user = User::query()->find($data['Id'])) {
-            $data = $this->userService->getInfo($data['Id'], $data['SessionId']);
-            $user = User::query()->create([
+            $data = $this->userService->getInfo($data['Id'], $session);
+            $user = User::query()->firstOrNew(['phone' => $data['MobilePhone']]);
+
+            $orders = $user->orders;
+            $visits = $user->visits;
+            if (count($orders) or count($visits)) {
+                $tmp = User::query()->find('5ac09db5-8f02-4158-ac3a-283c548de800');
+                if (count($orders)) $tmp->orders()->saveMany($orders);
+                if (count($visits)) $tmp->visits()->saveMany($visits);
+            }
+
+            $user->fill([
                 'id' => $data['Id'],
+                'email' => $data['EmailAddress'],
                 'first_name' => $data['FirstName'],
                 'last_name' => $data['LastName'],
                 'middle_name' => $data['MiddleName'],
-                'email' => $data['EmailAddress'],
-                'phone' => $data['MobilePhone'],
                 'gender' => $data['GenderCode'],
                 'birth_date' => Carbon::parse($data['BirthDate']),
-                'session' => $session,
-                'password' => ''
+                'phone_verified_at' => Carbon::parse($data['RegistrationDate']),
+                'password' => Hash::make($password),
             ]);
         }
-        else $user->update(['session' => $session]);
+
+        $user->session = $session;
+        $user->phone_verified_at = $user->phone_verified_at ?? Carbon::now();
+        $user->save();
+
+        if (count($orders)) $user->orders()->saveMany($orders);
+        if (count($visits)) $user->visits()->saveMany($visits);
 
         Auth::login($user);
     }
 
     public function logout(User $user): void
     {
-        $url = config('data.loyalty.test.url.lk') . '/Identity/Logout';
+        $url = $this->urls['lk'] . '/Identity/Logout';
         $data = ['id' => $user->id, 'sessionid' => $user->session];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);

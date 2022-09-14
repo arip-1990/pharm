@@ -1,14 +1,14 @@
 import {createApi} from '@reduxjs/toolkit/query/react';
 import {axiosBaseQuery} from './api';
 import {IPagination} from '../models/IPagination';
-import {IOffer} from "../models/IOffer";
+import { IProduct } from '../models/IProduct';
 
 
 export const offerApi = createApi({
   reducerPath: 'offerApi',
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
-    fetchOffers: builder.query<IPagination<IOffer>, {
+    fetchOffers: builder.query<IPagination<IProduct>, {
       search: { column: string, text: string } | undefined,
       pagination: { current: number, pageSize: number },
       order: { field: string | null, direction: string }
@@ -35,7 +35,7 @@ export const offerApi = createApi({
         }
       },
     }),
-    fetchOffer: builder.query<IOffer, string>({
+    fetchOffer: builder.query<IProduct, string>({
       query: (slug) => ({
         url: '/offer/' + slug
       }),

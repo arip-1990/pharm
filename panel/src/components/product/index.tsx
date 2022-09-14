@@ -312,13 +312,13 @@ const Product: React.FC = () => {
             loading={fetchLoading}
             data={products?.data.map((item) => ({
               key: item.slug,
-              photo: { url: item.photos[0].url, total: item.photos.length },
+              photo: { url: item.photos[0]?.url, total: item.photos?.length },
               sale: item.sale,
               code: item.code,
               barcode: item.barcode,
               name: item.name,
               category: item.category?.name,
-              status: item.offers,
+              status: item.totalOffers,
             }))}
             onChange={handleChange}
             pagination={{

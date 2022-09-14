@@ -1,10 +1,12 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useState } from "react";
 import { Container, Row } from "react-bootstrap";
 import Header from "./header";
 import Footer from "./footer";
 import bannerImage from "../../assets/images/banner.png";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { NotificationContainer } from "react-notifications";
+import Loyalty from "../loyalty";
+import Auth from "../auth";
 
 type Props = {
   children?: ReactNode;
@@ -12,6 +14,12 @@ type Props = {
 };
 
 const Layout: FC<Props> = ({ children, banner }) => {
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setShowModal(true);
+  };
+
   return (
     <>
       <Header />
@@ -19,9 +27,14 @@ const Layout: FC<Props> = ({ children, banner }) => {
       <NotificationContainer />
 
       {banner ? (
-        <Container fluid={banner === true}>
+        // <Container fluid={banner === true}>
+        //   <Row style={{ justifyContent: "center" }}>
+        //     {typeof banner === "boolean" ? <Image src={bannerImage} /> : banner}
+        //   </Row>
+        // </Container>
+        <Container>
           <Row style={{ justifyContent: "center" }}>
-            {typeof banner === "boolean" ? <Image src={bannerImage} /> : banner}
+            <Loyalty.Banner onClick={handleClick} />
           </Row>
         </Container>
       ) : null}
@@ -31,6 +44,12 @@ const Layout: FC<Props> = ({ children, banner }) => {
       </Container>
 
       <Footer />
+
+      <Auth
+        show={showModal}
+        type="register"
+        onHide={() => setShowModal(false)}
+      />
     </>
   );
 };

@@ -11,7 +11,7 @@ class IndexController
 {
     public function handle(Request $request): JsonResponse
     {
-        $url = config('data.loyalty.test.url.lk') . '/Coupon/GetAllByContact';
+        $url = config('data.loyalty.url.lk') . '/Coupon/GetAllByContact';
         $client = new Client([
             'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
             'http_errors' => false,

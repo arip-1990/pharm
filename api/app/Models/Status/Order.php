@@ -22,4 +22,8 @@ enum Order: string
     case STATUS_CANCELLED = 'R'; // Отменен
     case STATUS_SENT = 'S'; // Отправлен
     case STATUS_RETURN_BY_COURIER = 'U'; // Возврат от курьера, полный возврат
+
+    case STATE_WAIT = 'wait';
+    case STATE_ERROR = 'error';
+    case STATE_SUCCESS = 'success';
 }

@@ -1,4 +1,5 @@
 import moment from "moment";
+import { IOffer } from "./IOffer";
 import { IPhoto } from "./IPhoto";
 
 interface IAttribute {
@@ -25,7 +26,8 @@ export interface IProduct {
   recipe: boolean;
   sale: boolean;
   status: number;
-  offers: boolean;
+  offers: IOffer[];
+  totalOffers: number;
   attributes: IAttribute[];
   createdAt: moment.Moment;
   updatedAt: moment.Moment;

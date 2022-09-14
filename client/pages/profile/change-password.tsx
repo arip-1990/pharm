@@ -1,32 +1,10 @@
 import axios from "axios";
-import { Formik, FormikHelpers, useField } from "formik";
+import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { FC } from "react";
 import Layout from "../../components/layout";
 import BaseProfile from "../../components/profile";
 import api from "../../lib/api";
 import { useNotification } from "../../hooks/useNotification";
-
-const TextField = ({ label, ...props }: any) => {
-  const [field, meta, helpers] = useField(props);
-  const style = {
-    width: "100%",
-    marginTop: "0.25rem",
-    fontSize: "0.85rem",
-    color: "#dc3545",
-  };
-
-  return (
-    <>
-      <label htmlFor={field.name} className="form-label">
-        {label}
-      </label>
-      <input className="form-control" id={field.name} {...field} {...props} />
-      {meta.touched && meta.error ? (
-        <div style={style}>{meta.error}</div>
-      ) : null}
-    </>
-  );
-};
 
 interface Values {
   oldPassword: string;
@@ -34,96 +12,111 @@ interface Values {
   password_confirmation: string;
 }
 
+const ErrorField: FC<{ name: string; errors: FormikErrors<Values> }> = ({
+  name,
+  errors,
+}) => {
+  const style = {
+    width: "100%",
+    marginTop: "0.25rem",
+    fontSize: "0.85rem",
+    color: "#dc3545",
+  };
+
+  return errors[name] ? <div style={style}>{errors[name]}</div> : null;
+};
+
 const ChangePassword: FC = () => {
   const notification = useNotification();
 
-  const handleChangePassword = async (
-    values: Values,
-    actions: FormikHelpers<Values>
-  ) => {
-    console.log(values);
-    try {
-      await api.put("user/update-password", { ...values });
-      actions.resetForm();
-      notification("success", "Пароль изменен");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response.data.code === 100023)
-          notification("error", error.response.data.message);
+  const formik = useFormik({
+    initialValues: { oldPassword: "", password: "", password_confirmation: "" },
+    onSubmit: async (values: Values, actions: FormikHelpers<Values>) => {
+      try {
+        await api.put("user/update-password", { ...values });
+        actions.resetForm();
+        notification("success", "Пароль изменен");
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response.data.code === 100023)
+            notification("error", error.response.data.message);
+        }
+
+        console.log(error?.response.data);
       }
-
-      console.log(error?.response.data);
-    }
-    actions.setSubmitting(false);
-  };
-
-  const handleValidate = (values: Values) => {
-    const errors = {
-      oldPassword: "",
-      password: "",
-      password_confirmation: "",
-    };
-    if (
-      values.password_confirmation &&
-      values.password_confirmation !== values.password
-    ) {
-      errors.password_confirmation = "Пароли не совпадают";
-    }
-    return errors;
-  };
+      actions.setSubmitting(false);
+    },
+    validate: (values: Values) => {
+      const errors = {
+        oldPassword: "",
+        password: "",
+        password_confirmation: "",
+      };
+      if (
+        values.password_confirmation &&
+        values.password_confirmation !== values.password
+      ) {
+        errors.password_confirmation = "Пароли не совпадают";
+      }
+      return errors;
+    },
+  });
 
   return (
     <Layout>
-      <BaseProfile title="Изменить пароль">
-        <Formik
-          initialValues={{
-            oldPassword: "",
-            password: "",
-            password_confirmation: "",
-          }}
-          onSubmit={handleChangePassword}
-          validate={handleValidate}
+      <BaseProfile title="Изменить пароль" contentClassName="d-flex">
+        <form
+          onSubmit={formik.handleSubmit}
+          style={{ maxWidth: 320, margin: "auto" }}
         >
-          {({ isValid, isSubmitting, handleSubmit }) => (
-            <form
-              onSubmit={handleSubmit}
-              style={{ maxWidth: 320, margin: "auto" }}
-            >
-              <div className="mb-3">
-                <TextField
-                  type="password"
-                  name="oldPassword"
-                  label="Старый пароль"
-                />
-              </div>
-              <div className="mb-3">
-                <TextField
-                  type="password"
-                  name="password"
-                  label="Новый пароль"
-                />
-              </div>
-              <div className="mb-3">
-                <TextField
-                  type="password"
-                  name="password_confirmation"
-                  label="Повторить новый пароль"
-                />
-              </div>
-              <div className="row align-items-center">
-                <span className="col-5 text-end">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={isSubmitting}
-                  >
-                    Сохранить
-                  </button>
-                </span>
-              </div>
-            </form>
-          )}
-        </Formik>
+          <div className="mb-3">
+            <input
+              className="form-control"
+              type="password"
+              name="oldPassword"
+              placeholder="*Старый пароль"
+              onChange={formik.handleChange}
+              value={formik.values.oldPassword}
+              required
+            />
+            <ErrorField name="oldPassword" errors={formik.errors} />
+          </div>
+          <div className="mb-3">
+            <input
+              className="form-control"
+              type="password"
+              name="password"
+              placeholder="*Новый пароль"
+              onChange={formik.handleChange}
+              value={formik.values.password}
+              required
+            />
+            <ErrorField name="password" errors={formik.errors} />
+          </div>
+          <div className="mb-3">
+            <input
+              className="form-control"
+              type="password"
+              name="password_confirmation"
+              placeholder="*Повторить новый пароль"
+              onChange={formik.handleChange}
+              value={formik.values.password_confirmation}
+              required
+            />
+            <ErrorField name="password_confirmation" errors={formik.errors} />
+          </div>
+          <div className="row align-items-center">
+            <span className="col-5 text-end">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={formik.isSubmitting}
+              >
+                Сохранить
+              </button>
+            </span>
+          </div>
+        </form>
       </BaseProfile>
     </Layout>
   );

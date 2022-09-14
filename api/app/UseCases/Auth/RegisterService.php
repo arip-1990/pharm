@@ -5,27 +5,21 @@ namespace App\UseCases\Auth;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\VerifyPhoneRequest;
 use App\Models\User;
+use App\UseCases\LoyaltyService;
 use App\UseCases\PosService;
-use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
 use Ramsey\Uuid\Uuid;
 
-class RegisterService
+class RegisterService extends LoyaltyService
 {
-    private Client $client;
-
-    public function __construct(private readonly PosService $posService) {
-        $this->client = new Client([
-            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-            'http_errors' => false,
-            'verify' => false
-        ]);
+    function __construct(private readonly PosService $posService) {
+        parent::__construct();
     }
 
     public function requestRegister(RegisterRequest $request): void
     {
         $data = $this->posService->getBalance($request->get('phone'));
-        if (isset($data['ContactID']))
+        if (isset($data['contactID']))
             throw new \DomainException('Существует контакт с таким телефоном');
 
         $data = $request->validated();
@@ -51,10 +45,8 @@ class RegisterService
             $request->session()->put('token', $user->token);
         }
         else {
-            $data = $this->posService->createCard($user);
+            $user->id = $this->posService->createCard($user)['contactID'];
             $this->posService->getBalance($user->phone, true);
-
-            $user->id = $data['contactID'];
             $request->session()->put('userId', $user->id);
         }
 
@@ -63,8 +55,7 @@ class RegisterService
 
     private function phoneRegister(User $user, string $cardNumber): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/Identity/RequestAdvancedPhoneEmailRegistration';
-        $partnerId = config('data.loyalty.test.partner_id');
+        $url = $this->urls['lk'] . '/Identity/RequestAdvancedPhoneEmailRegistration';
         $tmp = [
             'CardNumber' => $cardNumber,
             'MobilePhone' => $user->phone,
@@ -79,7 +70,7 @@ class RegisterService
             'AllowEmail' => false,
             'AllowSms' => false,
             'AgreeToTerms' => true,
-            'PartnerId' => $partnerId
+            'PartnerId' => $this->config['partner_id']
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($tmp)]]);
@@ -93,8 +84,7 @@ class RegisterService
 
     public function requestPhoneVerification(string $token): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/Identity/RequestMobilePhoneVerification';
-
+        $url = $this->urls['lk'] . '/Identity/RequestMobilePhoneVerification';
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode(['Token' => $token])]]);
         $data = json_decode($response->getBody(), true);
 
@@ -107,8 +97,8 @@ class RegisterService
     #[ArrayShape(['id' => "string", 'sessionId' => "string"])]
     public function verifySms(VerifyPhoneRequest $request, string $token): array
     {
-        $url = config('data.loyalty.test.url.lk') . '/Identity/';
-        $partnerId = config('data.loyalty.test.partner_id');
+        $url = $this->urls['lk'] . '/Identity';
+        $partnerId = $this->config['partner_id'];
 
         $data = [
             'Token' => $token,
@@ -116,7 +106,7 @@ class RegisterService
             'PartnerId' => $partnerId
         ];
 
-        $response = $this->client->post($url . 'CheckSmsForRegistration', ['json' => ['parameter' => json_encode($data)]]);
+        $response = $this->client->post($url . '/CheckSmsForRegistration', ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -127,7 +117,7 @@ class RegisterService
             'PartnerId' => $partnerId
         ];
 
-        $response = $this->client->post($url . 'AdvancedPhoneEmailRegister', ['json' => ['parameter' => json_encode($data)]]);
+        $response = $this->client->post($url . '/AdvancedPhoneEmailRegister', ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)

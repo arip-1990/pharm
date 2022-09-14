@@ -54,13 +54,13 @@ return [
         'secret' => '875598b9e417663986bd5b8b5aab7155ed646df5'
     ],
     'loyalty' => [
+        'url' => [
+            'pos' => 'http://37.18.77.42:8083/posprocessing.asmx',
+            'lk' => 'http://37.18.77.42:1011/CustomerOfficeService',
+            'manager' => 'http://37.18.77.42:1012/ManagerOfficeService',
+            'admin' => 'http://37.18.77.42:1013/AdministratorOfficeService'
+        ],
         'test' => [
-            'url' => [
-                'pos' => 'http://seredinacrm4.ru:8083/posprocessing.asmx',
-                'lk' => 'http://seredinacrm4.ru:1011/CustomerOfficeService',
-                'manager' => 'http://seredinacrm4.ru:1012/ManagerOfficeService',
-                'admin' => 'http://seredinacrm4.ru:1013/AdministratorOfficeService'
-            ],
             'organization' => '00001', // идентификатор организации
             'business_unit' => 1, // идентификатор магазина
             'pos' => 1, // идентификатор кассы
@@ -73,6 +73,21 @@ return [
             'manager' => [
                 'login' => 'integer',
                 'password' => '9LuwK8NvVjx6jw',
+            ]
+        ],
+        'prod' => [
+            'organization' => '10074', // идентификатор организации
+            'business_unit' => 'test', // идентификатор магазина
+            'pos' => 'test', // идентификатор кассы
+            'org_name' => 'ZS2',
+            'login' => 'crm\dagfarm',
+            'password' => 'EgW8mBQG9',
+            'id_task_card' => 'dag1',
+            'partner_id' => 'E078F788-5707-ED11-80CB-001DD8B75065',
+            'session_id' => 'A35B9DCA-1947-407B-8079-86AF61E2A2C5', // сессия администратора
+            'manager' => [
+                'login' => 'dagfarm',
+                'password' => 'YtvH9zDSVJ06PLbnm7',
             ]
         ]
     ]

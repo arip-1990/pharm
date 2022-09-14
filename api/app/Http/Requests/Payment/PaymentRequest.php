@@ -19,14 +19,14 @@ class PaymentRequest extends FormRequest
             "hasPreorderItems" => 'nullable|boolean',
             "city" => "nullable|string|max:255",
             "promocode" => "nullable|string|max:255",
-            "deliveryId" => "nullable|integer",
+            "deliveryId" => "nullable|string",
             "pickupLocationId" => "nullable|integer",
             "bonusesSpent" => "nullable|integer",
             "items" => "nullable|array",
             "items.*.name" => "nullable|string|max:255",
             "items.*.id" => "nullable|string|max:255",
-            "items.*.privateId" => "nullable|integer",
-            "items.*.configurationId" => "nullable|integer",
+            "items.*.privateId" => "nullable|string",
+            "items.*.configurationId" => "nullable|string",
             "items.*.quantity" => "nullable|integer",
         ];
     }

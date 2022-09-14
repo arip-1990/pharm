@@ -1,52 +1,35 @@
-.overlay {
-    display: none;
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.6);
-    opacity: 0;
-    transform: translateZ(0);
+.dialog {
+    max-width: 480px;
 }
 
-.modal-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    display: none;
-    justify-content: center;
-    align-items: center;
+.modal {
+    border: 3px solid $primary;
+    border-radius: 0.5rem;
 
-    .modal {
-        background: #fff;
-        border-radius: 10px;
-        width: 300px;
-        height: 250px;
-        display: flex;
-        align-items: flex-end;
-        
-        footer {
-          width: 100%;
-          display: flex;
-          justify-content: flex-end;
-        }
-        
-        button {
-          border: none;
-          border-radius: 5px;
-          padding: 25px 50px;
-          margin: 0 10px 10px 0;
+    .button {
+        display: inline-block;
+        font-weight: 600;
+        line-height: 1.5;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+        cursor: pointer;
+        user-select: none;
+        background-color: #d63517;
+        border: 1px solid #d63517;
+        padding: 0.5rem 2.5rem;
+        font-size: 1rem;
+        border-radius: 0.25rem;
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+
+        &:not(:disabled) {
+        cursor: pointer;
         }
 
-        .submit {
-            background: #8CDA26;
-        }
-        
-        .cancel {
-            background: #DA2632;
+        &:hover {
+        background-color: darken($color: #d63517, $amount: 5);
+        border-color: darken($color: #d63517, $amount: 5);
         }
     }
 }

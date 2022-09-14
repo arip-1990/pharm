@@ -59,7 +59,7 @@ const Navbar: FC = () => {
                 })}
                 tabIndex={0}
               >
-                <i className="" /> Программа лояльности
+                <i className="icon-loyalty" /> Программа лояльности
               </a>
             </Link>
           </Nav.Item>

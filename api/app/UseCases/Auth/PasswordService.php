@@ -2,27 +2,16 @@
 
 namespace App\UseCases\Auth;
 
-use GuzzleHttp\Client;
+use App\UseCases\LoyaltyService;
 
-class PasswordService
+class PasswordService extends LoyaltyService
 {
-    private Client $client;
-
-    public function __construct() {
-        $this->client = new Client([
-            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-            'http_errors' => false,
-            'verify' => false
-        ]);
-    }
-
     public function requestResetPassword(string $phone): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/User/RequestPasswordChange';
-        $partnerId = config('data.loyalty.test.partner_id');
+        $url = $this->urls['lk'] . '/User/RequestPasswordChange';
         $data = [
             'PhoneOrEmail' => $phone,
-            'PartnerId' => $partnerId
+            'PartnerId' => $this->config['partner_id']
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
@@ -36,7 +25,7 @@ class PasswordService
 
     public function validateTempPassword(string $token, string $password): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/User/ValidateTempPassword';
+        $url = $this->urls['lk'] . '/User/ValidateTempPassword';
         $data = [
             'Token' => $token,
             'TemporaryPassword' => $password
@@ -53,7 +42,7 @@ class PasswordService
 
     public function changePassword(string $token, string $password): void
     {
-        $url = config('data.loyalty.test.url.lk') . '/User/ChangePassword';
+        $url = $this->urls['lk'] . '/User/ChangePassword';
         $data = [
             'Token' => $token,
             'Password' => $password

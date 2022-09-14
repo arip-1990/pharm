@@ -57,7 +57,7 @@ const View: React.FC = () => {
             loading={isFetching}
             pagination={false}
             columns={itemColumns}
-            dataSource={offer?.items.map((item) => ({
+            dataSource={offer?.offers.map((item) => ({
               key: item.store.id,
               name: item.store.name,
               quantity: item.quantity,

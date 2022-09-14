@@ -1,16 +1,49 @@
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import { useFormik } from "formik";
+import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import Layout from "../../../components/layout";
 import { useLocalStorage } from "react-use-storage";
 import { ICart } from "../../../models/ICart";
 import { Delivery, Payment } from "../../../components/checkout";
-import { useMountedState } from "react-use";
+import api from "../../../lib/api";
+import axios from "axios";
+import { useNotification } from "../../../hooks/useNotification";
+import { useCookies } from "react-cookie";
+import { useMounted } from "../../../hooks/useMounted";
+
+interface Values {
+  delivery: number;
+  payment: number;
+  city?: string;
+  street?: string;
+  house?: string;
+  entrance?: number;
+  floor?: number;
+  apt?: number;
+  service_to_door: boolean;
+  rule: boolean;
+}
+
+const ErrorField: FC<{ name: string; errors: FormikErrors<Values> }> = ({
+  name,
+  errors,
+}) => {
+  const style = {
+    width: "100%",
+    marginTop: "0.25rem",
+    fontSize: "0.85rem",
+    color: "#dc3545",
+  };
+
+  return errors[name] ? <div style={style}>{errors[name]}</div> : null;
+};
 
 const Checkout: FC = () => {
   const [carts] = useLocalStorage<ICart[]>("cart", []);
+  const [{ city }] = useCookies(["city"]);
   const router = useRouter();
-  const isMounted = useMountedState();
+  const isMounted = useMounted();
+  const notification = useNotification();
   const [recipe, setRecipe] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const { slug } = router.query;
@@ -28,25 +61,65 @@ const Checkout: FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      delivery: "0",
-      payment: "0",
-      city: undefined,
+      delivery: 0,
+      payment: 0,
+      city: city,
       street: undefined,
       house: undefined,
       entrance: undefined,
       floor: undefined,
       apt: undefined,
-      service_to_door: undefined,
+      service_to_door: false,
       rule: false,
     },
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values: Values, actions: FormikHelpers<Values>) => {
+      const items = carts.map((item) => ({
+        id: item.product.id,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+      try {
+        const { data } = await api.post<{ id: number; paymentUrl?: string }>(
+          "order/checkout",
+          {
+            ...values,
+            store: slug,
+            price: totalPrice,
+            items,
+          }
+        );
+
+        console.log(data);
+        if (data.paymentUrl) window.location.href = data.paymentUrl;
+        else router.push(`/order/checkout/${data.id}`);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response.status === 422) {
+            for (const [key, value] of Object.entries(
+              error.response.data?.errors || {}
+            )) {
+              if (key in values) {
+                actions.setFieldError(key, value[0]);
+              }
+            }
+          } else notification("error", error.response.data.message);
+        }
+        console.log(error?.response.data);
+      }
+      actions.setSubmitting(false);
     },
   });
 
   return (
     <Layout>
       <h1 className="text-center">Оформление заказа</h1>
+      {recipe ? (
+        <div className="alert alert-danger" role="alert">
+          Заказать рецептурный препарат на сайте, можно только путем самовывоза
+          из аптеки при наличии рецепта, выписанного врачом!
+        </div>
+      ) : null}
+
       <form className="row row-cols-1 checkout" onSubmit={formik.handleSubmit}>
         <div className="col-md-8 p-4" style={{ border: "2px solid #f7f7f7" }}>
           <h4 className="text-center">Способ получения</h4>
@@ -55,6 +128,7 @@ const Checkout: FC = () => {
             defaultValue={formik.values.delivery}
             onChange={formik.handleChange}
             deliveryValues={formik.values}
+            errors={formik.errors}
           />
 
           <h4
@@ -82,16 +156,12 @@ const Checkout: FC = () => {
                 <label className="form-check-label" htmlFor="rule">
                   Я согласен(а) с правилами сайта
                 </label>
-                {/* <p
-                  style={{ fontSize: "0.75rem", fontWeight: 300 }}
-                  className="text-danger"
-                >
-                  Обязательно для заполнения.
-                </p> */}
+                <ErrorField name="rule" errors={formik.errors} />
               </div>
             </div>
           </div>
         </div>
+
         <div className="col-md-4 p-4" style={{ border: "2px solid #f7f7f7" }}>
           <h4 className="text-center">Ваш заказ</h4>
           {isMounted() &&
@@ -141,7 +211,11 @@ const Checkout: FC = () => {
           </div>
 
           <div className="text-center">
-            <button className="btn btn-primary" type="submit">
+            <button
+              className="btn btn-primary"
+              type="submit"
+              disabled={formik.isSubmitting}
+            >
               Подтвердить заказ
             </button>
           </div>

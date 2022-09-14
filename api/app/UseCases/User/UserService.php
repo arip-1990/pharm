@@ -4,25 +4,18 @@ namespace App\UseCases\User;
 
 use App\Http\Requests\User\UpdatePasswordRequest;
 use App\Models\User;
+use App\UseCases\LoyaltyService;
 use App\UseCases\ManagerService;
-use GuzzleHttp\Client;
 
-class UserService
+class UserService extends LoyaltyService
 {
-    private Client $client;
-
     public function __construct(private readonly ManagerService $managerService) {
-        $this->client = new Client([
-            'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
-            'http_errors' => false,
-            'verify' => false
-        ]);
+        parent::__construct();
     }
 
     public function getInfo(string $id, string $sessionId): array
     {
-        $url = config('data.loyalty.test.url.lk') . '/Contact/Get';
-
+        $url = $this->urls['lk'] . '/Contact/Get';
         $response = $this->client->get($url, ['query' => "id='{$id}'&sessionid='{$sessionId}'"]);
         $data = json_decode($response->getBody(), true);
 
@@ -34,8 +27,7 @@ class UserService
 
     public function updateInfo(User $user, array $newData = []): string
     {
-        $url = config('data.loyalty.test.url.lk') . '/Contact/Update';
-        $partnerId = config('data.loyalty.test.partner_id');
+        $url = $this->urls['lk'] . '/Contact/Update';
         if (!$user->session) $manager = $this->managerService->login();
 
         $data = [
@@ -53,7 +45,7 @@ class UserService
                 'AllowEmail' => false,
                 'AllowSms' => false,
                 'AgreeToTerms' => false,
-                'PartnerId' => $partnerId
+                'PartnerId' => $this->config['partner_id']
             ],
             'SessionId' => $user->session ?? $manager['sessionId']
         ];
@@ -69,7 +61,7 @@ class UserService
 
     public function updatePassword(User $user, UpdatePasswordRequest $request): void
     {
-        $url = config('data.loyalty.test.url.lk') . '/Identity/UpdatePassword';
+        $url = $this->urls['lk'] . '/Identity/UpdatePassword';
         $data = [
             'id' => $user->id,
             'sessionid' => $user->session,
@@ -86,12 +78,11 @@ class UserService
 
     public function setPassword(string $userId, string $password): void
     {
-        $url = config('data.loyalty.test.url.admin') . '/User/CreatePassword';
-        $sessionId = config('data.loyalty.test.session_id');
+        $url = $this->urls['admin'] . '/User/CreatePassword';
         $data = [
             'Id' => $userId,
             'Password' => $password,
-            'SessionId' => $sessionId
+            'SessionId' => $this->config['session_id']
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);

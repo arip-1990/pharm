@@ -2,6 +2,8 @@
 
 namespace App\Casts;
 
+use App\Models\Status\Order;
+use App\Models\Status\OrderState;
 use App\Models\Status\Status;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
@@ -21,7 +23,7 @@ class StatusCollection implements CastsAttributes
     public function get($model, string $key, $value, array $attributes)
     {
         $tmp = new Collection(json_decode($value, true));
-        return $tmp->map(fn($item) => new Status($item['value'], new Carbon($item['created_at']), $item['state']));
+        return $tmp->map(fn($item) => new Status(Order::from($item['value']), new Carbon($item['created_at']), OrderState::from($item['state'])));
     }
 
     /**

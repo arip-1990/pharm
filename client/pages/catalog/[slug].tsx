@@ -111,7 +111,7 @@ const Catalog: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, params }) => {
-    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
+    // if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
 
     const { page, slug } = params;
 

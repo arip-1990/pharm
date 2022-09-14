@@ -52,12 +52,15 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.client.rule=Host(`test.xn--12080-6ve4g.xn--p1ai`)
-        - traefik.http.services.client.loadBalancer.server.port=80
-        - traefik.http.routers.client.middlewares=secure-headers
-        - traefik.http.routers.client.entryPoints=https
-        - traefik.http.routers.client.tls=true
-        - traefik.http.routers.client.tls.certResolver=letsEncrypt
+        - traefik.http.routers.site.rule=Host(`xn--12080-6ve4g.xn--p1ai`) || Host(`www.xn--12080-6ve4g.xn--p1ai`) || Host(`120-na-80.ru`) || Host(`www.120-na-80.ru`)
+        - traefik.http.services.site.loadBalancer.server.port=80
+        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)(www.xn--12080-6ve4g.xn--p1ai|www.120-na-80.ru|120-na-80.ru)/(.*)$$
+        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}xn--12080-6ve4g.xn--p1ai/$${3}
+        - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
+        - traefik.http.routers.site.middlewares=site-redirect,secure-headers
+        - traefik.http.routers.site.entryPoints=https
+        - traefik.http.routers.site.tls=true
+        - traefik.http.routers.site.tls.certResolver=letsEncrypt
       mode: replicated
       replicas: 1
       update_config:
@@ -93,72 +96,6 @@ services:
       update_config:
         parallelism: 1
         delay: 10s
-
-  site:
-    image: ${REGISTRY}/pharm-site:${IMAGE_TAG}
-    networks:
-      - traefik-public
-      - default
-    volumes:
-      - uploads:/app/public/storage
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.http.routers.site.rule=Host(`xn--12080-6ve4g.xn--p1ai`) || Host(`www.xn--12080-6ve4g.xn--p1ai`) || Host(`120-na-80.ru`) || Host(`www.120-na-80.ru`)
-        - traefik.http.services.site.loadBalancer.server.port=80
-        - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)(www.xn--12080-6ve4g.xn--p1ai|www.120-na-80.ru|120-na-80.ru)/(.*)$$
-        - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}xn--12080-6ve4g.xn--p1ai/$${3}
-        - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
-        - traefik.http.routers.site.middlewares=site-redirect,secure-headers
-        - traefik.http.routers.site.entryPoints=https
-        - traefik.http.routers.site.tls=true
-        - traefik.http.routers.site.tls.certResolver=letsEncrypt
-      mode: replicated
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 5s
-
-  site-php-fpm:
-    image: ${REGISTRY}/pharm-site-php-fpm:${IMAGE_TAG}
-    environment:
-      APP_NAME: Сеть аптек 120/80
-      APP_URL: https://120на80.рф
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
-      DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
-      DB_DATABASE: app
-      DB_USERNAME: app
-      DB_PASSWORD: ${DB_PASSWORD}
-      FILESYSTEM_DRIVER: public
-      BROADCAST_DRIVER: redis
-      CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      SESSION_DRIVER: redis
-      SESSION_LIFETIME: 120
-      SESSION_DOMAIN: '.xn--12080-6ve4g.xn--p1ai'
-      SANCTUM_STATEFUL_DOMAINS: '*.xn--12080-6ve4g.xn--p1ai'
-      CORS_ORIGIN: https://panel.xn--12080-6ve4g.xn--p1ai
-      REDIS_HOST: redis
-      REDIS_CLIENT: predis
-      MAIL_HOST: smtp.mail.ru
-      MAIL_PORT: 465
-      MAIL_USERNAME: info@120-na-80.ru
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120-na-80.ru
-      MAIL_FROM_NAME: Сеть аптек 120/80
-      ELASTICSEARCH_HOST: elasticsearch
-    volumes:
-      - uploads:/app/storage/app/public
-      - ./logs:/app/storage/logs
-    deploy:
-      mode: replicated
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 5s
 
   api:
     image: ${REGISTRY}/pharm-api:${IMAGE_TAG}
@@ -201,9 +138,10 @@ services:
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
       SESSION_LIFETIME: 120
+      SESSION_SECURE_COOKIE: 'true'
       SESSION_DOMAIN: '.xn--12080-6ve4g.xn--p1ai'
       SANCTUM_STATEFUL_DOMAINS: '*.xn--12080-6ve4g.xn--p1ai'
-      CORS_ORIGIN: 'https://panel.xn--12080-6ve4g.xn--p1ai|https://test.xn--12080-6ve4g.xn--p1ai'
+      CORS_ORIGIN: 'https://panel.xn--12080-6ve4g.xn--p1ai|https://xn--12080-6ve4g.xn--p1ai'
       REDIS_HOST: redis
       REDIS_CLIENT: predis
       MAIL_HOST: smtp.mail.ru

@@ -14,7 +14,7 @@ import {
 } from "../lib/catalogService";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { useCookies } from "react-cookie";
+import { useCookie } from "../hooks/useCookie";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -48,7 +48,7 @@ const generateCategory = (category: ICategory) => {
 const Catalog: FC = () => {
   const router = useRouter();
   const { page } = router.query;
-  const [{ city }] = useCookies(["city"]);
+  const [city] = useCookie("city");
   const { data, isFetching, refetch } = useFetchProductsQuery({
     page: Number(page) || 1,
   });
@@ -110,7 +110,7 @@ const Catalog: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ req, params }) => {
-    if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
+    // if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
 
     const page = Number(params?.page) || 1;
 

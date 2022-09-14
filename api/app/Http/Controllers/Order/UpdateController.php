@@ -55,18 +55,18 @@ class UpdateController extends Controller
             return response($this->orderError('Не найден заказ №' . $id . '!', 2, $id), 500);
         }
 
-        switch ($xml->order->status) {
+        switch ($status = (string)$xml->order->status) {
             case OrderStatus::STATUS_ASSEMBLED_PHARMACY:
                 $order->assembled();
                 break;
             case OrderStatus::STATUS_CANCELLED:
             case OrderStatus::STATUS_DISBANDED:
             case OrderStatus::STATUS_RETURN_BY_COURIER:
-                $order->cancel(status: $xml->order->status);
+                $order->cancel(status: OrderStatus::from($status));
                 $this->service->fullRefund($order);
                 break;
             default:
-                $order->addStatus($xml->order->status);
+                $order->addStatus(OrderStatus::from($status));
         }
 
         if (isset($xml->order->products->product) and ($order->isAssembled() or $order->isReceived()))

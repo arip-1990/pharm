@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Status\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
@@ -24,10 +25,10 @@ class OrderResource extends JsonResource
             'updatedAt' => $this->updated_at,
             'user' => new UserResource($this->user),
             'store' => new StoreResource($this->store),
-            'statuses' => $this->statuses->map(fn($status) => [
-                'value' => $status['value'],
-                'state' => $status['state'] ?? 2,
-                'createdAt' => $status['created_at']
+            'statuses' => $this->statuses->map(fn(Status $status) => [
+                'value' => $status->value,
+                'state' => $status->state ?? 2,
+                'createdAt' => $status->created_at->format('d.m.Y')
             ]),
             'items' => $this->items->map(fn(OrderItem $item) => [
                 'product' => new ProductResource($item->product),
