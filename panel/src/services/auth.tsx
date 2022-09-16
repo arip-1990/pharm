@@ -81,8 +81,10 @@ const Auth: FC<Props> = ({ children }) => {
     });
 
   const setUser = (user: IUser, isAuth: boolean = true) => {
-    if (user.emailVerified) user.emailVerified = moment(user.emailVerified);
-    if (user.phoneVerified) user.phoneVerified = moment(user.phoneVerified);
+    if (user.phone_verified_at)
+      user.phone_verified_at = moment(user.phone_verified_at);
+    if (user.email_verified_at)
+      user.email_verified_at = moment(user.email_verified_at);
 
     setAuthState({ user, isAuth });
   };
