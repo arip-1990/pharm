@@ -14,7 +14,7 @@ import {
 } from "../../lib/catalogService";
 import { wrapper } from "../../lib/store";
 import { useRouter } from "next/router";
-import axios from "axios";
+import { useCookie } from "../../hooks/useCookie";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -38,9 +38,12 @@ const isFavorite = (id: string) => {
 };
 
 const Product: FC = () => {
+  const [city] = useCookie("city");
   const router = useRouter();
   const { slug } = router.query;
-  const { data } = useGetProductQuery(String(slug));
+  const { data, refetch } = useGetProductQuery(String(slug));
+
+  useEffect(() => refetch(), [city]);
 
   return (
     <Layout>
@@ -110,7 +113,7 @@ const Product: FC = () => {
                   ) : null}
                 </div>
                 <div className="col-12 col-lg-4 col-xxl-3 d-flex flex-column justify-content-evenly align-items-end">
-                  {data?.offers ? (
+                  {data?.offers.length ? (
                     <>
                       <h5
                         className="price"
@@ -192,7 +195,7 @@ const Product: FC = () => {
         </Accordion.Item>
       </Accordion>
 
-      {data?.offers ? (
+      {data?.offers.length ? (
         <>
           <div
             className="row p-2 fw-bold d-md-flex m-0"
@@ -208,38 +211,33 @@ const Product: FC = () => {
             <div className="col-md-2 text-center">Количество</div>
           </div>
 
-          {data?.offers.map((item) => {
-            if (item.store) {
-              return (
-                <div
-                  key={item.id}
-                  className="row align-items-center border-top p-2 m-0"
-                >
-                  <div className="col-12 col-md-5">
-                    <span style={{ fontWeight: 600 }}>{item.store.name}</span>
-                  </div>
-                  <div className="col-12 col-md-3 text-md-center">
-                    <b className="d-md-none">Время работы: </b>
-                    <span
-                      dangerouslySetInnerHTML={{ __html: item.store.schedule }}
-                    />
-                  </div>
-                  <div className="col-12 col-md-2 text-md-center">
-                    <b className="d-md-none">Цена: </b>
-                    <span style={{ fontSize: "1.25rem", fontWeight: 600 }}>
-                      {item.price}
-                    </span>{" "}
-                    &#8381;
-                  </div>
-                  <div className="col-12 col-md-2 text-md-center">
-                    <b className="d-md-none">Количество:</b>
-                    {item.quantity >= 10 ? "много" : item.quantity + " шт."}
-                  </div>
-                </div>
-              );
-            }
-            return item.store.id;
-          })}
+          {data?.offers.map((item) => (
+            <div
+              key={item.id}
+              className="row align-items-center border-top p-2 m-0"
+            >
+              <div className="col-12 col-md-5">
+                <span style={{ fontWeight: 600 }}>{item.store.name}</span>
+              </div>
+              <div className="col-12 col-md-3 text-md-center">
+                <b className="d-md-none">Время работы: </b>
+                <span
+                  dangerouslySetInnerHTML={{ __html: item.store.schedule }}
+                />
+              </div>
+              <div className="col-12 col-md-2 text-md-center">
+                <b className="d-md-none">Цена: </b>
+                <span style={{ fontSize: "1.25rem", fontWeight: 600 }}>
+                  {item.price}
+                </span>{" "}
+                &#8381;
+              </div>
+              <div className="col-12 col-md-2 text-md-center">
+                <b className="d-md-none">Количество:</b>
+                {item.quantity >= 10 ? "много" : item.quantity + " шт."}
+              </div>
+            </div>
+          ))}
         </>
       ) : null}
     </Layout>
@@ -247,9 +245,7 @@ const Product: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async ({ req, params }) => {
-    // if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
-
+  (store) => async ({ params }) => {
     const { slug } = params;
 
     store.dispatch(getProduct.initiate(String(slug)));

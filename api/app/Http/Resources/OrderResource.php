@@ -23,7 +23,7 @@ class OrderResource extends JsonResource
             'cancel_reason' => $this->cancel_reason,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
-            'user' => new UserResource($this->user),
+            'user' => $this->user,
             'store' => new StoreResource($this->store),
             'statuses' => $this->statuses->map(fn(Status $status) => [
                 'value' => $status->value,

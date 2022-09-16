@@ -28,6 +28,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test', function () {
+    $product = \App\Models\Product::find('7a2ce03f-2d57-11eb-80e7-ac1f6bd1d36d');
+    dd($product->offers()->whereCity(\App\Models\City::query()->find(1)?->name)->get());
+});
+
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
     Route::post('/feed', [V1\FeedController::class, 'handle']);
     Route::post('/order', [Order\UpdateController::class, 'handle']);

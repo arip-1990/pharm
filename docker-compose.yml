@@ -67,7 +67,7 @@ services:
     build:
       context: panel/docker/dev/node
     environment:
-      REACT_APP_API_URL: http://pharm.test
+      REACT_APP_API_URL: http://api.pharm.test
     volumes:
       - ./panel:/app
     command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn start"

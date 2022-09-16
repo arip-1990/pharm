@@ -2,7 +2,7 @@
 
 namespace App\Models\Status;
 
-enum Mobile: string
+enum MobileStatus: string
 {
     case PLACED = 'placed'; // создан
     case PROCESSING = 'processing'; // в обработке

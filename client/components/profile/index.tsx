@@ -42,11 +42,14 @@ const Profile: FC<Props> = ({
       <div className="row">
         <div className="col-3">
           <div className={styles["profile_logo"]}>
-            <div className="fa-regular fa-gift" />
+            <div className="icon-gift" />
             <div>Бонусная программа</div>
           </div>
         </div>
-        <div className="col-9">
+        <div
+          className="col-9"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
           <nav className={styles["profile_nav"]}>
             <Link href="/">
               <a>Главная</a>
@@ -64,7 +67,7 @@ const Profile: FC<Props> = ({
               Выход
             </a>
           </nav>
-          {title && <h4 className="m-0">{title}</h4>}
+          {title && <h4 className="mb-0 mt-auto">{title}</h4>}
         </div>
       </div>
 

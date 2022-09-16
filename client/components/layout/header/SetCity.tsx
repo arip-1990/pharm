@@ -8,12 +8,13 @@ type Props = {
 };
 
 const SetCity: FC<Props> = ({ className }) => {
-  const [city, setCookie] = useCookie("city");
+  const [city, setCookie, removeCookie] = useCookie("city");
   const { data } = useFetchCitiesQuery();
   let classes = ["menu-city"];
   if (className) classes = classes.concat(className.split(" "));
 
   const handleSetCity = async (newCity: string) => {
+    removeCookie();
     setCookie(newCity);
   };
 

@@ -5,20 +5,21 @@ namespace App\Listeners\Order;
 use App\Events\Order\OrderDelivery;
 use App\Models\Exception;
 use App\Models\Order;
-use App\Models\Status\Status;
+use App\Models\Status\OrderState;
+use App\Models\Status\OrderStatus;
 use App\UseCases\Order\GenerateDataService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OrderDeliveryListener implements ShouldQueue
 {
-    public function __construct(private GenerateDataService $service) {}
+    public function __construct(private readonly GenerateDataService $service) {}
 
     public function handle(OrderDelivery $event): void
     {
         $order = $event->order;
-        if ($order->status !== Status::STATUS_ASSEMBLED_PHARMACY or $order->delivery_type !== Order::DELIVERY_TYPE_COURIER) {
+        if ($order->status !== OrderStatus::STATUS_ASSEMBLED_PHARMACY or $order->delivery_type !== Order::DELIVERY_TYPE_COURIER) {
             $message = 'Заказ не может быть отправлен.';
-            $order->changeStatusState(Status::STATE_ERROR);
+            $order->changeStatusState(OrderState::STATE_ERROR);
             $order->save();
 
             Exception::create($order->id, 'yandex', $message)->save();
@@ -29,7 +30,7 @@ class OrderDeliveryListener implements ShouldQueue
         $response = $this->getDeliveryInfo($number_order, $this->service->generateDeliveryData());
         if(isset($response['code'])) {
             $message = 'Номер заказа(1c): ' . $number_order . '. Code: ' . $response['code'] . '. -> ' . $response['message'];
-            $order->changeStatusState(Status::STATE_ERROR);
+            $order->changeStatusState(OrderState::STATE_ERROR);
             $order->save();
 
             Exception::create($order->id, 'yandex', $message)->save();
@@ -37,7 +38,7 @@ class OrderDeliveryListener implements ShouldQueue
         }
         if(isset($response['id'])) {
             $order->yandex_id = strval($response['id']);
-            $order->changeStatusState(Status::STATE_SUCCESS);
+            $order->changeStatusState(OrderState::STATE_SUCCESS);
             $order->save();
         }
     }

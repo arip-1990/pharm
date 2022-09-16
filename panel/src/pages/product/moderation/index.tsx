@@ -33,7 +33,7 @@ const attributeColumns = [
 ];
 
 const Moderation: React.FC = () => {
-  const { data: products, isLoading } = useFetchModerationProductsQuery();
+  const { data: products, isFetching } = useFetchModerationProductsQuery();
   const [updateProduct] = useUpdateModerationProductMutation();
 
   const handleUpdate = (slug: string, check: boolean) => {
@@ -85,7 +85,7 @@ const Moderation: React.FC = () => {
               </span>
             </div>
           }
-          loading={isLoading}
+          loading={isFetching}
         >
           {products?.map((product) => {
             const vendor = product.attributes

@@ -3,7 +3,6 @@ import Card from "../components/card";
 import { FC, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../models/ICategory";
-import saleImage from "../assets/images/sale-icon.png";
 import Link from "next/link";
 import Pagination from "../components/pagination";
 import { wrapper } from "../lib/store";
@@ -13,7 +12,6 @@ import {
   useFetchProductsQuery,
 } from "../lib/catalogService";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { useCookie } from "../hooks/useCookie";
 
 const generateCategory = (category: ICategory) => {
@@ -109,9 +107,7 @@ const Catalog: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async ({ req, params }) => {
-    // if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
-
+  (store) => async ({ params }) => {
     const page = Number(params?.page) || 1;
 
     store.dispatch(fetchProducts.initiate({ page }));

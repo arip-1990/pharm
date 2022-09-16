@@ -6,7 +6,8 @@ use App\Events\Order\OrderSend;
 use App\Mail\Order\CreateOrder;
 use App\Models\Exception;
 use App\Models\Order;
-use App\Models\Status\Status;
+use App\Models\Status\OrderState;
+use App\Models\Status\OrderStatus;
 use App\UseCases\Order\GenerateDataService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,14 +29,14 @@ class OrderSendListener implements ShouldQueue
             }
 
             if(isset($response->success->order_id)) {
-                $order->changeStatusState(Status::STATE_SUCCESS);
-                $order->addStatus(Status::STATUS_SENT_MAIL);
+                $order->changeStatusState(OrderState::STATE_SUCCESS);
+                $order->addStatus(OrderStatus::STATUS_SENT_MAIL);
 
                 Mail::to($order->user)->send(new CreateOrder($order));
             }
         }
         catch (\Exception $e) {
-            $order->changeStatusState(Status::STATE_ERROR);
+            $order->changeStatusState(OrderState::STATE_ERROR);
             Exception::create($order->id, '1c', $e->getMessage())->save();
         }
 

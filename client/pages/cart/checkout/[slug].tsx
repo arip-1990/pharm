@@ -1,15 +1,16 @@
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
-import Layout from "../../../components/layout";
 import { useLocalStorage } from "react-use-storage";
+import axios from "axios";
+
+import Layout from "../../../components/layout";
 import { ICart } from "../../../models/ICart";
 import { Delivery, Payment } from "../../../components/checkout";
-import api from "../../../lib/api";
-import axios from "axios";
 import { useNotification } from "../../../hooks/useNotification";
-import { useCookies } from "react-cookie";
 import { useMounted } from "../../../hooks/useMounted";
+import { useCookie } from "../../../hooks/useCookie";
+import api from "../../../lib/api";
 
 interface Values {
   delivery: number;
@@ -40,7 +41,7 @@ const ErrorField: FC<{ name: string; errors: FormikErrors<Values> }> = ({
 
 const Checkout: FC = () => {
   const [carts] = useLocalStorage<ICart[]>("cart", []);
-  const [{ city }] = useCookies(["city"]);
+  const [city] = useCookie("city");
   const router = useRouter();
   const isMounted = useMounted();
   const notification = useNotification();
@@ -166,15 +167,14 @@ const Checkout: FC = () => {
           <h4 className="text-center">Ваш заказ</h4>
           {isMounted() &&
             carts.map((item) => (
-              <div key={item.product.id} className="row">
+              <div key={item.product.id} className="row mb-3">
                 <div className="col-6 col-md-8 offset-1 offset-md-0">
                   <a href="{{ route('catalog.product', ['product' => $item->product->slug]) }}">
                     {item.product.name}
                   </a>
                 </div>
                 <div className="col-4 col-md-4 text-end">
-                  {item.product.minPrice}&#8381;
-                  <br />
+                  {item.product.minPrice}&#8381;{" "}
                   <span className="text-muted">x {item.quantity}</span>
                 </div>
               </div>

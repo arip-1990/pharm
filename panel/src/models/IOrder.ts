@@ -1,4 +1,5 @@
 import moment from "moment";
+import { IUser } from "./IUser";
 
 export interface IStatus {
   value: string;
@@ -24,11 +25,7 @@ export interface IOrder {
   cancel_reason: string | null;
   createdAt: moment.Moment;
   updatedAt: moment.Moment;
-  user: {
-    id: string;
-    name: string;
-    phone: string;
-  };
+  user: IUser;
   store: {
     id: string;
     name: string;

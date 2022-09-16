@@ -13,6 +13,7 @@ import {
   AccordionItemContext,
   isAccordionItemSelected,
 } from "./Context";
+
 import styles from "./Accordion.module.scss";
 
 type CustomEventHandler = EventHandler<SyntheticEvent>;
@@ -66,8 +67,8 @@ const Header = forwardRef<HTMLElement, Props>(
           !isAccordionItemSelected(activeEventKey, eventKey) &&
             styles.collapsed,
           {
-            "accordion-item_header__left-icon": icon === "left",
-            "accordion-item_header__icon-plus": iconType === "plus",
+            [styles["accordion-item_header__left-icon"]]: icon === "left",
+            [styles["accordion-item_header__icon-plus"]]: iconType === "plus",
           }
         )}
       />

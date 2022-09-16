@@ -9,7 +9,6 @@ import {
   getRunningOperationPromises,
 } from "../lib/catalogService";
 import Head from "next/head";
-import api from "../lib/api";
 import { useRouter } from "next/router";
 import Auth from "../components/auth";
 import { useCookie } from "../hooks/useCookie";
@@ -69,9 +68,7 @@ const Home: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async ({ req }) => {
-    // if (req) api.defaults.headers.common.Cookie = req.headers.cookie;
-
+  (store) => async () => {
     store.dispatch(fetchPopularProducts.initiate());
 
     await Promise.all(getRunningOperationPromises());

@@ -63,7 +63,7 @@ class CheckoutService
     {
         $orders = [];
         foreach ($request->validated('orders') as $data) {
-            $paymentType = (int)(explode('/', $data['payment'])[0] === 'card');
+            $paymentType = (int)(explode('/', $data['payment'])[1] === '001');
             $deliveryType = (int)(explode('/', $data['delivery'])[1] === 'regular');
             $order = Order::create($data['externalUserId'], $data['pickupLocationId'], $paymentType, $data['price'], $deliveryType);
 
@@ -101,6 +101,14 @@ class CheckoutService
 
                     $offers->each(fn(Offer $offer) => $offer->save());
                 });
+
+                $orders[] = [
+                    'id' => $order->id,
+                    'uuid' => $data['uuid'],
+                    'success' => true,
+                    'price' => $order->cost,
+                    'items' => $data['items']
+                ];
             }
             catch (\DomainException $e) {
                 $orders[] = [
@@ -112,17 +120,7 @@ class CheckoutService
                     'price' => $order->cost,
                     'items' => $data['items']
                 ];
-
-                continue;
             }
-
-            $orders[] = [
-                'id' => $order->id,
-                'uuid' => $data['uuid'],
-                'success' => true,
-                'price' => $order->cost,
-                'items' => $data['items']
-            ];
         }
 
         return $orders;

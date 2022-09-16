@@ -6,6 +6,7 @@ use App\Models\DeliveryType;
 use App\Models\PickupLocation;
 use App\Models\TimeInterval;
 use Carbon\Carbon;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DeliveryResource extends JsonResource
@@ -49,7 +50,7 @@ class DeliveryResource extends JsonResource
         return $data;
     }
 
-    public static function customCollection($resource, $data): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public static function customCollection($resource, $data): AnonymousResourceCollection
     {
         self::$data = $data;
         return parent::collection($resource);

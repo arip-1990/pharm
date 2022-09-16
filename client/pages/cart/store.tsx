@@ -6,8 +6,10 @@ import { ICart } from "../../models/ICart";
 import defaultImage from "../../assets/images/default.png";
 import Layout from "../../components/layout";
 import Accordion from "../../components/accordion";
+import { useCookie } from "../../hooks/useCookie";
 
 const Store: FC = () => {
+  const [city] = useCookie("city");
   const router = useRouter();
   const [carts, setCarts] = useLocalStorage<ICart[]>("cart", []);
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,7 +32,7 @@ const Store: FC = () => {
     };
 
     fetchStores();
-  }, []);
+  }, [city]);
 
   const handleStore = (e: MouseEvent<HTMLButtonElement>, storeId: string) => {
     e.stopPropagation();
@@ -71,7 +73,7 @@ const Store: FC = () => {
                 className="store-item"
               >
                 <Accordion.Header className="store-item_title" icon="left">
-                  <h6 className="col-7">{store.store.name}</h6>
+                  <h6 className="col-6">{store.store.name}</h6>
                   <p className="col-2 text-center text-primary">
                     {store.products.length} из {carts.length} товаров
                   </p>

@@ -22,9 +22,9 @@ const View: React.FC = () => {
   const { slug } = useParams();
   const {
     data: product,
-    isFetching: fetchProductLoading,
+    isFetching: productLoading,
   } = useFetchProductQuery(slug || "", { skip: !slug });
-  // const { data: offers, isFetching: fetchOffersLoading } = useFetchOfferQuery(
+  // const { data: offers, isFetching: offersLoading } = useFetchOfferQuery(
   //   slug || "",
   //   {
   //     skip: !slug,
@@ -40,10 +40,10 @@ const View: React.FC = () => {
       <Col span={12}>
         <Row gutter={[32, 32]}>
           <Col span={24}>
-            <ViewBase loading={fetchProductLoading} product={product} />
+            <ViewBase loading={productLoading} product={product} />
           </Col>
           <Col span={24}>
-            <ViewDescription loading={fetchProductLoading} product={product} />
+            <ViewDescription loading={productLoading} product={product} />
           </Col>
         </Row>
       </Col>
@@ -51,7 +51,7 @@ const View: React.FC = () => {
       <Col span={12}>
         <Row gutter={[32, 32]}>
           <Col span={24}>
-            <ViewAttributes loading={fetchProductLoading} product={product} />
+            <ViewAttributes loading={productLoading} product={product} />
           </Col>
         </Row>
       </Col>
@@ -60,7 +60,7 @@ const View: React.FC = () => {
         <ViewPhotos
           slug={slug || ""}
           photos={product?.photos || []}
-          loading={fetchProductLoading}
+          loading={productLoading}
         />
       </Col>
 
@@ -68,7 +68,7 @@ const View: React.FC = () => {
         <Card title="Аптеки">
           <Table
             size="small"
-            loading={fetchProductLoading}
+            loading={productLoading}
             pagination={false}
             columns={offerColumns}
             dataSource={product?.offers.map((item) => ({

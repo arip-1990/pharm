@@ -15,6 +15,6 @@ class IndexController extends Controller
     {
         $city = City::query()->where('name', $request->cookie('city'))->first() ?? City::query()->find(1);
         $stores = Store::active()->whereIn('location_id', $city->locations->pluck('id'))->paginate(15);
-        return StoreResource::collection($stores);
+        return StoreResource::customCollection($stores);
     }
 }

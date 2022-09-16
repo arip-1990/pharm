@@ -20,7 +20,7 @@ const Order: React.FC = () => {
     filters: [],
   });
   const { data: users } = useFetchUsersQuery();
-  const { data: orders, isFetching: fetchLoading } = useFetchOrdersQuery(
+  const { data: orders, isFetching: ordersLoading } = useFetchOrdersQuery(
     filters
   );
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Order: React.FC = () => {
       title: "Имя",
       dataIndex: "userName",
       filters: users?.map((item) => ({
-        text: item.name,
+        text: item.first_name,
         value: item.id,
       })),
       filteredValue:
@@ -153,11 +153,13 @@ const Order: React.FC = () => {
           <Table
             size="small"
             columns={columns}
-            loading={fetchLoading}
+            loading={ordersLoading}
             dataSource={orders?.data.map((item) => ({
               key: item.id,
               id: item.id,
-              userName: item.user.name,
+              userName:
+                item.user.first_name +
+                (item.user.last_name ? ` ${item.user.last_name[0]}` : ""),
               userPhone: item.user.phone,
               store: item.store.name,
               status: (

@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller;
 
 class EditController extends Controller
 {
-    public function __construct(private RefundService $refundService) {}
+    public function __construct(private readonly RefundService $refundService) {}
 
     private function isValidEditOrderXML($xml): bool
     {

@@ -18,10 +18,7 @@ const Statistic: React.FC = () => {
       pagination: { current: 1, pageSize: 10 },
     }
   );
-  const {
-    data: statistics,
-    isFetching: fetchLoading,
-  } = useFetchStatisticsQuery(filters);
+  const { data: statistics, isFetching } = useFetchStatisticsQuery(filters);
 
   const columns = [
     {
@@ -140,7 +137,7 @@ const Statistic: React.FC = () => {
           <Table
             size="small"
             columns={columns}
-            loading={fetchLoading}
+            loading={isFetching}
             dataSource={statistics?.data.map((item) => ({
               key: item.id,
               ip: item.ip,

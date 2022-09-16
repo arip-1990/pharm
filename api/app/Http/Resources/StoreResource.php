@@ -4,17 +4,12 @@ namespace App\Http\Resources;
 
 use App\Helper;
 use App\Models\Store;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StoreResource extends JsonResource
 {
-    private readonly bool $long;
-
-    public function __construct($resource, bool $long = false)
-    {
-        $this->long = $long;
-        parent::__construct($resource);
-    }
+    public static bool $long = false;
 
     public function toArray($request): array
     {
@@ -24,11 +19,20 @@ class StoreResource extends JsonResource
             'slug' => $this->slug,
             'name' => $this->name,
             'phone' => Helper::formatPhone($this->phone),
-            'schedule' => Helper::formatSchedule($this->schedule),
+            'schedule' => Helper::formatSchedule($this->schedule, static::$long),
             'route' => $this->route,
             'delivery' => $this->delivery,
             'status' => $this->status,
             'location' => new LocationResource($this->location)
         ];
+    }
+
+    public static function customCollection(mixed $resource, bool $long = false): JsonResource | AnonymousResourceCollection
+    {
+        static::$long = $long;
+        if ($resource instanceof Store)
+            return new self($resource);
+
+        return parent::collection($resource);
     }
 }

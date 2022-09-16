@@ -30,12 +30,12 @@ const Store: FC = () => {
       <Page className="row">
         <div className="col-12 col-md-6">
           <Map
-            center={data.location.coordinate}
+            center={data?.location.coordinate}
             points={[
               {
-                title: data.name,
-                description: data.phone,
-                coordinates: data.location.coordinate,
+                title: data?.name,
+                description: data?.phone,
+                coordinates: data?.location.coordinate,
               },
             ]}
           />

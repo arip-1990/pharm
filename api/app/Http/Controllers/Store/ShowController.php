@@ -11,6 +11,6 @@ class ShowController extends Controller
 {
     public function handle(Store $store): JsonResponse
     {
-            return new JsonResponse(new StoreResource($store, true));
+            return new JsonResponse(StoreResource::customCollection($store, true));
     }
 }

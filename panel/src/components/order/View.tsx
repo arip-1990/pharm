@@ -1,52 +1,99 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { Card, Col, Row, Table } from "antd";
-import { useFetchOrderItemsQuery, useFetchOrderQuery } from "../../services/OrderService";
-import StatusStep from './StatusStep';
+import {
+  useFetchOrderItemsQuery,
+  useFetchOrderQuery,
+} from "../../services/OrderService";
+import StatusStep from "./StatusStep";
 
-const baseColumns = [
-  { dataIndex: "key" },
-  { dataIndex: "value" },
-];
+const baseColumns = [{ dataIndex: "key" }, { dataIndex: "value" }];
 
 const itemColumns = [
-  { dataIndex: "name", title: 'Наименование товара' },
-  { dataIndex: "quantity", title: 'Количество' },
-  { dataIndex: "price", title: 'Цена', render: (price: number) => <span>{price}&#8381;</span> },
-  { dataIndex: "total", title: 'Итого', render: (total: number) => <span>{total}&#8381;</span> },
+  { dataIndex: "name", title: "Наименование товара" },
+  { dataIndex: "quantity", title: "Количество" },
+  {
+    dataIndex: "price",
+    title: "Цена",
+    render: (price: number) => <span>{price}&#8381;</span>,
+  },
+  {
+    dataIndex: "total",
+    title: "Итого",
+    render: (total: number) => <span>{total}&#8381;</span>,
+  },
 ];
 
 const View: React.FC = () => {
   const { id } = useParams();
-  const { data: order, isLoading: fetchLoading } = useFetchOrderQuery(Number(id), {skip: !id});
-  const { data: items, isLoading: fetchItemsLoading } = useFetchOrderItemsQuery(Number(id), {skip: !id});
+  const { data: order, isFetching: orderLoading } = useFetchOrderQuery(
+    Number(id),
+    { skip: !id }
+  );
+  const {
+    data: items,
+    isFetching: orderItemsLoading,
+  } = useFetchOrderItemsQuery(Number(id), { skip: !id });
 
   return (
     <Row gutter={[32, 32]}>
       <Col span={24}>
-        <h2 style={{margin: 0}}>Заказ {order?.id}</h2>
+        <h2 style={{ margin: 0 }}>Заказ {order?.id}</h2>
       </Col>
 
       <Col span={24}>
         <Card title="Общий">
           <Table
             size="small"
-            loading={fetchLoading}
+            loading={orderLoading}
             showHeader={false}
             pagination={false}
             columns={baseColumns}
-            dataSource={order && [
-              {key: 'Номер заказа в 1c', value: order.otherId},
-              {key: 'Время заказа', value: order.createdAt.format('LLL')},
-              {key: 'Статус', value: <StatusStep full statuses={order.statuses} paymentType={order.paymentType} deliveryType={order.deliveryType} />},
-              {key: 'Тип оплаты / Тип доставки', value: (order.paymentType ? 'Оплата картой' : 'Наличными') + ' / ' + (order.deliveryType ? 'Доставка' : 'Самовывоз')},
-              {key: 'Адрес доставки', value: order.deliveryAddress},
-              {key: 'Сумма заказа', value: <span>{(order.cost * 1).toLocaleString('ru')}&#8381;</span>},
-              {key: 'Аптека', value: order.store.name},
-              {key: 'Оплачено', value: order.statuses.some(item => item.value === 'P' && item.state === 2)},
-              {key: 'Заказчик', value: order.user.name},
-              {key: 'Заметка', value: order.note},
-            ]}
+            dataSource={
+              order && [
+                { key: "Номер заказа в 1c", value: order.otherId },
+                { key: "Время заказа", value: order.createdAt.format("LLL") },
+                {
+                  key: "Статус",
+                  value: (
+                    <StatusStep
+                      full
+                      statuses={order.statuses}
+                      paymentType={order.paymentType}
+                      deliveryType={order.deliveryType}
+                    />
+                  ),
+                },
+                {
+                  key: "Тип оплаты / Тип доставки",
+                  value:
+                    (order.paymentType ? "Оплата картой" : "Наличными") +
+                    " / " +
+                    (order.deliveryType ? "Доставка" : "Самовывоз"),
+                },
+                { key: "Адрес доставки", value: order.deliveryAddress },
+                {
+                  key: "Сумма заказа",
+                  value: (
+                    <span>{(order.cost * 1).toLocaleString("ru")}&#8381;</span>
+                  ),
+                },
+                { key: "Аптека", value: order.store.name },
+                {
+                  key: "Оплачено",
+                  value: order.statuses.some(
+                    (item) => item.value === "P" && item.state === 2
+                  ),
+                },
+                {
+                  key: "Заказчик",
+                  value:
+                    order.user.first_name +
+                    (order.user.last_name ? ` ${order.user.last_name[0]}` : ""),
+                },
+                { key: "Заметка", value: order.note },
+              ]
+            }
           />
         </Card>
       </Col>
@@ -55,15 +102,19 @@ const View: React.FC = () => {
         <Card title="Товары">
           <Table
             size="small"
-            loading={fetchLoading}
+            loading={orderLoading}
             pagination={false}
             columns={itemColumns}
             dataSource={order?.items.map((item, i) => ({
               key: i + 1,
-              name: <Link to={`/product/${item.product.slug}`}>{item.product.name}</Link>,
+              name: (
+                <Link to={`/product/${item.product.slug}`}>
+                  {item.product.name}
+                </Link>
+              ),
               quantity: item.quantity,
-              price: (item.price * 1).toLocaleString('ru'),
-              total: (item.quantity * item.price).toLocaleString('ru')
+              price: (item.price * 1).toLocaleString("ru"),
+              total: (item.quantity * item.price).toLocaleString("ru"),
             }))}
           />
         </Card>
@@ -73,15 +124,19 @@ const View: React.FC = () => {
         <Card title="Всего заказанных товаров">
           <Table
             size="small"
-            loading={fetchItemsLoading}
+            loading={orderItemsLoading}
             pagination={false}
             columns={itemColumns}
             dataSource={items?.map((item, i) => ({
               key: i + 1,
-              name: <Link to={`/product/${item.product.slug}`}>{item.product.name}</Link>,
+              name: (
+                <Link to={`/product/${item.product.slug}`}>
+                  {item.product.name}
+                </Link>
+              ),
               quantity: item.quantity,
-              price: (item.price * 1).toLocaleString('ru'),
-              total: (item.quantity * item.price).toLocaleString('ru')
+              price: (item.price * 1).toLocaleString("ru"),
+              total: (item.quantity * item.price).toLocaleString("ru"),
             }))}
           />
         </Card>

@@ -16,7 +16,6 @@ class PaymentResource extends JsonResource
     public function toArray($request)
     {
         /** @var Payment $this */
-
        return [
             "id" => $this->slug_id,
             "title" => $this->title,

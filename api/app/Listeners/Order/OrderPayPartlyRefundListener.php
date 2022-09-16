@@ -4,7 +4,7 @@ namespace App\Listeners\Order;
 
 use App\Events\Order\OrderPayPartlyRefund;
 use App\Models\Exception;
-use App\Models\Status\Status;
+use App\Models\Status\OrderState;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OrderPayPartlyRefundListener implements ShouldQueue
@@ -25,10 +25,10 @@ class OrderPayPartlyRefundListener implements ShouldQueue
             elseif ($response['errorCode'] != 0)
                 throw new \DomainException('Ошибка! ' . $response['errorMessage'].', sber_id: ' . $order->sber_id);
 
-            $order->changeStatusState(Status::STATE_SUCCESS);
+            $order->changeStatusState(OrderState::STATE_SUCCESS);
         }
         catch (\Exception $exception) {
-            $order->changeStatusState(Status::STATE_ERROR);
+            $order->changeStatusState(OrderState::STATE_ERROR);
 
             Exception::create($order->id, 'partly-refund', $exception->getMessage())->save();
         }

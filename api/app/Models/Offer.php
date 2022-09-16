@@ -55,8 +55,10 @@ class Offer extends Model
 
     public function scopeWhereCity(Builder $query, string $city): Builder
     {
-        return $query->join('stores', 'offers.store_id', '=', 'stores.id')
-        ->where('stores.name', 'like', $city . '%');
+        return $query->whereHas('store', function (Builder $query) use ($city) {
+            $query->where('status', Store::STATUS_ACTIVE)
+                ->where('name', 'like', '%' . $city . '%');
+        });
     }
 
     public function scopeWhereInMultiple(Builder $query, array $columns, array $values): Builder

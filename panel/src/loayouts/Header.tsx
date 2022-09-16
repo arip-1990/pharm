@@ -4,10 +4,10 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   LogoutOutlined,
-  UserOutlined
+  UserOutlined,
 } from "@ant-design/icons";
 import { SiderTheme } from "antd/lib/layout/Sider";
-import { useSanctum } from "react-sanctum";
+import { useAuth } from "../hooks/useAuth";
 
 interface PropsType {
   theme: SiderTheme;
@@ -16,13 +16,13 @@ interface PropsType {
 }
 
 const Header: React.FC<PropsType> = ({ theme, collapsed, onCollapsed }) => {
-  const { user, signOut } = useSanctum();
-  const [currentMenu, setCurrentMenu] = React.useState<string>('');
+  const { user, logout } = useAuth();
+  const [currentMenu, setCurrentMenu] = React.useState<string>("");
 
   const handleClickMenu = (e: any) => {
     setCurrentMenu(e.key);
-    if (e.key === 'logout') signOut();
-  }
+    if (e.key === "logout") logout();
+  };
 
   return (
     <Layout.Header>
@@ -33,13 +33,24 @@ const Header: React.FC<PropsType> = ({ theme, collapsed, onCollapsed }) => {
 
       <Menu
         theme={theme}
-        style={{display: 'flex', flex: 0.5, justifyContent: 'end', lineHeight: '64px'}}
+        style={{
+          display: "flex",
+          flex: 0.5,
+          justifyContent: "end",
+          lineHeight: "64px",
+        }}
         onClick={handleClickMenu}
         selectedKeys={[currentMenu]}
-        mode='horizontal'
+        mode="horizontal"
       >
-        <Menu.SubMenu key='profile' icon={<UserOutlined />} title={user.name}>
-          <Menu.Item key='logout'>
+        <Menu.SubMenu
+          key="profile"
+          icon={<UserOutlined />}
+          title={
+            user?.first_name + (user?.last_name ? ` ${user.last_name[0]}` : "")
+          }
+        >
+          <Menu.Item key="logout">
             <LogoutOutlined /> Выход
           </Menu.Item>
         </Menu.SubMenu>

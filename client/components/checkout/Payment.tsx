@@ -1,6 +1,8 @@
 import classNames from "classnames";
 import { ChangeEvent, FC, useState } from "react";
 
+import paymentsLogo from "../../assets/images/payments.png";
+
 type Props = {
   defaultValue?: number;
   onChange?: (e: any) => void;
@@ -44,11 +46,7 @@ const Payment: FC<Props> = ({ defaultValue = 0, onChange }) => {
           <p className="radio-button_text">
             Оплата картой
             <span>
-              <img
-                style={{ height: "20px" }}
-                src="/images/payments.png"
-                alt=""
-              />
+              <img style={{ height: "20px" }} src={paymentsLogo.src} alt="" />
             </span>
           </p>
         </label>

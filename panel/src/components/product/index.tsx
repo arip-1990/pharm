@@ -35,9 +35,7 @@ const Product: React.FC = () => {
       pagination: { current: 1, pageSize: 10 },
     }
   );
-  const { data: products, isFetching: fetchLoading } = useFetchProductsQuery(
-    filters
-  );
+  const { data: products, isFetching } = useFetchProductsQuery(filters);
   const [searchText, setSearchText] = React.useState<string>();
 
   const getColumnSearchProps = (dataIndex: string) => ({
@@ -309,7 +307,7 @@ const Product: React.FC = () => {
           <Table
             size="small"
             columns={columns}
-            loading={fetchLoading}
+            loading={isFetching}
             data={products?.data.map((item) => ({
               key: item.slug,
               photo: { url: item.photos[0]?.url, total: item.photos?.length },

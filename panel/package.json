@@ -23,7 +23,6 @@
     "react-draft-wysiwyg": "^1.14.7",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.1",
-    "react-sanctum": "^2.1.2",
     "react-scripts": "5.0.0",
     "react-use-storage": "^0.5.1",
     "sass": "^1.45.2",

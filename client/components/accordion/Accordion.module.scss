@@ -11,42 +11,43 @@
 
       &::after,
       &::before {
+        content: "\e803";
         display: inline-block;
         font-family: 'icon';
-        transition: transform 0.35s ease;
         transform: rotate(-180deg);
-      }
-
-      &:not(&__left-icon) {
-        &::after {
-          content: "\e803";
-        }
-
-        .accordion-item_header__icon-plus::after {
-          content: "+";
-        }
-      }
-
-      &__left-icon::before {
-        content: "\e803";
-        margin-right: 0.5rem;
-
-        &.accordion-item_header__icon-plus::before {
-          content: "+";
-        }
+        transition-property: transform;
+        transition-duration: 0.5s;
+        transition-timing-function: ease;
       }
 
       &__icon-plus {
         &::after,
         &::before {
+          content: "+";
           font-size: 1.5em;
           line-height: 0.5em;
           transform: rotate(-225deg);
-          transition: transform 0.35s ease-in-out;
+          transition-timing-function: ease-in-out;
         }
 
         &.collapsed {
-          background-color:#dae1e1;
+          background-color: #dae1e1;
+        }
+      }
+
+      &:not(&__left-icon) {
+        &::before {
+          content: none !important;
+        }
+      }
+
+      &__left-icon {
+        &::after {
+          content: none !important;
+        }
+
+        &::before {
+          margin-right: 0.5rem;
         }
       }
 
