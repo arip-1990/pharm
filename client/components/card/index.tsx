@@ -3,9 +3,10 @@ import Image from "next/image";
 import { IProduct } from "../../models/IProduct";
 import defaultImage from "../../assets/images/default.png";
 import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
-import styles from "./Card.module.scss";
 import { ICart } from "../../models/ICart";
 import { useLocalStorage } from "react-use-storage";
+
+import styles from "./Card.module.scss";
 
 const isRecipe = (recipe: boolean) => {
   const classess = [styles.card_mod];
@@ -73,20 +74,19 @@ const Card: FC<Props> = ({ product }) => {
       itemScope
       itemType="https://schema.org/Product"
     >
-      {isRecipe(product.recipe)}
-
       <div className={styles.card_image}>
+        {isFavorite(product)}
         <Image
           className="mt-2"
           itemProp="image"
-          width={220}
-          height={220}
+          layout="fill"
+          objectFit="contain"
           src={product.photos[0]?.url || defaultImage}
           alt={product.name}
         />
+        {isRecipe(product.recipe)}
+        <div className={styles.card_discount} />
       </div>
-
-      {isFavorite(product)}
 
       <div className={styles.card_body}>
         <h6>
