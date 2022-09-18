@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\DeliveryType;
+use App\Models\Delivery;
 use Illuminate\Database\Seeder;
 
 class DeliverySeeder extends Seeder
@@ -19,7 +19,7 @@ class DeliverySeeder extends Seeder
                 'slug_id' => 'regular',
                 'title' => 'Доставка курьером',
                 'description' => 'Доставка курьерской службой по городу на следующий день',
-                'type' => DeliveryType::DELIVERY,
+                'type' => Delivery::DELIVERY,
                 'price' => 350,
                 'min' => 0,
                 'max' => 0,
@@ -28,7 +28,7 @@ class DeliverySeeder extends Seeder
                 'slug_id' => 'pickup',
                 'title' => 'Самовывоз из магазина',
                 'description' => 'Самовывоз заказа из магазина в день заказа',
-                'type' => DeliveryType::PICKUP,
+                'type' => Delivery::PICKUP,
                 'price' => 0,
                 'min' => 0,
                 'max' => 0,
@@ -37,7 +37,7 @@ class DeliverySeeder extends Seeder
 
         foreach ($data as $item) {
             // dd($item['slug_id']);
-            DeliveryType::firstOrCreate(
+            Delivery::firstOrCreate(
                 [
                 'slug_id' => $item['slug_id']
             ],

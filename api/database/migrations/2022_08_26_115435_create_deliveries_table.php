@@ -8,9 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('delivery_types', function (Blueprint $table) {
+        Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
-            $table->string('slug_id')->nullable()->comment('Идентификатор');
             $table->string('title')->nullable()->comment('название');
             $table->text('description')->nullable()->nullable()->comment('описание');
             $table->string('type')->nullable()->comment('тип (delivery, pickup — доставка или самовывоз)');
@@ -24,6 +23,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('delivery_types');
+        Schema::dropIfExists('deliveries');
     }
 };

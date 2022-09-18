@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->string('slug_id')->nullable()->comment('идентификатор 1c');
             $table->string('title')->nullable()->comment('название');
             $table->string('description')->nullable()->comment('описание');
             $table->string('type')->nullable()->comment('тип из перечисленных');

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\DeliveryType;
+use App\Models\Delivery;
 use App\Models\PickupLocation;
 use App\Models\TimeInterval;
 use Carbon\Carbon;
@@ -11,21 +11,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DeliveryResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
+    public static array $data;
 
-    public static $data;
-
-    public function toArray($request)
+    public function toArray($request): array
     {
-        /** @var DeliveryType $this */
+        /** @var Delivery $this */
         $nowDate = Carbon::now()->locale('ru_RU');
         $data = [
-            'id' => $this->slug_id,
+            'id' => (string)$this->id,
             'title' => $this->title,
             'description' => $this->description,
             'type' =>$this->type,
@@ -50,7 +43,7 @@ class DeliveryResource extends JsonResource
         return $data;
     }
 
-    public static function customCollection($resource, $data): AnonymousResourceCollection
+    public static function customCollection($resource, array $data): AnonymousResourceCollection
     {
         self::$data = $data;
         return parent::collection($resource);
