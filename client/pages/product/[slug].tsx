@@ -217,7 +217,9 @@ const Product: FC = () => {
               className="row align-items-center border-top p-2 m-0"
             >
               <div className="col-12 col-md-5">
-                <span style={{ fontWeight: 600 }}>{item.store.name}</span>
+                <span style={{ fontWeight: 600 }}>
+                  {item.store.location.address}
+                </span>
               </div>
               <div className="col-12 col-md-3 text-md-center">
                 <b className="d-md-none">Время работы: </b>

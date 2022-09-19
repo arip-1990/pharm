@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Mobile;
 
+use App\Models\City;
 use App\Models\Delivery;
-use App\Models\PickupLocation;
-use App\Models\TimeInterval;
+use App\Models\Location;
+use App\Models\Store;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -29,15 +30,18 @@ class DeliveryResource extends JsonResource
             'timeLabel' => 'В день заказа'
 
         ];
-        if ($data['type'] == 'pickup') {
-            $data['locations'] = PickupLocationResource::collection(PickupLocation::where('city', self::$data['addressData']['city'])->get());
+        if ($data['type'] == Delivery::TYPE_PICKUP) {
+            $city = City::where('name', trim(str_replace(['с.', 'с'], '', self::$data['addressData']['city'])))->first();
+            $locationIds = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))->pluck('id');
+
+            $data['locations'] = PickupLocationResource::collection(Store::whereIn('location_id', $locationIds));
         }
-        elseif ($data['type'] == 'delivery') {
+        elseif ($data['type'] == Delivery::TYPE_DELIVERY) {
             $data['dateIntervals'] = [
                 'id' => $nowDate->format('y-m-d'),
                 "title" => $nowDate->translatedFormat('d M'),
                 "subTitle" => "Сегодня",
-                "timeIntervals" => TimeIntervalResource::collection(TimeInterval::all())
+                "timeIntervals" => ["id" => 1, "title" => "с 10:00 до 20:00"]
             ];
         }
         return $data;

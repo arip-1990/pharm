@@ -8,10 +8,8 @@ use App\Http\Controllers\Category;
 use App\Http\Controllers\Cheque;
 use App\Http\Controllers\City;
 use App\Http\Controllers\Coupon;
-use App\Http\Controllers\Delivery;
 use App\Http\Controllers\Offer;
 use App\Http\Controllers\Order;
-use App\Http\Controllers\Payment;
 use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
 use App\Http\Controllers\V1;
@@ -29,8 +27,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/test', function () {
-    $product = \App\Models\Product::find('7a2ce03f-2d57-11eb-80e7-ac1f6bd1d36d');
-    dd($product->offers()->whereCity(\App\Models\City::query()->find(1)?->name)->get());
+    //
 });
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
@@ -38,19 +35,18 @@ Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () 
     Route::post('/order', [Order\UpdateController::class, 'handle']);
 });
 
-Route::prefix('deliveries')->group(function () {
-    Route::post('/', [Delivery\IndexController::class, 'handle']);
-});
-
-Route::prefix('payments')->group(function () {
-    Route::post('/', [Payment\IndexController::class, 'handle']);
-});
+// TODO delete routes
+Route::post('/deliveries', [V1\Mobile\DeliveryController::class, 'handle']);
+Route::post('/payments', [V1\Mobile\PaymentController::class, 'handle']);
+//
 
 Route::prefix('v1')->group(function () {
     Route::post('/pay', [V1\PayController::class, 'handle']);
 
     Route::prefix('mobile')->group(function () {
-        Route::post('checkout', [V1\Mobile\CheckoutController::class, 'handle']);
+        Route::post('/checkout', [V1\Mobile\CheckoutController::class, 'handle']);
+        Route::post('/deliveries', [V1\Mobile\DeliveryController::class, 'handle']);
+        Route::post('/payments', [V1\Mobile\PaymentController::class, 'handle']);
     });
 
     Route::prefix('auth')->group(function () {

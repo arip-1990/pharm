@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Payment;
+namespace App\Http\Controllers\V1\Mobile;
 
-use App\Http\Requests\Payment\PaymentRequest;
-use App\Http\Resources\PaymentResource;
+use App\Http\Requests\Mobile\PaymentRequest;
+use App\Http\Resources\Mobile\PaymentResource;
 use App\Models\Payment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
-class IndexController extends Controller
+class PaymentController extends Controller
 {
     public function handle(PaymentRequest $request): JsonResponse
     {

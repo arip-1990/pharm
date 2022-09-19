@@ -19,8 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
- * @property int $payment_type
- * @property int $delivery_type
  * @property float $cost
  * @property OrderStatus $status
  * @property ?string $note
@@ -32,6 +30,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $deleted_at
  *
  * @property User $user
+ * @property Payment $payment
+ * @property Delivery $delivery
  * @property OrderDelivery $orderDelivery
  * @property ?Store $store
  *
@@ -49,21 +49,13 @@ class Order extends Model
         'statuses' => StatusCollection::class
     ];
 
-    // Тип оплаты
-    const PAYMENT_TYPE_CASH = 0;
-    const PAYMENT_TYPE_SBER = 1;
-
-    // Способ получения
-    const DELIVERY_TYPE_PICKUP = 0;
-    const DELIVERY_TYPE_COURIER = 1;
-
-    public static function create(string $userId, string $storeId, int $paymentType, float $cost, int $deliveryType): self
+    public static function create(User $user, Store $store, Payment $payment, float $cost, Delivery $delivery): self
     {
         $item = new static();
-        $item->user_id = $userId;
-        $item->store_id = $storeId;
-        $item->payment_type = $paymentType;
-        $item->delivery_type = $deliveryType;
+        $item->user_id = $user->id;
+        $item->store_id = $store->id;
+        $item->payment_id = $payment->id;
+        $item->delivery_id = $delivery->id;
         $item->cost = $cost;
         $item->addStatus(OrderStatus::STATUS_ACCEPTED, OrderState::STATE_SUCCESS);
         return $item;
@@ -246,6 +238,16 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
+    }
+
+    public function delivery(): BelongsTo
+    {
+        return $this->belongsTo(Delivery::class);
     }
 
     public function lastException(): ?self

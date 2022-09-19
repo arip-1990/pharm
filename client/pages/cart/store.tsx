@@ -73,7 +73,7 @@ const Store: FC = () => {
                 className="store-item"
               >
                 <Accordion.Header className="store-item_title" icon="left">
-                  <h6 className="col-6">{store.store.name}</h6>
+                  <h6 className="col-6">{store.store.location?.address}</h6>
                   <p className="col-2 text-center text-primary">
                     {store.products.length} из {carts.length} товаров
                   </p>

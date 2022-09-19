@@ -6,15 +6,17 @@ use App\Http\Requests;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StoreResource;
 use App\Models\City;
+use App\Models\Delivery;
 use App\Models\Location;
 use App\Models\OrderDelivery;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Street;
+use App\Models\Payment;
+use App\Models\Store;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutService
@@ -22,7 +24,13 @@ class CheckoutService
     public function checkoutWeb(Requests\Order\CheckoutRequest $request): Order
     {
         $data = $request->validated();
-        $order = Order::create(Auth::id(), $data['store'], $data['payment'], $data['price'], $data['delivery']);
+        $order = Order::create(
+            $request->user(),
+            Store::find($data['store']),
+            Payment::find($data['payment']),
+            $data['price'],
+            Delivery::find($data['delivery'])
+        );
 
         DB::transaction(function () use ($order, $data) {
             $items = new Collection();
@@ -38,7 +46,7 @@ class CheckoutService
             $order->save();
             $order->items()->saveMany($items);
 
-            if ($data['delivery'] == Order::DELIVERY_TYPE_COURIER) {
+            if ($order->delivery->type === Delivery::TYPE_DELIVERY) {
                 $delivery = OrderDelivery::create(
                     $data['entrance'] ?? null,
                     $data['floor'] ?? null,
@@ -46,8 +54,9 @@ class CheckoutService
                     $data['service_to_door']
                 );
 
-                $street = Street::query()->firstOrCreate(['name' => $data['street'], 'house' => $data['house']]);
-                $location = Location::query()->firstOrCreate(['city_id' => 1, 'street_id' => $street->id]);
+                $city = City::find(1);
+                $location = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))
+                    ->firstOrCreate(['name' => $data['street'], 'house' => $data['house']], ['city_id' => $city->id]);
 
                 $delivery->location()->associate($location);
                 $order->orderDelivery()->save($delivery);
@@ -63,17 +72,22 @@ class CheckoutService
     {
         $orders = [];
         foreach ($request->validated('orders') as $data) {
-            $paymentType = (int)(explode('/', $data['payment'])[1] === '001');
-            $deliveryType = (int)(explode('/', $data['delivery'])[1] === 'regular');
-            $order = Order::create($data['externalUserId'], $data['pickupLocationId'], $paymentType, $data['price'], $deliveryType);
+            $order = Order::create(
+                User::find($data['externalUserId']),
+                Store::find($data['pickupLocationId']),
+                Payment::find((int)explode('/', $data['payment'])[1]),
+                $data['price'],
+                Delivery::find((int)explode('/', $data['delivery'])[1])
+            );
 
             try {
-                DB::transaction(function () use ($order, $data, $deliveryType) {
+                DB::transaction(function () use ($order, $data) {
                     $items = new Collection();
                     $offers = new Collection();
                     foreach ($data['items'] as $item) {
                         /** @var Offer $offer */
-                        if (!$offer = Offer::query()->where('store_id', $data['pickupLocationId'])->where('product_id', $item['privateId'])->first())
+                        if (!$offer = Offer::query()->where('store_id', $order->store_id)
+                            ->where('product_id', $item['privateId'])->first())
                             throw new \DomainException('Товар не найден');
 
                         $offer->checkout($item['quantity']);
@@ -84,7 +98,7 @@ class CheckoutService
                     $order->save();
                     $order->items()->saveMany($items);
 
-                    if ($deliveryType == Order::DELIVERY_TYPE_COURIER) {
+                    if ($order->delivery->type === Delivery::TYPE_DELIVERY) {
                         $delivery = OrderDelivery::create(
                             $data['entrance'] ?? null,
                             $data['floor'] ?? null,
@@ -92,8 +106,11 @@ class CheckoutService
                             $data['service_to_door'] ?? false
                         );
 
-                        $street = Street::query()->firstOrCreate(['name' => $data['addressData']['street'], 'house' => $data['addressData']['house']]);
-                        $location = Location::query()->firstOrCreate(['city_id' => 1, 'street_id' => $street->id]);
+                        $location = Location::firstOrCreate([
+                            'city_id' => 1,
+                            'street' => $data['addressData']['street'],
+                            'house' => $data['addressData']['house']
+                        ]);
 
                         $delivery->location()->associate($location);
                         $order->orderDelivery()->save($delivery);

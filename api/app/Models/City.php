@@ -27,6 +27,11 @@ class City extends Model
     const TYPE_VILLAGE = 2;
     const TYPE_MICRO_DISTRICT = 3;
 
+    public function getName(): string
+    {
+        return $this->parent ? $this->parent->name : $this->name;
+    }
+
     public function locations(): HasMany
     {
         return $this->hasMany(Location::class);

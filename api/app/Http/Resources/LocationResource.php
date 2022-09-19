@@ -12,9 +12,8 @@ class LocationResource extends JsonResource
         /** @var Location $this */
         return [
             'id' => $this->id,
-            'city' => $this->city->name,
-            'street' => $this->street->prefix . '. ' . $this->street->name,
-            'house' => 'д.' . $this->street->house,
+            'city' => $this->city->getName(),
+            'address' => $this->getAddress(),
             'coordinate' => $this->coordinate,
         ];
     }

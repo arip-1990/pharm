@@ -14,7 +14,6 @@ import {
 } from "../lib/storeService";
 import { useRouter } from "next/router";
 import Map from "../components/Map";
-import axios from "axios";
 import { useCookie } from "../hooks/useCookie";
 
 const Store: FC = () => {
@@ -60,7 +59,7 @@ const Store: FC = () => {
           return (
             <div key={item.id} className="row address">
               <div className="col-12 col-md-5 text-center text-md-start">
-                <span>{item.name}</span>
+                <span>{item.location.address}</span>
               </div>
               <div
                 className="col-12 col-md-4 col-lg-3 text-center"
@@ -89,9 +88,7 @@ const Store: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async ({ req, params }) => {
-    // if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
-
+  (store) => async ({ params }) => {
     const page = Number(params?.page) || 1;
 
     store.dispatch(fetchStores.initiate(page));

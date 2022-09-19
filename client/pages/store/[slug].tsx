@@ -13,7 +13,6 @@ import {
 } from "../../lib/storeService";
 import { useRouter } from "next/router";
 import Map from "../../components/Map";
-import axios from "axios";
 
 const Store: FC = () => {
   const router = useRouter();
@@ -42,7 +41,9 @@ const Store: FC = () => {
         </div>
 
         <div className="col-12 col-md-6">
-          <h4 className="text-center">{data?.name}</h4>
+          <h4 className="text-center">
+            <b>{data?.location.city},</b> {data?.location.address}
+          </h4>
 
           {data?.route ? (
             <>
@@ -87,9 +88,7 @@ const Store: FC = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async ({ req, params }) => {
-    // if (req) axios.defaults.headers.common.Cookie = req.headers.cookie;
-
+  (store) => async ({ params }) => {
     const { slug } = params;
 
     store.dispatch(getStore.initiate(String(slug)));

@@ -1,23 +1,17 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Mobile;
 
 use App\Models\Payment;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
-    public function toArray($request)
+    public function toArray($request): array
     {
         /** @var Payment $this */
        return [
-            "id" => $this->slug_id,
+            "id" => (string)$this->id,
             "title" => $this->title,
             "description" => $this->description,
             "type" => $this->type,

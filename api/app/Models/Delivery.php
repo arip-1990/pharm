@@ -21,10 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Delivery extends Model
 {
-    use HasFactory, softDeletes;
+    use HasFactory, SoftDeletes;
 
-    const DELIVERY = 'delivery';
-    const PICKUP = 'pickup';
+    const TYPE_DELIVERY = 'delivery';
+    const TYPE_PICKUP = 'pickup';
 
     protected $fillable = [
         'title',//название

@@ -35,9 +35,6 @@ class Store extends Model
     const STATUS_ACTIVE = true;
     const STATUS_INACTIVE = false;
 
-    const STATUS_DELIVERY = true;
-    const STATUS_PICKUP = false;
-
     public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = ['name', 'slug', 'phone', 'address'];
