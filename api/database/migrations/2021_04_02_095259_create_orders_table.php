@@ -10,9 +10,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('payment_type', unsigned: true)->default(0);
-            $table->tinyInteger('delivery_type', unsigned: true)->default(0);
-            $table->float('cost', unsigned: true);
+            $table->decimal('cost', unsigned: true);
             $table->string('status', 2);
             $table->json('statuses')->default('[]');
             $table->text('note')->nullable();
@@ -24,6 +22,8 @@ return new class extends Migration
 
             $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('store_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('payment_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('delivery_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

@@ -14,9 +14,11 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         '1c/order',
         '1c/feed',
+        'v1/mobile/deliveries',
+        'v1/mobile/payments',
         'v1/mobile/checkout',
         'deliveries',
         'payments',
-        'pay',
+        'v1/pay',
     ];
 }

@@ -30,10 +30,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $deleted_at
  *
  * @property User $user
- * @property Payment $payment
- * @property Delivery $delivery
- * @property OrderDelivery $orderDelivery
  * @property ?Store $store
+ * @property ?Payment $payment
+ * @property ?Delivery $delivery
+ * @property OrderDelivery $orderDelivery
  *
  * @property Collection<Status> $statuses
  * @property Collection<OrderItem> $items

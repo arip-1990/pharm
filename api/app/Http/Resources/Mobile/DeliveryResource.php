@@ -31,10 +31,10 @@ class DeliveryResource extends JsonResource
 
         ];
         if ($data['type'] == Delivery::TYPE_PICKUP) {
-            $city = City::where('name', trim(str_replace(['с.', 'с'], '', self::$data['addressData']['city'])))->first();
-            $locationIds = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))->pluck('id');
-
-            $data['locations'] = PickupLocationResource::collection(Store::whereIn('location_id', $locationIds));
+            if ($city = City::where('name', trim(str_replace(['с.', 'с'], '', self::$data['addressData']['city'])))->first()) {
+                $locationIds = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))->pluck('id');
+                $data['locations'] = PickupLocationResource::collection(Store::whereIn('location_id', $locationIds)->get());
+            }
         }
         elseif ($data['type'] == Delivery::TYPE_DELIVERY) {
             $data['dateIntervals'] = [

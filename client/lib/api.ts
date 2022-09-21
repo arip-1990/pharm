@@ -27,9 +27,21 @@ unknown
         return { data: result.data }
     } catch (error) {
         if (axios.isAxiosError(error))
-            return {error: { status: error.response.status, data: error.response.data }};
-        return error;
+            return {error: { status: error.response?.status, data: error.response?.data }};
+        return {error};
     }
 }
+
+instance.interceptors.request.use(config => {
+    if (typeof window !== "undefined") {
+        let token = localStorage.getItem('token');
+        token = token ? JSON.parse(token)?.accessToken : null;
+        if (token && config.headers) config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return config;
+    },
+    error => Promise.reject(error)
+);
 
 export default instance;

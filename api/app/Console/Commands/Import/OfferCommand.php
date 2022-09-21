@@ -4,6 +4,8 @@ namespace App\Console\Commands\Import;
 
 use App\Models\Product;
 use App\Models\Offer;
+use App\Models\Store;
+use Illuminate\Support\Facades\Redis;
 
 class OfferCommand extends Command
 {
@@ -14,6 +16,7 @@ class OfferCommand extends Command
 
     public function handle(): int
     {
+        $client = Redis::connection()->client();
         try {
             switch ($this->argument('type')) {
                 case 'change':
@@ -28,6 +31,7 @@ class OfferCommand extends Command
         }
         catch (\Exception $e) {
             $this->error($e->getMessage());
+            $client->publish("bot:import", json_encode(['message' => $e->getMessage()]));
             return 1;
         }
 
@@ -78,11 +82,12 @@ class OfferCommand extends Command
         $i = 0;
         foreach ($data->stocks->stock as $item) {
             if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+            if (!$store = Store::query()->find((string)$item->store_uuid)) continue;
 
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
             $fields[] = [
-                'store_id' => (string)$item->store_uuid,
+                'store_id' => $store->id,
                 'product_id' => $product->id,
                 'price' => max($price, 0),
                 'quantity' => max($quantity, 0)

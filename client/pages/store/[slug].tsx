@@ -5,7 +5,7 @@ import { FC } from "react";
 import Page from "../../components/page";
 import Image from "next/image";
 import payments from "../../assets/images/payments.png";
-import { wrapper } from "../../lib/store";
+import { wrapper } from "../../store";
 import {
   getRunningOperationPromises,
   getStore,

@@ -3,8 +3,7 @@
 namespace App\Listeners\Order;
 
 use App\Events\Order\OrderDelivery;
-use App\Models\Exception;
-use App\Models\Order;
+use App\Models\Delivery;
 use App\Models\Status\OrderState;
 use App\Models\Status\OrderStatus;
 use App\UseCases\Order\GenerateDataService;
@@ -17,12 +16,10 @@ class OrderDeliveryListener implements ShouldQueue
     public function handle(OrderDelivery $event): void
     {
         $order = $event->order;
-        if ($order->status !== OrderStatus::STATUS_ASSEMBLED_PHARMACY or $order->delivery_type !== Order::DELIVERY_TYPE_COURIER) {
+        if ($order->status !== OrderStatus::STATUS_ASSEMBLED_PHARMACY or $order->delivery->type !== Delivery::TYPE_DELIVERY) {
             $message = 'Заказ не может быть отправлен.';
             $order->changeStatusState(OrderState::STATE_ERROR);
             $order->save();
-
-            Exception::create($order->id, 'yandex', $message)->save();
             return;
         }
 
@@ -32,8 +29,6 @@ class OrderDeliveryListener implements ShouldQueue
             $message = 'Номер заказа(1c): ' . $number_order . '. Code: ' . $response['code'] . '. -> ' . $response['message'];
             $order->changeStatusState(OrderState::STATE_ERROR);
             $order->save();
-
-            Exception::create($order->id, 'yandex', $message)->save();
             throw new \DomainException($message);
         }
         if(isset($response['id'])) {

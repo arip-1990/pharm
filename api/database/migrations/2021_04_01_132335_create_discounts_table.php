@@ -8,11 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable()->comment('название');
-            $table->string('description')->nullable()->comment('описание');
-            $table->string('type')->nullable()->comment('тип из перечисленных');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->decimal('percent', unsigned: true);
+            $table->boolean('active')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -20,6 +21,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('discounts');
     }
 };

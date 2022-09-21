@@ -15,12 +15,11 @@ class PaymentRequest extends FormRequest
     {
         return [
             "externalUserId" => "nullable|string",
-            "country" => "nullable|string|max:255",
             "hasPreorderItems" => 'nullable|boolean',
             "city" => "nullable|string|max:255",
             "promocode" => "nullable|string|max:255",
             "deliveryId" => "nullable|string",
-            "pickupLocationId" => "nullable|integer",
+            "pickupLocationId" => "nullable|uuid",
             "bonusesSpent" => "nullable|integer",
             "items" => "nullable|array",
             "items.*.name" => "nullable|string|max:255",

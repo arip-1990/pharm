@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $id
  * @property int $views
  * @property int $orders
+ * @property int $reviews
  * @property int $cancellations
  * @property float $rating
  * @property ?Carbon $created_at
@@ -21,7 +22,7 @@ class ProductStatistic extends Model
 {
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id', 'views', 'orders', 'cancellations'];
+    protected $fillable = ['id', 'views', 'orders', 'reviews', 'cancellations'];
 
     public function product(): BelongsTo
     {

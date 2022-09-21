@@ -4,7 +4,6 @@ namespace App\Listeners\Order;
 
 use App\Events\Order\OrderSend;
 use App\Mail\Order\CreateOrder;
-use App\Models\Exception;
 use App\Models\Order;
 use App\Models\Status\OrderState;
 use App\Models\Status\OrderStatus;
@@ -37,7 +36,6 @@ class OrderSendListener implements ShouldQueue
         }
         catch (\Exception $e) {
             $order->changeStatusState(OrderState::STATE_ERROR);
-            Exception::create($order->id, '1c', $e->getMessage())->save();
         }
 
         $order->save();

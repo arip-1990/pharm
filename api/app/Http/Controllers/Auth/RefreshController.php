@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\UseCases\Auth\LoginService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class LogoutController
+class RefreshController
 {
-    public function __construct(private readonly LoginService $service) {}
-
     public function handle(Request $request): JsonResponse
     {
         try {
-            $this->service->logout($request->user(), $request->session()->get('session'));
+            $token = Auth::refresh();
 
             $request->session()->invalidate();
         }
@@ -24,6 +22,9 @@ class LogoutController
             ], 500);
         }
 
-        return new JsonResponse();
+        return new JsonResponse([
+            'accessToken' => $token,
+            'expiresIn' => Auth::factory()->getTTL() * 60,
+        ]);
     }
 }

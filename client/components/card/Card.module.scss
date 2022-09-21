@@ -66,16 +66,35 @@
 
   &_discount {
     position: absolute;
-    left: 0;
+    left: -2px;
     bottom: 0;
+    display: none;
     width: 83px;
-    height: 30px;
-    background-image: url(../../assets/images/discount-30.png);
+    height: 83px;
     background-position: center;
     background-repeat: no-repeat;
+    z-index: 99;
     transition-duration: 0.25s;
     transition-timing-function: ease;
     transition-property: width, height;
+
+    &__30 {
+      display: block;
+      background-image: url(../../assets/images/discount-30.png);
+
+      &.card_discount::after {
+        background-image: url(../../assets/images/discount-30-big.png);
+      }
+    }
+
+    &__50 {
+      display: block;
+      background-image: url(../../assets/images/discount-50.png);
+
+      &.card_discount::after {
+        background-image: url(../../assets/images/discount-50-big.png);
+      }
+    }
 
     &::after {
       content: '';
@@ -83,7 +102,6 @@
       width: 0;
       height: 0;
       background: #3fae9c;
-      background-image: url(../../assets/images/discount-30-big.svg);
       background-position: center;
       background-repeat: no-repeat;
       border-radius: 0.75rem;
@@ -94,12 +112,12 @@
     }
 
     &:hover {
-      width: 100%;
-      height: 100%;
+      width: calc(100% + 4px);
+      height: calc(100% + 2px);
 
       &::after {
         width: 100%;
-        height: 320px;
+        height: 326px;
         opacity: 1;
       }
     }
@@ -229,6 +247,12 @@
 
 @media (min-width: 576px) {
   .card_discount:hover::after {
-    height: 336px;
+    height: 372px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .card_discount:hover::after {
+    height: 352px;
   }
 }

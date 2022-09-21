@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { wrapper } from "../lib/store";
-import { Auth } from "../lib/auth";
+import { wrapper } from "../store";
+import { Auth } from "../store/auth";
 import Loader from "../components/loader";
 
 import "react-notifications/lib/notifications.css";

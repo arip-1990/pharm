@@ -89,6 +89,10 @@ def listen_redis() -> None:
                     elif type == 'pay':
                         for key, item in json.loads(message.get('data')):
                             bot.send_message(1195813156, f'{key} => {item}')
+                    elif type == 'import':
+                        data = json.loads(message.get('data'))
+                        bot.send_message(1195813156, data['message'])
+                        test_command = False
                     elif type == 'test':
                         data = json.loads(message.get('data'))
                         bot.send_message(data['chatId'], data['message'])

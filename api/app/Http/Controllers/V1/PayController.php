@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Models\Exception;
 use App\Models\Order;
 use App\Models\Status\OrderState;
 use App\Models\Status\OrderStatus;
@@ -53,11 +52,11 @@ class PayController
                     break;
                 case 'reversed':
                     $order->changeStatusState(OrderState::STATE_ERROR);
-                    Exception::create($order->id, 'pay', 'Оплата отменена')->save();
+                    Redis::publish('bot:pay', "Заказ №{$order->id}: Оплата отменена!");
                     break;
                 case 'declinedByTimeout':
                     $order->changeStatusState(OrderState::STATE_ERROR);
-                    Exception::create($order->id, 'pay', 'Истек время ожидания оплаты')->save();
+                    Redis::publish('bot:pay', "Заказ №{$order->id}: Истек время ожидания оплаты!");
                     break;
             }
         }

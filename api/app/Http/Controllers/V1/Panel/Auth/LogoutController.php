@@ -11,9 +11,9 @@ class LogoutController extends Controller
 {
     public function handle(Request $request): JsonResponse
     {
-        Auth::guard('web')->logout();
+        Auth::logout();
         $request->session()->regenerate();
 
-        return response()->json();
+        return new JsonResponse();
     }
 }

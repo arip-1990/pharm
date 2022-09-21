@@ -8,6 +8,7 @@ use App\UseCases\User\UserService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use JetBrains\PhpStorm\ArrayShape;
 
 class LoginService extends LoyaltyService
 {
@@ -15,7 +16,8 @@ class LoginService extends LoyaltyService
         parent::__construct();
     }
 
-    public function phoneAuth(string $phone, string $password)
+    #[ArrayShape(['token' => "string", 'session' => "string"])]
+    public function phoneAuth(string $phone, string $password): array
     {
         $url = $this->urls['lk'] . '/Identity/AdvancedPhoneEmailLogin';
         $data = [
@@ -58,20 +60,22 @@ class LoginService extends LoyaltyService
             ]);
         }
 
-        $user->session = $session;
         $user->phone_verified_at = $user->phone_verified_at ?? Carbon::now();
         $user->save();
 
         if (count($orders)) $user->orders()->saveMany($orders);
         if (count($visits)) $user->visits()->saveMany($visits);
 
-        Auth::login($user);
+        return [
+            'token' => Auth::login($user),
+            'session' => $session
+        ];
     }
 
-    public function logout(User $user): void
+    public function logout(User $user, string $session): void
     {
         $url = $this->urls['lk'] . '/Identity/Logout';
-        $data = ['id' => $user->id, 'sessionid' => $user->session];
+        $data = ['id' => $user->id, 'sessionid' => $session];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);
         $data = json_decode($response->getBody(), true);
@@ -79,7 +83,6 @@ class LoginService extends LoyaltyService
         if ($response->getStatusCode() !== 200)
             throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
 
-        $user->update(['session' => null]);
-        Auth::guard('web')->logout();
+        Auth::logout();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Console\Commands\Import;
 
 use App\Models\Category;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redis;
 
 class CategoryCommand extends Command
 {
@@ -12,6 +13,7 @@ class CategoryCommand extends Command
 
     public function handle(): int
     {
+        $client = Redis::connection()->client();
         try {
             $data = $this->getData();
             foreach ($data->categories->category as $item) {
@@ -26,6 +28,7 @@ class CategoryCommand extends Command
         }
         catch (\RuntimeException $e) {
             $this->error($e->getMessage());
+            $client->publish("bot:import", json_encode(['message' => $e->getMessage()]));
             return 1;
         }
 

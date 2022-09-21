@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('type', unsigned: true)->default(0);
+            $table->smallInteger('type', unsigned: true)->default(0);
+            $table->string('prefix', 8)->default('ул');
             $table->string('street');
-            $table->string('house');
+            $table->string('house')->default('1');
             $table->json('coordinate')->default('[]');
-            $table->string('prefix', 8)->nullable();
             $table->timestamps();
             $table->softDeletes();
 

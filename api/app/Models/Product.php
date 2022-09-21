@@ -17,23 +17,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $name
  * @property string $slug
  * @property int $code
- * @property ?string $barcode
  * @property ?string $description
+ * @property Collection<string> $barcodes
  * @property bool $marked
  * @property bool $recipe
- * @property bool $sale
  * @property int $status
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
  *
  * @property ?Category $category
+ * @property ?Discount $discount
+ * @property ?ProductStatistic $statistic
+ *
  * @property Collection<Photo> $photos
  * @property Collection<Photo> $checkedPhotos
  * @property Collection<Photo> $certificates
  * @property Collection<Offer> $offers
  * @property Collection<Value> $values
- * @property ?ProductStatistic $statistic
  */
 class Product extends Model
 {
@@ -46,15 +47,11 @@ class Product extends Model
     public string $abc = '';
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['id', 'name', 'code', 'category_id', 'barcode', 'description', 'marked', 'recipe', 'sale', 'status'];
+    protected $fillable = ['id', 'name', 'code', 'description', 'marked', 'recipe', 'status'];
 
     public function sluggable(): array
     {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
+        return ['slug' => ['source' => 'name']];
     }
 
     public function getRouteKeyName(): string
@@ -100,7 +97,7 @@ class Product extends Model
         return $query->whereHas('offers', function (Builder $query) use ($city) {
             $query->where('quantity', '>', 0)
                 ->whereHas('store', function (Builder $query) use ($city) {
-                    $query->where('status', Store::STATUS_ACTIVE);
+                    $query->where('active', true);
                     if ($city) $query->where('stores.name', 'like', '%' . $city . '%');
                 });
         });
@@ -114,6 +111,11 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function discount(): BelongsTo
+    {
+        return $this->belongsTo(Discount::class)->where('active', true);
     }
 
     public function addPhoto(): void

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('prefix', 8);
-            $table->tinyInteger('type', unsigned: true)->default(0);
+            $table->smallInteger('type', unsigned: true)->default(0);
             $table->timestamps();
 
             $table->unique(['name', 'type']);

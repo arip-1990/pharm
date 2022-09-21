@@ -7,6 +7,7 @@ import { ICart } from "../../models/ICart";
 import { useLocalStorage } from "react-use-storage";
 
 import styles from "./Card.module.scss";
+import classNames from "classnames";
 
 const isRecipe = (recipe: boolean) => {
   const classess = [styles.card_mod];
@@ -85,7 +86,14 @@ const Card: FC<Props> = ({ product }) => {
           alt={product.name}
         />
         {isRecipe(product.recipe)}
-        <div className={styles.card_discount} />
+        {product.discount && (
+          <div
+            className={classNames(styles.card_discount, {
+              [styles.card_discount__50]: Number(product.discount) === 50,
+              [styles.card_discount__30]: Number(product.discount) === 30,
+            })}
+          />
+        )}
       </div>
 
       <div className={styles.card_body}>

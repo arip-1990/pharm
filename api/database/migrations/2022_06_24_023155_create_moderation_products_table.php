@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('moderation_products', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('status', unsigned: true)->default(0);
+            $table->smallInteger('status', unsigned: true)->default(0);
             $table->string('type');
             $table->text('comment')->nullable();
             $table->timestamps();

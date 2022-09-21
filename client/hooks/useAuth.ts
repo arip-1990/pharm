@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AuthContext, ContextProps } from '../lib/auth';
+import { AuthContext, ContextProps } from '../store/auth';
 
 export const useAuth = (): ContextProps => {
   const context = useContext(AuthContext);

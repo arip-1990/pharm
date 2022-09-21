@@ -1,10 +1,10 @@
-import axios from "axios";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useNotification } from "../../hooks/useNotification";
 import api from "../../lib/api";
-import { IMaskInput } from "react-imask";
+import { useIMask } from "react-imask";
+import axios from "axios";
 
 import styles from "./Auth.module.scss";
 import classNames from "classnames";
@@ -40,6 +40,12 @@ const ErrorField: FC<{ name: string; errors: FormikErrors<Values> }> = ({
 const Login: FC<Props> = ({ switchAuthType, onHide }) => {
   const { login } = useAuth();
   const [active, setActive] = useState<boolean>(false);
+  const [maskOpts, setMaskOpts] = useState<any>({
+    mask: "+{7} (000) 000-00-00",
+  });
+  const { ref, value, setValue } = useIMask(
+    maskOpts /* { onAccept, onComplete } */
+  );
   const [type, setType] = useState<LoginType>("login");
   const notification = useNotification();
   const router = useRouter();
@@ -126,7 +132,7 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
       case "setPassword":
         return "Установка пароля";
       default:
-        return "Войти";
+        return "Добро пожаловать";
     }
   };
 
@@ -166,14 +172,17 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
       default:
         form = [
           <div key="login" className="mb-3">
-            <IMaskInput
-              mask={"+{7} (000) 000-00-00"}
+            <input
+              ref={ref}
               name="login"
               placeholder="*Телефон"
               className="form-control"
-              onChange={formik.handleChange}
+              onChange={(e: any) => {
+                formik.handleChange(e);
+                setValue(e);
+              }}
               onInput={formik.handleChange}
-              value={formik.values.login}
+              value={value}
               required
             />
             <ErrorField name="login" errors={formik.errors} />
@@ -219,6 +228,7 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
         <div className="text-center mt-4">
           <button
             type="submit"
+            data-text={type === "login" ? "Войти" : "Отправить"}
             className={classNames(styles.button, { [styles.active]: active })}
             onMouseDown={handleDown}
             disabled={formik.isSubmitting}

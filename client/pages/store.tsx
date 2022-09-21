@@ -6,7 +6,7 @@ import Pagination from "../components/pagination";
 import Link from "next/link";
 import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
-import { wrapper } from "../lib/store";
+import { wrapper } from "../store";
 import {
   fetchStores,
   getRunningOperationPromises,

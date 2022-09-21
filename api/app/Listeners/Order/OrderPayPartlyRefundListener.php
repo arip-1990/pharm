@@ -3,7 +3,6 @@
 namespace App\Listeners\Order;
 
 use App\Events\Order\OrderPayPartlyRefund;
-use App\Models\Exception;
 use App\Models\Status\OrderState;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -29,8 +28,6 @@ class OrderPayPartlyRefundListener implements ShouldQueue
         }
         catch (\Exception $exception) {
             $order->changeStatusState(OrderState::STATE_ERROR);
-
-            Exception::create($order->id, 'partly-refund', $exception->getMessage())->save();
         }
 
         $order->save();

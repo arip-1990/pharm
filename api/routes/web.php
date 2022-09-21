@@ -26,9 +26,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-    //
-});
+//Route::get('/test', function () {
+//    //
+//});
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
     Route::post('/feed', [V1\FeedController::class, 'handle']);
@@ -52,13 +52,13 @@ Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/login', [V1\Panel\Auth\LoginController::class, 'handle']);
 
-        Route::middleware('auth:sanctum')->group(function () {
+        Route::middleware('auth:api')->group(function () {
             Route::post('/logout', [V1\Panel\Auth\LogoutController::class, 'handle']);
             Route::get('/user', [V1\Panel\Auth\UserController::class, 'handle']);
         });
     });
 
-    Route::group(['prefix' => 'panel', 'middleware' => 'auth:sanctum'], function () {
+    Route::group(['prefix' => 'panel', 'middleware' => 'auth:api'], function () {
         Route::prefix('user')->group(function () {
             Route::get('/', [V1\Panel\User\IndexController::class, 'handle']);
             Route::get('/{user}', [V1\Panel\User\ShowController::class, 'handle']);
@@ -145,10 +145,13 @@ Route::prefix('auth')->group(function () {
         Route::post('/phone', [Auth\Verify\VerifyPhoneController::class, 'handle']);
     });
 
-    Route::post('/logout', [Auth\LogoutController::class, 'handle'])->middleware('auth:sanctum');
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/logout', [Auth\LogoutController::class, 'handle']);
+        Route::post('/refresh', [Auth\RefreshController::class, 'handle']);
+    });
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::prefix('user')->group(function () {
         Route::get('/', [User\IndexController::class, 'handle']);
         Route::patch('/', [User\UpdateController::class, 'handle']);

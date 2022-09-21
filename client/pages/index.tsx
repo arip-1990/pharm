@@ -2,7 +2,7 @@ import Layout from "../components/layout";
 import Card from "../components/card";
 import React, { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
-import { wrapper } from "../lib/store";
+import { wrapper } from "../store";
 import {
   fetchPopularProducts,
   useFetchPopularProductsQuery,

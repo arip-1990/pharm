@@ -19,7 +19,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
-      await login(values.email, values.password, values.remember);
+      await login(values.email, values.password);
     } catch (error) {
       // message.error(error?.response?.data.message);
       console.log(error);

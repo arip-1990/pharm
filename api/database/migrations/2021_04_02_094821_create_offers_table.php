@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('offers', function (Blueprint $table) {
             $table->id();
-            $table->float('price', unsigned: true)->default(0);
+            $table->decimal('price', unsigned: true)->default(0);
             $table->integer('quantity', unsigned: true)->default(0);
             $table->timestamps();
 

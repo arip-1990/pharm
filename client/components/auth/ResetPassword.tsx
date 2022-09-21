@@ -3,7 +3,7 @@ import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
 import { useNotification } from "../../hooks/useNotification";
 import api from "../../lib/api";
-import { IMaskInput } from "react-imask";
+import { useIMask } from "react-imask";
 
 import styles from "./Auth.module.scss";
 import classNames from "classnames";
@@ -37,6 +37,12 @@ const ErrorField: FC<{ name: string; errors: FormikErrors<Values> }> = ({
 
 const ResetPassword: FC<Props> = ({ switchAuthType }) => {
   const [active, setActive] = useState<boolean>(false);
+  const [maskOpts, setMaskOpts] = useState<any>({
+    mask: "+{7} (000) 000-00-00",
+  });
+  const { ref, value, setValue } = useIMask(
+    maskOpts /* { onAccept, onComplete } */
+  );
   const [type, setType] = useState<ResetPasswordType>("request");
   const notification = useNotification();
 
@@ -210,14 +216,17 @@ const ResetPassword: FC<Props> = ({ switchAuthType }) => {
       default:
         form = [
           <div key="phone" className="mb-3">
-            <IMaskInput
-              mask={"+{7} (000) 000-00-00"}
+            <input
+              ref={ref}
               name="phone"
               placeholder="*Мобильный телефон"
               className="form-control"
-              onChange={formik.handleChange}
+              onChange={(e: any) => {
+                formik.handleChange(e);
+                setValue(e);
+              }}
               onInput={formik.handleChange}
-              value={formik.values.phone}
+              value={value}
               required
             />
             <ErrorField name="phone" errors={formik.errors} />
@@ -243,6 +252,7 @@ const ResetPassword: FC<Props> = ({ switchAuthType }) => {
         <div className="text-center mt-4">
           <button
             type="submit"
+            data-text="Отправить"
             className={classNames(styles.button, { [styles.active]: active })}
             onMouseDown={handleDown}
             disabled={formik.isSubmitting}

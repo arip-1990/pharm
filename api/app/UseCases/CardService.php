@@ -6,10 +6,10 @@ use App\Models\User;
 
 class CardService extends LoyaltyService
 {
-    public function getAll(User $user)
+    public function getAll(User $user, string $session)
     {
         $url = $this->urls['lk'] . '/Card/GetAllByContact';
-        $response = $this->client->get($url, ['query' => "contactid='{$user->id}'&sessionid='{$user->session}'"]);
+        $response = $this->client->get($url, ['query' => "contactid='{$user->id}'&sessionid='{$session}'"]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -18,13 +18,13 @@ class CardService extends LoyaltyService
         return $data['value'];
     }
 
-    public function block(User $user, string $cardId): void
+    public function block(User $user, string $cardId, string $session): void
     {
         $url = $this->urls['lk'] . '/Contact/BlockCard';
         $data = [
             'Id' => $user->id,
             'CardId' => $cardId,
-            'SessionId' => $user->session
+            'SessionId' => $session
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);

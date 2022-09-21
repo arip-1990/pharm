@@ -13,10 +13,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique()->nullable();
             $table->text('description')->nullable();
-            $table->integer('_lft', unsigned: true);
-            $table->integer('_rgt', unsigned: true);
             $table->smallInteger('sort', unsigned: true)->default(0);
             $table->string('picture')->nullable();
+            $table->integer('_lft', unsigned: true);
+            $table->integer('_rgt', unsigned: true);
             $table->timestamps();
 
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');

@@ -3,8 +3,7 @@
 namespace App\Listeners\Order;
 
 use App\Events\Order\OrderPayFullRefund;
-use App\Models\Exception;
-use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Status\OrderState;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -14,7 +13,7 @@ class OrderPayFullRefundListener implements ShouldQueue
     {
         $order = $event->order;
         try {
-            if ($order->payment_type === Order::PAYMENT_TYPE_SBER and $order->isPay() and !$order->isFullRefund()) {
+            if ($order->payment->type === Payment::TYPE_CARD and $order->isPay() and !$order->isFullRefund()) {
                 $response = $this->getOrderInfo($order->sber_id);
                 if($response['errorCode'] == 0) {
                     $order->changeStatusState(OrderState::STATE_SUCCESS);
@@ -30,8 +29,6 @@ class OrderPayFullRefundListener implements ShouldQueue
         catch (\Exception $exception) {
             $order->changeStatusState(OrderState::STATE_ERROR);
             $order->save();
-
-            Exception::create($order->id, 'full-refund', $exception->getMessage())->save();
             return;
         }
 

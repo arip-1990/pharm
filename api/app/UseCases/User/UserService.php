@@ -25,10 +25,10 @@ class UserService extends LoyaltyService
         return $data;
     }
 
-    public function updateInfo(User $user, array $newData = []): string
+    public function updateInfo(User $user, array $newData = [], string $session = null): string
     {
         $url = $this->urls['lk'] . '/Contact/Update';
-        if (!$user->session) $manager = $this->managerService->login();
+        if (!$session) $manager = $this->managerService->login();
 
         $data = [
             'Entity' => [
@@ -47,7 +47,7 @@ class UserService extends LoyaltyService
                 'AgreeToTerms' => false,
                 'PartnerId' => $this->config['partner_id']
             ],
-            'SessionId' => $user->session ?? $manager['sessionId']
+            'SessionId' => $session ?? $manager['sessionId']
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);

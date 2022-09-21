@@ -12,7 +12,7 @@ import {
   getRunningOperationPromises,
   useGetProductQuery,
 } from "../../lib/catalogService";
-import { wrapper } from "../../lib/store";
+import { wrapper } from "../../store";
 import { useRouter } from "next/router";
 import { useCookie } from "../../hooks/useCookie";
 

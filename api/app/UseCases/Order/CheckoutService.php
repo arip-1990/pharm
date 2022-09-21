@@ -27,9 +27,9 @@ class CheckoutService
         $order = Order::create(
             $request->user(),
             Store::find($data['store']),
-            Payment::find($data['payment']),
+            Payment::find($data['payment'] ?: 2),
             $data['price'],
-            Delivery::find($data['delivery'])
+            Delivery::find($data['delivery'] ?: 2)
         );
 
         DB::transaction(function () use ($order, $data) {
@@ -56,7 +56,7 @@ class CheckoutService
 
                 $city = City::find(1);
                 $location = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))
-                    ->firstOrCreate(['name' => $data['street'], 'house' => $data['house']], ['city_id' => $city->id]);
+                    ->firstOrCreate(['street' => $data['street'], 'house' => $data['house']], ['city_id' => $city->id]);
 
                 $delivery->location()->associate($location);
                 $order->orderDelivery()->save($delivery);

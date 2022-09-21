@@ -16,11 +16,11 @@
         "guzzlehttp/guzzle": "^7.2",
         "kalnoy/nestedset": "^6.0",
         "laravel/framework": "^9.2",
-        "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
         "phpoffice/phpspreadsheet": "^1.24",
         "predis/predis": "^2.0",
-        "psr/simple-cache": "^2.0"
+        "psr/simple-cache": "^2.0",
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

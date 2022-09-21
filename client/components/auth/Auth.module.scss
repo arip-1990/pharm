@@ -13,6 +13,7 @@
     display: inline-block;
     width: 216px;
     height: 38px;
+    text-align: center;
     background-color: transparent;
     background-image: url(../../assets/images/button.svg);
     background-position: center;
@@ -27,6 +28,15 @@
 
     &.active {
       background-image: url(../../assets/images/button-active.svg);
+    }
+
+    &::before {
+      content: attr(data-text);
+      display: inline-block;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #fff;
+      vertical-align: middle;
     }
   }
 }

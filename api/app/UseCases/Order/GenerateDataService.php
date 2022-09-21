@@ -2,8 +2,10 @@
 
 namespace App\UseCases\Order;
 
+use App\Models\Delivery;
 use App\Models\Order;
 use App\Helper;
+use App\Models\Payment;
 use Carbon\Carbon;
 
 class GenerateDataService
@@ -17,7 +19,7 @@ class GenerateDataService
         $order_number = config('data.orderStartNumber') + $this->order->id;
 
         $delivery_xml = '';
-        if($this->order->delivery_type === Order::DELIVERY_TYPE_PICKUP) {
+        if($this->order->delivery->type === Delivery::TYPE_PICKUP) {
             $delivery_xml =
                 "<deliveries>
                         <delivery>
@@ -31,7 +33,7 @@ class GenerateDataService
                         </delivery>
                     </deliveries>";
         }
-        elseif($this->order->delivery_type === Order::DELIVERY_TYPE_COURIER) {
+        elseif($this->order->delivery->type === Delivery::TYPE_DELIVERY) {
             $delivery = $this->order->delivery;
             $delivery_xml = "
                 <deliveries>
@@ -75,7 +77,7 @@ class GenerateDataService
                         <phone>$phone</phone>
                     </customer>" . $delivery_xml;
 
-        if($this->order->payment_type === Order::PAYMENT_TYPE_CASH) {
+        if($this->order->payment->type === Payment::TYPE_CASH) {
             $xml .=
                 "<payments>
                     <payment>
@@ -84,7 +86,7 @@ class GenerateDataService
                     </payment>
                 </payments>";
         }
-        elseif($this->order->payment_type === Order::PAYMENT_TYPE_SBER) {
+        elseif($this->order->payment->type === Payment::TYPE_CARD) {
             $xml .=
                 "<payments>
                     <payment>

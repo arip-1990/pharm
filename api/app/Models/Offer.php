@@ -56,8 +56,7 @@ class Offer extends Model
     public function scopeWhereCity(Builder $query, string $city): Builder
     {
         return $query->whereHas('store', function (Builder $query) use ($city) {
-            $query->where('status', Store::STATUS_ACTIVE)
-                ->where('name', 'like', '%' . $city . '%');
+            $query->where('active', true)->where('name', 'like', '%' . $city . '%');
         });
     }
 

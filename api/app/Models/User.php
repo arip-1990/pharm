@@ -11,22 +11,22 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @property string $id
+ * @property ?string $username
  * @property string $first_name
  * @property ?string $last_name
  * @property ?string $middle_name
- * @property ?string $email
  * @property string $phone
+ * @property ?string $email
  * @property string $password
  * @property int $gender
  * @property ?Carbon $birth_date
- * @property ?string $token
- * @property ?string $session
- * @property ?Carbon $email_verified_at
  * @property ?Carbon $phone_verified_at
+ * @property ?Carbon $email_verified_at
+ * @property ?string $token
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
@@ -38,9 +38,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Collection<ModerationProduct> $moderationProducts
  * @property Limit $priceLimit
  */
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes;
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -49,15 +49,14 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'middle_name',
-        'email',
         'phone',
+        'email',
         'gender',
         'birth_date',
-        'token',
-        'session',
         'password',
         'phone_verified_at',
-        'email_verified_at'
+        'email_verified_at',
+        'token'
     ];
     protected $hidden = ['password'];
     protected $casts = [
@@ -94,5 +93,15 @@ class User extends Authenticatable
     public function grants(): BelongsTo
     {
         return $this->belongsTo(Grant::class);
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims(): array
+    {
+        return [];
     }
 }

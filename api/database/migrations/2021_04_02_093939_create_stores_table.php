@@ -11,12 +11,12 @@ return new class extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('slug')->nullable()->unique();
+            $table->string('slug')->unique()->nullable();
             $table->string('phone')->nullable();
             $table->json('schedule')->default('[]');
             $table->text('route')->nullable();
             $table->boolean('delivery')->default(false);
-            $table->boolean('status')->default(false);
+            $table->boolean('active')->default(false);
             $table->timestamps();
             $table->softDeletes();
 

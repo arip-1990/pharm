@@ -1,13 +1,13 @@
 import { useState, createContext, ReactNode, FC, useEffect } from "react";
 import { IUser } from "../models/IUser";
 import axios from "axios";
-import api, { API_URL } from "./api";
+import api from "./api";
 import moment from "moment";
 
 export interface ContextProps {
   user: null | IUser;
   isAuth: null | boolean;
-  login: (login: string, password: string, remember?: boolean) => Promise<void>;
+  login: (login: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: IUser, isAuth?: boolean) => void;
 }
@@ -18,23 +18,27 @@ interface Props {
   children?: ReactNode;
 }
 
+interface AuthState {
+  user: null | IUser;
+  isAuth: null | boolean;
+}
+
 const Auth: FC<Props> = ({ children }) => {
-  const [authState, setAuthState] = useState<{
-    user: IUser | null;
-    isAuth: boolean | null;
-  }>({ user: null, isAuth: null });
-  const user = authState.user;
-  const isAuth = authState.isAuth;
+  const [authState, setAuthState] = useState<AuthState>({
+    user: null,
+    isAuth: null,
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (isAuth === null) {
+      if (authState.isAuth === null) {
         try {
           await revalidate();
         } catch (error) {
           if (axios.isAxiosError(error)) {
             if (error.response && error.response.status === 401) {
               setAuthState({ user: null, isAuth: false });
+              localStorage.removeItem("token");
             }
           }
         }
@@ -44,20 +48,16 @@ const Auth: FC<Props> = ({ children }) => {
     checkAuth();
   }, [authState]);
 
-  const csrf = () => axios.get(`${API_URL}/sanctum/csrf-cookie`);
-
-  const login = (login: string, password: string, remember: boolean = false) =>
+  const login = (email: string, password: string) =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        // Get CSRF cookie.
-        await csrf();
-
         // Sign in.
-        await api.post(
-          "/v1/auth/login",
-          { email: login, password, remember },
-          { maxRedirects: 0 }
-        );
+        const { data } = await api.post<{
+          accessToken: string;
+          expiresIn: number;
+        }>("/v1/auth/login", { email, password }, { maxRedirects: 0 });
+
+        localStorage.setItem("token", JSON.stringify(data));
 
         // Fetch user.
         await revalidate();
@@ -74,6 +74,7 @@ const Auth: FC<Props> = ({ children }) => {
         await api.post("/v1/auth/logout");
         // Only sign out after the server has successfully responded.
         setAuthState({ user: null, isAuth: false });
+        localStorage.removeItem("token");
         resolve();
       } catch (error) {
         return reject(error);
@@ -81,6 +82,7 @@ const Auth: FC<Props> = ({ children }) => {
     });
 
   const setUser = (user: IUser, isAuth: boolean = true) => {
+    if (user.birth_date) user.birth_date = moment(user.birth_date);
     if (user.phone_verified_at)
       user.phone_verified_at = moment(user.phone_verified_at);
     if (user.email_verified_at)
@@ -103,6 +105,7 @@ const Auth: FC<Props> = ({ children }) => {
           if (error.response && error.response.status === 401) {
             // If there's a 401 error the user is not signed in.
             setAuthState({ user: null, isAuth: false });
+            localStorage.removeItem("token");
             return resolve();
           } else {
             // If there's any other error, something has gone wrong.
@@ -116,7 +119,13 @@ const Auth: FC<Props> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuth, login, logout, setUser }}
+      value={{
+        user: authState.user,
+        isAuth: authState.isAuth,
+        login,
+        logout,
+        setUser,
+      }}
       children={children}
     />
   );

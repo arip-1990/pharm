@@ -15,12 +15,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property string $id
  * @property string $name
- * @property string $slug
+ * @property ?string $slug
  * @property ?string $phone
  * @property Collection $schedule
  * @property ?string $route
  * @property bool $delivery
- * @property bool $status
+ * @property bool $active
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
@@ -32,23 +32,14 @@ class Store extends Model
 {
     use SoftDeletes, Sluggable;
 
-    const STATUS_ACTIVE = true;
-    const STATUS_INACTIVE = false;
-
     public $incrementing = false;
     protected $keyType = 'string';
-    protected $fillable = ['name', 'slug', 'phone', 'address'];
-    protected $casts = [
-        'schedule' => AsCollection::class
-    ];
+    protected $fillable = ['name', 'slug', 'phone'];
+    protected $casts = ['schedule' => AsCollection::class];
 
     public function sluggable(): array
     {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
+        return ['slug' => ['source' => 'name']];
     }
 
     public function getRouteKeyName(): string
@@ -58,23 +49,18 @@ class Store extends Model
 
     public function activate(): void
     {
-        if ($this->isActive())
+        if ($this->active)
             throw new \DomainException('Store is already active.');
 
-        $this->status = self::STATUS_ACTIVE;
+        $this->status = true;
     }
 
     public function inactivate(): void
     {
-        if (!$this->isActive())
+        if (!$this->active)
             throw new \DomainException('Store is already inactive.');
 
-        $this->status = self::STATUS_INACTIVE;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->status;
+        $this->status = false;
     }
 
     public function getPrice(Product $product): float
@@ -85,7 +71,7 @@ class Store extends Model
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', self::STATUS_ACTIVE);
+        return $query->where('status', true);
     }
 
     public function offers(): HasMany

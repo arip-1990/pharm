@@ -13,7 +13,7 @@ class BlockController
     public function handle(Request $request, string $cardId): JsonResponse
     {
         try {
-            $this->service->block($request->user(), $cardId);
+            $this->service->block($request->user(), $cardId, $request->session()->get('session'));
         }
         catch (\DomainException $e) {
             return new JsonResponse([

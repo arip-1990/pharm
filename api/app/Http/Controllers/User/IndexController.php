@@ -16,8 +16,10 @@ class IndexController
     {
         try {
             $user = $request->user();
+            if (!$session = $request->session()->get('session'))
+                return new JsonResponse('Не авторизован', 401);
 
-            $data = $this->service->getInfo($user->id, $user->session);
+            $data = $this->service->getInfo($user->id, $session);
             $balance = $this->posService->getBalance($user->phone);
             $data['cardNumber'] = $balance['cardNumber'];
             $data['cardChargedBonus'] = $balance['cardChargedBonus'];

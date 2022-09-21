@@ -19,7 +19,7 @@ class IndexController
         ]);
 
         $user = $request->user();
-        $response = $client->get($url, ['query' => "contactid='{$user->id}'&sessionid='{$user->session}'"]);
+        $response = $client->get($url, ['query' => "contactid='{$user->id}'&sessionid='{$request->session()->get('session')}'"]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200) {

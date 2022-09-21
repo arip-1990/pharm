@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Value;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Support\Facades\Redis;
 
 class ProductCommand extends Command
 {
@@ -14,6 +15,7 @@ class ProductCommand extends Command
 
     public function handle(): int
     {
+        $client = Redis::connection()->client();
         try {
             $data = $this->getData();
             $productFields = [];
@@ -27,7 +29,6 @@ class ProductCommand extends Command
                     'code' => (int)$item->code,
                     'recipe' => (string)$item->recipe === 'true' ? true : (Product::query()->find((string)$item->uuid)?->recipe ?? false),
                     'marked' => (string)$item->is_marked === 'true',
-                    'sale' => (string)$item->sale === 'true'
                 ];
 
                 if ($vendor = (string)$item->vendor) {
@@ -41,7 +42,7 @@ class ProductCommand extends Command
                 $i++;
 
                 if ($i >= 1000) {
-                    Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe', 'sale']);
+                    Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
                     Value::query()->upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
                     $productFields = [];
                     $valueFields = [];
@@ -50,7 +51,7 @@ class ProductCommand extends Command
             }
 
             if ($i) {
-                Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe', 'sale']);
+                Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
                 Value::query()->upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
             }
 
@@ -60,6 +61,7 @@ class ProductCommand extends Command
         }
         catch (\RuntimeException $e) {
             $this->error($e->getMessage());
+            $client->publish("bot:import", json_encode(['message' => $e->getMessage()]));
             return 1;
         }
 

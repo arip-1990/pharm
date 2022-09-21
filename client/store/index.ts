@@ -1,16 +1,16 @@
 import {configureStore} from "@reduxjs/toolkit";
 import {createWrapper} from 'next-redux-wrapper';
 
-import { categoryApi } from "./categoryService";
-import { cityApi } from "./cityService";
-import { orderApi } from "./orderService";
-import { catalogApi } from "./catalogService";
-import { storeApi } from "./storeService";
-import { offerApi } from "./offerService";
-import { cardApi } from "./cardService";
-import { chequeApi } from "./chequeService";
-import { bonusApi } from "./bonusService";
-import { couponApi } from "./couponService";
+import { categoryApi } from "../lib/categoryService";
+import { cityApi } from "../lib/cityService";
+import { orderApi } from "../lib/orderService";
+import { catalogApi } from "../lib/catalogService";
+import { storeApi } from "../lib/storeService";
+import { offerApi } from "../lib/offerService";
+import { cardApi } from "../lib/cardService";
+import { chequeApi } from "../lib/chequeService";
+import { bonusApi } from "../lib/bonusService";
+import { couponApi } from "../lib/couponService";
 
 const makeStore = () =>
 configureStore({

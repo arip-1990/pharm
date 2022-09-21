@@ -13,7 +13,7 @@ return new class extends Migration
             $table->smallInteger('limit', unsigned: true);
             $table->smallInteger('requests', unsigned: true)->default(0);
             $table->timestamp('last_request')->nullable();
-            $table->timestamp('expires')->nullable();
+            $table->timestamp('expired_at')->nullable();
 
             $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('cascade');
         });

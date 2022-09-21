@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('photos', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('type')->default(0);
             $table->string('file');
+            $table->smallInteger('type', unsigned: true)->default(0);
             $table->smallInteger('sort', unsigned: true)->default(0);
-            $table->tinyInteger('status', unsigned: true)->default(0);
+            $table->smallInteger('status', unsigned: true)->default(0);
             $table->timestamps();
             $table->softDeletes();
 

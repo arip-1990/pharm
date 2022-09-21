@@ -5,7 +5,7 @@ import { GetServerSideProps } from "next";
 import { ICategory } from "../models/ICategory";
 import Link from "next/link";
 import Pagination from "../components/pagination";
-import { wrapper } from "../lib/store";
+import { wrapper } from "../store";
 import {
   fetchProducts,
   getRunningOperationPromises,

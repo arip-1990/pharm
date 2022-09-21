@@ -12,10 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property int $id
  * @property int $type
+ * @property string $prefix
  * @property string $street
  * @property string $house
  * @property Collection $coordinate
- * @property ?string $prefix
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at

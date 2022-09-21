@@ -14,7 +14,7 @@ return new class extends Migration
             $table->smallInteger('floor', unsigned: true)->nullable();
             $table->smallInteger('apartment', unsigned: true)->nullable();
             $table->boolean('service_to_door')->default(false);
-            $table->float('delivery_price', unsigned: true);
+            $table->decimal('price', unsigned: true)->comment('Цена доставки');
 
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('location_id')->nullable()->constrained()->onDelete('set null');

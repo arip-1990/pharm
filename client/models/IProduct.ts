@@ -23,6 +23,7 @@ export interface IProduct {
   status: boolean;
   marked: boolean;
   recipe: boolean;
+  discount: number | null;
   attributes: IAttribute[];
   minPrice: number;
   totalOffers: number;

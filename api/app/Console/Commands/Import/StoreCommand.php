@@ -2,8 +2,11 @@
 
 namespace App\Console\Commands\Import;
 
+use App\Models\City;
+use App\Models\Location;
 use App\Models\Store;
 use Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Support\Facades\Redis;
 
 class StoreCommand extends Command
 {
@@ -12,11 +15,20 @@ class StoreCommand extends Command
 
     public function handle(): int
     {
+        $client = Redis::connection()->client();
         try {
             $data = $this->getData(2);
             $fields = [];
             foreach ($data->pharmacies->pharmacy as $item) {
-                $cord = $item->coordinates;
+                $address = explode(',', $item->address);
+                if (!$city = City::firstWhere('name', trim($address[0])))
+                    continue;
+
+                $street = trim(str_replace(['пр.', 'пр', 'ул.', 'ул'], '', $address[1]));
+                $house = trim(str_replace(['д.', 'д'], '', $address[2]));
+                $location = Location::firstOrCreate(['city_id' => $city->id, 'street' => $street, 'house' => $house]);
+                if ($coordinates = $item->coordinates) $location->update(['coordinate' => [(float)$coordinates->lat, (float)$coordinates->lon]]);
+
                 $schedules =  [];
                 foreach ($item->schedules->schedule as $schedule) {
                     $schedules[] = [
@@ -30,10 +42,8 @@ class StoreCommand extends Command
                     'name' => (string)$item->title,
                     'slug' => SlugService::createSlug(Store::class, 'slug', (string)$item->title),
                     'phone' => (string)$item->phone ?: null,
-//                    'address' => (string)$item->address ?: null,
-//                    'lon' => (string)$cord->lon ?: null,
-//                    'lat' => (string)$cord->lat ?: null,
-                    'schedule' => json_encode($schedules, JSON_UNESCAPED_UNICODE)
+                    'schedule' => json_encode($schedules, JSON_UNESCAPED_UNICODE),
+                    'location_id' => $location->id
                 ];
             }
 
@@ -41,6 +51,7 @@ class StoreCommand extends Command
         }
         catch (\RuntimeException $e) {
             $this->error($e->getMessage());
+            $client->publish("bot:import", json_encode(['message' => $e->getMessage()]));
             return 1;
         }
 

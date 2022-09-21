@@ -6,6 +6,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\UseCases\Auth\LoginService;
 use App\UseCases\User\PhoneVerifyService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController
 {
@@ -14,12 +15,14 @@ class LoginController
     public function handle(LoginRequest $request): JsonResponse
     {
         try {
-            $this->loginService->phoneAuth($request->get('login'), $request->get('password'));
+            $data = $this->loginService->phoneAuth($request->get('login'), $request->get('password'));
+
             $request->session()->regenerate();
+            $request->session()->put('session', $data['session']);
         }
         catch (\DomainException $e) {
             $code = $e->getCode();
-            $request->session()->put('login', $request->validated());
+            $request->session()->put('loginData', $request->validated());
             if ($code === 100033) {
                 $token = $this->verifyService->requestVerify($request->get('login'));
                 $request->session()->put('token', $token);
@@ -31,6 +34,9 @@ class LoginController
             ], 500);
         }
 
-        return new JsonResponse();
+        return new JsonResponse([
+            'accessToken' => $data['token'],
+            'expiresIn' => Auth::factory()->getTTL() * 60,
+        ]);
     }
 }

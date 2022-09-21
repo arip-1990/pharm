@@ -9,14 +9,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_statistics', function (Blueprint $table) {
-            $table->uuid('id')->primary();
             $table->integer('views', unsigned: true)->default(0);
             $table->integer('orders', unsigned: true)->default(0);
+            $table->integer('reviews', unsigned: true)->default(0);
             $table->integer('cancellations', unsigned: true)->default(0);
-            $table->float('rating', unsigned: true)->default(0);
+            $table->decimal('rating', unsigned: true)->default(0);
             $table->timestamps();
 
-            $table->foreign('id')->references('id')->on('products')->onDelete('cascade');
+            $table->primary('id');
+
+            $table->foreignUuid('id')->constrained('products')->onDelete('cascade');
         });
     }
 

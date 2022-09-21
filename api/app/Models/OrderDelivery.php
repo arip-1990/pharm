@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?int $floor
  * @property ?int $apartment
  * @property bool $service_to_door
- * @property float $delivery_price
+ * @property float $price
  *
  * @property Location $location
  */
@@ -19,14 +19,14 @@ class OrderDelivery extends Model
 {
     public $timestamps = false;
 
-    public static function create(int $entrance = null, int $floor = null, int $apartment = null, bool $serviceToDoor = false, float $deliveryPrice = null): self
+    public static function create(int $entrance = null, int $floor = null, int $apartment = null, bool $serviceToDoor = false, float $price = null): self
     {
         $delivery = new self();
         $delivery->entrance = $entrance;
         $delivery->floor = $floor;
         $delivery->apartment = $apartment;
         $delivery->service_to_door = $serviceToDoor;
-        $delivery->delivery_price = $deliveryPrice ?? 0;
+        $delivery->price = $price ?? 0;
         return $delivery;
     }
 

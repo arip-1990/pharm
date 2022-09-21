@@ -14,8 +14,8 @@ use Kalnoy\Nestedset\NodeTrait;
 /**
  * @property int $id
  * @property string $name
- * @property string $slug
- * @property string|null $description
+ * @property ?string $slug
+ * @property ?string $description
  * @property int $sort
  * @property ?string $picture
  * @property ?Carbon $created_at
@@ -32,7 +32,7 @@ class Category extends Model
         Sluggable::replicate as replicateSlug;
     }
 
-    protected $fillable = ['id', 'name', 'parent_id'];
+    protected $fillable = ['id', 'name', 'description', 'sort', 'picture'];
 
     public function replicate(array $except = null)
     {
@@ -44,11 +44,7 @@ class Category extends Model
 
     public function sluggable(): array
     {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
+        return ['slug' => ['source' => 'name']];
     }
 
     public function getRouteKeyName(): string

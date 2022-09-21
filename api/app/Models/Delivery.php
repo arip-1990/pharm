@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property int $id
  * @property string $title
- * @property string $description
+ * @property ?string $description
  * @property string $type
  * @property float $price
  * @property int $min
  * @property int $max
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
+ * @property ?Carbon $created_at
+ * @property ?Carbon $updated_at
+ * @property ?Carbon $deleted_at
  */
 class Delivery extends Model
 {

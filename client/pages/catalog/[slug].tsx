@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Pagination from "../../components/pagination";
 import { useRouter } from "next/router";
-import { wrapper } from "../../lib/store";
+import { wrapper } from "../../store";
 import {
   fetchProducts,
   getRunningOperationPromises,

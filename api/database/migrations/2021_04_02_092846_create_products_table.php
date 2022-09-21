@@ -13,16 +13,16 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique()->nullable();
             $table->integer('code', unsigned: true)->unique();
-            $table->string('barcode')->nullable();
             $table->text('description')->nullable();
+            $table->json('barcodes')->default('[]');
             $table->boolean('marked')->default(false);
             $table->boolean('recipe')->default(false);
-            $table->boolean('sale')->default(false);
-            $table->tinyInteger('status', unsigned: true)->default(0);
+            $table->smallInteger('status', unsigned: true)->default(0);
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('discount_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

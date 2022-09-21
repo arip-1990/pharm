@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('attributes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type');
+            $table->string('type')->default('string');
             $table->string('default')->nullable();
             $table->boolean('required')->default(false);
             $table->json('variants')->default('[]');
