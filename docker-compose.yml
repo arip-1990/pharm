@@ -188,12 +188,6 @@ services:
       - default
     volumes:
       - redis-data:/data
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
-      - traefik.http.routers.redis.rule=Host(`redis.pharm.test`)
-      - traefik.http.routers.redis.entryPoints=http
-      - traefik.http.services.redis.loadBalancer.server.port=6379
 
   # parser:
   #   build:

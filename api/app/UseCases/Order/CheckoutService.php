@@ -43,10 +43,12 @@ class CheckoutService
                 $items->add(OrderItem::create($item['id'], $item['price'], $item['quantity']));
             }
 
+            if ($order->payment->equalType(Payment::TYPE_CASH)) $order->sent();
+
             $order->save();
             $order->items()->saveMany($items);
 
-            if ($order->delivery->type === Delivery::TYPE_DELIVERY) {
+            if ($order->delivery->equalType(Delivery::TYPE_DELIVERY)) {
                 $delivery = OrderDelivery::create(
                     $data['entrance'] ?? null,
                     $data['floor'] ?? null,
@@ -96,10 +98,12 @@ class CheckoutService
                         $items->add(OrderItem::create($item['privateId'], $item['price'], $item['quantity']));
                     }
 
+                    if ($order->payment->equalType(Payment::TYPE_CASH)) $order->sent();
+
                     $order->save();
                     $order->items()->saveMany($items);
 
-                    if ($order->delivery->type === Delivery::TYPE_DELIVERY) {
+                    if ($order->delivery->equalType(Delivery::TYPE_DELIVERY)) {
                         $delivery = OrderDelivery::create(
                             $data['entrance'] ?? null,
                             $data['floor'] ?? null,

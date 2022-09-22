@@ -16,7 +16,7 @@ class OrderDeliveryListener implements ShouldQueue
     public function handle(OrderDelivery $event): void
     {
         $order = $event->order;
-        if ($order->status !== OrderStatus::STATUS_ASSEMBLED_PHARMACY or $order->delivery->type !== Delivery::TYPE_DELIVERY) {
+        if ($order->status !== OrderStatus::STATUS_ASSEMBLED_PHARMACY or $order->delivery->equalType(Delivery::TYPE_PICKUP)) {
             $message = 'Заказ не может быть отправлен.';
             $order->changeStatusState(OrderState::STATE_ERROR);
             $order->save();

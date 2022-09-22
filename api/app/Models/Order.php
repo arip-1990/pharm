@@ -139,8 +139,8 @@ class Order extends Model
     public function isPay(): bool
     {
         return $this->inStatus(OrderStatus::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
-                return $status->equal(OrderStatus::STATUS_PAID) and $status->state === OrderState::STATE_SUCCESS;
-            });
+            return $status->equal(OrderStatus::STATUS_PAID) and $status->state === OrderState::STATE_SUCCESS;
+        });
     }
 
     public function isSend(): bool

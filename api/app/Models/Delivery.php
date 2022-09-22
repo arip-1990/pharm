@@ -34,4 +34,9 @@ class Delivery extends Model
         'min',//минимальный срок доставки
         'max',//максимальный срок доставки
     ];
+
+    public function equalType(string $type): bool
+    {
+        return $this->type === $type;
+    }
 }
