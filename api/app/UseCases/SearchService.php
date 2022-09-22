@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class SearchService
 {
-    public function __construct(private Client $client) {}
+    public function __construct(private readonly Client $client) {}
 
     public function search(SearchRequest $request, string $city, int $perPage): Paginator
     {

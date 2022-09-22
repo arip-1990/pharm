@@ -54,8 +54,8 @@ class TestCommand extends Command
 
         $i = 2;
         $client = new Client();
-        $productIds = Offer::query()->select('product_id')->groupBy('product_id')->get()->pluck('product_id');
-        Product::query()->whereIn('id', $productIds)->doesntHave('photos')->chunk(1000, function ($products) use ($sheet, $client, &$i) {
+        $productIds = Offer::select('product_id')->groupBy('product_id')->get()->pluck('product_id');
+        Product::whereIn('id', $productIds)->doesntHave('photos')->chunk(1000, function ($products) use ($sheet, $client, &$i) {
             $baseUrl = 'http://xn--12080-6ve4g.xn--p1ai/catalog/product?code=';
             /** @var Product $product */
             foreach ($products as $product) {
@@ -87,8 +87,7 @@ class TestCommand extends Command
         $spreadsheet = $reader->load(Storage::path('Фото.xlsx'));
 
         foreach ($spreadsheet->getActiveSheet()->toArray() as $row) {
-            /** @var Product $product */
-            $product = Product::query()->where('code', (int)$row[0])->first();
+            $product = Product::where('code', (int)$row[0])->first();
             if ($product) {
                 $exp = explode('/', $row[1]);
                 $exp = explode('.', $exp[count($exp) - 1])[1];

@@ -1,52 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
+import { FC, MouseEvent, useEffect, useState } from "react";
+import { useLocalStorage } from "react-use-storage";
+import classNames from "classnames";
 import { IProduct } from "../../models/IProduct";
 import defaultImage from "../../assets/images/default.png";
-import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
 import { ICart } from "../../models/ICart";
-import { useLocalStorage } from "react-use-storage";
+import Recipe from "./Recipe";
+import Favorite from "./Favorite";
 
 import styles from "./Card.module.scss";
-import classNames from "classnames";
-
-const isRecipe = (recipe: boolean) => {
-  const classess = [styles.card_mod];
-  classess.push(
-    recipe ? styles.card_mod__prescription : styles.card_mod__delivery
-  );
-
-  return (
-    <div className={classess.join(" ")}>
-      <div className={styles.icon} />
-      <div className={styles.text}>{recipe ? "По рецепту" : "Доставка"}</div>
-    </div>
-  );
-};
-
-const isFavorite = (product: IProduct) => {
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  const [favorites, setFavorites] = useLocalStorage<IProduct[]>(
-    "favorites",
-    []
-  );
-
-  useEffect(() => {
-    setIsFavorite(favorites.some((item) => item.id === product.id));
-  }, [favorites]);
-
-  const handleFavorite = useCallback(() => {
-    if (isFavorite)
-      setFavorites(favorites.filter((item) => item.id !== product.id));
-    else setFavorites([...favorites, product]);
-  }, [isFavorite]);
-
-  return (
-    <i
-      className={"icon-heart" + (isFavorite ? "" : "-empty")}
-      onClick={handleFavorite}
-    />
-  );
-};
+import Price from "./Price";
 
 type Props = {
   product: IProduct;
@@ -76,7 +40,8 @@ const Card: FC<Props> = ({ product }) => {
       itemType="https://schema.org/Product"
     >
       <div className={styles.card_image}>
-        {isFavorite(product)}
+        <Favorite product={product} />
+
         <Image
           className="mt-2"
           itemProp="image"
@@ -85,7 +50,9 @@ const Card: FC<Props> = ({ product }) => {
           src={product.photos[0]?.url || defaultImage}
           alt={product.name}
         />
-        {isRecipe(product.recipe)}
+
+        <Recipe isRecipe={product.recipe} />
+
         {product.discount && (
           <div
             className={classNames(styles.card_discount, {
@@ -106,29 +73,7 @@ const Card: FC<Props> = ({ product }) => {
         </h6>
 
         <div>
-          {product.totalOffers ? (
-            <>
-              <p className={styles.card_marker}>
-                <i className="fas fa-map-marker-alt" />
-                {`В наличии в ${product.totalOffers} ` +
-                  (product.totalOffers === 1 ? "аптеке" : "аптеках")}
-              </p>
-              <div
-                itemProp="offers"
-                itemScope
-                itemType="https://schema.org/Offer"
-              >
-                <p className={styles["price-mask"]}>Показать цену</p>
-                <p className={styles["price-real"]} itemProp="price">
-                  от <span style={{ fontWeight: 600 }}></span> &#8381;
-                </p>
-              </div>
-            </>
-          ) : (
-            <p className={styles.card_marker + " " + styles.card_marker__red}>
-              <i className="fas fa-map-marker-alt" /> Нет в наличии
-            </p>
-          )}
+          <Price slug={product.slug} totalOffers={product.totalOffers} />
 
           <button
             className={styles.card_button}

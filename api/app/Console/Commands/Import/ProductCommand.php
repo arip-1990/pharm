@@ -27,7 +27,7 @@ class ProductCommand extends Command
                     'category_id' => (int)$item->category ?: null,
                     'name' => (string)$item->name,
                     'code' => (int)$item->code,
-                    'recipe' => (string)$item->recipe === 'true' ? true : (Product::query()->find((string)$item->uuid)?->recipe ?? false),
+                    'recipe' => (string)$item->recipe === 'true' ? true : (Product::find((string)$item->uuid)?->recipe ?? false),
                     'marked' => (string)$item->is_marked === 'true',
                 ];
 
@@ -42,8 +42,8 @@ class ProductCommand extends Command
                 $i++;
 
                 if ($i >= 1000) {
-                    Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
-                    Value::query()->upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
+                    Product::upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
+                    Value::upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
                     $productFields = [];
                     $valueFields = [];
                     $i = 0;
@@ -51,11 +51,11 @@ class ProductCommand extends Command
             }
 
             if ($i) {
-                Product::query()->upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
-                Value::query()->upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
+                Product::upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
+                Value::upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
             }
 
-            foreach (Product::query()->whereNull('slug')->get() as $product) {
+            foreach (Product::whereNull('slug')->get() as $product) {
                 $product->update(['slug' => SlugService::createSlug(Product::class, 'slug', $product->name)]);
             }
         }

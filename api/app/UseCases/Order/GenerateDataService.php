@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class GenerateDataService
 {
-    public function __construct(private Order $order) {}
+    public function __construct(private readonly Order $order) {}
 
     public function generateSenData(Carbon $date): string
     {
@@ -19,22 +19,23 @@ class GenerateDataService
         $order_number = config('data.orderStartNumber') + $this->order->id;
 
         $delivery_xml = '';
-        if($this->order->delivery->type === Delivery::TYPE_PICKUP) {
+        if($this->order->delivery->equalType(Delivery::TYPE_PICKUP)) {
             $delivery_xml =
                 "<deliveries>
                         <delivery>
                             <type>PICKUP</type>
                             <date_time>{$date->format('Y-m-d H:i:s')}</date_time>
                             <coordinates>
-                                <lon>{$this->order->store->lon}</lon>
-                                <lat>{$this->order->store->lat}</lat>
+                                <lon>{$this->order->store->location->coordinate[1]}</lon>
+                                <lat>{$this->order->store->location->coordinate[0]}</lat>
                             </coordinates>
                             <pharmacy>{$this->order->store_id}</pharmacy>
                         </delivery>
                     </deliveries>";
         }
-        elseif($this->order->delivery->type === Delivery::TYPE_DELIVERY) {
-            $delivery = $this->order->delivery;
+        elseif($this->order->delivery->equalType(Delivery::TYPE_DELIVERY)) {
+            $delivery = $this->order->orderDelivery;
+            $location = $delivery->location;
             $delivery_xml = "
                 <deliveries>
                     <delivery>
@@ -44,10 +45,10 @@ class GenerateDataService
                             <lon>0.773499</lon>
                             <lat>0.679043</lat>
                         </coordinates>
-                        <address>{$delivery->city}, ул. {$delivery->street}, д. {$delivery->house}, кв. {$delivery->apartment}</address>
-                        <city>{$delivery->city}</city>
-                        <street>{$delivery->street}</street>
-                        <house>{$delivery->house}</house>";
+                        <address>{$location->city->name}, ул. {$location->street}, д. {$location->house}, кв. {$delivery->apartment}</address>
+                        <city>{$location->city->name}</city>
+                        <street>{$location->street}</street>
+                        <house>{$location->house}</house>";
 
             $delivery_xml .= $delivery->apartment ? "<apartment>{$delivery->apartment}</apartment>" : '';
             $delivery_xml .= $delivery->floor ? "<floor>{$delivery->floor}</floor>" : '';
@@ -77,7 +78,7 @@ class GenerateDataService
                         <phone>$phone</phone>
                     </customer>" . $delivery_xml;
 
-        if($this->order->payment->type === Payment::TYPE_CASH) {
+        if($this->order->payment->equalType(Payment::TYPE_CASH)) {
             $xml .=
                 "<payments>
                     <payment>
@@ -86,7 +87,7 @@ class GenerateDataService
                     </payment>
                 </payments>";
         }
-        elseif($this->order->payment->type === Payment::TYPE_CARD) {
+        elseif($this->order->payment->equalType(Payment::TYPE_CARD)) {
             $xml .=
                 "<payments>
                     <payment>
@@ -120,10 +121,10 @@ class GenerateDataService
     public function generateDeliveryData(): string
     {
         $order_number = config('data.orderStartNumber') + $this->order->id;
-        $delivery = $this->order->delivery;
+        $delivery = $this->order->orderDelivery;
         $store = $this->order->store;
         $user = $this->order->user;
-        $delivery_address = $delivery->city . ", " . $delivery->street . ", " . $delivery->house;
+        $delivery_address = $delivery->location->city->name . ", " . $delivery->location->street . ", " . $delivery->location->house;
         $coordinates = Helper::getCoordinates($delivery_address);
         $delivery_lon = $coordinates['lon'];
         $delivery_lat = $coordinates['lat'];
@@ -154,7 +155,7 @@ class GenerateDataService
             'route_points' => [
                 [
                     'address' => [
-                        'coordinates' => [$store->lon, $store->lat],
+                        'coordinates' => [$store->location->coordinate[1], $store->location->coordinate[0]],
                         'fullname' => $store->name
                     ],
                     'contact' => [
@@ -176,7 +177,7 @@ class GenerateDataService
                     ],
                     'contact' => [
                         'email' => $user->email,
-                        'name' => $user->name,
+                        'name' => $user->first_name,
                         'phone' => '+' . $user->phone
                     ],
                     'external_order_id' => (string)$order_number,

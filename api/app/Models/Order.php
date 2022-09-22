@@ -37,9 +37,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property Collection<Status> $statuses
  * @property Collection<OrderItem> $items
- *
- * @property Exception $lastException
- * @property Collection<Exception> $exceptions
  */
 class Order extends Model
 {
@@ -248,16 +245,5 @@ class Order extends Model
     public function delivery(): BelongsTo
     {
         return $this->belongsTo(Delivery::class);
-    }
-
-    public function lastException(): ?self
-    {
-        return $this->exceptions()->orderBy('id', SORT_DESC)->first();
-    }
-
-    public function exceptions(): HasMany
-    {
-        return $this->hasMany(Exception::class, 'initiator_id')
-            ->where('initiator', self::class);
     }
 }

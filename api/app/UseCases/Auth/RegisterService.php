@@ -23,7 +23,7 @@ class RegisterService extends LoyaltyService
             throw new \DomainException('Существует контакт с таким телефоном');
 
         $data = $request->validated();
-        $user = User::query()->firstOrNew(['phone' => $data['phone'], 'email' => $data['email']]);
+        $user = User::firstOrNew(['phone' => $data['phone'], 'email' => $data['email']]);
 
         $fullName = explode(' ', $data['fullName']);
         $firstName = $fullName[1] ?? $fullName[0];

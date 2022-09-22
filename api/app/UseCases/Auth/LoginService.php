@@ -35,14 +35,14 @@ class LoginService extends LoyaltyService
         $orders = [];
         $visits = [];
         $session = $data['SessionId'];
-        if (!$user = User::query()->find($data['Id'])) {
+        if (!$user = User::find($data['Id'])) {
             $data = $this->userService->getInfo($data['Id'], $session);
-            $user = User::query()->firstOrNew(['phone' => $data['MobilePhone']]);
+            $user = User::firstOrNew(['phone' => $data['MobilePhone']]);
 
             $orders = $user->orders;
             $visits = $user->visits;
             if (count($orders) or count($visits)) {
-                $tmp = User::query()->find('5ac09db5-8f02-4158-ac3a-283c548de800');
+                $tmp = User::find('5ac09db5-8f02-4158-ac3a-283c548de800');
                 if (count($orders)) $tmp->orders()->saveMany($orders);
                 if (count($visits)) $tmp->visits()->saveMany($visits);
             }

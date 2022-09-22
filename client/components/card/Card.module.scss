@@ -50,17 +50,24 @@
       }
     }
 
-    .price-mask {
+    .price {
+      width: 100%;
       text-align: center;
-      color: #666;
-      background-color: #ccc;
-      cursor: pointer;
-    }
+      opacity: 0;
+      transition: 0.3s opacity ease;
 
-    .price-real {
-      display: none;
-      text-align: center;
-      font-size: 1.25rem;
+      &_mask {
+        color: #666;
+        background-color: #ccc;
+        opacity: 1;
+        cursor: pointer;
+      }
+
+      &_real {
+        font-size: 1.25rem;
+        line-height: 1.2;
+        opacity: 1;
+      }
     }
   }
 

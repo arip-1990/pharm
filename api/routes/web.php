@@ -112,8 +112,12 @@ Route::prefix('catalog')->group(function () {
 //    Route::get('/sale', [Catalog\PopularController::class, 'handle']);
     Route::get('/search', [Catalog\SearchController::class, 'handle']);
     Route::get('/popular', [Catalog\PopularController::class, 'handle']);
-    Route::get('/product/{product}', [Catalog\ProductController::class, 'handle']);
     Route::get('/{category?}', [Catalog\IndexController::class, 'handle']);
+
+    Route::prefix('product')->group(function () {
+        Route::get('/{product}', [Catalog\Product\IndexController::class, 'handle']);
+        Route::get('/{product}/price', [Catalog\Product\PriceController::class, 'handle']);
+    });
 });
 
 Route::prefix('category')->group(function () {

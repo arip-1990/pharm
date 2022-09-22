@@ -23,30 +23,30 @@ class ProductService
             $categories = Category::all();
         }
 
-        $productIds = Offer::query()->select('product_id')->whereCity($city)
+        $productIds = Offer::select('product_id')->whereCity($city)
             ->groupBy('product_id')->get()->pluck('product_id');
 
-        return Product::query()->whereIn('id', $productIds)
+        return Product::whereIn('id', $productIds)
             ->whereIn('category_id', $categoryIds->merge($categories)->pluck('id'))->paginate(12);
     }
 
     public function getSalesByCity(string $city): Paginator
     {
-        $productIds = Offer::query()->select('product_id')->whereCity($city)
+        $productIds = Offer::select('product_id')->whereCity($city)
             ->groupBy('product_id')->get()->pluck('product_id');
 
-        return Product::query()->whereIn('id', [])->paginate(12);
+        return Product::whereIn('id', [])->paginate(12);
     }
 
     public function getNamesBySearch(string $text, int $limit = 10): array
     {
-        return Product::query()->where('name', 'like', $text . '%')
+        return Product::where('name', 'like', $text . '%')
             ->orWhere('name', 'like', '%' . $text . '%')->limit($limit)->get();
     }
 
     public function getFilters(Collection $productIds): array
     {
-        $query = Value::query()->whereIn('product_id', $productIds)
+        $query = Value::whereIn('product_id', $productIds)
             ->with(['attribute' => function ($query) {
                 $query->where('type', '!=', Attribute::TYPE_TEXT);
             }]);

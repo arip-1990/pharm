@@ -46,7 +46,7 @@ class OfferCommand extends Command
         $delFields = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
-            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+            if (!$product = Product::find((string)$item->code) or str_starts_with($product->name, '*')) continue;
 
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
@@ -61,28 +61,28 @@ class OfferCommand extends Command
             $i++;
 
             if ($i >= 1000) {
-                Offer::query()->whereInMultiple(['store_id', 'product_id'], $delFields)->delete();
-                Offer::query()->upsert($fields, ['store_id', 'product_id']);
+                Offer::whereInMultiple(['store_id', 'product_id'], $delFields)->delete();
+                Offer::upsert($fields, ['store_id', 'product_id']);
                 $fields = [];
                 $delFields = [];
                 $i = 0;
             }
         }
         if ($i) {
-            Offer::query()->whereInMultiple(['store_id', 'product_id'], $delFields)->delete();
-            Offer::query()->upsert($fields, ['store_id', 'product_id']);
+            Offer::whereInMultiple(['store_id', 'product_id'], $delFields)->delete();
+            Offer::upsert($fields, ['store_id', 'product_id']);
         }
     }
 
     private function all(): void
     {
         $data = $this->getData(3);
-        Offer::query()->truncate();
+        Offer::truncate();
         $fields = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
-            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
-            if (!$store = Store::query()->find((string)$item->store_uuid)) continue;
+            if (!$product = Product::find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+            if (!$store = Store::find((string)$item->store_uuid)) continue;
 
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
@@ -95,25 +95,25 @@ class OfferCommand extends Command
             $i++;
 
             if ($i >= 1000) {
-                Offer::query()->upsert($fields, ['store_id', 'product_id']);
+                Offer::upsert($fields, ['store_id', 'product_id']);
                 $fields = [];
                 $i = 0;
             }
         }
 
         if ($i) {
-            Offer::query()->upsert($fields, ['store_id', 'product_id']);
+            Offer::upsert($fields, ['store_id', 'product_id']);
         }
     }
 
     private function stock(): void
     {
         $data = $this->getData(6);
-        Offer::query()->where('store_id', config('data.stock'))->delete();
+        Offer::where('store_id', config('data.stock'))->delete();
         $fields = [];
         $i = 0;
         foreach ($data->offers->offer as $item) {
-            if (!$product = Product::query()->find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+            if (!$product = Product::find((string)$item->code) or str_starts_with($product->name, '*')) continue;
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
             $fields[] = [
@@ -125,11 +125,11 @@ class OfferCommand extends Command
             $i++;
 
             if ($i >= 1000) {
-                Offer::query()->upsert($fields, ['store_id', 'product_id']);
+                Offer::upsert($fields, ['store_id', 'product_id']);
                 $fields = [];
                 $i = 0;
             }
         }
-        if ($i) Offer::query()->upsert($fields, ['store_id', 'product_id']);
+        if ($i) Offer::upsert($fields, ['store_id', 'product_id']);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Catalog;
+namespace App\Http\Controllers\Catalog\Product;
 
 use App\Http\Resources\OfferResource;
 use App\Http\Resources\ProductResource;
@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
-class ProductController extends Controller
+class IndexController extends Controller
 {
     public function handle(Product $product, Request $request): JsonResponse
     {

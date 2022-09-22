@@ -19,7 +19,7 @@ class CategoryCommand extends Command
             foreach ($data->categories->category as $item) {
                 $attr = $item->attributes();
 
-                $category = Category::query()->updateOrCreate(['id' => (int)$attr->id, 'name' => (string)$item]);
+                $category = Category::updateOrCreate(['id' => (int)$attr->id, 'name' => (string)$item]);
                 if ((int)$attr->parentId) {
                     $category->parent_id = (int)$attr->parentId;
                     $category->save();

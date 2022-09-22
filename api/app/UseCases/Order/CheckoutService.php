@@ -36,8 +36,7 @@ class CheckoutService
             $items = new Collection();
             $offers = new Collection();
             foreach ($data['items'] as $item) {
-                /** @var Offer $offer */
-                $offer = Offer::query()->where('store_id', $data['store'])->where('product_id', $item['id'])->first();
+                $offer = Offer::where('store_id', $data['store'])->where('product_id', $item['id'])->first();
                 $offer->checkout($item['quantity']);
                 $offers->add($offer);
                 $items->add(OrderItem::create($item['id'], $item['price'], $item['quantity']));
@@ -88,8 +87,7 @@ class CheckoutService
                     $items = new Collection();
                     $offers = new Collection();
                     foreach ($data['items'] as $item) {
-                        /** @var Offer $offer */
-                        if (!$offer = Offer::query()->where('store_id', $order->store_id)
+                        if (!$offer = Offer::where('store_id', $order->store_id)
                             ->where('product_id', $item['privateId'])->first())
                             throw new \DomainException('Товар не найден');
 
@@ -186,8 +184,8 @@ class CheckoutService
             throw new \DomainException('Нет товаров в корзине');
 
         $stores = [];
-        Offer::query()->whereIn('product_id', $carts->keys())
-            ->whereCity($request->cookie('city', City::query()->find(1)?->name))
+        Offer::whereIn('product_id', $carts->keys())
+            ->whereCity($request->cookie('city', City::find(1)?->name))
             ->each(function (Offer $offer) use ($carts, &$stores) {
                 $cartQuantity = (int)$carts[$offer->product_id];
                 $stores[$offer->store_id]['store'] = new StoreResource($offer->store);

@@ -47,7 +47,7 @@ class StoreCommand extends Command
                 ];
             }
 
-            Store::query()->upsert($fields, 'id', ['name', 'slug', 'phone', 'schedule']);
+            Store::upsert($fields, 'id', ['name', 'slug', 'phone', 'schedule']);
         }
         catch (\RuntimeException $e) {
             $this->error($e->getMessage());

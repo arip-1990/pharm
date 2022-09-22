@@ -24,8 +24,7 @@ class EmptyProductCommand extends \Illuminate\Console\Command
             $spreadsheet = $reader->load(Storage::path('Найденные товары.xlsx'));
 
             foreach ($spreadsheet->getActiveSheet()->toArray() as $row) {
-                /** @var Product $product */
-                $product = Product::query()->where('code', (int)$row[0])
+                $product = Product::where('code', (int)$row[0])
                     ->where('status', Product::STATUS_DRAFT)->first();
                 if ($product) {
                     if ($photo = (string)$row[6]) {
