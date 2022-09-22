@@ -16,8 +16,9 @@ const Favorite: FC = () => {
       <Head>
         <title>Сеть аптек 120/80 | Избранное</title>
       </Head>
+
       <div className="row">
-        <div className="col-9">
+        <div className="col">
           <div className="card">
             <div className="card-header">Избранное</div>
             <div className="card-body">

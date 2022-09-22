@@ -4,6 +4,7 @@ namespace App\Http\Requests\Mobile;
 
 use App\Models\Status\MobilePlatform;
 use App\Models\Status\MobileStatus;
+use App\Rules\CustomDate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -37,8 +38,8 @@ class CheckoutRequest extends FormRequest
             'orders.*.loyaltyCard' => 'nullable|string',
 //            'orders.*.hasPreorderItems' => 'nullable|boolean',
             'orders.*.externalIds' => 'nullable|array',
-            'orders.*.createdOn' => 'nullable|date',
-            'orders.*.updatedOn' => 'nullable|date',
+            'orders.*.createdOn' => ['nullable', new CustomDate()],
+            'orders.*.updatedOn' => ['nullable', new CustomDate()],
 
             'orders.*.payment' => 'required|string',
             'orders.*.delivery' => 'required|string',

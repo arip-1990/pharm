@@ -13,6 +13,7 @@ use App\Http\Controllers\Order;
 use App\Http\Controllers\Store;
 use App\Http\Controllers\User;
 use App\Http\Controllers\V1;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,9 +27,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/test', function () {
-//    //
-//});
+Route::get('/test', function () {
+    //
+});
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
     Route::post('/feed', [V1\FeedController::class, 'handle']);

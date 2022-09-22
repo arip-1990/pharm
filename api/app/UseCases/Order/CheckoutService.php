@@ -73,7 +73,8 @@ class CheckoutService
         $orders = [];
         foreach ($request->validated('orders') as $data) {
             $order = Order::create(
-                User::find($data['externalUserId']),
+//                User::find($data['externalUserId']),
+                User::where('phone', str_replace('+', '', $data['phone']))->first(),
                 Store::find($data['pickupLocationId']),
                 Payment::find((int)explode('/', $data['payment'])[1]),
                 $data['price'],

@@ -7,6 +7,7 @@ import defaultImage from "../../assets/images/default.png";
 import Layout from "../../components/layout";
 import Accordion from "../../components/accordion";
 import { useCookie } from "../../hooks/useCookie";
+import Loader from "../../components/loader";
 
 const Store: FC = () => {
   const [city] = useCookie("city");
@@ -60,9 +61,10 @@ const Store: FC = () => {
         <div className="col-2 text-center">Наличие</div>
 
         <Accordion>
+          {loading && <Loader />}
           {stores.map((store) => {
             let price = 0;
-            store.products.forEach((product) => {
+            store.products.forEach((product: any) => {
               price += product.quantity * product.price;
             });
 

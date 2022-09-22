@@ -101,14 +101,16 @@ const Header: FC = () => {
             className="text-center"
             style={{ marginTop: 19 }}
           >
-            <a className="fav" href="/favorite">
-              <span style={{ display: "inline-block", position: "relative" }}>
-                <span className="quantity">{totalFavorite}</span>
-                <Image src={heart} height={30} />
-              </span>
-              <br />
-              <span>Избранное</span>
-            </a>
+            <Link href="/favorite">
+              <a className="fav">
+                <span style={{ display: "inline-block", position: "relative" }}>
+                  <span className="quantity">{totalFavorite}</span>
+                  <Image src={heart} height={30} />
+                </span>
+                <br />
+                <span>Избранное</span>
+              </a>
+            </Link>
           </Col>
           <Col
             xs={3}
@@ -117,14 +119,16 @@ const Header: FC = () => {
             className="text-center"
             style={{ marginTop: 19 }}
           >
-            <a className="cart" href="/cart">
-              <span style={{ display: "inline-block", position: "relative" }}>
-                <span className="quantity">{totalCart}</span>
-                <Image src={cart} height={30} />
-              </span>
-              <br />
-              <span>Корзина</span>
-            </a>
+            <Link href="/cart">
+              <a className="cart">
+                <span style={{ display: "inline-block", position: "relative" }}>
+                  <span className="quantity">{totalCart}</span>
+                  <Image src={cart} height={30} />
+                </span>
+                <br />
+                <span>Корзина</span>
+              </a>
+            </Link>
           </Col>
         </Row>
       </div>
