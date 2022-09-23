@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { FC, MouseEvent, useEffect, useState } from "react";
+import {FC, MouseEvent, useCallback, useEffect, useState} from "react";
 import { useLocalStorage } from "react-use-storage";
 import api from "../../lib/api";
 import { ICart } from "../../models/ICart";
@@ -8,6 +8,7 @@ import Layout from "../../components/layout";
 import Accordion from "../../components/accordion";
 import { useCookie } from "../../hooks/useCookie";
 import Loader from "../../components/loader";
+import Breadcrumbs from "../../components/breadcrumbs";
 
 const Store: FC = () => {
   const [city] = useCookie("city");
@@ -35,6 +36,10 @@ const Store: FC = () => {
     fetchStores();
   }, [city]);
 
+  const getDefaultTextGenerator = useCallback((path: string) => (
+      { cart: "Корзина" }[path] || { store: "Выбор аптеки" }[path]
+  ), []);
+
   const handleStore = (e: MouseEvent<HTMLButtonElement>, storeId: string) => {
     e.stopPropagation();
 
@@ -54,6 +59,8 @@ const Store: FC = () => {
 
   return (
     <Layout>
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <div className="row">
         <div className="col-7">
           <span className="border-bottom border-primary">Выбор аптеки</span>

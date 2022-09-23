@@ -1,7 +1,7 @@
 import Layout from "../../components/layout";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
-import { FC } from "react";
+import {FC, useCallback} from "react";
 import Page from "../../components/page";
 import Image from "next/image";
 import payments from "../../assets/images/payments.png";
@@ -13,11 +13,16 @@ import {
 } from "../../lib/storeService";
 import { useRouter } from "next/router";
 import Map from "../../components/Map";
+import Breadcrumbs from "../../components/breadcrumbs";
 
 const Store: FC = () => {
   const router = useRouter();
   const { slug } = router.query;
   const { data } = useGetStoreQuery(String(slug));
+
+  const getDefaultTextGenerator = useCallback((path: string) => (
+      { store: "Точки самовывоза" }[path] || { [slug]: data.name }[path]
+  ), []);
 
   return (
     <Layout>
@@ -25,6 +30,8 @@ const Store: FC = () => {
         <title>{data?.name}</title>
         <meta key="description" name="description" content={data?.name} />
       </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
 
       <Page className="row">
         <div className="col-12 col-md-6">

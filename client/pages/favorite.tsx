@@ -1,21 +1,26 @@
 import Head from "next/head";
 import Link from "next/link";
-import { FC } from "react";
+import {FC, useCallback} from "react";
 import { useLocalStorage } from "react-use-storage";
 import Layout from "../components/layout";
 import { IProduct } from "../models/IProduct";
 import defaultImage from "../assets/images/default.png";
 import { useMounted } from "../hooks/useMounted";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const Favorite: FC = () => {
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
   const isMounted = useMounted();
+
+    const getDefaultTextGenerator = useCallback((path: string) => ({ favorite: "Избранное" }[path]), []);
 
   return (
     <Layout>
       <Head>
         <title>Сеть аптек 120/80 | Избранное</title>
       </Head>
+
+        <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
 
       <div className="row">
         <div className="col">

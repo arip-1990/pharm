@@ -5,13 +5,7 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const ProcessingPersonalData: FC = () => {
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { "processing-personal-data": "Обработка персональных данных" }[
-        subpath
-      ] || subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+  const getDefaultTextGenerator = useCallback((path: string) => ({ "processing-personal-data": "Обработка персональных данных" }[path]), []);
 
   return (
     <Layout>

@@ -5,12 +5,7 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const OrderPayment: FC = () => {
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { "order-payment": "Оплата заказа" }[subpath] ||
-      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+  const getDefaultTextGenerator = useCallback((path: string) => ({ "order-payment": "Оплата заказа" }[path]), []);
 
   return (
     <Layout>

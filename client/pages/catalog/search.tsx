@@ -1,22 +1,23 @@
-import Layout from "../components/layout";
-import Card from "../components/card";
-import { FC, useEffect } from "react";
+import Layout from "../../components/layout";
+import Card from "../../components/card";
+import {FC, useCallback, useEffect} from "react";
 import { GetServerSideProps } from "next";
-import { ICategory } from "../models/ICategory";
+import { ICategory } from "../../models/ICategory";
 import Link from "next/link";
-import Pagination from "../components/pagination";
-import { wrapper } from "../store";
+import Pagination from "../../components/pagination";
+import { wrapper } from "../../store";
 import {
   getRunningOperationPromises,
   searchProducts,
   useSearchProductsQuery,
-} from "../lib/catalogService";
+} from "../../lib/catalogService";
 import { useRouter } from "next/router";
 import {
   fetchCategories,
   useFetchCategoriesQuery,
-} from "../lib/categoryService";
-import { useCookie } from "../hooks/useCookie";
+} from "../../lib/categoryService";
+import { useCookie } from "../../hooks/useCookie";
+import Breadcrumbs from "../../components/breadcrumbs";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -57,6 +58,10 @@ const Search: FC = () => {
   });
   const { data: categories } = useFetchCategoriesQuery();
 
+    const getDefaultTextGenerator = useCallback((path: string) => (
+        { catalog: "Наш ассортимент" }[path] || { search: "Поиск" }[path]
+    ), []);
+
   useEffect(() => {
     const path = router.asPath.split("?")[0];
     if (Number(page) > 1) router.push(path);
@@ -65,6 +70,8 @@ const Search: FC = () => {
 
   return (
     <Layout>
+        <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <div className="row">
         <nav className="col-md-3">
           <ul className="category">

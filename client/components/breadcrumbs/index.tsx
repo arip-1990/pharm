@@ -25,18 +25,18 @@ const Breadcrumbs: FC<Props> = ({
     const asPathNestedRoutes = generatePathParts(router.asPath);
     const pathnameNestedRoutes = generatePathParts(router.pathname);
 
-    const crumblist = asPathNestedRoutes.map((subpath, idx) => {
+    const crumbList = asPathNestedRoutes.map((path, idx) => {
       const param = pathnameNestedRoutes[idx].replace("[", "").replace("]", "");
 
       const href = "/" + asPathNestedRoutes.slice(0, idx + 1).join("/");
       return {
         href,
         textGenerator: getTextGenerator(param, router.query),
-        text: getDefaultTextGenerator(subpath),
+        text: getDefaultTextGenerator(path),
       };
     });
 
-    return [{ href: "/", text: "Главная" }, ...crumblist];
+    return [{ href: "/", text: "Главная" }, ...crumbList];
   }, [
     router.asPath,
     router.pathname,

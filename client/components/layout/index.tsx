@@ -7,6 +7,7 @@ import Image from "next/image";
 import { NotificationContainer } from "react-notifications";
 import Loyalty from "../loyalty";
 import Auth from "../auth";
+import {useAuth} from "../../hooks/useAuth";
 
 type Props = {
   children?: ReactNode;
@@ -14,10 +15,11 @@ type Props = {
 };
 
 const Layout: FC<Props> = ({ children, banner }) => {
+    const {isAuth} = useAuth();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleClick = () => {
-    setShowModal(true);
+    !isAuth && setShowModal(true);
   };
 
   return (

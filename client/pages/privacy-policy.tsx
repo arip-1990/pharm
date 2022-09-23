@@ -5,12 +5,7 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const PrivacyPolicy: FC = () => {
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { "privacy-policy": "Политика конфиденциальности" }[subpath] ||
-      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+  const getDefaultTextGenerator = useCallback((path: string) => ({ "privacy-policy": "Политика конфиденциальности" }[path]), []);
 
   return (
     <Layout>

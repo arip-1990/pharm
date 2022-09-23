@@ -1,6 +1,6 @@
 import Layout from "../components/layout";
 import Card from "../components/card";
-import { FC, useEffect } from "react";
+import {FC, useCallback, useEffect} from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../models/ICategory";
 import Link from "next/link";
@@ -13,6 +13,8 @@ import {
 } from "../lib/catalogService";
 import { useRouter } from "next/router";
 import { useCookie } from "../hooks/useCookie";
+import Breadcrumbs from "../components/breadcrumbs";
+import Head from "next/head";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -57,8 +59,21 @@ const Catalog: FC = () => {
     else refetch();
   }, [city]);
 
+    const getDefaultTextGenerator = useCallback((path: string) => ({ catalog: "Наш ассортимент" }[path]), []);
+
   return (
     <Layout>
+        <Head>
+            <title>Сеть аптек 120/80 | Наш ассортимент</title>
+            <meta
+                key="description"
+                name="description"
+                content="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой."
+            />
+        </Head>
+
+        <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+
       <div className="row">
         <nav className="col-md-3">
           <ul className="category">
@@ -80,7 +95,7 @@ const Catalog: FC = () => {
                 itemScope
                 itemType="https://schema.org/ItemList"
               >
-                <link itemProp="url" href="/products" />
+                <link itemProp="url" href="/catalog" />
                 {data?.products.map((product) => (
                   <div key={product.id} className="col-10 offset-1 offset-sm-0">
                     <Card product={product} />

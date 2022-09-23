@@ -39,7 +39,7 @@ const Header: FC = () => {
   const formik = useFormik({
     initialValues: { q: "" },
     onSubmit: ({ q }) => {
-      if (q.length >= 3) router.push(`/search?q=${q}`);
+      if (q.length >= 3) router.push(`/catalog/search?q=${q}`);
     },
   });
 

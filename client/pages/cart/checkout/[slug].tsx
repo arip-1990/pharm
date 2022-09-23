@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import {FC, useCallback, useEffect, useState} from "react";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { useLocalStorage } from "react-use-storage";
 import axios from "axios";
@@ -11,6 +11,7 @@ import { useNotification } from "../../../hooks/useNotification";
 import { useMounted } from "../../../hooks/useMounted";
 import { useCookie } from "../../../hooks/useCookie";
 import api from "../../../lib/api";
+import Breadcrumbs from "../../../components/breadcrumbs";
 
 interface Values {
   delivery: number;
@@ -60,6 +61,10 @@ const Checkout: FC = () => {
     setTotalPrice(tmp.totalPrice);
   }, [slug]);
 
+  const getDefaultTextGenerator = useCallback((path: string) => (
+      { cart: "Корзина" }[path] || { checkout: "Оформление заказа" }[path]// || { [slug]: "Оформление заказа" }[path]
+  ), []);
+
   const formik = useFormik({
     initialValues: {
       delivery: 0,
@@ -90,7 +95,6 @@ const Checkout: FC = () => {
           }
         );
 
-        console.log(data);
         if (data.paymentUrl) window.location.href = data.paymentUrl;
         else router.push(`/order/checkout/${data.id}`);
       } catch (error) {
@@ -113,6 +117,8 @@ const Checkout: FC = () => {
 
   return (
     <Layout>
+      {/*<Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />*/}
+
       <h1 className="text-center">Оформление заказа</h1>
       {recipe ? (
         <div className="alert alert-danger" role="alert">

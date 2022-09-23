@@ -9,12 +9,7 @@ import BaseLoyalty from "../components/loyalty";
 const Loyalty: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { loyalty: "Программа лояльности" }[subpath] ||
-      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+    const getDefaultTextGenerator = useCallback((path: string) => ({ loyalty: "Программа лояльности" }[path]), []);
 
   const handleClick = (e: MouseEvent) => {
     e.preventDefault();

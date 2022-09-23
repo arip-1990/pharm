@@ -5,12 +5,7 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const Rent: FC = () => {
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { rent: "Развитие сети/Аренда" }[subpath] ||
-      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+  const getDefaultTextGenerator = useCallback((path: string) => ({ rent: "Развитие сети/Аренда" }[path]), []);
 
   return (
     <Layout>

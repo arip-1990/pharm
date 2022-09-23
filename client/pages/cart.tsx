@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useAuth } from "../hooks/useAuth";
 import { useNotification } from "../hooks/useNotification";
 import { useMounted } from "../hooks/useMounted";
+import Breadcrumbs from "../components/breadcrumbs";
 
 const Cart: FC = () => {
   const { isAuth } = useAuth();
@@ -35,12 +36,16 @@ const Cart: FC = () => {
     }
   }, [isAuth]);
 
+  const getDefaultTextGenerator = useCallback((path: string) => ({ cart: "Корзина" }[path]), []);
+
   return (
     <Layout>
       <Head>
         <title>Сеть аптек 120/80 | Корзина</title>
-        <meta key="description" name="description" content="Корзина." />
+        <meta key="description" name="description" content="Корзина" />
       </Head>
+
+      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
 
       <div className="row">
         <h3>Состав заказа</h3>

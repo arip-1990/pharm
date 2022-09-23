@@ -19,12 +19,8 @@ const Crumb: FC<Props> = ({
   useEffect(() => {
     if (!Boolean(textGenerator)) return;
 
-    const fetchText = async () => {
-      const finalText = await textGenerator();
-      setText(finalText);
-    };
-
-    fetchText();
+    const finalText = textGenerator();
+    setText(finalText);
   }, [textGenerator]);
 
   if (last) {

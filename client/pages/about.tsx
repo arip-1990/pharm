@@ -14,12 +14,7 @@ import { FC, useCallback } from "react";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const About: FC = () => {
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { about: "О компании" }[subpath] ||
-      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+  const getDefaultTextGenerator = useCallback((path: string) => ({ about: "О компании" }[path]), []);
 
   return (
     <Layout>

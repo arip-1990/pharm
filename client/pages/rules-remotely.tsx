@@ -5,12 +5,7 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const RulesRemotely: FC = () => {
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { "rules-remotely": "Правила дистанционной торговли ЛС" }[subpath] ||
-      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+  const getDefaultTextGenerator = useCallback((path: string) => ({ "rules-remotely": "Правила дистанционной торговли ЛС" }[path]), []);
 
   return (
     <Layout>

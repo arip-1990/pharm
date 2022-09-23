@@ -28,12 +28,7 @@ const Store: FC = () => {
     else refetch();
   }, [city]);
 
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { store: "Точки самовывоза" }[subpath] ||
-      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+  const getDefaultTextGenerator = useCallback((path: string) => ({ store: "Точки самовывоза" }[path]), []);
 
   let points = [];
 

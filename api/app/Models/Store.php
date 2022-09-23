@@ -71,7 +71,7 @@ class Store extends Model
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', true);
+        return $query->where('active', true);
     }
 
     public function offers(): HasMany

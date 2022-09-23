@@ -14,12 +14,7 @@ import { FC, useCallback } from "react";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const DeliveryBooking: FC = () => {
-  const getDefaultTextGenerator = useCallback((subpath: string) => {
-    return (
-      { "delivery-booking": "Доставка/Бронирование" }[subpath] ||
-      subpath[0].toUpperCase() + subpath.substring(1).toLowerCase()
-    );
-  }, []);
+  const getDefaultTextGenerator = useCallback((path: string) => ({ "delivery-booking": "Доставка/Бронирование" }[path]), []);
 
   return (
     <Layout>
