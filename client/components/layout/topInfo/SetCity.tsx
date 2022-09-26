@@ -22,7 +22,7 @@ const SetCity: FC<Props> = ({ className }) => {
     return (
       <div className={classes.join(" ")}>
         <Dropdown onSelect={(eventKey) => handleSetCity(eventKey)}>
-          <span>Ваш город:</span>
+          <span>Ваш город: </span>
           <Dropdown.Toggle
             variant="success"
             id="city"

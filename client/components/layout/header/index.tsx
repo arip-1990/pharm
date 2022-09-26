@@ -5,19 +5,14 @@ import Navbar from "./Navbar";
 import Logo from "../../../assets/images/logo.svg";
 import heart from "../../../assets/images/heart.png";
 import cart from "../../../assets/images/cart.png";
-import { FC, MouseEvent, useEffect, useState } from "react";
-import { SetCity } from "./SetCity";
-import { useAuth } from "../../../hooks/useAuth";
+import { FC, useEffect, useState } from "react";
 import { ICart } from "../../../models/ICart";
 import { useLocalStorage } from "react-use-storage";
 import { IProduct } from "../../../models/IProduct";
-import Auth from "../../auth";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 
 const Header: FC = () => {
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const { isAuth } = useAuth();
   const router = useRouter();
   const [carts] = useLocalStorage<ICart[]>("cart", []);
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
@@ -31,11 +26,6 @@ const Header: FC = () => {
     setTotalFavorite(favorites.length);
   }, [carts, favorites]);
 
-  const handleSignIn = (e: MouseEvent) => {
-    e.preventDefault();
-    setShowModal(true);
-  };
-
   const formik = useFormik({
     initialValues: { q: "" },
     onSubmit: ({ q }) => {
@@ -45,25 +35,6 @@ const Header: FC = () => {
 
   return (
     <Container as="header" className="my-3">
-      <Row>
-        <SetCity className="col-5" />
-
-        <Col xs={7} sm={7} className="auth text-end">
-          <span className="phone">+7 (8722) 606-366</span>
-          <span className="d-inline-block">
-            {isAuth ? (
-              <Link href="/profile">
-                <a>Личный кабинет</a>
-              </Link>
-            ) : (
-              <a href="#" onClick={handleSignIn}>
-                Войти
-              </a>
-            )}
-          </span>
-        </Col>
-      </Row>
-
       <div className="empty-box" />
       <div className="fixed-box">
         <Row className="container align-items-center p-0 mx-auto">
@@ -136,8 +107,6 @@ const Header: FC = () => {
       <Row>
         <Navbar />
       </Row>
-
-      <Auth show={showModal} onHide={() => setShowModal(false)} />
     </Container>
   );
 };

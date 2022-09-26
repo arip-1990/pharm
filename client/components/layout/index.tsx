@@ -8,6 +8,7 @@ import { NotificationContainer } from "react-notifications";
 import Loyalty from "../loyalty";
 import Auth from "../auth";
 import {useAuth} from "../../hooks/useAuth";
+import TopInfo from "./topInfo";
 
 type Props = {
   children?: ReactNode;
@@ -24,6 +25,8 @@ const Layout: FC<Props> = ({ children, banner }) => {
 
   return (
     <>
+      <TopInfo />
+
       <Header />
 
       <NotificationContainer />

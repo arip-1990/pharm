@@ -1,51 +1,47 @@
 @import "variables";
 
-header {
-  .city-choose {
-    position: absolute;
-    top: 100%;
-    display: none;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 315px;
-    height: 120px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-    background: #fff;
-    border-radius: 4px;
-    padding: 28px 19px 28px 26px;
-    box-sizing: border-box;
+.city-choose {
+  position: absolute;
+  top: 100%;
+  display: none;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 315px;
+  height: 120px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  background: #fff;
+  border-radius: 4px;
+  padding: 28px 19px 28px 26px;
+  box-sizing: border-box;
+}
+
+.auth {
+  a {
+    font-weight: 600;
   }
 
-  .auth {
+  .phone {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+}
+
+.menu-city {
+  position: relative;
+  font-size: 16px;
+
+  .dropdown-menu {
     a {
-      font-weight: 600;
-    }
-
-    .phone {
-      font-size: 1rem;
-      font-weight: bold;
-      margin-right: 0.5rem;
-    }
-  }
-
-  .menu-city {
-    position: relative;
-    font-size: 16px;
-
-    .dropdown-toggle {
-      margin-left: 0.5rem;
-    }
-
-    .dropdown-menu {
-      a {
-        &:hover:not(.active) {
-          color: $primary;
-        }
+      &:hover:not(.active) {
+        color: $primary;
       }
     }
   }
+}
 
+header {
   .fixed-box {
     align-items: center;
     background-color: #fff;
