@@ -1,0 +1,35 @@
+.topInfo {
+  grid-area: top-info;
+  display: grid;
+  grid-template-columns: minmax(120px, 100%) max-content;
+  grid-column-gap: 1rem;
+  align-items: center;
+
+  .deliverySale {
+    display: none;
+  }
+
+  .auth {
+    text-align: end;
+
+    a {
+      font-weight: 600;
+    }
+
+    .phone {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .topInfo {
+    grid-template-columns: auto 1fr auto;
+
+    .deliverySale {
+      display: block;
+    }
+  }
+}

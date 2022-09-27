@@ -1,9 +1,10 @@
 import {FC, MouseEvent, useState} from "react";
 import {SetCity} from "./SetCity";
-import {Col, Container, Row} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import Link from "next/link";
 import {useAuth} from "../../../hooks/useAuth";
 import Auth from "../../auth";
+import styles from './TopInfo.module.scss';
 
 const TopInfo: FC = () => {
 	const { isAuth } = useAuth();
@@ -16,10 +17,14 @@ const TopInfo: FC = () => {
 
 	return (
 		<Container className='my-3'>
-			<Row>
-				<SetCity className="col-5" />
+			<div className={styles.topInfo}>
+				<SetCity />
 
-				<Col xs={7} sm={7} className="auth text-end">
+				<div className={styles.deliverySale}>
+					{/*<Image src={deliverySale} />*/}
+				</div>
+
+				<div className="auth text-end">
 					<span className="phone">+7 (8722) 606-366</span>
 					<span className="d-inline-block">
             {isAuth ? (
@@ -32,10 +37,10 @@ const TopInfo: FC = () => {
 							</a>
 						)}
           </span>
-				</Col>
+				</div>
 
 				<Auth show={showModal} onHide={() => setShowModal(false)} />
-			</Row>
+			</div>
 		</Container>
 	);
 }
