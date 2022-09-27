@@ -27,7 +27,7 @@ const TopInfo: FC = () => {
 								<a>Личный кабинет</a>
 							</Link>
 						) : (
-							<a href="components/layout/topInfo/TopInfo#index.tsx" onClick={handleSignIn}>
+							<a href="#" onClick={handleSignIn}>
 								Войти
 							</a>
 						)}

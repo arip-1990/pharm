@@ -12,7 +12,7 @@ import TopInfo from "./topInfo";
 
 type Props = {
   children?: ReactNode;
-  banner?: boolean | ReactNode;
+  banner?: boolean;
 };
 
 const Layout: FC<Props> = ({ children, banner }) => {
@@ -31,18 +31,13 @@ const Layout: FC<Props> = ({ children, banner }) => {
 
       <NotificationContainer />
 
-      {banner ? (
-        // <Container fluid={banner === true}>
-        //   <Row style={{ justifyContent: "center" }}>
-        //     {typeof banner === "boolean" ? <Image src={bannerImage} /> : banner}
-        //   </Row>
-        // </Container>
+      {banner && (
         <Container>
           <Row style={{ justifyContent: "center" }}>
             <Loyalty.Banner onClick={handleClick} />
           </Row>
         </Container>
-      ) : null}
+      )}
 
       <Container as="main" className="my-5">
         {children}
