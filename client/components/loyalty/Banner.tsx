@@ -4,9 +4,10 @@ import styles from "./Loyalty.module.scss";
 
 interface Props {
   onClick: () => void;
+  disabled?: boolean;
 }
 
-const Banner: FC<Props> = ({ onClick }) => {
+const Banner: FC<Props> = ({ onClick, disabled }) => {
   const [active, setActive] = useState<boolean>(false);
 
   useEffect(() => {
@@ -37,6 +38,8 @@ const Banner: FC<Props> = ({ onClick }) => {
         className={classNames(styles.button, { [styles.active]: active })}
         onMouseDown={handleDown}
         onClick={handleClick}
+        disabled={disabled}
+        data-text='Заполнить форму'
       />
     </div>
   );

@@ -2,8 +2,6 @@ import { FC, ReactNode, useState } from "react";
 import { Container, Row } from "react-bootstrap";
 import Header from "./header";
 import Footer from "./footer";
-import bannerImage from "../../assets/images/banner.png";
-import Image from "next/image";
 import { NotificationContainer } from "react-notifications";
 import Loyalty from "../loyalty";
 import Auth from "../auth";
@@ -20,7 +18,7 @@ const Layout: FC<Props> = ({ children, banner }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleClick = () => {
-    !isAuth && setShowModal(true);
+    setShowModal(true);
   };
 
   return (
@@ -34,7 +32,7 @@ const Layout: FC<Props> = ({ children, banner }) => {
       {banner && (
         <Container>
           <Row style={{ justifyContent: "center" }}>
-            <Loyalty.Banner onClick={handleClick} />
+            <Loyalty.Banner disabled={isAuth} onClick={handleClick} />
           </Row>
         </Container>
       )}

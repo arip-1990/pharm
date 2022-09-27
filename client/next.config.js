@@ -32,6 +32,6 @@ module.exports = {
   },
   
   experimental: {
-    outputStandalone: true,
+    output: 'standalone',
   }
 };

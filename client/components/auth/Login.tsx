@@ -5,10 +5,10 @@ import { useNotification } from "../../hooks/useNotification";
 import api from "../../lib/api";
 import { useIMask } from "react-imask";
 import axios from "axios";
-
-import styles from "./Auth.module.scss";
 import classNames from "classnames";
 import { useRouter } from "next/router";
+
+import styles from "./Auth.module.scss";
 
 type LoginType = "login" | "verifyPhone" | "setPassword";
 

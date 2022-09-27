@@ -2,11 +2,9 @@ import {FC, MouseEvent, useState} from "react";
 import {SetCity} from "./SetCity";
 import {Container} from "react-bootstrap";
 import Link from "next/link";
-import Image from "next/image";
 import {useAuth} from "../../../hooks/useAuth";
 import Auth from "../../auth";
-
-import deliverySale from '../../../assets/images/delivery-sale.png';
+import DeliverySale from "./DeliverySale";
 
 import styles from './TopInfo.module.scss';
 
@@ -24,15 +22,13 @@ const TopInfo: FC = () => {
 			<div className={styles.topInfo}>
 				<SetCity />
 
-				<div className={styles.deliverySale}>
-					<Image src={deliverySale} />
-				</div>
+				<DeliverySale />
 
 				<div className="auth text-end">
 					<span className="phone">+7 (8722) 606-366</span>
 					<span className="d-inline-block">
             {isAuth ? (
-							<Link href="/pages/profile">
+							<Link href="/profile">
 								<a>Личный кабинет</a>
 							</Link>
 						) : (

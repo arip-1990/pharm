@@ -7,6 +7,27 @@
 
   .deliverySale {
     display: none;
+    justify-content: center;
+    align-items: center;
+    grid-gap: 0.25rem;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 60px;
+      height: 24px;
+      background-color: transparent;
+      background-image: url(../../../assets/images/delivery-car.png);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+    &_text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #f00;
+    }
   }
 
   .auth {
@@ -29,7 +50,49 @@
     grid-template-columns: auto 1fr auto;
 
     .deliverySale {
-      display: block;
+      display: flex;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .topInfo .deliverySale {
+    grid-gap: 1rem;
+
+    &::before {
+      width: 86px;
+      height: 34px;
+    }
+
+    &_text {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  .topInfo .deliverySale {
+    &::before {
+      width: 112px;
+      height: 44px;
+    }
+
+    &_text {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+  }
+}
+
+@media (min-width: 1400px) {
+  .topInfo .deliverySale {
+    &::before {
+      width: 132px;
+      height: 52px;
+    }
+
+    &_text {
+      font-size: 1.5rem;
     }
   }
 }
