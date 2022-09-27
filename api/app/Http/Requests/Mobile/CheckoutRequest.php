@@ -38,8 +38,8 @@ class CheckoutRequest extends FormRequest
             'orders.*.loyaltyCard' => 'nullable|string',
 //            'orders.*.hasPreorderItems' => 'nullable|boolean',
             'orders.*.externalIds' => 'nullable|array',
-            'orders.*.createdOn' => ['nullable', new CustomDate()],
-            'orders.*.updatedOn' => ['nullable', new CustomDate()],
+            'orders.*.createdOn' => ['nullable', 'string'],
+            'orders.*.updatedOn' => ['nullable', 'string'],
 
             'orders.*.payment' => 'required|string',
             'orders.*.delivery' => 'required|string',

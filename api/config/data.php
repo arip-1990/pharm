@@ -4,16 +4,17 @@ return [
     'stock' => '6b7f2bb6-7d5e-11ea-80cb-ac1f6bd1d36d',
     'orderStartNumber' => 0, // стартовый номер заказа для 1c
     '1c' => [
-        'user' => 'webservice',
+        'login' => 'webservice',
         'password' => 'H5v-8Yt2S57',
+        'base_url' => '1c.pharm36.ru/pharm36/hs/reserv/',
         'urls' => [
-            '1c.pharm36.ru/pharm36/hs/reserv/goods',
-            '1c.pharm36.ru/pharm36/hs/reserv/goods/getChanges',
-            '1c.pharm36.ru/pharm36/hs/reserv/pharmacies',
-            '1c.pharm36.ru/pharm36/hs/reserv/pharmacyOffers',
-            '1c.pharm36.ru/pharm36/hs/reserv/pharmacyOffers/getChanges',
-            '1c.pharm36.ru/pharm36/hs/reserv/orders',
-            '1c.pharm36.ru/pharm36/hs/reserv/offers'
+            'goods',
+            'goods/getChanges',
+            'pharmacies',
+            'pharmacyOffers',
+            'pharmacyOffers/getChanges',
+            'reserv/orders',
+            'offers'
         ]
     ],
     'pay' => [

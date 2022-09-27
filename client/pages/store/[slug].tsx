@@ -21,7 +21,7 @@ const Store: FC = () => {
   const { data } = useGetStoreQuery(String(slug));
 
   const getDefaultTextGenerator = useCallback((path: string) => (
-      { store: "Точки самовывоза" }[path] || { [slug]: data.name }[path]
+      { store: "Точки самовывоза" }[path] || { [String(slug)]: data.name }[path]
   ), []);
 
   return (

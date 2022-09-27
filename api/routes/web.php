@@ -26,19 +26,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/test', function () {
-//    //
-//});
+Route::get('/test', function () {
+    \Illuminate\Support\Facades\Artisan::call('import:category');
+});
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
     Route::post('/feed', [V1\FeedController::class, 'handle']);
     Route::post('/order', [Order\UpdateController::class, 'handle']);
 });
-
-// TODO delete routes
-Route::post('/deliveries', [V1\Mobile\DeliveryController::class, 'handle']);
-Route::post('/payments', [V1\Mobile\PaymentController::class, 'handle']);
-//
 
 Route::prefix('v1')->group(function () {
     Route::post('/pay', [V1\PayController::class, 'handle']);
@@ -47,6 +42,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/checkout', [V1\Mobile\CheckoutController::class, 'handle']);
         Route::post('/deliveries', [V1\Mobile\DeliveryController::class, 'handle']);
         Route::post('/payments', [V1\Mobile\PaymentController::class, 'handle']);
+        Route::post('/acquiring', [V1\Mobile\AcquiringController::class, 'handle']);
     });
 
     Route::prefix('auth')->group(function () {

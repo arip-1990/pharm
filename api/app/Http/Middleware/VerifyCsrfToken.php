@@ -17,8 +17,7 @@ class VerifyCsrfToken extends Middleware
         'v1/mobile/deliveries',
         'v1/mobile/payments',
         'v1/mobile/checkout',
-        'deliveries',
-        'payments',
+        'v1/mobile/acquiring',
         'v1/pay',
     ];
 }

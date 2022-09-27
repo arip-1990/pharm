@@ -62,7 +62,7 @@ const Catalog: FC = () => {
   });
 
     const getDefaultTextGenerator = useCallback((path: string) => (
-        { catalog: "Наш ассортимент" }[path] || { [slug]: "Поиск" }[path]
+        { catalog: "Наш ассортимент" }[path] || { [String(slug)]: "Поиск" }[path]
     ), []);
 
   useEffect(() => {
