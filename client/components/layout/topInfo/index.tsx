@@ -2,8 +2,12 @@ import {FC, MouseEvent, useState} from "react";
 import {SetCity} from "./SetCity";
 import {Container} from "react-bootstrap";
 import Link from "next/link";
+import Image from "next/image";
 import {useAuth} from "../../../hooks/useAuth";
 import Auth from "../../auth";
+
+import deliverySale from '../../../assets/images/delivery-sale.png';
+
 import styles from './TopInfo.module.scss';
 
 const TopInfo: FC = () => {
@@ -21,7 +25,7 @@ const TopInfo: FC = () => {
 				<SetCity />
 
 				<div className={styles.deliverySale}>
-					{/*<Image src={deliverySale} />*/}
+					<Image src={deliverySale} />
 				</div>
 
 				<div className="auth text-end">
