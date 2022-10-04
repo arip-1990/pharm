@@ -17,7 +17,7 @@ class IndexController
         try {
             $order = $this->service->checkoutWeb($request);
             if ($order->payment->equalType(Payment::TYPE_CARD))
-                $paymentUrl = $this->service->paySber($order, 'https://120на80.рф/order/checkout/' . $order->id);
+                $paymentUrl = $this->service->paySber($order, 'https://xn--12080-6ve4g.xn--p1ai/order/checkout/' . $order->id);
         }
         catch (\DomainException $e) {
             return new JsonResponse([

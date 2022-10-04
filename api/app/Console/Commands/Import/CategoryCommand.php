@@ -13,7 +13,7 @@ class CategoryCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::connection()->client();
+        $client = Redis::client();
         try {
             $data = $this->getData();
             foreach ($data->categories->category as $item) {
@@ -26,12 +26,18 @@ class CategoryCommand extends Command
                 }
             }
         }
-        catch (\RuntimeException $e) {
+        catch (\DomainException $e) {
             $this->error($e->getMessage());
-            $client->publish("bot:import", json_encode(['message' => $e->getMessage()]));
+            $client->publish("bot:import", json_encode([
+                'success' => false,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'message' => $e->getMessage()
+            ]));
             return 1;
         }
 
+        $client->publish("bot:import", json_encode(['success' => true, 'message' => 'Категории успешно обновлены']));
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff(Carbon::now())->format('%iм %sс'));
         return 0;
     }

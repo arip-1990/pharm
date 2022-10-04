@@ -15,7 +15,7 @@ class StoreCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::connection()->client();
+        $client = Redis::client();
         try {
             $data = $this->getData(2);
             $fields = [];
@@ -49,12 +49,18 @@ class StoreCommand extends Command
 
             Store::upsert($fields, 'id', ['name', 'slug', 'phone', 'schedule']);
         }
-        catch (\RuntimeException $e) {
+        catch (\DomainException $e) {
             $this->error($e->getMessage());
-            $client->publish("bot:import", json_encode(['message' => $e->getMessage()]));
+            $client->publish("bot:import", json_encode([
+                'success' => false,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'message' => $e->getMessage()
+            ]));
             return 1;
         }
 
+        $client->publish("bot:import", json_encode(['success' => true, 'message' => 'Аптеки успешно обновлены']));
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff()->format('%iм %sс'));
         return 0;
     }

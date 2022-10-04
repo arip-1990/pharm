@@ -157,10 +157,8 @@ const Order: React.FC = () => {
             dataSource={orders?.data.map((item) => ({
               key: item.id,
               id: item.id,
-              userName:
-                item.user.first_name +
-                (item.user.last_name ? ` ${item.user.last_name[0]}` : ""),
-              userPhone: item.user.phone,
+              userName: item.customer.name,
+              userPhone: item.customer.phone,
               store: item.store.name,
               status: (
                 <StatusStep

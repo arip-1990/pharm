@@ -42,7 +42,11 @@ Route::prefix('v1')->group(function () {
         Route::post('/checkout', [V1\Mobile\CheckoutController::class, 'handle']);
         Route::post('/deliveries', [V1\Mobile\DeliveryController::class, 'handle']);
         Route::post('/payments', [V1\Mobile\PaymentController::class, 'handle']);
-        Route::post('/acquiring', [V1\Mobile\AcquiringController::class, 'handle']);
+
+        Route::prefix('acquiring')->group(function () {
+            Route::post('/', [V1\Mobile\Acquiring\IndexController::class, 'handle']);
+            Route::post('/status', [V1\Mobile\Acquiring\StatusController::class, 'handle']);
+        });
     });
 
     Route::prefix('auth')->group(function () {

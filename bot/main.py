@@ -7,8 +7,9 @@ from telebot import TeleBot
 
 bot = TeleBot('5264546096:AAHH7gzUFdZim4deJs0o78RwZ8x8q6vC6Io')
 r = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, decode_responses=True)
-update_command = None
+update = {'chat': None, 'command': None}
 test_command = False
+admin = 1195813156
 
 
 @bot.message_handler(commands=['start'])
@@ -24,34 +25,35 @@ def help(message) -> None:
 
 @bot.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer'])
 def update_data(message) -> None:
-    global update_command
+    global update
     send_message = ''
 
-    if update_command:
-        if update_command == 'category':
+    if update['command']:
+        if update['command'] == 'category':
             send_message = 'Обновление категории не завершено'
-        elif update_command == 'product':
+        elif update['command'] == 'product':
             send_message = 'Обновление товаров не завершено'
-        elif update_command == 'store':
+        elif update['command'] == 'store':
             send_message = 'Обновление аптек не завершено'
-        elif update_command == 'offer':
+        elif update['command'] == 'offer':
             send_message = 'Обновление остатков не завершено'
-        elif update_command == 'test':
+        elif update['command'] == 'test':
             send_message = 'Обработка запроса не завершено'
 
         bot.reply_to(message, send_message)
     else:
-        update_command = message.text.split(' ')[0].split('_')[1].strip()
-        if update_command == 'category':
+        update['command'] = message.text.split(' ')[0].split('_')[1].strip()
+        if update['command'] == 'category':
             send_message = 'Обновляем категории...'
-        elif update_command == 'product':
+        elif update['command'] == 'product':
             send_message = 'Обновляем товары...'
-        elif update_command == 'store':
+        elif update['command'] == 'store':
             send_message = 'Обновляем аптеки...'
-        elif update_command == 'offer':
+        elif update['command'] == 'offer':
             send_message = 'Обновляем остатки...'
 
-        r.publish('update', json.dumps({'chatId': message.chat.id, 'type': update_command}))
+        update['chat'] = message.chat.id
+        r.publish('update', json.dumps({'type': update['command']}))
         bot.send_message(message.chat.id, send_message)
 
 
@@ -60,20 +62,32 @@ def test_data(message) -> None:
     global test_command
 
     if test_command:
-        send_message = 'Обработка запроса не завершено!'
-
-        bot.reply_to(message, send_message)
+        bot.reply_to(message, 'Обработка запроса не завершено!')
     else:
         test_command = True
-        send_message = 'Обрабатываем запрос...'
 
         order_id = message.text.split(' ')[1].strip()
         r.publish('update', json.dumps({'chatId': message.chat.id, 'type': 'test', 'order': order_id}))
-        bot.send_message(message.chat.id, send_message)
+        bot.send_message(message.chat.id, 'Обрабатываем запрос...')
+
+
+def handle_import(data: dict) -> None:
+    global update
+
+    if data['success']:
+        message = data['message']
+    else:
+        message = f"Ошибка обработки запроса!\nФайл: {data['file']}\nСтрока: {data['line']}\n{data['message']}"
+
+    bot.send_message(admin, message)
+    # if update['chat'] and update['chat'] != admin:
+    #     bot.send_message(update['chat'], message)
+
+    update = {'chat': None, 'command': None}
 
 
 def listen_redis() -> None:
-    global update_command, test_command
+    global update, test_command
     p = r.pubsub()
     p.psubscribe('bot:*')
 
@@ -85,22 +99,20 @@ def listen_redis() -> None:
                     if type == 'update':
                         data = json.loads(message.get('data'))
                         bot.send_message(data['chatId'], data['message'])
-                        update_command = None
+                        update = {'chat': None, 'command': None}
                     elif type == 'pay':
                         for key, item in json.loads(message.get('data')):
-                            bot.send_message(1195813156, f'{key} => {item}')
+                            bot.send_message(admin, f'{key} => {item}')
                     elif type == 'import':
-                        data = json.loads(message.get('data'))
-                        bot.send_message(1195813156, data['message'])
-                        test_command = False
+                        handle_import(json.loads(message.get('data')))
                     elif type == 'test':
                         data = json.loads(message.get('data'))
                         bot.send_message(data['chatId'], data['message'])
                         test_command = False
                     else:
-                        bot.send_message(1195813156, message.get('data'))
+                        bot.send_message(admin, message.get('data'))
             except ValueError:
-                bot.send_message(1195813156, message.get('data'))
+                bot.send_message(admin, message.get('data'))
 
 
 def main():

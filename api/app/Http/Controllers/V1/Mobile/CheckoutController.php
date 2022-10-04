@@ -22,6 +22,9 @@ class CheckoutController
             ], 500);
         }
 
-        return new JsonResponse($orders);
+        return new JsonResponse([
+            'message' => 'Ваш заказ принят.',
+            'orders' => $orders
+        ]);
     }
 }

@@ -19,6 +19,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
+ * @property ?string $name
+ * @property ?string $phone
+ * @property ?string $email
  * @property float $cost
  * @property OrderStatus $status
  * @property ?string $note
@@ -29,7 +32,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
  *
- * @property User $user
+ * @property ?User $user
  * @property ?Store $store
  * @property ?Payment $payment
  * @property ?Delivery $delivery
@@ -46,16 +49,23 @@ class Order extends Model
         'statuses' => StatusCollection::class
     ];
 
-    public static function create(User $user, Store $store, Payment $payment, float $cost, Delivery $delivery): self
+    public static function create(Store $store, Payment $payment, float $cost, Delivery $delivery, string $note = null): self
     {
         $item = new static();
-        $item->user_id = $user->id;
         $item->store_id = $store->id;
         $item->payment_id = $payment->id;
         $item->delivery_id = $delivery->id;
         $item->cost = $cost;
+        $item->note = $note;
         $item->addStatus(OrderStatus::STATUS_ACCEPTED, OrderState::STATE_SUCCESS);
         return $item;
+    }
+
+    public function setUserInfo(string $name, string $phone, string $email = null): void
+    {
+        $this->name = $name;
+        $this->phone = $phone;
+        $this->email = $email;
     }
 
     public function pay(string $sberId): void
@@ -135,7 +145,7 @@ class Order extends Model
 
     public function isPay(): bool
     {
-        return $this->inStatus(OrderStatus::STATUS_PAID) and $this->statuses->contains(function (Status $status) {
+        return $this->statuses->contains(function (Status $status) {
             return $status->equal(OrderStatus::STATUS_PAID) and $status->state === OrderState::STATE_SUCCESS;
         });
     }

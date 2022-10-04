@@ -22,8 +22,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('import:offer change')->everyMinute();
         $schedule->command('import:offer stock')->everyMinute();
 
-        $schedule->command('import:emptyProduct')->hourly();
-        $schedule->command('export:emptyProduct description')->dailyAt('1:00');
+//        $schedule->command('import:emptyProduct')->hourly();
+//        $schedule->command('export:emptyProduct description')->dailyAt('1:00');
     }
 
     /**

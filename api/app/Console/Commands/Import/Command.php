@@ -31,7 +31,7 @@ class Command extends BaseCommand
         $response = $this->client->get($this->config['urls'][$url]);
 
         if ($response->getStatusCode() !== 200)
-            throw new \DomainException('Ошибка получения баланса');
+            throw new \DomainException('Ошибка получения данных');
 
         $xml = simplexml_load_string($response->getBody()->getContents());
         if ($xml === false)

@@ -67,9 +67,13 @@ const View: React.FC = () => {
                 {
                   key: "Тип оплаты / Тип доставки",
                   value:
-                    (order.paymentType ? "Оплата картой" : "Наличными") +
+                    (order.paymentType === "card"
+                      ? "Оплата картой"
+                      : "Наличными") +
                     " / " +
-                    (order.deliveryType ? "Доставка" : "Самовывоз"),
+                    (order.deliveryType === "delivery"
+                      ? "Доставка"
+                      : "Самовывоз"),
                 },
                 { key: "Адрес доставки", value: order.deliveryAddress },
                 {
@@ -83,13 +87,13 @@ const View: React.FC = () => {
                   key: "Оплачено",
                   value: order.statuses.some(
                     (item) => item.value === "P" && item.state === 2
-                  ),
+                  )
+                    ? "Да"
+                    : "Нет",
                 },
                 {
                   key: "Заказчик",
-                  value:
-                    order.user.first_name +
-                    (order.user.last_name ? ` ${order.user.last_name[0]}` : ""),
+                  value: order.customer.name,
                 },
                 { key: "Заметка", value: order.note },
               ]

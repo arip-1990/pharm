@@ -11,7 +11,7 @@ class ShowItemsController extends Controller
 {
     public function handle(Order $order): JsonResponse
     {
-        $items = $order->user->orders->map(fn(Order $order) => [...$order->items])->collapse();
+        $items = $order->user?->orders->map(fn(Order $order) => [...$order->items])->collapse() ?? [];
         return new JsonResponse(OrderItemResource::collection($items));
     }
 }

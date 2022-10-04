@@ -10,6 +10,9 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->decimal('cost', unsigned: true);
             $table->string('status', 2);
             $table->json('statuses')->default('[]');
@@ -20,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignUuid('store_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('payment_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('delivery_id')->nullable()->constrained()->onDelete('set null');

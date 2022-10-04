@@ -25,12 +25,15 @@ class CheckoutService
     {
         $data = $request->validated();
         $order = Order::create(
-            $request->user(),
             Store::find($data['store']),
             Payment::find($data['payment'] ?: 2),
             $data['price'],
             Delivery::find($data['delivery'] ?: 2)
         );
+
+        $user = $request->user();
+        $order->user()->associate($user);
+        $order->setUserInfo($user->first_name, $user->phone, $user->email);
 
         DB::transaction(function () use ($order, $data) {
             $items = new Collection();
@@ -41,8 +44,6 @@ class CheckoutService
                 $offers->add($offer);
                 $items->add(OrderItem::create($item['id'], $item['price'], $item['quantity']));
             }
-
-            if ($order->payment->equalType(Payment::TYPE_CASH)) $order->sent();
 
             $order->save();
             $order->items()->saveMany($items);
@@ -66,6 +67,11 @@ class CheckoutService
             $offers->each(fn(Offer $offer) => $offer->save());
         });
 
+        if ($order->payment->equalType(Payment::TYPE_CASH)) {
+            $order->sent();
+            $order->save();
+        }
+
         return $order;
     }
 
@@ -73,30 +79,34 @@ class CheckoutService
     {
         $orders = [];
         foreach ($request->validated('orders') as $data) {
-            $order = Order::create(
-//                User::find($data['externalUserId']),
-                User::where('phone', str_replace('+', '', $data['phone']))->first(),
-                Store::find($data['pickupLocationId']),
-                Payment::find((int)explode('/', $data['payment'])[1]),
-                $data['price'],
-                Delivery::find((int)explode('/', $data['delivery'])[1])
-            );
-
             try {
+                $order = Order::create(
+                    Store::find($data['pickupLocationId']),
+                    Payment::find((int)explode('/', $data['payment'])[1]),
+                    $data['price'],
+                    Delivery::find((int)explode('/', $data['delivery'])[1]),
+                    $data['deliveryComment'] ?? null
+                );
+
+                // User::find($data['externalUserId']),
+                $phone = str_replace('+', '', $data['phone']);
+                if ($user = User::where('phone', $phone)->first())
+                    $order->user()->associate($user);
+
+                $order->setUserInfo($data['name'], $phone, $data['email'] ?? null);
+
                 DB::transaction(function () use ($order, $data) {
                     $items = new Collection();
                     $offers = new Collection();
                     foreach ($data['items'] as $item) {
                         if (!$offer = Offer::where('store_id', $order->store_id)
                             ->where('product_id', $item['privateId'])->first())
-                            throw new \DomainException('Товар не найден');
+                            throw new \DomainException('Товара нет в наличии');
 
                         $offer->checkout($item['quantity']);
                         $offers->add($offer);
                         $items->add(OrderItem::create($item['privateId'], $item['price'], $item['quantity']));
                     }
-
-                    if ($order->payment->equalType(Payment::TYPE_CASH)) $order->sent();
 
                     $order->save();
                     $order->items()->saveMany($items);
@@ -122,8 +132,13 @@ class CheckoutService
                     $offers->each(fn(Offer $offer) => $offer->save());
                 });
 
+                if ($order->payment->equalType(Payment::TYPE_CASH)) {
+                    $order->sent();
+                    $order->save();
+                }
+
                 $orders[] = [
-                    'id' => $order->id,
+                    'id' => (string)$order->id,
                     'uuid' => $data['uuid'],
                     'success' => true,
                     'price' => $order->cost,
@@ -132,12 +147,12 @@ class CheckoutService
             }
             catch (\DomainException $e) {
                 $orders[] = [
-                    'id' => $order->id,
+                    'id' => null,
                     'uuid' => $data['uuid'],
                     'success' => false,
                     'errorCode' => $e->getCode(),
                     'errorMessage' => $e->getMessage(),
-                    'price' => $order->cost,
+                    'price' => $data['price'],
                     'items' => $data['items']
                 ];
             }

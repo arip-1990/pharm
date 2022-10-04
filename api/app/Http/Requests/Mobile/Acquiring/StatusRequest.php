@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Mobile;
+namespace App\Http\Requests\Mobile\Acquiring;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AcquiringRequest extends FormRequest
+class StatusRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,9 +16,7 @@ class AcquiringRequest extends FormRequest
         return [
             'command' => 'required|string',
             "paymentMethodId" => 'required|string',
-            "orderUuid" => 'required|uuid',
-            "orderId" => 'required|string',
-            "returnUrl" => 'nullable|string'
+            "paymentId" => 'required|uuid'
         ];
     }
 }

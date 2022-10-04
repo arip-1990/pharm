@@ -16,7 +16,7 @@ class OfferCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::connection()->client();
+        $client = Redis::client();
         try {
             switch ($this->argument('type')) {
                 case 'change':
@@ -27,11 +27,17 @@ class OfferCommand extends Command
                     break;
                 default:
                     $this->all();
+                    $client->publish("bot:import", json_encode(['success' => true, 'message' => 'Остатки успешно обновлены']));
             }
         }
-        catch (\Exception $e) {
+        catch (\DomainException $e) {
             $this->error($e->getMessage());
-            $client->publish("bot:import", json_encode(['message' => $e->getMessage()]));
+            $client->publish("bot:import", json_encode([
+                'success' => false,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'message' => $e->getMessage()
+            ]));
             return 1;
         }
 

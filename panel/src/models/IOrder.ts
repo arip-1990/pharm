@@ -1,5 +1,4 @@
 import moment from "moment";
-import { IUser } from "./IUser";
 
 export interface IStatus {
   value: string;
@@ -17,15 +16,19 @@ export interface IOrder {
   id: number;
   otherId: number;
   cost: number;
-  paymentType: number;
-  deliveryType: number;
+  paymentType: string;
+  deliveryType: string;
   deliveryAddress: string;
   status: string;
   note: string | null;
   cancel_reason: string | null;
   createdAt: moment.Moment;
   updatedAt: moment.Moment;
-  user: IUser;
+  customer: {
+    name: string;
+    phone: string;
+    email: string | null;
+  };
   store: {
     id: string;
     name: string;

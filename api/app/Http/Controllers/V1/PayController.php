@@ -24,7 +24,6 @@ class PayController
         $binarySignature = hex2bin(strtolower($request->get('checksum')));
         $isVerify = openssl_verify($data, $binarySignature, $publicKey, OPENSSL_ALGO_SHA512);
 
-        Redis::publish('bot:pay', "is verified: {$isVerify}");
         if ($isVerify !== 1) {
             return new Response(status: SymfonyResponse::HTTP_PRECONDITION_FAILED);
         }
@@ -39,7 +38,9 @@ class PayController
 
     private function checkStatus(Order $order, string $operation, int $status): void
     {
-        if ($order->status === OrderStatus::STATUS_PAID) {
+        $client = Redis::client();
+        $client->publish('bot:pay', "Статус: " . ($order->status === OrderStatus::STATUS_PAID));
+//        if ($order->status === OrderStatus::STATUS_PAID) {
             switch ($operation) {
                 case 'deposited':
                     if ($status === 1) {
@@ -52,16 +53,16 @@ class PayController
                     break;
                 case 'reversed':
                     $order->changeStatusState(OrderState::STATE_ERROR);
-                    Redis::publish('bot:pay', "Заказ №{$order->id}: Оплата отменена!");
+                    $client->publish('bot:pay', "Заказ №{$order->id}: Оплата отменена!");
                     break;
                 case 'declinedByTimeout':
                     $order->changeStatusState(OrderState::STATE_ERROR);
-                    Redis::publish('bot:pay', "Заказ №{$order->id}: Истек время ожидания оплаты!");
+                    $client->publish('bot:pay', "Заказ №{$order->id}: Истек время ожидания оплаты!");
                     break;
             }
-        }
-        else {
-            Redis::publish('bot:pay', "Заказ №{$order->id} не ожидает оплаты!");
-        }
+//        }
+//        else {
+//            $client->publish('bot:pay', "Заказ №{$order->id} не ожидает оплаты!");
+//        }
     }
 }
