@@ -38,9 +38,9 @@ class PayController
 
     private function checkStatus(Order $order, string $operation, int $status): void
     {
-        $client = Redis::client();
-        $client->publish('bot:pay', "Статус: " . ($order->status === OrderStatus::STATUS_PAID));
-//        if ($order->status === OrderStatus::STATUS_PAID) {
+        $client = Redis::connection('bot')->client();
+        $client->publish('bot:pay', "Заказ №{$order->id}:\nСтатус заказа: {$order->status->value}\nОперация: {$operation}\nСтатус операции: {$status}");
+        if ($order->status === OrderStatus::STATUS_PAID) {
             switch ($operation) {
                 case 'deposited':
                     if ($status === 1) {
@@ -60,9 +60,9 @@ class PayController
                     $client->publish('bot:pay', "Заказ №{$order->id}: Истек время ожидания оплаты!");
                     break;
             }
-//        }
-//        else {
-//            $client->publish('bot:pay', "Заказ №{$order->id} не ожидает оплаты!");
-//        }
+        }
+        else {
+            $client->publish('bot:pay', "Заказ №{$order->id} не ожидает оплаты!");
+        }
     }
 }

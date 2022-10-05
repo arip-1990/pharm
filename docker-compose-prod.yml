@@ -133,7 +133,6 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DISK: public
-      BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
@@ -143,7 +142,6 @@ services:
       SANCTUM_STATEFUL_DOMAINS: '*.xn--12080-6ve4g.xn--p1ai'
       CORS_ORIGIN: 'https://panel.xn--12080-6ve4g.xn--p1ai|https://xn--12080-6ve4g.xn--p1ai'
       REDIS_HOST: redis
-      REDIS_CLIENT: predis
       MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120-na-80.ru
@@ -231,11 +229,9 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
-      BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
-      REDIS_CLIENT: predis
       MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120-na-80.ru
@@ -243,7 +239,7 @@ services:
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
       ELASTICSEARCH_HOST: elasticsearch
-    command: sh -c 'php artisan schedule:run'
+    command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public
       - ./logs:/app/storage/logs
@@ -269,11 +265,9 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
-      BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
-      REDIS_CLIENT: predis
       MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120-na-80.ru
@@ -304,11 +298,9 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
-      BROADCAST_DRIVER: redis
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
-      REDIS_CLIENT: predis
       MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120-na-80.ru

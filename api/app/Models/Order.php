@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-use App\Casts\StatusCollection;
+use App\Casts\StatusCast;
+use App\Casts\StatusCollectionCast;
 use App\Events\Order\OrderPayFullRefund;
 use App\Events\Order\OrderPayPartlyRefund;
 use App\Events\Order\OrderSend;
@@ -46,7 +47,8 @@ class Order extends Model
     use SoftDeletes;
 
     protected $casts = [
-        'statuses' => StatusCollection::class
+        'status' => StatusCast::class,
+        'statuses' => StatusCollectionCast::class
     ];
 
     public static function create(Store $store, Payment $payment, float $cost, Delivery $delivery, string $note = null): self

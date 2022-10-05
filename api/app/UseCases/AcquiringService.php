@@ -22,10 +22,9 @@ class AcquiringService
             'password'      => $config['password'],
             'orderNumber'   => $order->id,
             'amount'        => $order->getTotalCost() * 100,
-            'returnUrl'     => $successUrl ?? 'https://xn--12080-6ve4g.xn--p1ai/order/checkout/' . $order->id,
+            'returnUrl'     => $successUrl ?? "https://xn--12080-6ve4g.xn--p1ai/order/checkout/{$order->id}/success",
+            'failUrl'       => $failUrl ?? "https://xn--12080-6ve4g.xn--p1ai/order/checkout/{$order->id}/failed",
         ];
-
-        if ($failUrl) $data['failUrl'] = $failUrl;
 
         $response = $this->client->post($config['url'], ['query' => $data]);
         $data = json_decode($response->getBody(), true);

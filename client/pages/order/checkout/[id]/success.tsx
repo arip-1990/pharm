@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
 import { useLocalStorage } from "react-use-storage";
-import Layout from "../../../components/layout";
-import { ICard } from "../../../models/ICard";
+import Layout from "../../../../components/layout";
+import { ICard } from "../../../../models/ICard";
 
-const CheckoutFinish: FC = () => {
+const CheckoutSuccess: FC = () => {
   const [, , removeCarts] = useLocalStorage<ICard[]>("cart", []);
   const router = useRouter();
   const { id } = router.query;
@@ -33,4 +33,4 @@ const CheckoutFinish: FC = () => {
   );
 };
 
-export default CheckoutFinish;
+export default CheckoutSuccess;

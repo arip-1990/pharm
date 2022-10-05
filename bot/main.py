@@ -67,7 +67,7 @@ def test_data(message) -> None:
         test_command = True
 
         order_id = message.text.split(' ')[1].strip()
-        r.publish('update', json.dumps({'chatId': message.chat.id, 'type': 'test', 'order': order_id}))
+        r.publish('update', json.dumps({'chatId': message.chat.id, 'type': 'test', 'orderId': order_id}))
         bot.send_message(message.chat.id, 'Обрабатываем запрос...')
 
 
@@ -88,7 +88,7 @@ def handle_import(data: dict) -> None:
 
 def listen_redis() -> None:
     global update, test_command
-    p = r.pubsub()
+    p = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, 3, decode_responses=True).pubsub()
     p.psubscribe('bot:*')
 
     for message in p.listen():
@@ -96,11 +96,7 @@ def listen_redis() -> None:
             try:
                 if message.get('type') == 'pmessage':
                     type = message.get('channel').split(':')[1]
-                    if type == 'update':
-                        data = json.loads(message.get('data'))
-                        bot.send_message(data['chatId'], data['message'])
-                        update = {'chat': None, 'command': None}
-                    elif type == 'pay':
+                    if type == 'pay':
                         for key, item in json.loads(message.get('data')):
                             bot.send_message(admin, f'{key} => {item}')
                     elif type == 'import':

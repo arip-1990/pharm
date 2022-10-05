@@ -161,7 +161,7 @@ class CheckoutService
         return $orders;
     }
 
-    public function paySber(Order $order, string $redirectUrl): string
+    public function paySber(Order $order): string
     {
         $curl = curl_init();
         $config =  config('app.env') === 'production' ? config('data.pay.sber.prod') : config('data.pay.sber.test');
@@ -175,7 +175,8 @@ class CheckoutService
                 'password'      => $config['password'],
                 'orderNumber'   => $order->id,
                 'amount'        => $order->getTotalCost() * 100,
-                'returnUrl'     => $redirectUrl,
+                'returnUrl'     => "https://xn--12080-6ve4g.xn--p1ai/order/checkout/{$order->id}/success",
+                'failUrl'       => "https://xn--12080-6ve4g.xn--p1ai/order/checkout/{$order->id}/failed",
             ])
         ]);
 

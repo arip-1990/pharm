@@ -15,7 +15,7 @@ class StoreCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::client();
+        $client = Redis::connection('bot')->client();
         try {
             $data = $this->getData(2);
             $fields = [];

@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Collection;
 
-class StatusCollection implements CastsAttributes
+class StatusCollectionCast implements CastsAttributes
 {
     /**
      * Cast the given value.
@@ -40,6 +40,7 @@ class StatusCollection implements CastsAttributes
         if (!$value instanceof Collection) {
             throw new \InvalidArgumentException('Данное значение не является экземпляром Collection.');
         }
+
         return $value->toJson();
     }
 }

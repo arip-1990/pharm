@@ -13,14 +13,14 @@ class IndexController
     public function handle(IndexRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $successRegex = "payment/{$data['orderId']}/success";
-        $failureRegex = "payment/{$data['orderId']}/failed";
+        $successRegex = "{$data['orderId']}/success";
+        $failureRegex = "{$data['orderId']}/failed";
 
         try {
             if ($data['command'] !== 'create' or $data['paymentMethodId'] != '1')
                 throw new \DomainException('Ошибка данных');
 
-            $data = $this->service->sberPay((int)$data['orderId'], failUrl: $data['returnUrl']);
+            $data = $this->service->sberPay((int)$data['orderId']);
         }
         catch (\DomainException $e) {
             return new JsonResponse([
@@ -28,8 +28,7 @@ class IndexController
                 "paymentId" => null,
                 "paymentUrl" => null,
                 "successRegex" => $successRegex,
-                "failureRegex" => $failureRegex,
-                'error' => $e->getMessage()
+                "failureRegex" => $failureRegex
             ]);
         }
 

@@ -7,6 +7,7 @@ use App\Models\Status\OrderStatus;
 use App\UseCases\Order\RefundService;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Redis;
 
 class UpdateController extends Controller
 {
@@ -44,6 +45,7 @@ class UpdateController extends Controller
 
     public function handle(): Response
     {
+        $client = Redis::connection('bot')->client();
         $xml = file_get_contents("php://input");
         $xml = simplexml_load_string($xml);
         if(!$this->isValidEditOrderXML($xml))
@@ -52,6 +54,7 @@ class UpdateController extends Controller
         $id = intval($xml->order->id) - config('data.orderStartNumber');
         /** @var Order $order */
         if (!$order = Order::query()->find($id)) {
+            $client->publish('bot:1c', 'Не найден заказ №' . $id . '!');
             return response($this->orderError('Не найден заказ №' . $id . '!', 2, $id), 500);
         }
 
@@ -74,9 +77,11 @@ class UpdateController extends Controller
 
         try {
             $order->save();
+            $client->publish('bot:1c', 'Заказ № ' . $id . ' успешно обновлен!');
             return response($this->orderSuccess($id));
         }
         catch (\RuntimeException $e) {
+            $client->publish('bot:1c', $e->getMessage());
             return response($this->orderError($e->getMessage(), 2, $id), 500);
         }
     }

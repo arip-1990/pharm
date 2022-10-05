@@ -16,7 +16,7 @@ class OfferCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::client();
+        $client = Redis::connection('bot')->client();
         try {
             switch ($this->argument('type')) {
                 case 'change':

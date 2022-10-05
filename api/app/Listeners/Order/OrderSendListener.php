@@ -11,11 +11,13 @@ use App\UseCases\Order\GenerateDataService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redis;
 
 class OrderSendListener implements ShouldQueue
 {
     public function handle(OrderSend $event): void
     {
+        $client = Redis::client();
         $order = $event->order;
         try {
             $order_number = config('data.orderStartNumber') + $order->id;
@@ -27,6 +29,7 @@ class OrderSendListener implements ShouldQueue
                 throw new \DomainException($message . '. ' . $response->errors->error->message);
             }
 
+            $client->publish("bot:import", json_encode(['success' => true, 'message' => $response->success->order_id]));
             if(isset($response->success->order_id)) {
                 $order->changeStatusState(OrderState::STATE_SUCCESS);
                 $order->addStatus(OrderStatus::STATUS_SENT_MAIL);
@@ -35,6 +38,12 @@ class OrderSendListener implements ShouldQueue
             }
         }
         catch (\Exception $e) {
+            $client->publish("bot:import", json_encode([
+                'success' => false,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'message' => $e->getMessage()
+            ]));
             $order->changeStatusState(OrderState::STATE_ERROR);
         }
 
