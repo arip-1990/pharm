@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Status\OrderState;
 use App\Models\Status\OrderStatus;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Redis;
 
 class OrderCommand extends Command
 {
@@ -14,7 +15,14 @@ class OrderCommand extends Command
 
     public function handle(): int
     {
+        $client = Redis::connection('bot')->client();
         if (!$order = Order::find((int)$this->argument('orderId'))) {
+            $client->publish("bot:import", json_encode([
+                'success' => false,
+                'file' => 'OrderCommand',
+                'line' => '19',
+                'message' => 'Заказ не найден!'
+            ]));
             $this->error('Заказ не найден!');
             return 1;
         }
@@ -28,10 +36,18 @@ class OrderCommand extends Command
                 $order->save();
                 break;
             default:
+                $client->publish("bot:import", json_encode([
+                    'success' => false,
+                    'file' => 'OrderCommand',
+                    'line' => '39',
+                    'message' => 'Неверный тип!'
+                ]));
                 $this->error('Неверный тип!');
+                return 1;
         }
 
-        $this->info('Процесс завершена!');
+        $client->publish("bot:import", json_encode(['success' => true, 'message' => 'Процесс завершен!']));
+        $this->info('Процесс завершен!');
         return 0;
     }
 }
