@@ -11,19 +11,18 @@ class StatusController
     public function handle(StatusRequest $request): JsonResponse
     {
         $data = $request->validated();
-        if (!$order = Order::where('sber_id', $data['paymentId'])->first()) {
+        if (!Order::where('sber_id', $data['paymentId'])->first()) {
             return new JsonResponse([
                 'success' => false,
                 'paymentId' => $data['paymentId'],
-                'paymentCaptured' => false,
-                'error' => 'Не найден заказ с таким платежом'
+                'paymentCaptured' => false
             ]);
         }
 
         return new JsonResponse([
             'success' => true,
             'paymentId' => $data['paymentId'],
-            'paymentCaptured' => $order->isPay(),
+            'paymentCaptured' => true
         ]);
     }
 }
