@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { wrapper } from "../store";
@@ -7,6 +7,7 @@ import Loader from "../components/loader";
 
 import "react-notifications/lib/notifications.css";
 import "../styles/global.scss";
+import Head from "next/head";
 
 const App = ({ Component, pageProps }) => {
   const router = useRouter();
@@ -36,10 +37,20 @@ const App = ({ Component, pageProps }) => {
   }, []);
 
   return (
-    <Auth>
-      {loading && <Loader />}
-      <Component {...pageProps} />
-    </Auth>
+    <>
+      <Head>
+        <meta name="apple-itunes-app" content="app-id=6443518664" />
+
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+
+        <title>Сеть аптек 120/80</title>
+      </Head>
+      <Auth>
+        {loading && <Loader />}
+        <Component {...pageProps} />
+      </Auth>
+    </>
   );
 };
 

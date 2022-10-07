@@ -8,7 +8,6 @@ import {
   useFetchPopularProductsQuery,
   getRunningOperationPromises,
 } from "../lib/catalogService";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import Auth from "../components/auth";
 import { useCookie } from "../hooks/useCookie";
@@ -36,15 +35,6 @@ const Home: FC = () => {
 
   return (
     <Layout banner>
-      <Head>
-        <title>Сеть аптек 120/80</title>
-        <meta
-          key="description"
-          name="description"
-          content="Добро пожаловать на наш сайт - сервис для покупки лекарств и товаров в собственной аптечной сети! Наши аптеки популярны, благодаря широкому ассортименту и высокой культуре обслуживания при доступных ценах. Гарантия качества и сервисное обслуживание – основные принципы нашей работы!"
-        />
-      </Head>
-
       <div
         className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3 g-xl-4"
         itemScope
