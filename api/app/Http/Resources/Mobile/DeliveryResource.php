@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Mobile;
 
+use App\Helper;
 use App\Models\City;
 use App\Models\Delivery;
 use App\Models\Location;
+use App\Models\Offer;
 use App\Models\Store;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -31,9 +33,15 @@ class DeliveryResource extends JsonResource
 
         ];
         if ($data['type'] == Delivery::TYPE_PICKUP) {
-            if ($city = City::where('name', trim(str_replace(['с.', 'с'], '', self::$data['addressData']['city'])))->first()) {
+            if ($city = City::where('name', Helper::trimPrefixCity(self::$data['addressData']['city']))->first()) {
+                $productIds = array_column(self::$data['items'], 'privateId');
                 $locationIds = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))->pluck('id');
-                $data['locations'] = PickupLocationResource::collection(Store::whereIn('location_id', $locationIds)->get());
+                $storeIds = Offer::select('store_id')->whereIn('product_id', $productIds)->groupBy('store_id')
+                    ->havingRaw('count(store_id) = ?', [count($productIds)])->pluck('store_id');
+
+                $data['locations'] = PickupLocationResource::collection(
+                    Store::whereIn('id', $storeIds)->whereIn('location_id', $locationIds)->get()
+                );
             }
         }
         elseif ($data['type'] == Delivery::TYPE_DELIVERY) {

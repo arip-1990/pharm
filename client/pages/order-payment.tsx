@@ -5,7 +5,9 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const OrderPayment: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ "order-payment": "Оплата заказа" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/order-payment', text: "Оплата заказа" }
+  ], []);
 
   return (
     <Layout>
@@ -18,7 +20,7 @@ const OrderPayment: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page>
         <h6 className="text-center fw-bold">

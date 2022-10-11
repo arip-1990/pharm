@@ -5,7 +5,9 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const ProcessingPersonalData: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ "processing-personal-data": "Обработка персональных данных" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/processing-personal-data', text: "Обработка персональных данных" }
+  ], []);
 
   return (
     <Layout>
@@ -18,7 +20,7 @@ const ProcessingPersonalData: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Обработка персональных данных">
         <p>

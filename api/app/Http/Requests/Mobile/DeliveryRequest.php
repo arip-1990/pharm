@@ -53,11 +53,12 @@ class DeliveryRequest extends FormRequest
             "addressData.value" =>"nullable|string|max:255",
             "addressData.zip" => "nullable|string|max:255",
 
-            "items.name" => "nullable|string|max:255",
-            "items.id" => "nullable|string|max:255",
-            "items.privateId" => "nullable|string|max:255",
-            "items.configurationId" => "nullable|string|max:255",
-            "items.quantity" => "nullable|numeric",
+            "items" => "required|array",
+            "items.*.name" => "nullable|string|max:255",
+            "items.*.id" => "nullable|uuid|max:255",
+            "items.*.privateId" => "required|uuid|max:255",
+            "items.*.configurationId" => "nullable|uuid|max:255",
+            "items.*.quantity" => "nullable|numeric",
         ];
     }
 }

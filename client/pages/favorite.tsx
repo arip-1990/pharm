@@ -12,7 +12,9 @@ const Favorite: FC = () => {
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
   const isMounted = useMounted();
 
-    const getDefaultTextGenerator = useCallback((path: string) => ({ favorite: "Избранное" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/favorite', text: "Избранное" }
+  ], []);
 
   return (
     <Layout>
@@ -20,7 +22,7 @@ const Favorite: FC = () => {
         <title>Сеть аптек 120/80 | Избранное</title>
       </Head>
 
-        <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+        <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <div className="col">

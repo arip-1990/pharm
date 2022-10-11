@@ -5,7 +5,9 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const Rent: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ rent: "Развитие сети/Аренда" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/rent', text: "Развитие сети/Аренда" }
+  ], []);
 
   return (
     <Layout>
@@ -18,7 +20,7 @@ const Rent: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Развитие сети/Аренда">
         <p>

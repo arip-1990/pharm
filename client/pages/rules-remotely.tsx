@@ -5,7 +5,9 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const RulesRemotely: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ "rules-remotely": "Правила дистанционной торговли ЛС" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/rules-remotely', text: "Правила дистанционной торговли ЛС" }
+  ], []);
 
   return (
     <Layout>
@@ -18,7 +20,7 @@ const RulesRemotely: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page>
         <p className="text-center fw-bold">

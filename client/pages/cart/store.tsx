@@ -36,9 +36,10 @@ const Store: FC = () => {
     fetchStores();
   }, [city]);
 
-  const getDefaultTextGenerator = useCallback((path: string) => (
-      { cart: "Корзина" }[path] || { store: "Выбор аптеки" }[path]
-  ), []);
+  const getDefaultGenerator = useCallback(() => [
+    {href: '/cart', text: "Корзина"},
+    {href: '/cart/store', text: "Выбор аптеки"}
+  ], []);
 
   const handleStore = (e: MouseEvent<HTMLButtonElement>, storeId: string) => {
     e.stopPropagation();
@@ -59,7 +60,7 @@ const Store: FC = () => {
 
   return (
     <Layout>
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <div className="col-7">

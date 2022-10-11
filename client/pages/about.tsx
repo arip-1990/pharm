@@ -14,7 +14,9 @@ import { FC, useCallback } from "react";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const About: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ about: "О компании" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/about', text: "О компании" }
+  ], []);
 
   return (
     <Layout>
@@ -27,7 +29,7 @@ const About: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page>
         <h6

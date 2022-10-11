@@ -5,7 +5,9 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const PrivacyPolicy: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ "privacy-policy": "Политика конфиденциальности" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/privacy-policy', text: "Политика конфиденциальности" }
+  ], []);
 
   return (
     <Layout>
@@ -18,7 +20,7 @@ const PrivacyPolicy: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Политика конфиденциальности">
         <p>

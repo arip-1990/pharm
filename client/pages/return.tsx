@@ -5,7 +5,9 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const Return: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ return: "Условия возврата" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/return', text: "Условия возврата" }
+  ], []);
 
   return (
     <Layout>
@@ -18,7 +20,7 @@ const Return: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Условия возврата">
         <p>

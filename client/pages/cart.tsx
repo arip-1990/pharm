@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState, MouseEvent } from "react";
 import Layout from "../components/layout";
 import defaultImage from "../assets/images/default.png";
 import Link from "next/link";
@@ -28,7 +28,8 @@ const Cart: FC = () => {
     setTotalAmount(tmp);
   }, [carts]);
 
-  const handleCheckout = useCallback(() => {
+  const handleCheckout = useCallback((e: MouseEvent) => {
+    e.preventDefault();
     if (isAuth) router.push("/cart/store");
     else {
       setOpenModal(true);
@@ -36,7 +37,9 @@ const Cart: FC = () => {
     }
   }, [isAuth]);
 
-  const getDefaultTextGenerator = useCallback((path: string) => ({ cart: "Корзина" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/cart', text: "Корзина" }
+  ], []);
 
   return (
     <Layout>
@@ -45,7 +48,7 @@ const Cart: FC = () => {
         <meta key="description" name="description" content="Корзина" />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <h3>Состав заказа</h3>
@@ -81,7 +84,7 @@ const Cart: FC = () => {
                 </div>
                 <div className="col-10 col-sm-7 col-md-5 product_title">
                   <p>
-                    <Link href={`/product/${cart.product.slug}`}>
+                    <Link href={`/catalog/product/${cart.product.slug}`}>
                       <a>{cart.product.name}</a>
                     </Link>
                   </p>

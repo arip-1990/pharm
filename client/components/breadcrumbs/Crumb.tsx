@@ -1,28 +1,13 @@
 import Link from "next/link";
-import { FC, HTMLAttributes, useState, useEffect } from "react";
+import { FC } from "react";
 
-interface Props extends HTMLAttributes<HTMLElement> {
-  text?: string;
-  textGenerator?: () => string;
+interface Props {
+  text: string;
   href: string;
   last?: boolean;
 }
 
-const Crumb: FC<Props> = ({
-  text: defaultText,
-  textGenerator,
-  href,
-  last = false,
-}) => {
-  const [text, setText] = useState(defaultText);
-
-  useEffect(() => {
-    if (!Boolean(textGenerator)) return;
-
-    const finalText = textGenerator();
-    setText(finalText);
-  }, [textGenerator]);
-
+const Crumb: FC<Props> = ({text, href, last = false}) => {
   if (last) {
     return (
       <li className="breadcrumb-item active" aria-current="page">

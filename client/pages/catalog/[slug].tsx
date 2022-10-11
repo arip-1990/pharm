@@ -1,6 +1,6 @@
 import Layout from "../../components/layout";
 import Card from "../../components/card";
-import {FC, useCallback, useEffect} from "react";
+import {FC, useEffect} from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../../models/ICategory";
 import Image from "next/image";
@@ -15,6 +15,8 @@ import {
 } from "../../lib/catalogService";
 import { useCookie } from "../../hooks/useCookie";
 import Breadcrumbs from "../../components/breadcrumbs";
+import {getCategoryBySlug, getTreeCategories} from "../../helpers";
+import {useFetchCategoriesQuery} from "../../lib/categoryService";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -56,14 +58,22 @@ const Catalog: FC = () => {
   const [city] = useCookie("city");
   const router = useRouter();
   const { slug, page } = router.query;
+  const {data: categories} = useFetchCategoriesQuery();
   const { data, refetch } = useFetchProductsQuery({
     category: String(slug),
     page: Number(page),
   });
 
-    const getDefaultTextGenerator = useCallback((path: string) => (
-        { catalog: "Наш ассортимент" }[path] || { [String(slug)]: "Поиск" }[path]
-    ), []);
+  const getDefaultGenerator = () => {
+    if (categories) {
+      const category = getCategoryBySlug(String(slug), categories);
+      return [{href: '/catalog', text: "Наш ассортимент"}, ...getTreeCategories(category, categories).map(item => ({
+        href: `/catalog/${item.slug}`,
+        text: item.name
+      }))]
+    }
+    return [{href: '/catalog', text: "Наш ассортимент"}];
+  };
 
   useEffect(() => {
     const path = router.asPath.split("?")[0];
@@ -73,7 +83,7 @@ const Catalog: FC = () => {
 
   return (
     <Layout>
-        {/*<Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />*/}
+        <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <nav className="col-md-3">

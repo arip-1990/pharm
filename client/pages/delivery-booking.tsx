@@ -14,7 +14,9 @@ import { FC, useCallback } from "react";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const DeliveryBooking: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ "delivery-booking": "Доставка/Бронирование" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/delivery-booking', text: "Доставка/Бронирование" }
+  ], []);
 
   return (
     <Layout>
@@ -27,7 +29,7 @@ const DeliveryBooking: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Доставка/Бронирование">
         <Row>

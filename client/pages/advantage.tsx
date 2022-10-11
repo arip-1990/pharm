@@ -11,7 +11,9 @@ import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const Advantage: FC = () => {
-  const getDefaultTextGenerator = useCallback((path: string) => ({ advantage: "Наши преимущества" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/advantage', text: "Наши преимущества" }
+  ], []);
 
   return (
     <Layout>
@@ -24,7 +26,7 @@ const Advantage: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page
         title="Преимущества наших аптек"

@@ -1,18 +1,13 @@
-import {FC, useCallback} from "react";
+import {FC} from "react";
 import Layout from "../components/layout";
 import BaseProfile from "../components/profile";
 import { useAuth } from "../hooks/useAuth";
-import Breadcrumbs from "../components/breadcrumbs";
 
 const Profile: FC = () => {
   const { user } = useAuth();
 
-  const getDefaultTextGenerator = useCallback((path: string) => ({ profile: "Профиль" }[path]), []);
-
   return (
     <Layout>
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
-
       <BaseProfile title="Персональные данные">
         <div className="row">
           <div

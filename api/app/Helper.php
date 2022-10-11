@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\ArrayShape;
 
 class Helper
 {
@@ -82,11 +83,11 @@ class Helper
         return $tmp;
     }
 
+    #[ArrayShape(['lon' => "float", 'lat' => "float"])]
     public static function getCoordinates(string $geoCode): array
     {
         $apiKey = config('data.yandex.GeoCoder.apikey');
-        if(empty($apiKey))
-            throw new \Exception('Не задан api ключ для GeoCoder');
+        if(empty($apiKey)) throw new \DomainException('Не задан api ключ для GeoCoder');
 
         $data = [
             'apikey'    => $apiKey,
@@ -103,8 +104,7 @@ class Helper
         curl_close($ch);
 
         $json = json_decode($response, true);
-        if(!isset($json['response']))
-            throw new \Exception('Не удалось получить ответ от GeoCoder');
+        if(!isset($json['response'])) throw new \DomainException('Не удалось получить ответ от GeoCoder');
 
         $coordinates = $json['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'];
         $coordinates = explode(' ', $coordinates);
@@ -112,5 +112,10 @@ class Helper
         $lat = $coordinates[1];// широта
 
         return ['lon' => (float)$lon, 'lat' => (float)$lat];
+    }
+
+    public static function trimPrefixCity(string $city): ?string
+    {
+        return preg_replace('/^(г|пос|с)[. ]/', '', trim($city));
     }
 }

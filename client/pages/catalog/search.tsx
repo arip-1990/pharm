@@ -58,9 +58,10 @@ const Search: FC = () => {
   });
   const { data: categories } = useFetchCategoriesQuery();
 
-    const getDefaultTextGenerator = useCallback((path: string) => (
-        { catalog: "Наш ассортимент" }[path] || { search: "Поиск" }[path]
-    ), []);
+    const getDefaultGenerator = useCallback(() => [
+      {href: '/catalog', text: "Наш ассортимент"},
+      {href: '/', text: `Поиск по запросу "${q}"`}
+    ], [q]);
 
   useEffect(() => {
     const path = router.asPath.split("?")[0];
@@ -70,7 +71,7 @@ const Search: FC = () => {
 
   return (
     <Layout>
-        <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+        <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <nav className="col-md-3">
@@ -93,7 +94,7 @@ const Search: FC = () => {
                 itemScope
                 itemType="https://schema.org/ItemList"
               >
-                <link itemProp="url" href="/products" />
+                <link itemProp="url" href={`/catalog/search?q=${q}`} />
                 {products?.data.map((product) => (
                   <div key={product.id} className="col-10 offset-1 offset-sm-0">
                     <Card product={product} />
@@ -111,7 +112,7 @@ const Search: FC = () => {
               </div>
             </>
           ) : (
-            <h3 className="text-center">Товары отсутствуют</h3>
+            <h3 className="text-center">По запросу "{q}" ничего не найдено!</h3>
           )}
         </div>
       </div>

@@ -59,7 +59,7 @@ const Catalog: FC = () => {
     else refetch();
   }, [city]);
 
-    const getDefaultTextGenerator = useCallback((path: string) => ({ catalog: "Наш ассортимент" }[path]), []);
+    const getDefaultGenerator = useCallback(() => [{ href: '/catalog', text: "Наш ассортимент" }], []);
 
   return (
     <Layout>
@@ -72,7 +72,7 @@ const Catalog: FC = () => {
             />
         </Head>
 
-        <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+        <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <nav className="col-md-3">

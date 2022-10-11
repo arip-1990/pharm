@@ -28,7 +28,9 @@ const Store: FC = () => {
     else refetch();
   }, [city]);
 
-  const getDefaultTextGenerator = useCallback((path: string) => ({ store: "Точки самовывоза" }[path]), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/store', text: "Точки самовывоза" }
+  ], []);
 
   let points = [];
 
@@ -39,7 +41,7 @@ const Store: FC = () => {
         <meta key="description" name="description" content="Точки самовывоза" />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Точки самовывоза">
         <Map points={points} />

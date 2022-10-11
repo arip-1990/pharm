@@ -20,9 +20,10 @@ const Store: FC = () => {
   const { slug } = router.query;
   const { data } = useGetStoreQuery(String(slug));
 
-  const getDefaultTextGenerator = useCallback((path: string) => (
-      { store: "Точки самовывоза" }[path] || { [String(slug)]: data.name }[path]
-  ), []);
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/store', text: "Точки самовывоза" },
+    { href: `/store/${String(slug)}`, text: data?.name }
+  ], [data]);
 
   return (
     <Layout>
@@ -31,7 +32,7 @@ const Store: FC = () => {
         <meta key="description" name="description" content={data?.name} />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page className="row">
         <div className="col-12 col-md-6">

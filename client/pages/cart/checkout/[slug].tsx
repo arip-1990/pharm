@@ -12,6 +12,7 @@ import { useMounted } from "../../../hooks/useMounted";
 import { useCookie } from "../../../hooks/useCookie";
 import api from "../../../lib/api";
 import Breadcrumbs from "../../../components/breadcrumbs";
+import Link from "next/link";
 
 interface Values {
   delivery: number;
@@ -61,9 +62,11 @@ const Checkout: FC = () => {
     setTotalPrice(tmp.totalPrice);
   }, [slug]);
 
-  const getDefaultTextGenerator = useCallback((path: string) => (
-      { cart: "Корзина" }[path] || { checkout: "Оформление заказа" }[path]// || { [slug]: "Оформление заказа" }[path]
-  ), []);
+  const getDefaultGenerator = useCallback(() => [
+    {href: '/cart', text: "Корзина"},
+    {href: '/cart/store', text: "Выбор аптеки"},
+    {href: `/cart/checkout/${String(slug)}`, text: "Оформление заказа"}
+  ], []);
 
   const formik = useFormik({
     initialValues: {
@@ -117,7 +120,7 @@ const Checkout: FC = () => {
 
   return (
     <Layout>
-      {/*<Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />*/}
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <h1 className="text-center">Оформление заказа</h1>
       {recipe ? (
@@ -175,9 +178,9 @@ const Checkout: FC = () => {
             carts.map((item) => (
               <div key={item.product.id} className="row mb-3">
                 <div className="col-6 col-md-8 offset-1 offset-md-0">
-                  <a href="{{ route('catalog.product', ['product' => $item->product->slug]) }}">
-                    {item.product.name}
-                  </a>
+                  <Link href={`/catalog/product/${item.product.slug}`}>
+                    <a>{item.product.name}</a>
+                  </Link>
                 </div>
                 <div className="col-4 col-md-4 text-end">
                   {item.product.minPrice}&#8381;{" "}

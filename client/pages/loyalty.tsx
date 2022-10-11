@@ -1,6 +1,6 @@
 import Layout from "../components/layout";
 import Page from "../components/page";
-import { FC, MouseEvent, useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 import Auth from "../components/auth";
@@ -9,12 +9,9 @@ import BaseLoyalty from "../components/loyalty";
 const Loyalty: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
-    const getDefaultTextGenerator = useCallback((path: string) => ({ loyalty: "Программа лояльности" }[path]), []);
-
-  const handleClick = (e: MouseEvent) => {
-    e.preventDefault();
-    setShowModal(true);
-  };
+  const getDefaultGenerator = useCallback(() => [
+    { href: '/loyalty', text: "Программа лояльности" }
+  ], []);
 
   return (
     <Layout banner>
@@ -27,7 +24,7 @@ const Loyalty: FC = () => {
         />
       </Head>
 
-      <Breadcrumbs getDefaultTextGenerator={getDefaultTextGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Программа лояльности">
         <BaseLoyalty />

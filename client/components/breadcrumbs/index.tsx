@@ -3,47 +3,37 @@ import { FC, HTMLAttributes, useMemo } from "react";
 import Crumb from "./Crumb";
 
 interface Props extends HTMLAttributes<HTMLElement> {
-  getTextGenerator?: (param: string, query: any) => null;
-  getDefaultTextGenerator?: (path?: string) => string;
+  getDefaultGenerator: () => {href: string, text: string}[];
 }
-
-const _defaultGetTextGenerator = (param: string, query: any) => null;
-const _defaultGetDefaultTextGenerator = (path: string) => path;
 
 const generatePathParts = (pathStr: string) => {
   const pathWithoutQuery = pathStr.split("?")[0];
   return pathWithoutQuery.split("/").filter((v) => v.length > 0);
 };
 
-const Breadcrumbs: FC<Props> = ({
-  getTextGenerator = _defaultGetTextGenerator,
-  getDefaultTextGenerator = _defaultGetDefaultTextGenerator,
-}) => {
-  const router = useRouter();
+const Breadcrumbs: FC<Props> = ({getDefaultGenerator}) => {
+  // const router = useRouter();
 
-  const breadcrumbs = useMemo(() => {
-    const asPathNestedRoutes = generatePathParts(router.asPath);
-    const pathnameNestedRoutes = generatePathParts(router.pathname);
+  // const breadcrumbs = useMemo(() => {
+  //   const asPathNestedRoutes = generatePathParts(router.asPath);
+  //
+  //   const crumbList = asPathNestedRoutes.map((path, idx) => {
+  //     const href = "/" + asPathNestedRoutes.slice(0, idx + 1).join("/");
+  //     return {
+  //       href,
+  //       text: getDefaultGenerator(),
+  //     };
+  //   });
+  //
+  //   return [{ href: "/", text: "Главная" }, ...crumbList];
+  // }, [
+  //   router.asPath,
+  //   router.pathname,
+  //   router.query,
+  //   getDefaultGenerator,
+  // ]);
 
-    const crumbList = asPathNestedRoutes.map((path, idx) => {
-      const param = pathnameNestedRoutes[idx].replace("[", "").replace("]", "");
-
-      const href = "/" + asPathNestedRoutes.slice(0, idx + 1).join("/");
-      return {
-        href,
-        textGenerator: getTextGenerator(param, router.query),
-        text: getDefaultTextGenerator(path),
-      };
-    });
-
-    return [{ href: "/", text: "Главная" }, ...crumbList];
-  }, [
-    router.asPath,
-    router.pathname,
-    router.query,
-    getTextGenerator,
-    getDefaultTextGenerator,
-  ]);
+  const breadcrumbs = useMemo(() => [{ href: "/", text: "Главная" }, ...getDefaultGenerator()], [getDefaultGenerator]);
 
   return (
     <nav aria-label="breadcrumb">

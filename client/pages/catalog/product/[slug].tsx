@@ -1,20 +1,23 @@
-import Layout from "../../components/layout";
+import Layout from "../../../components/layout";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { FC, useCallback, useEffect, useState } from "react";
-import defaultImage from "../../assets/images/default.png";
+import defaultImage from "../../../assets/images/default.png";
 import { useLocalStorage } from "react-use-storage";
-import Accordion from "../../components/accordion";
-import Zoom from "../../components/zoom";
-import Cart from "../../components/cart";
+import Accordion from "../../../components/accordion";
+import Zoom from "../../../components/zoom";
+import Cart from "../../../components/cart";
 import {
   getProduct,
   getRunningOperationPromises,
   useGetProductQuery,
-} from "../../lib/catalogService";
-import { wrapper } from "../../store";
+} from "../../../lib/catalogService";
+import { wrapper } from "../../../store";
 import { useRouter } from "next/router";
-import { useCookie } from "../../hooks/useCookie";
+import { useCookie } from "../../../hooks/useCookie";
+import {getTreeCategories} from "../../../helpers";
+import {useFetchCategoriesQuery} from "../../../lib/categoryService";
+import Breadcrumbs from "../../../components/breadcrumbs";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -42,6 +45,20 @@ const Product: FC = () => {
   const router = useRouter();
   const { slug } = router.query;
   const { data, refetch } = useGetProductQuery(String(slug));
+  const {data: categories} = useFetchCategoriesQuery();
+
+  const getDefaultGenerator = () => {
+    let crumbs = [{href: '/catalog', text: "Наш ассортимент"}];
+
+    if (categories && data?.product.category) {
+      crumbs = [...crumbs, ...getTreeCategories(data.product.category, categories).map(item => ({
+        href: `/catalog/${item.slug}`,
+        text: item.name
+      }))];
+    }
+
+    return [...crumbs, {href: `/catalog/product/${slug}`, text: data?.product.name}];
+  };
 
   useEffect(() => refetch(), [city]);
 
@@ -50,6 +67,8 @@ const Product: FC = () => {
       <Head>
         <title>{data?.product.name}</title>
       </Head>
+
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Accordion>
         <Accordion.Item eventKey="attributes">
