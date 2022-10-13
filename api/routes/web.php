@@ -149,13 +149,13 @@ Route::prefix('auth')->group(function () {
         Route::post('/phone', [Auth\Verify\VerifyPhoneController::class, 'handle']);
     });
 
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware('auth')->group(function () {
         Route::post('/logout', [Auth\LogoutController::class, 'handle']);
         Route::post('/refresh', [Auth\RefreshController::class, 'handle']);
     });
 });
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::prefix('user')->group(function () {
         Route::get('/', [User\IndexController::class, 'handle']);
         Route::patch('/', [User\UpdateController::class, 'handle']);

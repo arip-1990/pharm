@@ -99,7 +99,7 @@ const Checkout: FC = () => {
         );
 
         if (data.paymentUrl) window.location.href = data.paymentUrl;
-        else router.push(`/order/checkout/${data.id}`);
+        else router.push(`/order/checkout/${data.id}/success`);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           if (error.response.status === 422) {
