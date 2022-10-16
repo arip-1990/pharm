@@ -119,7 +119,7 @@ class OfferCommand extends Command
         $fields = [];
         $i = 0;
         foreach ($data->offers->offer as $item) {
-            if (!$product = Product::find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+            if (!$product = Product::find((string)$item->uuid) or str_starts_with($product->name, '*')) continue;
             $price = (float)$item->price;
             $quantity = (int)$item->quantity;
             $fields[] = [

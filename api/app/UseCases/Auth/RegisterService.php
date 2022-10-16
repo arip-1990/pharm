@@ -4,6 +4,7 @@ namespace App\UseCases\Auth;
 
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\VerifyPhoneRequest;
+use App\Http\Requests\Mobile\Auth\RegisterRequest as MobileRegisterRequest;
 use App\Models\User;
 use App\UseCases\LoyaltyService;
 use App\UseCases\PosService;
@@ -16,7 +17,7 @@ class RegisterService extends LoyaltyService
         parent::__construct();
     }
 
-    public function requestRegister(RegisterRequest $request): void
+    public function requestRegister(RegisterRequest|MobileRegisterRequest $request): User
     {
         $data = $this->posService->getBalance($request->get('phone'));
         if (isset($data['contactID']))
@@ -42,17 +43,15 @@ class RegisterService extends LoyaltyService
 
         if ($cardNumber = $request->get('cardNumber')) {
             $user->token = $this->phoneRegister($user, $cardNumber);
-
-            $request->session()->put('token', $user->token);
         }
         else {
             $user->id = $this->posService->createCard($user)['contactID'];
             $this->posService->getBalance($user->phone, true);
-
-            $request->session()->put('userId', $user->id);
         }
 
         $user->save();
+
+        return $user;
     }
 
     private function phoneRegister(User $user, string $cardNumber): string

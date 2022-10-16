@@ -11,7 +11,7 @@ class FeedController
     public function handle(Request $request): JsonResponse
     {
         $data = [];
-        Product::query()->whereIn('code', $request->post('codes', []))->each(function (Product $product) use (&$data) {
+        Product::whereIn('code', $request->post('codes', []))->each(function (Product $product) use (&$data) {
             $data[] = [
                 'Код' => $product->code,
                 'Картинка' => $product->photos()->first()?->getUrl(),

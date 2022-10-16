@@ -55,7 +55,7 @@ const Auth: FC<Props> = ({ children }) => {
         const { data } = await api.post<{
           accessToken: string;
           expiresIn: number;
-        }>("/v1/auth/login", { email, password }, { maxRedirects: 0 });
+        }>("/auth/login", { email, password }, { maxRedirects: 0 });
 
         localStorage.setItem("token", JSON.stringify(data));
 
@@ -71,7 +71,7 @@ const Auth: FC<Props> = ({ children }) => {
   const logout = () =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("/v1/auth/logout");
+        await api.post("/auth/logout");
         // Only sign out after the server has successfully responded.
         setAuthState({ user: null, isAuth: false });
         localStorage.removeItem("token");
@@ -94,7 +94,7 @@ const Auth: FC<Props> = ({ children }) => {
   const revalidate = () =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        const { data } = await api.get<IUser>("/v1/auth/user", {
+        const { data } = await api.get<IUser>("/auth/user", {
           maxRedirects: 0,
         });
 

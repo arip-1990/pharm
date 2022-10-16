@@ -5,7 +5,7 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.120на80
 export const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_COOKIE_DOMAIN || '.xn--12080-6ve4g.xn--p1ai';
 
 const instance = axios.create({
-    baseURL: API_URL,
+    baseURL: `${API_URL}/v1`,
     headers: {'X-Requested-With': 'XMLHttpRequest'},
     withCredentials: true
 });
@@ -38,10 +38,8 @@ instance.interceptors.request.use(config => {
         token = token ? JSON.parse(token)?.accessToken : null;
         if (token && config.headers) config.headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     return config;
-    },
-    error => Promise.reject(error)
-);
+}, error => Promise.reject(error));
 
 export default instance;

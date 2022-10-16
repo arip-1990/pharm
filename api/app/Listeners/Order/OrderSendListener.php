@@ -18,11 +18,11 @@ class OrderSendListener implements ShouldQueue
     {
         $order = $event->order;
         try {
-            $order_number = config('data.orderStartNumber') + $order->id;
+            $orderNumber = config('data.orderStartNumber') + $order->id;
             $response = simplexml_load_string($this->getSendInfo($order));
 
             if(isset($response->errors->error->code)) {
-                $message = 'Номер заказа: ' . $order_number . '. Код ошибки: ' . $response->errors->error->code;
+                $message = 'Номер заказа: ' . $orderNumber . '. Код ошибки: ' . $response->errors->error->code;
 
                 throw new \DomainException($message . '. ' . $response->errors->error->message);
             }
@@ -36,9 +36,10 @@ class OrderSendListener implements ShouldQueue
         }
         catch (\Exception $e) {
             $order->changeStatusState(OrderState::STATE_ERROR);
+            throw new \DomainException($e->getMessage());
+        } finally {
+            $order->save();
         }
-
-        $order->save();
     }
 
     private function getSendInfo(Order $order): string

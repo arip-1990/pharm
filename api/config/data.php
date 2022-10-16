@@ -13,7 +13,7 @@ return [
             'pharmacies',
             'pharmacyOffers',
             'pharmacyOffers/getChanges',
-            'reserv/orders',
+            'orders',
             'offers'
         ]
     ],

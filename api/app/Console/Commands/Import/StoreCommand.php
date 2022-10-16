@@ -24,8 +24,8 @@ class StoreCommand extends Command
                 if (!$city = City::firstWhere('name', trim($address[0])))
                     continue;
 
-                $street = trim(str_replace(['пр.', 'пр', 'ул.', 'ул'], '', $address[1]));
-                $house = trim(str_replace(['д.', 'д'], '', $address[2]));
+                $street = trim(str_replace(['пр.', 'пр ', 'ул.', 'ул '], '', $address[1]));
+                $house = trim(str_replace(['д.', 'д '], '', $address[2]));
                 $location = Location::firstOrCreate(['city_id' => $city->id, 'street' => $street, 'house' => $house]);
                 if ($coordinates = $item->coordinates) $location->update(['coordinate' => [(float)$coordinates->lat, (float)$coordinates->lon]]);
 
@@ -41,7 +41,7 @@ class StoreCommand extends Command
                     'id' => (string)$item->uuid,
                     'name' => (string)$item->title,
                     'slug' => SlugService::createSlug(Store::class, 'slug', (string)$item->title),
-                    'phone' => (string)$item->phone ?: null,
+                    'phone' => trim((string)$item->phone, '+') ?: null,
                     'schedule' => json_encode($schedules, JSON_UNESCAPED_UNICODE),
                     'location_id' => $location->id
                 ];

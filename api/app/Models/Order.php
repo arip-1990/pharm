@@ -39,8 +39,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Delivery $delivery
  * @property OrderDelivery $orderDelivery
  *
- * @property Collection<Status> $statuses
- * @property Collection<OrderItem> $items
+ * @property Collection<int, Status> $statuses
+ * @property Collection<int, OrderItem> $items
  */
 class Order extends Model
 {

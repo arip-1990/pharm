@@ -149,7 +149,6 @@ services:
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
       ELASTICSEARCH_HOST: elasticsearch
-    command: sh -c 'php artisan event:cache'
     volumes:
       - uploads:/app/storage/app/public
       - ./logs:/app/storage/logs
