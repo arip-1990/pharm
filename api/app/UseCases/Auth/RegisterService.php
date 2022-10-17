@@ -19,12 +19,13 @@ class RegisterService extends LoyaltyService
 
     public function requestRegister(RegisterRequest|MobileRegisterRequest $request): User
     {
-        $data = $this->posService->getBalance($request->get('phone'));
+        $phone = $request instanceof MobileRegisterRequest ? $request->get('userIdentifier') : $request->get('phone');
+        $data = $this->posService->getBalance($phone);
         if (isset($data['contactID']))
-            throw new \DomainException('Существует контакт с таким телефоном');
+            throw new \DomainException('Существует контакт с таким телефоном', 111);
 
         $data = $request->validated();
-        $user = User::firstOrNew(['phone' => $data['phone'], 'email' => $data['email']]);
+        $user = User::firstOrNew(['phone' => $phone]);
 
         $fullName = explode(' ', $data['fullName']);
         $firstName = $fullName[1] ?? $fullName[0];
@@ -32,13 +33,13 @@ class RegisterService extends LoyaltyService
         $middleName = $fullName[2] ?? null;
 
         $user->id = $user->id ?: Uuid::uuid4()->toString();
-        $user->phone = $data['phone'];
+        $user->phone = $phone;
         $user->email = $data['email'] ?? null;
         $user->first_name = $firstName;
         $user->last_name = $lastName;
         $user->middle_name = $middleName;
         $user->password = $data['password'];
-        $user->birth_date = $data['birthDate'];
+        $user->birth_date = $data['birthday'] ?? $data['birthDate'];
         $user->gender = $data['gender'];
 
         if ($cardNumber = $request->get('cardNumber')) {

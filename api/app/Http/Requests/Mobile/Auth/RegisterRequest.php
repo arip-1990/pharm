@@ -17,6 +17,7 @@ class RegisterRequest extends FormRequest
             'userIdentifier' => 'required|regex:/^7\d{10}$/',
             'fullName' => 'required|string',
             'birthday' => 'required|date',
+            'password' => 'required|string|min:6|max:50',
             'email' => 'nullable|email|max:100',
             'gender' => 'nullable',
         ];
@@ -28,7 +29,8 @@ class RegisterRequest extends FormRequest
             'userIdentifier' => 'Телефон',
             'fullName' => 'ФИО',
             'birthDate' => 'День рождения',
-            'gender' => 'Пол'
+            'gender' => 'Пол',
+            'password' => 'Пароль',
         ];
     }
 }
