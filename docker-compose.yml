@@ -114,9 +114,8 @@ services:
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
-      SESSION_LIFETIME: 120
+      SESSION_CONNECTION: cache
       SESSION_DOMAIN: '.pharm.test'
-      SANCTUM_STATEFUL_DOMAINS: '*.pharm.test'
       CORS_ORIGIN: 'http://panel.pharm.test|http://pharm.test'
       REDIS_HOST: redis
       MAIL_HOST: mailer
@@ -182,8 +181,6 @@ services:
     networks:
       - traefik-public
       - default
-    volumes:
-      - redis-data:/data
 
   # parser:
   #   build:
@@ -226,7 +223,6 @@ services:
 
 volumes:
   db-postgres:
-  redis-data:
   uploads:
   esdata:
 

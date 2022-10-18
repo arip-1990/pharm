@@ -136,10 +136,9 @@ services:
       CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
-      SESSION_LIFETIME: 120
+      SESSION_CONNECTION: cache
       SESSION_SECURE_COOKIE: 'true'
       SESSION_DOMAIN: '.xn--12080-6ve4g.xn--p1ai'
-      SANCTUM_STATEFUL_DOMAINS: '*.xn--12080-6ve4g.xn--p1ai'
       CORS_ORIGIN: 'https://panel.xn--12080-6ve4g.xn--p1ai|https://xn--12080-6ve4g.xn--p1ai'
       REDIS_HOST: redis
       MAIL_HOST: smtp.mail.ru
@@ -216,7 +215,7 @@ services:
   #     restart_policy:
   #       condition: none
 
-  cheduler:
+  api-cheduler:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
@@ -229,17 +228,7 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
-      CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      REDIS_HOST: redis
-      MAIL_HOST: smtp.mail.ru
-      MAIL_PORT: 465
-      MAIL_USERNAME: info@120-na-80.ru
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120-na-80.ru
-      MAIL_FROM_NAME: Сеть аптек 120/80
-      ELASTICSEARCH_HOST: elasticsearch
-    command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan schedule:run'
+    command: sh -c 'php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public
       - ./logs:/app/storage/logs
@@ -252,7 +241,7 @@ services:
       restart_policy:
         condition: none
 
-  queue-worker:
+  api-worker:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
@@ -285,7 +274,7 @@ services:
         max_attempts: 5
         window: 120s
 
-  redis-subscribe:
+  api-subscribe:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80

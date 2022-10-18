@@ -13,33 +13,15 @@ class RedisSubscribe extends Command
 
     public function handle(): int
     {
-        $client = Redis::connection('bot')->client();
-        Redis::subscribe(['update'], function (string $data) use ($client) {
+        Redis::subscribe(['update'], function (string $data) {
             $data = json_decode($data, true);
-            $message = 'Данные успешно обновлены';
             switch ($data['type']) {
-                case 'category':
-                    if (Artisan::call('import:category'))
-                        $message = 'Ошибка обновления данных';
-                    break;
-                case 'offer':
-                    if (Artisan::call('import:offer'))
-                        $message = 'Ошибка обновления данных';
-                    break;
-                case 'product':
-                    if (Artisan::call('import:product'))
-                        $message = 'Ошибка обновления данных';
-                    break;
-                case 'store':
-                    if (Artisan::call('import:store'))
-                        $message = 'Ошибка обновления данных';
-                    break;
-                case 'test':
-                    if (Artisan::call('order', ['orderId' => $data['orderId']]))
-                        $message = 'Ошибка данных';
+                case 'category': Artisan::call('import:category'); break;
+                case 'offer': Artisan::call('import:offer'); break;
+                case 'product': Artisan::call('import:product'); break;
+                case 'store': Artisan::call('import:store'); break;
+                case 'test': Artisan::call('order', ['orderId' => $data['orderId']]);
             }
-
-            $client->publish('bot:import', json_encode(['success' => true, 'message' => $message]));
         });
 
         return 0;
