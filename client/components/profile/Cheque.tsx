@@ -31,7 +31,7 @@ const Cheque: FC<Props> = ({ data, className }) => {
       <tbody>
         {data.map((item) => (
           <tr key={item.id}>
-            <td>{item.date.format("d.m.Y")}</td>
+            <td>{item.date.format("L")}</td>
             <td>{item.number}</td>
             <td>{}</td>
             <td>{item.orgUnitName}</td>

@@ -28,8 +28,8 @@ const Coupon: FC<Props> = ({ data, className }) => {
           <tr key={item.id}>
             <td>{item.name}</td>
             <td>{item.number}</td>
-            <td>{item.actualStart.format("d.m.Y")}</td>
-            <td>{item.actualEnd.format("d.m.Y")}</td>
+            <td>{item.actualStart.format("L")}</td>
+            <td>{item.actualEnd.format("L")}</td>
             <td>{item.statusType}</td>
             <td>{item.description}</td>
           </tr>

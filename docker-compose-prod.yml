@@ -228,6 +228,9 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
+      CACHE_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
     command: sh -c 'php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public

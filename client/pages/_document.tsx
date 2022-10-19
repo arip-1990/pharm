@@ -6,6 +6,10 @@ class MyDocument extends Document {
     return (
       <Html lang="ru">
         <Head>
+          <meta charSet='utf-8' />
+          <meta name='viewport' content='width=device-width, initial-scale=1' />
+
+          <title>Сеть аптек 120/80</title>
           <meta name='title' content='Сеть аптек 120/80' />
           <meta
             key="description"
@@ -13,6 +17,7 @@ class MyDocument extends Document {
             content="Добро пожаловать на наш сайт - сервис для покупки лекарств и товаров в собственной аптечной сети! Наши аптеки популярны, благодаря широкому ассортименту и высокой культуре обслуживания при доступных ценах. Гарантия качества и сервисное обслуживание – основные принципы нашей работы!"
           />
 
+          <meta name="apple-itunes-app" content="app-id=6443518664" />
           <meta name="smartbanner:title" content="АПТЕКА 120/80" />
           <meta name="smartbanner:author" content="ООО Социальная аптека" />
           <meta name="smartbanner:price" content="Бесплатно" />

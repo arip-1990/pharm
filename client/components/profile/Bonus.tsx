@@ -25,11 +25,11 @@ const Bonus: FC<Props> = ({ data, className }) => {
       <tbody>
         {data.map((item) => (
           <tr key={item.id}>
-            <td>{item.createdDate.format("d.m.Y")}</td>
+            <td>{item.createdDate.format("L")}</td>
             <td>{item.campaignName}</td>
             <td>{item.debet}</td>
-            <td>{item.actualStart.format("d.m.Y")}</td>
-            <td>{item.actualEnd.format("d.m.Y")}</td>
+            <td>{item.actualStart.format("L")}</td>
+            <td>{item.actualEnd.format("L")}</td>
           </tr>
         ))}
       </tbody>

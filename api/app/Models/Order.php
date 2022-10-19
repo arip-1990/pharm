@@ -154,7 +154,9 @@ class Order extends Model
 
     public function isSend(): bool
     {
-        return $this->inStatus(OrderStatus::STATUS_SENT_IN_1C);
+        return $this->statuses->contains(fn(Status $status) => (
+            $status->equal(OrderStatus::STATUS_SENT_IN_1C) and $status->state === OrderState::STATE_SUCCESS
+        ));
     }
 
     public function isAccepted(): bool
