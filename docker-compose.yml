@@ -2,10 +2,12 @@ version: '3.9'
 services:
   traefik:
     image: traefik:2.8
-    command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80 --entryPoints.http_other.address=:8888
+    command:
+      --providers.docker=true
+      --providers.docker.exposedByDefault=false
+      --entryPoints.http.address=:80
     ports:
       - "80:80"
-      - "8888:8888"
     networks:
       - traefik-public
     volumes:
@@ -23,12 +25,12 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.site.rule=Host(`pharm.test`) || Host(`www.pharm.test`)
+      - traefik.http.routers.site.rule=Host(`localhost`) || Host(`www.localhost`)
       - traefik.http.routers.site.entryPoints=http
       - traefik.http.routers.site.service=site_main
       - traefik.http.services.site_main.loadBalancer.server.port=80
-      - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.pharm.test/(.*)$$
-      - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}pharm.test/$${2}
+      - traefik.http.middlewares.site-redirect.redirectRegex.regex=^(https?://)www.localhost/(.*)$$
+      - traefik.http.middlewares.site-redirect.redirectRegex.replacement=$${1}localhost/$${2}
       - traefik.http.middlewares.site-redirect.redirectRegex.permanent=true
       - traefik.http.routers.site.middlewares=site-redirect
 
@@ -36,13 +38,13 @@ services:
     build:
       context: client/docker/dev/node
     environment:
-      NEXT_PUBLIC_API_URL: http://api.pharm.test
-      NEXT_PUBLIC_COOKIE_DOMAIN: '.pharm.test'
+      NEXT_PUBLIC_API_URL: http://api.localhost
+      NEXT_PUBLIC_COOKIE_DOMAIN: localhost
     volumes:
       - ./client:/app
     command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn dev"
     links:
-      - "api:api.pharm.test"
+      - "api:api.localhost"
 
   client-node-cli:
     build:
@@ -59,7 +61,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.panel.rule=Host(`panel.pharm.test`)
+      - traefik.http.routers.panel.rule=Host(`panel.localhost`)
       - traefik.http.routers.panel.entryPoints=http
       - traefik.http.services.panel.loadBalancer.server.port=80
 
@@ -67,7 +69,7 @@ services:
     build:
       context: panel/docker/dev/node
     environment:
-      REACT_APP_API_URL: http://api.pharm.test
+      REACT_APP_API_URL: http://api.localhost
     volumes:
       - ./panel:/app
     command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn start"
@@ -91,7 +93,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.api.rule=Host(`api.pharm.test`)
+      - traefik.http.routers.api.rule=Host(`api.localhost`)
       - traefik.http.routers.api.entryPoints=http,http_other
       - traefik.http.services.api.loadBalancer.server.port=80
 
@@ -101,7 +103,7 @@ services:
       dockerfile: dev/php-fpm/Dockerfile
     environment:
       APP_NAME: Сеть аптек 120/80
-      APP_URL: http://api.pharm.test
+      APP_URL: http://api.localhost
       APP_ENV: local
       APP_DEBUG: true
       LOG_CHANNEL: stack
@@ -115,11 +117,9 @@ services:
       QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
       SESSION_CONNECTION: cache
-      SESSION_DOMAIN: '.pharm.test'
-      CORS_ORIGIN: 'http://panel.pharm.test|http://pharm.test'
       REDIS_HOST: redis
       MAIL_HOST: mailer
-      MAIL_FROM_ADDRESS: info@pharm.test
+      MAIL_FROM_ADDRESS: info@localhost
       MAIL_FROM_NAME: Сеть аптек 120/80
       FILESYSTEM_DISK: public
     volumes:
@@ -132,7 +132,7 @@ services:
       dockerfile: dev/php-cli/Dockerfile
     environment:
       APP_NAME: Сеть аптек 120/80
-      APP_URL: http://api.pharm.test
+      APP_URL: http://api.localhost
       APP_ENV: local
       APP_DEBUG: true
       LOG_CHANNEL: stack
@@ -146,7 +146,7 @@ services:
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       MAIL_HOST: mailer
-      MAIL_FROM_ADDRESS: info@pharm.test
+      MAIL_FROM_ADDRESS: info@localhost
       MAIL_FROM_NAME: Сеть аптек 120/80
       FILESYSTEM_DISK: public
     volumes:
@@ -172,7 +172,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.http.routers.mailer.rule=Host(`mailer.pharm.test`)
+      - traefik.http.routers.mailer.rule=Host(`mailer.localhost`)
       - traefik.http.routers.mailer.entryPoints=http
       - traefik.http.services.mailer.loadBalancer.server.port=8025
 
@@ -203,6 +203,7 @@ services:
       - ./bot:/app
     depends_on:
       - redis
+
   # elasticsearch:
   #   image: elasticsearch:8.3.2
   #   environment:

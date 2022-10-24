@@ -4,10 +4,8 @@ use App\Http\Controllers\V1\Mobile;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
-    Route::post('register', [Mobile\Auth\RegisterController::class, 'handle']);
-    Route::post('login', [Mobile\Auth\LoginController::class, 'handle']);
-    Route::post('verify-phone', [Mobile\Auth\VerifyPhoneController::class, 'handle']);
-//    Route::post('logout', []);
+    Route::post('/', [Mobile\Auth\AuthController::class, 'handle']);
+    Route::post('verify', [Mobile\Auth\VerifyController::class, 'handle']);
 });
 
 Route::prefix('acquiring')->group(function () {

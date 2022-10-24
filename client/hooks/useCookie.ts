@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { CookieSetOptions } from 'universal-cookie';
 import { useCookies } from 'react-cookie';
 import { COOKIE_DOMAIN } from '../lib/api';
 

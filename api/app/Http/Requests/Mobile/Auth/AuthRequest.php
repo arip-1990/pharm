@@ -4,7 +4,7 @@ namespace App\Http\Requests\Mobile\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class AuthRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,11 +15,10 @@ class RegisterRequest extends FormRequest
     {
         return [
             'userIdentifier' => 'required|regex:/^7\d{10}$/',
-            'fullName' => 'required|string',
-            'birthday' => 'required|date',
-            'password' => 'required|string|min:6|max:50',
+            'fullName' => 'nullable|string',
+            'birthday' => 'nullable|date',
             'email' => 'nullable|email|max:100',
-            'gender' => 'nullable',
+            'gender' => 'nullable'
         ];
     }
 
@@ -28,9 +27,8 @@ class RegisterRequest extends FormRequest
         return [
             'userIdentifier' => 'Телефон',
             'fullName' => 'ФИО',
-            'birthDate' => 'День рождения',
-            'gender' => 'Пол',
-            'password' => 'Пароль',
+            'birthday' => 'День рождения',
+            'gender' => 'Пол'
         ];
     }
 }

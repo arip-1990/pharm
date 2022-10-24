@@ -4,7 +4,7 @@ namespace App\Http\Requests\Mobile\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyPhoneRequest extends FormRequest
+class VerifyRequest extends FormRequest
 {
     public function authorize(): bool
     {

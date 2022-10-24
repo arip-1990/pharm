@@ -65,6 +65,24 @@ class User extends Authenticatable implements JWTSubject
         'phone_verified_at' => 'datetime',
     ];
 
+    public function getFullName(): string
+    {
+        $name = $this->last_name ? ($this->last_name . ' ') : '';
+        $name .= $this->first_name;
+        $name .= $this->middle_name ? (' ' . $this->middle_name) : '';
+
+        return $name;
+    }
+
+    public function getGenderLabel(): string
+    {
+        return match ($this->gender) {
+            1 => 'male',
+            2 => 'female',
+            default => '',
+        };
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class)->orderByDesc('id');

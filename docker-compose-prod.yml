@@ -150,7 +150,6 @@ services:
       ELASTICSEARCH_HOST: elasticsearch
     volumes:
       - uploads:/app/storage/app/public
-      - ./logs:/app/storage/logs
     deploy:
       mode: replicated
       replicas: 1
@@ -234,7 +233,6 @@ services:
     command: sh -c 'php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public
-      - ./logs:/app/storage/logs
     deploy:
       labels:
         - swarm.cronjob.enable=true
@@ -269,7 +267,6 @@ services:
     command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan queue:work'
     volumes:
       - uploads:/app/storage/app/public
-      - ./logs:/app/storage/logs
     deploy:
       restart_policy:
         condition: on-failure
@@ -302,7 +299,6 @@ services:
     command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan redis:subscribe'
     volumes:
       - uploads:/app/storage/app/public
-      - ./logs:/app/storage/logs
     deploy:
       restart_policy:
         condition: on-failure

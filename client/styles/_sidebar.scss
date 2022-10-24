@@ -50,7 +50,7 @@
       width: 100%;
       padding: 0 10px;
       cursor: default;
-      z-index: 99;
+      z-index: 999;
     }
   }
 
@@ -71,7 +71,6 @@
 
       > .overlay {
         display: block;
-        z-index: 99;
       }
     }
 

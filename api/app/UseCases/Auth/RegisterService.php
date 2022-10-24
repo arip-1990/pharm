@@ -4,7 +4,6 @@ namespace App\UseCases\Auth;
 
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\VerifyPhoneRequest;
-use App\Http\Requests\Mobile\Auth\RegisterRequest as MobileRegisterRequest;
 use App\Models\User;
 use App\UseCases\LoyaltyService;
 use App\UseCases\PosService;
@@ -17,9 +16,9 @@ class RegisterService extends LoyaltyService
         parent::__construct();
     }
 
-    public function requestRegister(RegisterRequest|MobileRegisterRequest $request): User
+    public function requestRegister(RegisterRequest $request): User
     {
-        $phone = $request instanceof MobileRegisterRequest ? $request->get('userIdentifier') : $request->get('phone');
+        $phone = $request->get('phone');
         $data = $this->posService->getBalance($phone);
         if (isset($data['contactID']))
             throw new \DomainException('Существует контакт с таким телефоном', 111);
@@ -39,7 +38,7 @@ class RegisterService extends LoyaltyService
         $user->last_name = $lastName;
         $user->middle_name = $middleName;
         $user->password = $data['password'];
-        $user->birth_date = $data['birthday'] ?? $data['birthDate'];
+        $user->birth_date = $data['birthDate'];
         $user->gender = $data['gender'];
 
         if ($cardNumber = $request->get('cardNumber')) {
