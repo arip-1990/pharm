@@ -15,7 +15,7 @@ return new class extends Migration
             $table->timestamp('last_request')->nullable();
             $table->timestamp('expired_at')->nullable();
 
-            $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignUuid('user_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

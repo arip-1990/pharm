@@ -46,6 +46,7 @@ class Order extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = ['user_id'];
     protected $casts = [
         'status' => StatusCast::class,
         'statuses' => StatusCollectionCast::class

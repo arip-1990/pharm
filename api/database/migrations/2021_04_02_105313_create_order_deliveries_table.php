@@ -16,8 +16,8 @@ return new class extends Migration
             $table->boolean('service_to_door')->default(false);
             $table->decimal('price', unsigned: true)->comment('Цена доставки');
 
-            $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('location_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('order_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('location_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
         });
     }
 

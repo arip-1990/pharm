@@ -15,8 +15,8 @@ return new class extends Migration
             $table->text('comment')->nullable();
             $table->timestamps();
 
-            $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
-            $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignUuid('product_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('user_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
         });
     }
 

@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->unique(['name', 'type']);
 
-            $table->foreignId('parent_id')->nullable()->constrained('cities')->onDelete('set null');
+            $table->foreignId('parent_id')->nullable()->constrained('cities')->onUpdate('cascade')->onDelete('set null');
         });
     }
 

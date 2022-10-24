@@ -124,9 +124,6 @@ class PosService extends LoyaltyService
         if (0 !== (int)$data->ReturnCode)
             throw new \DomainException((string)$data->Message, (int)$data->ReturnCode);
 
-        if (isset($data->ContactID))
-            throw new \DomainException('Существует контакт с таким телефоном');
-
         return [
             'contactID' => (string)$data->ContactID,
             'contactPresence' => (int)$data->ContactPresence,

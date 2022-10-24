@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->unique(['store_id', 'product_id']);
 
-            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
-            $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('store_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignUuid('product_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

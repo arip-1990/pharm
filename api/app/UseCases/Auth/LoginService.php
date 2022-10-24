@@ -32,20 +32,10 @@ class LoginService extends LoyaltyService
         if ($response->getStatusCode() !== 200)
             throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
 
-        $orders = [];
-        $visits = [];
         $session = $data['SessionId'];
         if (!$user = User::find($data['Id'])) {
             $data = $this->userService->getInfo($data['Id'], $session);
             $user = User::firstOrNew(['phone' => $data['MobilePhone']]);
-
-            $orders = $user->orders;
-            $visits = $user->visits;
-            if (count($orders) or count($visits)) {
-                $tmp = User::find('5ac09db5-8f02-4158-ac3a-283c548de800');
-                if (count($orders)) $tmp->orders()->saveMany($orders);
-                if (count($visits)) $tmp->visits()->saveMany($visits);
-            }
 
             $user->fill([
                 'id' => $data['Id'],
@@ -62,9 +52,6 @@ class LoginService extends LoyaltyService
 
         $user->phone_verified_at = $user->phone_verified_at ?? Carbon::now();
         $user->save();
-
-        if (count($orders)) $user->orders()->saveMany($orders);
-        if (count($visits)) $user->visits()->saveMany($visits);
 
         return [
             'token' => Auth::login($user),

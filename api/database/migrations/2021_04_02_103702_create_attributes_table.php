@@ -17,7 +17,7 @@ return new class extends Migration
             $table->json('variants')->default('[]');
             $table->timestamps();
 
-            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('category_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
         });
     }
 

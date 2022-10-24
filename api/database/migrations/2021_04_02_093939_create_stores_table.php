@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreignId('location_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('location_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
         });
     }
 

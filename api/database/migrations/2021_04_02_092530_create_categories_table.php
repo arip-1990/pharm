@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('_rgt', unsigned: true);
             $table->timestamps();
 
-            $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->foreignId('parent_id')->nullable()->constrained('categories')->onUpdate('cascade')->onDelete('set null');
         });
     }
 

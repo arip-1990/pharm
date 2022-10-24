@@ -23,10 +23,10 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignUuid('store_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('payment_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('delivery_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignUuid('user_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
+            $table->foreignUuid('store_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
+            $table->foreignId('payment_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
+            $table->foreignId('delivery_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
         });
     }
 

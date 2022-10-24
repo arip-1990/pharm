@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->unique(['city_id', 'street', 'house']);
 
-            $table->foreignId('city_id')->constrained()->onDelete('cascade');
+            $table->foreignId('city_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

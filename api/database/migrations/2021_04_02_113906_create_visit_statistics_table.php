@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('referrer')->nullable();
             $table->timestamps();
 
-            $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignUuid('user_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
         });
     }
 
