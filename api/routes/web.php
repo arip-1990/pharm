@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function () {
-    \Illuminate\Support\Facades\Artisan::call('import:category');
-});
-
 Route::post('/pay', [V1\PayController::class, 'handle']);
 
 Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {

@@ -12,7 +12,17 @@ services:
 
   traefik:
     image: traefik:2.8
-    command: --providers.docker=true --providers.docker.watch=true --providers.docker.swarmMode=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80 --entryPoints.https.address=:443 --certificatesResolvers.letsEncrypt.acme.httpChallenge=true --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
+    command:
+      --providers.docker=true
+      --providers.docker.watch=true
+      --providers.docker.swarmMode=true
+      --providers.docker.exposedByDefault=false
+      --entryPoints.http.address=:80
+      --entryPoints.https.address=:443
+      --certificatesResolvers.letsEncrypt.acme.httpChallenge=true
+      --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http
+      --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info
+      --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
     ports:
       - target: 80
         published: 80

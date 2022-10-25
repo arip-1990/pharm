@@ -8,6 +8,10 @@ Route::prefix('auth')->group(function () {
     Route::post('verify', [Mobile\Auth\VerifyController::class, 'handle']);
 });
 
+Route::prefix('user')->group(function () {
+    Route::post('/', []);
+});
+
 Route::prefix('acquiring')->group(function () {
     Route::post('/', [Mobile\Acquiring\IndexController::class, 'handle']);
     Route::post('/status', [Mobile\Acquiring\StatusController::class, 'handle']);

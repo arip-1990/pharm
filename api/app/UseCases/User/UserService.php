@@ -13,10 +13,12 @@ class UserService extends LoyaltyService
         parent::__construct();
     }
 
-    public function getInfo(string $id, string $sessionId): array
+    public function getInfo(string $id, string $session = null): array
     {
         $url = $this->urls['lk'] . '/Contact/Get';
-        $response = $this->client->get($url, ['query' => "id='{$id}'&sessionid='{$sessionId}'"]);
+        $session = $session ?? $this->managerService->login()['sessionId'];
+
+        $response = $this->client->get($url, ['query' => "id='{$id}'&sessionid='{$session}'"]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -28,7 +30,6 @@ class UserService extends LoyaltyService
     public function updateInfo(User $user, array $newData = [], string $session = null): string
     {
         $url = $this->urls['lk'] . '/Contact/Update';
-        if (!$session) $manager = $this->managerService->login();
 
         $data = [
             'Entity' => [
@@ -47,7 +48,7 @@ class UserService extends LoyaltyService
                 'AgreeToTerms' => false,
                 'PartnerId' => $this->config['partner_id']
             ],
-            'SessionId' => $session ?? $manager['sessionId']
+            'SessionId' => $session ?? $this->managerService->login()['sessionId']
         ];
 
         $response = $this->client->post($url, ['json' => ['parameter' => json_encode($data)]]);

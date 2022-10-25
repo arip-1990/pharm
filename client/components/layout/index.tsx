@@ -7,13 +7,15 @@ import Loyalty from "../loyalty";
 import Auth from "../auth";
 import {useAuth} from "../../hooks/useAuth";
 import TopInfo from "./topInfo";
+import Banner from "../banner";
 
 type Props = {
   children?: ReactNode;
   banner?: boolean;
+  type?: 'main' | 'loyalty';
 };
 
-const Layout: FC<Props> = ({ children, banner }) => {
+const Layout: FC<Props> = ({ children, banner, type = 'main' }) => {
     const {isAuth} = useAuth();
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -32,7 +34,7 @@ const Layout: FC<Props> = ({ children, banner }) => {
       {banner && (
         <Container>
           <Row style={{ justifyContent: "center" }}>
-            <Loyalty.Banner disabled={isAuth} onClick={handleClick} />
+            {type == 'main' ? <Banner /> : <Loyalty.Banner disabled={isAuth} onClick={handleClick} />}
           </Row>
         </Container>
       )}
