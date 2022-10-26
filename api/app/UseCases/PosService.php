@@ -64,7 +64,7 @@ class PosService extends LoyaltyService
             "cardDiscount" => (float)$data->CardDiscount,
             "cardQuantity" => (int)$data->CardQuantity,
             "contactPresence" => (int)$data->ContactPresence,
-            "cardType" => $data->CardType,
+            "cardType" => (string)$data->CardType,
             "cardStatus" => (int)$data->CardStatus,
             "cardCollaborationType" => (int)$data->CardCollaborationType,
             "cardChargeType" => (int)$data->CardChargeType,

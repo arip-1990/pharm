@@ -14,7 +14,7 @@ class IndexController
     public function handle(Request $request): JsonResponse
     {
         try {
-            $data = $this->service->getAll($request->user(), $request->session()->get('session'));
+            $data = $this->service->getAllByUser($request->user()->id, $request->session()->get('session'));
         }
         catch (\DomainException $e) {
             return new JsonResponse([

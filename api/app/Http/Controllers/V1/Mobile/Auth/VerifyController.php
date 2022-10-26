@@ -23,7 +23,6 @@ class VerifyController
             $user = User::where('phone', $data['userIdentifier'])->firstOrFail();
 
             $data = $this->posService->getBalance($user->phone, validationCode: $data['otp']);
-
             if (!$user->phone_verified_at) {
                 $this->userService->updateInfo($user);
                 $this->userService->setPassword($user->id, $user->password);
@@ -43,13 +42,9 @@ class VerifyController
                 'email' => $user->email,
                 'gender' => $user->getGenderLabel(),
                 'age' => $user->birth_date?->age,
+                'segments' => [],
                 'cardNumber' => $data['cardNumber'],
-                'bonuses' => 0,
-                'pendingBonuses' => 0,
-                'pendingBonusesTitle' => 'Будет накоплено',
-                'expressBonuses' => 0,
-                'exressBonusesTitle' => 'Экспресс-бонусы',
-                'loyaltyProgram' => [],
+                'bonuses' => $data['cardBalance'],
             ]
         ]);
     }

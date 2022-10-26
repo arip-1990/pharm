@@ -9,7 +9,8 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('user')->group(function () {
-    Route::post('/', []);
+    Route::post('/', [Mobile\User\IndexController::class, 'handle']);
+    Route::patch('/', [Mobile\User\UpdateController::class, 'handle']);
 });
 
 Route::prefix('acquiring')->group(function () {

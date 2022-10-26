@@ -6,6 +6,7 @@ use App\Http\Requests\User\UpdatePasswordRequest;
 use App\Models\User;
 use App\UseCases\LoyaltyService;
 use App\UseCases\ManagerService;
+use Carbon\Carbon;
 
 class UserService extends LoyaltyService
 {
@@ -30,24 +31,34 @@ class UserService extends LoyaltyService
     public function updateInfo(User $user, array $newData = [], string $session = null): string
     {
         $url = $this->urls['lk'] . '/Contact/Update';
+        $entity = [
+            'Id' => $user->id,
+            'MobilePhone' => $user->phone,
+            'EmailAddress' => $user->email,
+            'Firstname' => $user->first_name,
+            'Lastname' => $user->last_name,
+            'MiddleName' => $user->middle_name,
+            'BirthDate' => $user->birth_date?->format('Y-m-d'),
+            'GenderCode' => $user->gender,
+            'MobilePhoneVerified' => true,
+            'AllowNotification' => false,
+            'AllowEmail' => false,
+            'AllowSms' => false,
+            'AgreeToTerms' => false,
+            'PartnerId' => $this->config['partner_id']
+        ];
+
+        if ($newData) {
+            $entity['EmailAddress'] = $newData['email'] ?? $user->email;
+            $entity['Firstname'] = $newData['firstName'] ?? $user->first_name;
+            $entity['Lastname'] = $newData['lastName'];
+            $entity['MiddleName'] = $newData['middleName'];
+            $entity['BirthDate'] = $newData['birthDate']?->format('Y-m-d') ?? $user->birth_date?->format('Y-m-d');
+            $entity['GenderCode'] = $newData['gender'] ?? $user->gender;
+        }
 
         $data = [
-            'Entity' => [
-                'Id' => $user->id,
-                'MobilePhone' => $user->phone,
-                'EmailAddress' => $newData['email'] ?? $user->email,
-                'Firstname' => $newData['firstName'] ?? $user->first_name,
-                'Lastname' => $newData['lastName'] ?? $user->last_name,
-                'MiddleName' => $newData['middleName'] ?? $user->middle_name,
-                'BirthDate' => $newData['birthDate'] ?? $user->birth_date?->format('Y-m-d'),
-                'GenderCode' => $newData['gender'] ?? $user->gender,
-                'MobilePhoneVerified' => true,
-                'AllowNotification' => false,
-                'AllowEmail' => false,
-                'AllowSms' => false,
-                'AgreeToTerms' => false,
-                'PartnerId' => $this->config['partner_id']
-            ],
+            'Entity' => $entity,
             'SessionId' => $session ?? $this->managerService->login()['sessionId']
         ];
 
@@ -56,6 +67,15 @@ class UserService extends LoyaltyService
 
         if ($response->getStatusCode() !== 200)
             throw new \DomainException($data['odata.error']['message']['value'], $data['odata.error']['code']);
+
+        $user->update([
+            'first_name' => $entity['Firstname'],
+            'last_name' => $entity['Lastname'],
+            'middle_name' => $entity['MiddleName'],
+            'email' => $entity['EmailAddress'],
+            'birth_date' => Carbon::parse($entity['BirthDate']),
+            'gender' => $entity['GenderCode']
+        ]);
 
         return $data['value'];
     }

@@ -2,14 +2,18 @@
 
 namespace App\UseCases;
 
-use App\Models\User;
-
 class CardService extends LoyaltyService
 {
-    public function getAll(User $user, string $session)
+    public function __construct(private readonly ManagerService $managerService) {
+        parent::__construct();
+    }
+
+    public function getAllByUser(string $userId, string $session = null): array
     {
         $url = $this->urls['lk'] . '/Card/GetAllByContact';
-        $response = $this->client->get($url, ['query' => "contactid='{$user->id}'&sessionid='{$session}'"]);
+        $session = $session ?? $this->managerService->login()['sessionId'];
+
+        $response = $this->client->get($url, ['query' => "contactid='{$userId}'&sessionid='{$session}'"]);
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200)
@@ -18,11 +22,12 @@ class CardService extends LoyaltyService
         return $data['value'];
     }
 
-    public function block(User $user, string $cardId, string $session): void
+    public function block(string $userId, string $cardId, string $session = null): void
     {
         $url = $this->urls['lk'] . '/Contact/BlockCard';
+        $session = $session ?? $this->managerService->login()['sessionId'];
         $data = [
-            'Id' => $user->id,
+            'Id' => $userId,
             'CardId' => $cardId,
             'SessionId' => $session
         ];
