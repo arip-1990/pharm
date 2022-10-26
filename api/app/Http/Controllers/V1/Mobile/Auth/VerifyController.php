@@ -25,9 +25,11 @@ class VerifyController
             $data = $this->posService->getBalance($user->phone, validationCode: $data['otp']);
             if (!$user->phone_verified_at) {
                 $this->userService->updateInfo($user);
-                $this->userService->setPassword($user->id, $user->password);
 
-                $user->update(['password' => Hash::make($user->password)]);
+                if (strlen($user->password) < 50) {
+                    $this->userService->setPassword($user->id, $user->password);
+                    $user->update(['password' => Hash::make($user->password)]);
+                }
             }
         }
         catch (\Exception $e) {
