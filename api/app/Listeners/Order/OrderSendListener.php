@@ -9,6 +9,7 @@ use App\Models\Status\OrderState;
 use App\Models\Status\OrderStatus;
 use App\UseCases\Order\GenerateDataService;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 
@@ -29,9 +30,10 @@ class OrderSendListener implements ShouldQueue
 
             if(isset($response->success->order_id)) {
                 $order->changeStatusState(OrderState::STATE_SUCCESS);
-                $order->addStatus(OrderStatus::STATUS_SENT_MAIL);
 
+                $order->addStatus(OrderStatus::STATUS_SENT_MAIL);
                 Mail::to($order->user)->send(new CreateOrder($order));
+                $order->changeStatusState(OrderState::STATE_SUCCESS);
             }
         }
         catch (\Exception $e) {
@@ -46,18 +48,14 @@ class OrderSendListener implements ShouldQueue
     {
         $service = new GenerateDataService($order);
         $config = config('data.1c');
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => 'http://' . $config['login'] . ':' . $config['password'] . '@' . $config['urls'][5],
-            CURLOPT_POST => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER => false,
-            CURLOPT_POSTFIELDS => $service->generateSenData(Carbon::now())
+
+        $client = new Client([
+            'base_uri' => $config['base_url'],
+            'auth' => [$config['login'], $config['password']],
+            'verify' => false
         ]);
+        $response = $client->post($config['urls'][5], ['body' => $service->generateSenData(Carbon::now())]);
 
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        return $response;
+        return $response->getBody()->getContents();
     }
 }

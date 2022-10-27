@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Redis;
 
 class QueueCommand extends Command
 {
-    protected $signature = 'queue:list {connection=default}';
+    protected $signature = 'queue:list';
     protected $description = 'Queues list';
 
     public function handle(): int
     {
-        foreach (Redis::connection($this->argument('connection'))->command('lrange', ['queues:default', 0, -1]) as $item) {
+        foreach (Redis::command('lrange', ['queues:default', 0, -1]) as $item) {
             print_r(json_decode($item, true));
             echo PHP_EOL;
         }

@@ -212,12 +212,14 @@ class Order extends Model
 
     public function addStatus(OrderStatus $value, OrderState $state = OrderState::STATE_WAIT): void
     {
-        $statuses = $this->statuses;
-        $status = new Status($value, Carbon::now());
-        $status->changeState($state);
-        $statuses->add($status);
-        $this->statuses = $statuses;
-        $this->status = $value;
+        if (!$this->inStatus($value)) {
+            $statuses = $this->statuses;
+            $status = new Status($value, Carbon::now());
+            $status->changeState($state);
+            $statuses->add($status);
+            $this->statuses = $statuses;
+            $this->status = $value;
+        }
     }
 
     public function changeStatusState(OrderState $state): void
