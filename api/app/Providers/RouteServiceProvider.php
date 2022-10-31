@@ -32,7 +32,11 @@ class RouteServiceProvider extends ServiceProvider
                     Route::prefix('panel')->group(base_path('routes/panel.php'));
                 });
 
-                Route::group(['prefix' => 'mobile', 'middleware' => 'api'], base_path('routes/mobile.php'));
+                Route::middleware('api')->group(function () {
+                    Route::group([], base_path('routes/rest.php'));
+
+                    Route::prefix('mobile')->group(base_path('routes/mobile.php'));
+                });
             });
         });
     }

@@ -14,13 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/pay', [V1\PayController::class, 'handle']);
-
-Route::group(['prefix' => '1c', 'middleware' => 'auth.basic.once'], function () {
-    Route::post('/feed', [V1\FeedController::class, 'handle']);
-    Route::post('/order', [V1\Order\UpdateController::class, 'handle']);
-});
-
 Route::prefix('city')->group(function () {
     Route::get('/', [V1\City\IndexController::class, 'handle']);
     Route::post('/', [V1\City\StoreController::class, 'handle']);

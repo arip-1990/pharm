@@ -43,7 +43,7 @@ class Statistic
                 if ($user = $request->user()) $visit->user()->associate($user);
 
                 $visit->save();
-                $request->session()->add('visitId', $visit->id);
+                $request->session()->put('visitId', $visit->id);
             }
         } catch (\Exception $e) {}
 

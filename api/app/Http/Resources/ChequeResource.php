@@ -24,7 +24,7 @@ class ChequeResource extends JsonResource
             'summ' => $this['Summ'],
             'bonus' => $this['Bonus'],
             'paidByBonus' => $this['PaidByBonus'],
-            'paidByMoney' => $this['PaidByMoney'],
+            'paidByMoney' => $this['PaidByMoney'] ?? null,
             'cardId' => $this['CardId'],
             'cardNumber' => $this['CardNumber'],
             'discount' => $this['Discount'],

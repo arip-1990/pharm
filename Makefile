@@ -122,7 +122,7 @@ push-api:
 
 deploy:
 	ssh -o StrictHostKeyChecking=no arip@${HOST} 'docker network create --driver=overlay traefik-public || true'
-	ssh -o StrictHostKeyChecking=no arip@${HOST} 'rm -rf pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER}/logs && chmod 777 pharm_${BUILD_NUMBER}/logs'
+	ssh -o StrictHostKeyChecking=no arip@${HOST} 'rm -rf pharm_${BUILD_NUMBER} && mkdir pharm_${BUILD_NUMBER}'
 
 	envsubst < docker-compose-prod.yml > docker-compose-prod-env.yml
 	scp -o StrictHostKeyChecking=no docker-compose-prod-env.yml arip@${HOST}:pharm_${BUILD_NUMBER}/docker-compose.yml
