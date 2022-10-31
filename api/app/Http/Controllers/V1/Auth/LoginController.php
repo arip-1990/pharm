@@ -15,7 +15,7 @@ class LoginController
     public function handle(LoginRequest $request): JsonResponse
     {
         try {
-            $data = $this->loginService->phoneAuth($request->get('login'), $request->get('password'));
+            $data = $this->loginService->login($request->get('login'), $request->get('password'));
 
             $request->session()->regenerate();
             $request->session()->put('session', $data['session']);

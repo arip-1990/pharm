@@ -26,9 +26,11 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             Route::prefix('v1')->group(function () {
-                Route::middleware('web')->group(base_path('routes/web.php'));
+                Route::middleware('web')->group(function () {
+                    Route::middleware('statistic')->group(base_path('routes/web.php'));
 
-                Route::group(['prefix' => 'panel', 'middleware' => 'web'], base_path('routes/panel.php'));
+                    Route::prefix('panel')->group(base_path('routes/panel.php'));
+                });
 
                 Route::group(['prefix' => 'mobile', 'middleware' => 'api'], base_path('routes/mobile.php'));
             });

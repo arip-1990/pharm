@@ -17,7 +17,7 @@ class LoginService extends LoyaltyService
     }
 
     #[ArrayShape(['token' => "string", 'session' => "string"])]
-    public function phoneAuth(string $phone, string $password): array
+    public function login(string $phone, string $password): array
     {
         $url = $this->urls['lk'] . '/Identity/AdvancedPhoneEmailLogin';
         $data = [

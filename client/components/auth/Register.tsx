@@ -12,7 +12,6 @@ type RegisterType = "register" | "verifyPhone";
 
 interface Values {
   smsCode: string;
-  cardNumber: string;
   fullName: string;
   email: string;
   phone: string;
@@ -59,7 +58,6 @@ const Register: FC<Props> = ({ switchAuthType }) => {
   const formik = useFormik({
     initialValues: {
       smsCode: "",
-      cardNumber: "",
       fullName: "",
       email: "",
       phone: "",
@@ -147,16 +145,6 @@ const Register: FC<Props> = ({ switchAuthType }) => {
         break;
       default:
         form = [
-          <div key="cardNumber" className="mb-3">
-            <input
-              name="cardNumber"
-              placeholder="Номер карты"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.cardNumber}
-            />
-            <ErrorField name="cardNumber" errors={formik.errors} />
-          </div>,
           <div key="fullName" className="mb-3">
             <input
               name="fullName"

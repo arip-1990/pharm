@@ -14,10 +14,8 @@ class RegisterController
     {
         try {
             $user = $this->service->requestRegister($request);
-            if ($request->has('cardNumber'))
-                $request->session()->put('token', $user->token);
-            else
-                $request->session()->put('userId', $user->id);
+            
+            $request->session()->put('userId', $user->id);
         }
         catch (\DomainException $e) {
             return new JsonResponse([
