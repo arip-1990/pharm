@@ -22,7 +22,7 @@ class Statistic
                 $visit = VisitStatistic::find($visitId);
                 if (!$visit->city) {
                     $details = $ipInfo->getDetails($ip);
-                    $visit->city = $details->city;
+                    $visit->city = "{$details->postal}, {$details->city}";
                 }
 
                 if (!$visit->user and $user = $request->user())
@@ -36,7 +36,7 @@ class Statistic
                     'ip' => $ip,
                     'os' => Parser::platformName(),
                     'browser' => Parser::browserName(),
-                    'city' => $details->city,
+                    'city' => "{$details->postal}, {$details->city}",
                     'referrer' => $request->header('referer')
                 ]);
 
