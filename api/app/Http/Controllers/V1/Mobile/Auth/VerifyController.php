@@ -44,7 +44,6 @@ class VerifyController
                 'email' => $user->email,
                 'gender' => $user->getGenderLabel(),
                 'age' => $user->birth_date?->age,
-                'segments' => [],
                 'cardNumber' => $data['cardNumber'],
                 'bonuses' => $data['cardBalance'],
             ]

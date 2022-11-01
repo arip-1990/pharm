@@ -44,7 +44,6 @@ class IndexController
                 'emailConfirmed' => !!$user->email_verified_at,
                 'gender' => $user->getGenderLabel(),
                 'age' => $user->birth_date?->age,
-                'segments' => [],
                 'cardNumber' => $card['Number'],
                 'bonuses' => $card['Balance'],
                 'units' => $this->bonusTypeLabel($card['BonusType']),

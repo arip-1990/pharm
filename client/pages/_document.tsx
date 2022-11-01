@@ -20,12 +20,14 @@ class MyDocument extends Document {
           <meta name="apple-itunes-app" content="app-id=6443518664" />
           <meta name="smartbanner:title" content="АПТЕКА 120/80" />
           <meta name="smartbanner:author" content="ООО Социальная аптека" />
-          <meta name="smartbanner:price" content="Бесплатно" />
+          <meta name="smartbanner:price" content="бесплатно" />
           <meta name="smartbanner:price-suffix-google" content="ru.apteka120.android" />
-          <meta name="smartbanner:icon-google" content="https://play-lh.googleusercontent.com/DDqqkbF38Uhzr_ooOgoCLWS8K4sgoPXb2S5qkyylq8tL0P3MhDkkmYgPW4hSxpSFwoWe=s360" />
-          <meta name="smartbanner:button" content="Скачать" />
+          <meta name="smartbanner:icon-apple" content="https://play-lh.googleusercontent.com/DDqqkbF38Uhzr_ooOgoCLWS8K4sgoPXb2S5qkyylq8tL0P3MhDkkmYgPW4hSxpSFwoWe=w240-h480" />
+          <meta name="smartbanner:icon-google" content="https://play-lh.googleusercontent.com/DDqqkbF38Uhzr_ooOgoCLWS8K4sgoPXb2S5qkyylq8tL0P3MhDkkmYgPW4hSxpSFwoWe=w240-h480" />
+          <meta name="smartbanner:button" content="скачать" />
+          <meta name="smartbanner:button-url-apple" content="https://apps.apple.com/app/id6443518664" />
           <meta name="smartbanner:button-url-google" content="https://play.google.com/store/apps/details?id=ru.apteka120.android" />
-          <meta name="smartbanner:enabled-platforms" content="android" />
+          <meta name="smartbanner:enabled-platforms" content="android, ios" />
           <meta name="smartbanner:line1" content="Социальная аптека" />
           <meta name="smartbanner:line2" content="[r:4.7] (23) звезды" />
           <meta name="smartbanner:line3" content="АПТЕКА 120/80" />
