@@ -99,8 +99,7 @@ class CheckoutService
                     $items = new Collection();
                     $offers = new Collection();
                     foreach ($data['items'] as $item) {
-                        if (!$offer = Offer::where('store_id', $order->store_id)
-                            ->where('product_id', $item['privateId'])->first())
+                        if (!$offer = Offer::where('store_id', $order->store_id)->where('product_id', $item['privateId'])->first())
                             throw new \DomainException('Товара нет в наличии');
 
                         $offer->checkout($item['quantity']);
@@ -159,38 +158,6 @@ class CheckoutService
         }
 
         return $orders;
-    }
-
-    public function paySber(Order $order): string
-    {
-        $curl = curl_init();
-        $config =  config('app.env') === 'production' ? config('data.pay.sber.prod') : config('data.pay.sber.test');
-
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $config['url'],
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query([
-                'userName'      => $config['username'],
-                'password'      => $config['password'],
-                'orderNumber'   => $order->id,
-                'amount'        => $order->getTotalCost() * 100,
-                'returnUrl'     => "https://xn--12080-6ve4g.xn--p1ai/order/checkout/{$order->id}/success",
-                'failUrl'       => "https://xn--12080-6ve4g.xn--p1ai/order/checkout/{$order->id}/failed",
-            ])
-        ]);
-
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        $response = json_decode($response, true);
-
-        if(isset($response['errorCode']))
-            throw new \DomainException('Не удалось создать форму оплаты. ' . $response['errorMessage']);
-
-        $order->pay($response['orderId']);
-        $order->save();
-        return $response['formUrl'];
     }
 
     public function getStores(Request $request): array

@@ -10,11 +10,14 @@
     justify-content: center;
     align-items: center;
     grid-gap: 0.25rem;
+    width: 0;
+    max-height: 52px;
+    margin-left: auto;
+    transition: width 5s linear;
 
     &::before {
-      content: '';
       display: inline-block;
-      width: 60px;
+      min-width: 60px;
       height: 24px;
       background-color: transparent;
       background-image: url(../../../assets/images/delivery-car.png);
@@ -23,10 +26,20 @@
       background-size: contain;
     }
 
+    &.show {
+      width: 100%;
+
+      &::before {
+        content: '';
+      }
+    }
+
     &_text {
       font-size: 0.75rem;
       font-weight: 600;
       color: #f00;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 
@@ -60,7 +73,7 @@
     grid-gap: 1rem;
 
     &::before {
-      width: 86px;
+      min-width: 86px;
       height: 34px;
     }
 
@@ -73,7 +86,7 @@
 @media (min-width: 1200px) {
   .topInfo .deliverySale {
     &::before {
-      width: 112px;
+      min-width: 112px;
       height: 44px;
     }
 
@@ -87,7 +100,7 @@
 @media (min-width: 1400px) {
   .topInfo .deliverySale {
     &::before {
-      width: 132px;
+      min-width: 132px;
       height: 52px;
     }
 

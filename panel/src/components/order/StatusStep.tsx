@@ -31,15 +31,10 @@ const StatusStep: React.FC<PropsType> = ({
       <ul className={classnames("progressbar", { delivery, sber: payment })}>
         <li className="active">Заказ принят</li>
         {payment ? <li className={checkStatus("P")}>Оплата картой</li> : null}
-        <li className={checkStatus("J")}>Отправка email</li>
-        <li className={checkStatus("I")}>Отправка в 1с</li>
+        <li className={checkStatus("M")}>Отправка почты</li>
+        <li className={checkStatus("S")}>Отправка в 1с</li>
         <li className={checkStatus("H")}>Заказ собран</li>
-        {delivery ? (
-          <>
-            <li className={checkStatus("G")}>Вызов доставки</li>
-            <li className={checkStatus("S")}>Заказ получен в аптеке</li>
-          </>
-        ) : null}
+        {delivery ? <li className={checkStatus("D")}>Вызов доставки</li> : null}
         <li className={checkStatus("F")}>Заказ получен клиентом</li>
       </ul>
     );
@@ -63,21 +58,21 @@ const StatusStep: React.FC<PropsType> = ({
               <Typography.Text type="secondary">Оплата картой</Typography.Text>
             );
           break;
-        case "J":
+        case "M":
           if (item.state === 1)
             status = (
-              <Typography.Text type="danger">Отправка email</Typography.Text>
+              <Typography.Text type="danger">Отправка почты</Typography.Text>
             );
           else if (item.state === 2)
             status = (
-              <Typography.Text type="success">Отправка email</Typography.Text>
+              <Typography.Text type="success">Отправка почты</Typography.Text>
             );
           else
             status = (
-              <Typography.Text type="secondary">Отправка email</Typography.Text>
+              <Typography.Text type="secondary">Отправка почты</Typography.Text>
             );
           break;
-        case "I":
+        case "S":
           if (item.state === 1)
             status = (
               <Typography.Text type="danger">Отправка в 1с</Typography.Text>
@@ -105,7 +100,7 @@ const StatusStep: React.FC<PropsType> = ({
               <Typography.Text type="secondary">Заказ собран</Typography.Text>
             );
           break;
-        case "G":
+        case "D":
           if (item.state === 1)
             status = (
               <Typography.Text type="danger">Вызов доставки</Typography.Text>
@@ -117,26 +112,6 @@ const StatusStep: React.FC<PropsType> = ({
           else
             status = (
               <Typography.Text type="secondary">Вызов доставки</Typography.Text>
-            );
-          break;
-        case "S":
-          if (item.state === 1)
-            status = (
-              <Typography.Text type="danger">
-                Заказ получен в аптеке
-              </Typography.Text>
-            );
-          else if (item.state === 2)
-            status = (
-              <Typography.Text type="success">
-                Заказ получен в аптеке
-              </Typography.Text>
-            );
-          else
-            status = (
-              <Typography.Text type="secondary">
-                Заказ получен в аптеке
-              </Typography.Text>
             );
           break;
         case "F":

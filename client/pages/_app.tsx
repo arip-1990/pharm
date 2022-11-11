@@ -6,6 +6,7 @@ import { wrapper } from "../store";
 import { Auth } from "../store/auth";
 import Loader from "../components/loader";
 
+import "swiper/css/bundle";
 import "react-notifications/lib/notifications.css";
 import "../styles/global.scss";
 import "moment/locale/ru";

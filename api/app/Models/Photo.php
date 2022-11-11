@@ -3,21 +3,25 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
+ * @property string $name
+ * @property string $title
+ * @property string $extension
  * @property int $type
- * @property string $file
  * @property int $sort
  * @property int $status
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
  *
- * @property Product $product
+ * @property Collection<Product> $products
  */
 class Photo extends Model
 {
@@ -29,13 +33,14 @@ class Photo extends Model
     const STATUS_NOT_CHECKED = 0;
     const STATUS_CHECKED = 1;
 
-    protected $fillable = ['type', 'file', 'status', 'product_id', 'sort'];
+    protected $fillable = ['name', 'title', 'extension', 'type', 'status', 'sort'];
 
     public function getSize(): array
     {
         $data = [0, 0];
-        if (Storage::exists('images/original/' . $this->file)) {
-            list($width, $height) = getimagesize(Storage::path('images/original/' . $this->file));
+        $file = "images/original/{$this->name}.{$this->extension}";
+        if (Storage::exists($file)) {
+            list($width, $height) = getimagesize(Storage::path($file));
             $data = [$width, $height];
         }
 
@@ -44,8 +49,8 @@ class Photo extends Model
 
     public function getUrl(): ?string
     {
-        if (Storage::exists('images/original/' . $this->file))
-            return Storage::url('images/original/' . $this->file);
+        $file = "images/original/{$this->name}.{$this->extension}";
+        if (Storage::exists($file)) return Storage::url($file);
         return null;
     }
 
@@ -63,4 +68,9 @@ class Photo extends Model
 //        }
 //        return null;
 //    }
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class);
+    }
 }

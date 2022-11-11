@@ -36,8 +36,7 @@ class DeliveryResource extends JsonResource
             if ($city = City::where('name', Helper::trimPrefixCity(self::$data['addressData']['city']))->first()) {
                 $productIds = array_column(self::$data['items'], 'privateId');
                 $locationIds = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))->pluck('id');
-                $storeIds = Offer::select('store_id')->whereIn('product_id', $productIds)->groupBy('store_id')
-                    ->havingRaw('count(store_id) = ?', [count($productIds)])->pluck('store_id');
+                $storeIds = Offer::select('store_id')->whereIn('product_id', $productIds)->groupBy('store_id')->pluck('store_id');
 
                 $data['locations'] = PickupLocationResource::collection(
                     Store::whereIn('id', $storeIds)->whereIn('location_id', $locationIds)->get()
@@ -45,11 +44,11 @@ class DeliveryResource extends JsonResource
             }
         }
         elseif ($data['type'] == Delivery::TYPE_DELIVERY) {
-            $data['dateIntervals'] = [
+            $data['dateIntervals'][] = [
                 'id' => $nowDate->format('y-m-d'),
                 "title" => $nowDate->translatedFormat('d M'),
                 "subTitle" => "Сегодня",
-                "timeIntervals" => ["id" => 1, "title" => "с 10:00 до 20:00"]
+                "timeIntervals" => [["id" => '1', "title" => "с 10:00 до 20:00"]]
             ];
         }
         return $data;

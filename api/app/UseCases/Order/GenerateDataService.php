@@ -14,7 +14,7 @@ class GenerateDataService
 
     public function generateSenData(Carbon $date): string
     {
-        $phone = '+' . $this->order->user->phone;
+        $phone = '+' . $this->order->phone;
         $price_all = $this->order->getTotalCost();
         $order_number = config('data.orderStartNumber') + $this->order->id;
 
@@ -74,7 +74,7 @@ class GenerateDataService
                     <comment>{$this->order->note}</comment>
                     <customer>
                         <type>PRIVATE</type>
-                        <name>{$this->order->user->name}</name>
+                        <name>{$this->order->name}</name>
                         <phone>$phone</phone>
                     </customer>" . $delivery_xml;
 
@@ -123,7 +123,6 @@ class GenerateDataService
         $order_number = config('data.orderStartNumber') + $this->order->id;
         $delivery = $this->order->orderDelivery;
         $store = $this->order->store;
-        $user = $this->order->user;
         $delivery_address = $delivery->location->city->name . ", " . $delivery->location->street . ", " . $delivery->location->house;
         $coordinates = Helper::getCoordinates($delivery_address);
         $delivery_lon = $coordinates['lon'];
@@ -176,9 +175,9 @@ class GenerateDataService
                         'fullname' => $delivery_address
                     ],
                     'contact' => [
-                        'email' => $user->email,
-                        'name' => $user->first_name,
-                        'phone' => '+' . $user->phone
+                        'email' => $this->order->email,
+                        'name' => $this->order->name,
+                        'phone' => '+' . $this->order->phone
                     ],
                     'external_order_id' => (string)$order_number,
                     'pickup_code' => '111111',

@@ -7,19 +7,21 @@ use Illuminate\Database\Seeder;
 
 class PaymentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-        Payment::firstOrCreate([
-            'slug_id' => '001'
-        ], [
-            'title' => 'Картой в приложении',
-            'description' => 'Оплата картой visa или mastercard в приложении',
-            'type' => Payment::TYPE_CARD,
-        ]);
+        $data = [
+            'card' => [
+                'title' => 'Картой в приложении',
+                'description' => 'Оплата картой visa или mastercard в приложении',
+                'type' => Payment::TYPE_CARD,
+            ],
+            'cash' => [
+                'title' => 'Наличными в аптеке',
+                'description' => 'Оплата наличными при получении',
+                'type' => Payment::TYPE_CASH,
+            ]
+        ];
+
+        foreach ($data as $item) Payment::firstOrCreate($item);
     }
 }

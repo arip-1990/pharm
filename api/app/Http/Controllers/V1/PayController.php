@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class PayController
 {
@@ -24,9 +23,7 @@ class PayController
         $binarySignature = hex2bin(strtolower($request->get('checksum')));
         $isVerify = openssl_verify($data, $binarySignature, $publicKey, OPENSSL_ALGO_SHA512);
 
-        if ($isVerify !== 1) {
-            return new Response(status: SymfonyResponse::HTTP_PRECONDITION_FAILED);
-        }
+        if ($isVerify !== 1) return new Response(status: 412);
 
         /** @var Order $order */
         $order = Order::query()->find((int)$request->get('orderNumber'));
@@ -39,30 +36,24 @@ class PayController
     private function checkStatus(Order $order, string $operation, int $status): void
     {
         $client = Redis::connection('bot')->client();
-        $client->publish('bot:pay', "Заказ №{$order->id}:\nСтатус заказа: {$order->status->value}\nОперация: {$operation}\nСтатус операции: {$status}");
-        if ($order->status === OrderStatus::STATUS_PAID) {
-            switch ($operation) {
-                case 'deposited':
-                    if ($status === 1) {
-                        $order->changeStatusState(OrderState::STATE_SUCCESS);
-                        $order->sent();
-                    }
-                    elseif ($status === 0) {
-                        $order->changeStatusState(OrderState::STATE_ERROR);
-                    }
-                    break;
-                case 'reversed':
-                    $order->changeStatusState(OrderState::STATE_ERROR);
-                    $client->publish('bot:pay', "Заказ №{$order->id}: Оплата отменена!");
-                    break;
-                case 'declinedByTimeout':
-                    $order->changeStatusState(OrderState::STATE_ERROR);
-                    $client->publish('bot:pay', "Заказ №{$order->id}: Истек время ожидания оплаты!");
-                    break;
-            }
-        }
-        else {
-            $client->publish('bot:pay', "Заказ №{$order->id} не ожидает оплаты!");
+        switch ($operation) {
+            case 'deposited':
+                if ($status === 1) {
+                    $order->changeStatusState(OrderStatus::STATUS_PAID, OrderState::STATE_SUCCESS);
+                    $order->sent();
+                }
+                elseif ($status === 0) {
+                    $order->changeStatusState(OrderStatus::STATUS_PAID, OrderState::STATE_ERROR);
+                }
+                break;
+            case 'reversed':
+                $order->changeStatusState(OrderStatus::STATUS_PAID, OrderState::STATE_ERROR);
+                $client->publish('bot:pay', "Заказ №{$order->id}: Оплата отменена!");
+                break;
+            case 'declinedByTimeout':
+                $order->changeStatusState(OrderStatus::STATUS_PAID, OrderState::STATE_ERROR);
+                $client->publish('bot:pay', "Заказ №{$order->id}: Истек время ожидания оплаты!");
+                break;
         }
     }
 }

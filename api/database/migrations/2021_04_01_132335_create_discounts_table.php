@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('percent', unsigned: true);
+            $table->float('percent', unsigned: true);
             $table->boolean('active')->default(false);
             $table->timestamps();
             $table->softDeletes();

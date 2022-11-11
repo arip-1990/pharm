@@ -13,7 +13,7 @@ class UpdateStatusPhotoController extends Controller
     {
         try {
             foreach ($request->get('items') as $item) {
-                if ($photo = Photo::query()->find($item)) {
+                if ($photo = Photo::find($item)) {
                     $photo->update(['status' => Photo::STATUS_CHECKED]);
                 }
             }

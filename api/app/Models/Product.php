@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -123,9 +124,9 @@ class Product extends Model
         $this->photos()->create(['type' => Photo::TYPE_PICTURE]);
     }
 
-    public function photos(): HasMany
+    public function photos(): BelongsToMany
     {
-        return $this->hasMany(Photo::class)->where('type', Photo::TYPE_PICTURE)->orderBy('sort');
+        return $this->belongsToMany(Photo::class)->where('type', Photo::TYPE_PICTURE)->orderBy('sort');
     }
 
     public function checkedPhotos(): HasMany
@@ -138,9 +139,9 @@ class Product extends Model
         $this->certificates()->create(['type' => Photo::TYPE_CERTIFICATE]);
     }
 
-    public function certificates(): HasMany
+    public function certificates(): BelongsToMany
     {
-        return $this->hasMany(Photo::class)->where('type', Photo::TYPE_CERTIFICATE)->orderBy('sort');
+        return $this->belongsToMany(Photo::class)->where('type', Photo::TYPE_CERTIFICATE)->orderBy('sort');
     }
 
     public function getValue(int $attributeId): ?string

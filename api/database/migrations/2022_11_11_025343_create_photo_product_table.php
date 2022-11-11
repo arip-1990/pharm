@@ -8,20 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('order_items', function (Blueprint $table) {
+        Schema::create('photo_product', function (Blueprint $table) {
             $table->id();
-            $table->float('price', unsigned: true);
-            $table->smallInteger('quantity', unsigned: true);
 
-            $table->unique(['order_id', 'product_id']);
+            $table->unique(['photo_id', 'product_id']);
 
-            $table->foreignId('order_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('photo_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignUuid('product_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('order_items');
+        Schema::dropIfExists('photo_product');
     }
 };

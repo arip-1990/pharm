@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description')->nullable();
-            $table->string('type')->default('cash')->comment('тип из перечисленных');
+            $table->string('type')->default('cash');
             $table->timestamps();
             $table->softDeletes();
         });

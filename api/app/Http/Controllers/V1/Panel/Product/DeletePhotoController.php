@@ -14,9 +14,8 @@ class DeletePhotoController extends Controller
     {
         try {
             foreach ($request->get('items') as $item) {
-                if ($photo = Photo::query()->find($item) and Storage::delete('images/original/' . $photo->file)) {
+                if ($photo = Photo::find($item) and Storage::delete("images/original/{$photo->name}.{$photo->extension}"))
                     $photo->delete();
-                }
             }
         }
         catch (\Exception $e) {

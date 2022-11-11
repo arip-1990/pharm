@@ -13,7 +13,7 @@ return new class extends Migration
             $table->integer('orders', unsigned: true)->default(0);
             $table->integer('reviews', unsigned: true)->default(0);
             $table->integer('cancellations', unsigned: true)->default(0);
-            $table->decimal('rating', unsigned: true)->default(0);
+            $table->float('rating', unsigned: true)->default(0);
             $table->timestamps();
 
             $table->primary('id');

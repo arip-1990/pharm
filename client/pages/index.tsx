@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/router";
 import Auth from "../components/auth";
 import { useCookie } from "../hooks/useCookie";
+import Button from '../components/apk-button';
 
 type AuthType = "login" | "register";
 
@@ -35,6 +36,8 @@ const Home: FC = () => {
 
   return (
     <Layout banner>
+      <Button />
+
       <div
         className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3 g-xl-4"
         itemScope

@@ -14,7 +14,7 @@ const Loyalty: FC = () => {
   ], []);
 
   return (
-    <Layout banner>
+    <Layout>
       <Head>
         <title>Сеть аптек 120/80 | Программа лояльности</title>
         <meta

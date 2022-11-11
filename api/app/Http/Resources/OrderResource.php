@@ -34,7 +34,6 @@ class OrderResource extends JsonResource
             'cost' => $this->cost,
             'paymentType' => $this->payment->type,
             'deliveryType' => $this->delivery->type,
-            'status' => $this->status,
             'note' => $this->note,
             'cancel_reason' => $this->cancel_reason,
             'createdAt' => $this->created_at,

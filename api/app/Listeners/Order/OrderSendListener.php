@@ -18,6 +18,7 @@ class OrderSendListener implements ShouldQueue
     public function handle(OrderSend $event): void
     {
         $order = $event->order;
+        $status = OrderStatus::STATUS_SEND;
         try {
             $orderNumber = config('data.orderStartNumber') + $order->id;
             $response = simplexml_load_string($this->getSendInfo($order));
@@ -29,15 +30,16 @@ class OrderSendListener implements ShouldQueue
             }
 
             if(isset($response->success->order_id)) {
-                $order->changeStatusState(OrderState::STATE_SUCCESS);
+                $order->changeStatusState($status, OrderState::STATE_SUCCESS);
 
-                $order->addStatus(OrderStatus::STATUS_SENT_MAIL);
+                $status = OrderStatus::STATUS_MESSAGE;
+                $order->addStatus($status);
                 Mail::to($order->user)->send(new CreateOrder($order));
-                $order->changeStatusState(OrderState::STATE_SUCCESS);
+                $order->changeStatusState($status, OrderState::STATE_SUCCESS);
             }
         }
         catch (\Exception $e) {
-            $order->changeStatusState(OrderState::STATE_ERROR);
+            $order->changeStatusState($status, OrderState::STATE_ERROR);
             throw new \DomainException($e->getMessage());
         } finally {
             $order->save();

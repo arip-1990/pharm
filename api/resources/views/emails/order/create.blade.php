@@ -28,7 +28,7 @@
         </div>
         <div style="max-width: 640px; margin: auto; box-sizing: border-box; border: 1px solid #ccc; padding: 1rem 0; background-color: #f6f6f6;">
             <div style="border-bottom: 2px solid #ccc; margin: 0 1rem">
-                <h2>Здравствуйте, {{ $order->user->name }}!</h2>
+                <h2>Здравствуйте, {{ $order->name }}!</h2>
                 <p>
                     Спасибо за покупку! Ожидайте подтверждения заказа.<br />
                     Отслеживать его статус можно в

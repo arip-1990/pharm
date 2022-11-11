@@ -35,6 +35,7 @@
     "remark": "^14.0.1",
     "remark-html": "^15.0.0",
     "sass": "^1.49.11",
+    "swiper": "^8.4.4",
     "typescript": "^4.6.3",
     "uncontrollable": "^7.2.1",
     "use-timer": "^2.0.1"

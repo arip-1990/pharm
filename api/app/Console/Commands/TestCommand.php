@@ -13,7 +13,7 @@ class TestCommand extends Command
 
     public function handle(): int
     {
-        $this->info('Процесс завершена!');
+        $this->info("Процесс завершена!");
         return 0;
     }
 }

@@ -13,7 +13,7 @@ class UpdatePhotoController extends Controller
     {
         try {
             foreach ($request->get('items') as $item) {
-                if ($photo = Photo::query()->find($item['id'])) {
+                if ($photo = Photo::find($item['id'])) {
                     $photo->update(['sort' => $item['sort']]);
                 }
             }

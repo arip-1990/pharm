@@ -18,7 +18,7 @@ class UpdateController
         else {
             $photos = $product->photos()->where('status', Photo::STATUS_NOT_CHECKED)->get();
             foreach ($photos as $photo) {
-                Storage::delete('images/original/' . $photo->file);
+                Storage::delete("images/original/{$photo->name}.{$photo->extension}");
                 $photo->delete();
             }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\V1;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/get-apk-link', fn() => new JsonResponse(Storage::url('files/120на80.apk')));
 
 Route::prefix('city')->group(function () {
     Route::get('/', [V1\City\IndexController::class, 'handle']);

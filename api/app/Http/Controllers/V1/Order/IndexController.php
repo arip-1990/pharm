@@ -11,6 +11,6 @@ class IndexController
 {
     public function index(Request $request): JsonResource
     {
-        return OrderResource::collection(Order::query()->where('user_id', $request->user()->id)->paginate(15));
+        return OrderResource::collection(Order::where('user_id', $request->user()->id)->paginate(15));
     }
 }

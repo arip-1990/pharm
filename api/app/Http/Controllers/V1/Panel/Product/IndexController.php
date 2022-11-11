@@ -13,8 +13,6 @@ use Illuminate\Routing\Controller;
 
 class IndexController extends Controller
 {
-    public function __construct(private readonly SearchService $search) {}
-
     public function handle(Request $request): ResourceCollection
     {
         $query = Product::query()->select('products.*');

@@ -19,7 +19,6 @@ export interface IOrder {
   paymentType: string;
   deliveryType: string;
   deliveryAddress: string;
-  status: string;
   note: string | null;
   cancel_reason: string | null;
   createdAt: moment.Moment;

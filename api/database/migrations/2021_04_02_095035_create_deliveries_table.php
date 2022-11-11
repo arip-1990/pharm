@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('type')->default('pickup')->comment('delivery, pickup — доставка или самовывоз');
-            $table->decimal('price', unsigned: true)->default(0)->comment('Минимальная цена необходимая для данного типа заявки');
+            $table->string('type')->default('pickup');
+            $table->float('price', unsigned: true)->default(0);
             $table->smallInteger('min', unsigned: true)->default(0)->comment('минимальный срок доставки');
             $table->smallInteger('max', unsigned: true)->default(0)->comment('максимальный срок доставки');
             $table->timestamps();

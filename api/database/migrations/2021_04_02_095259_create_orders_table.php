@@ -13,8 +13,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
-            $table->decimal('cost', unsigned: true);
-            $table->string('status', 2);
+            $table->float('cost', unsigned: true);
             $table->json('statuses')->default('[]');
             $table->text('note')->nullable();
             $table->text('cancel_reason')->nullable();

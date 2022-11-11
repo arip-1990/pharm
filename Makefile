@@ -69,7 +69,7 @@ api-composer-update:
 	docker compose run --rm api-php-cli composer update
 
 api-wait-db:
-	docker compose run --rm api-php-cli wait-for-it db-postgres:5432 -t 30
+	docker compose run --rm api-php-cli wait-for-it api-db:5432 -t 30
 
 api-migrations:
 	docker compose run --rm api-php-cli php artisan migrate --force

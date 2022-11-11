@@ -1,9 +1,16 @@
 import { FC } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper";
 
 import styles from "./Banner.module.scss";
 
-const Banner: FC = ({children}) => {
-    return <div className={styles.banner}>{children}</div>
+const Banner: FC = () => {
+    return (
+        <Swiper autoplay={{disableOnInteraction: false}} autoHeight={true} spaceBetween={16} pagination={true} modules={[Autoplay, Pagination]}>
+            <SwiperSlide><div className={`${styles.banner} ${styles.banner_1}`} /></SwiperSlide>
+            <SwiperSlide><div className={`${styles.banner} ${styles.banner_2}`} /></SwiperSlide>
+        </Swiper>
+    );
 }
 
 export default Banner;

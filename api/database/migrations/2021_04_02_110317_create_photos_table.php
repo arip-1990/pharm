@@ -10,14 +10,14 @@ return new class extends Migration
     {
         Schema::create('photos', function (Blueprint $table) {
             $table->id();
-            $table->string('file');
+            $table->string('name', 16);
+            $table->string('title');
+            $table->string('extension', 6);
             $table->smallInteger('type', unsigned: true)->default(0);
             $table->smallInteger('sort', unsigned: true)->default(0);
             $table->smallInteger('status', unsigned: true)->default(0);
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreignUuid('product_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

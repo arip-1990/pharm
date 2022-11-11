@@ -1,8 +1,9 @@
 import { FC, ReactNode, useState } from "react";
 import { Container, Row } from "react-bootstrap";
+import { NotificationContainer } from "react-notifications";
+
 import Header from "./header";
 import Footer from "./footer";
-import { NotificationContainer } from "react-notifications";
 import Loyalty from "../loyalty";
 import Auth from "../auth";
 import {useAuth} from "../../hooks/useAuth";

@@ -52,7 +52,7 @@ const Search: FC = () => {
   const [city] = useCookie("city");
   const router = useRouter();
   const { page, q } = router.query;
-  const { data: products, refetch } = useSearchProductsQuery({
+  const { data: products, isFetching, refetch } = useSearchProductsQuery({
     q: String(q),
     page: Number(page) || 1,
   });
@@ -112,7 +112,7 @@ const Search: FC = () => {
               </div>
             </>
           ) : (
-            <h3 className="text-center">По запросу "{q}" ничего не найдено!</h3>
+            <h3 className="text-center">{isFetching ? `Идет поиск товара "${q}"` : `По запросу "${q}" ничего не найдено!`}</h3>
           )}
         </div>
       </div>

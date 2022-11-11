@@ -138,7 +138,7 @@ services:
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
+      DB_HOST: api-db
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
@@ -172,11 +172,11 @@ services:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
+      DB_HOST: api-db
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
-    command: sh -c 'wait-for-it db-postgres:5432 -t 60 && php artisan migrate --force'
+    command: sh -c 'wait-for-it api-db:5432 -t 60 && php artisan migrate --force'
     deploy:
       restart_policy:
         condition: on-failure
@@ -184,14 +184,14 @@ services:
         max_attempts: 5
         window: 120s
 
-  db-postgres:
+  api-db:
     image: postgres:14.1-alpine
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: app
     volumes:
-      - db-postgres:/var/lib/postgresql/data
+      - api-db:/var/lib/postgresql/data
     ports:
       - target: 5432
         published: 5432
@@ -206,7 +206,7 @@ services:
   #   image: ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
   #   environment:
   #     BACKUP_NAME: pharm-postgres
-  #     POSTGRES_HOST: db-postgres
+  #     POSTGRES_HOST: api-db
   #     POSTGRES_USERNAME: app
   #     POSTGRES_PASSWORD: ${DB_PASSWORD}
   #     POSTGRES_DB: app
@@ -215,7 +215,7 @@ services:
   #     AWS_DEFAULT_REGION: region
   #     S3_ENDPOINT: http://backup-storage:9000
   #     S3_BUCKET: backup
-  #   command: sh -c 'wait-for-it db-postgres:5432 -t 60 && backup'
+  #   command: sh -c 'wait-for-it api-db:5432 -t 60 && backup'
   #   deploy:
   #     labels:
   #       - swarm.cronjob.enable=true
@@ -233,7 +233,7 @@ services:
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
+      DB_HOST: api-db
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
@@ -261,7 +261,7 @@ services:
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
+      DB_HOST: api-db
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
@@ -293,7 +293,7 @@ services:
       LOG_CHANNEL: stack
       LOG_LEVEL: debug
       DB_CONNECTION: pgsql
-      DB_HOST: db-postgres
+      DB_HOST: api-db
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
@@ -368,19 +368,15 @@ services:
 
   redis:
     image: redis:6.2-alpine
-    volumes:
-      - redis-data:/data
     deploy:
       placement:
         constraints: [ node.role == manager ]
 
 volumes:
-  db-postgres:
-  redis-data:
+  api-db:
   uploads:
   traefik-certs:
   es-data:
-
 
 networks:
   traefik-public:

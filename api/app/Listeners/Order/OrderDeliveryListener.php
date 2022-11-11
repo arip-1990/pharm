@@ -16,26 +16,26 @@ class OrderDeliveryListener implements ShouldQueue
     public function handle(OrderDelivery $event): void
     {
         $order = $event->order;
-        if ($order->status !== OrderStatus::STATUS_ASSEMBLED_PHARMACY or $order->delivery->equalType(Delivery::TYPE_PICKUP)) {
-            $message = 'Заказ не может быть отправлен.';
-            $order->changeStatusState(OrderState::STATE_ERROR);
-            $order->save();
-            return;
-        }
-
-        $number_order = config('data.orderStartNumber') + $order->id;
-        $response = $this->getDeliveryInfo($number_order, $this->service->generateDeliveryData());
-        if(isset($response['code'])) {
-            $message = 'Номер заказа(1c): ' . $number_order . '. Code: ' . $response['code'] . '. -> ' . $response['message'];
-            $order->changeStatusState(OrderState::STATE_ERROR);
-            $order->save();
-            throw new \DomainException($message);
-        }
-        if(isset($response['id'])) {
-            $order->yandex_id = strval($response['id']);
-            $order->changeStatusState(OrderState::STATE_SUCCESS);
-            $order->save();
-        }
+//        if ($order->delivery->equalType(Delivery::TYPE_PICKUP)) {
+//            $message = 'Заказ не может быть отправлен.';
+//            $order->changeStatusState(OrderState::STATE_ERROR);
+//            $order->save();
+//            return;
+//        }
+//
+//        $number_order = config('data.orderStartNumber') + $order->id;
+//        $response = $this->getDeliveryInfo($number_order, $this->service->generateDeliveryData());
+//        if(isset($response['code'])) {
+//            $message = 'Номер заказа(1c): ' . $number_order . '. Code: ' . $response['code'] . '. -> ' . $response['message'];
+//            $order->changeStatusState(OrderState::STATE_ERROR);
+//            $order->save();
+//            throw new \DomainException($message);
+//        }
+//        if(isset($response['id'])) {
+//            $order->yandex_id = strval($response['id']);
+//            $order->changeStatusState(OrderState::STATE_SUCCESS);
+//            $order->save();
+//        }
     }
 
     private function getDeliveryInfo(int $orderId, string $data): array
