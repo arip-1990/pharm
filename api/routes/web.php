@@ -24,6 +24,7 @@ Route::prefix('city')->group(function () {
 
 Route::prefix('catalog')->group(function () {
 //    Route::get('/sale', [Catalog\PopularController::class, 'handle']);
+    Route::get('/stock', [V1\Catalog\StockController::class, 'handle']);
     Route::get('/search', [V1\Catalog\SearchController::class, 'handle']);
     Route::get('/popular', [V1\Catalog\PopularController::class, 'handle']);
     Route::get('/{category?}', [V1\Catalog\IndexController::class, 'handle']);

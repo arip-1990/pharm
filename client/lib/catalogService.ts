@@ -1,9 +1,9 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import { HYDRATE } from "next-redux-wrapper";
 import { ICatalog } from '../models/ICatalog';
 import { IOffer } from '../models/IOffer';
 import { IProduct } from '../models/IProduct';
-import { apiBaseQuery, API_URL } from './api';
+import { apiBaseQuery } from './api';
 
 export const catalogApi = createApi({
     reducerPath: 'catalogApi',
@@ -23,6 +23,12 @@ export const catalogApi = createApi({
           params: {page: args.page}
         }),
       }),
+      fetchStockProducts: builder.query<ICatalog, {page: number}>({
+        query: (args) => ({
+          url: '/catalog/stock',
+          params: {page: args.page}
+        }),
+      }),
       searchProducts: builder.query<Pagination<IProduct>, {q: string, page: number}>({
         query: (args) => ({
           url: '/catalog/search',
@@ -36,7 +42,14 @@ export const catalogApi = createApi({
   })
 
 // Export hooks for usage in functional components
-export const {useFetchPopularProductsQuery, useFetchProductsQuery, useSearchProductsQuery, useGetProductQuery, util: { getRunningOperationPromises }} = catalogApi;
+export const {
+  useFetchPopularProductsQuery,
+  useFetchProductsQuery,
+  useFetchStockProductsQuery,
+  useSearchProductsQuery,
+  useGetProductQuery,
+  util: { getRunningOperationPromises }
+} = catalogApi;
 
 // export endpoints for use in SSR
-export const { fetchPopularProducts, fetchProducts, searchProducts, getProduct } = catalogApi.endpoints;
+export const { fetchPopularProducts, fetchProducts, fetchStockProducts, searchProducts, getProduct } = catalogApi.endpoints;

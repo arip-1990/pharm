@@ -2,19 +2,15 @@
 
 namespace App\Http\Resources\Mobile;
 
-use App\Helper;
-use App\Models\City;
 use App\Models\Delivery;
-use App\Models\Location;
-use App\Models\Offer;
-use App\Models\Store;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 
 class DeliveryResource extends JsonResource
 {
-    public static array $data;
+    public static Collection $locations;
 
     public function toArray($request): array
     {
@@ -32,18 +28,10 @@ class DeliveryResource extends JsonResource
             'timeLabel' => 'В день заказа'
 
         ];
-        if ($data['type'] == Delivery::TYPE_PICKUP) {
-            if ($city = City::where('name', Helper::trimPrefixCity(self::$data['addressData']['city']))->first()) {
-                $productIds = array_column(self::$data['items'], 'privateId');
-                $locationIds = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))->pluck('id');
-                $storeIds = Offer::select('store_id')->whereIn('product_id', $productIds)->groupBy('store_id')->pluck('store_id');
-
-                $data['locations'] = PickupLocationResource::collection(
-                    Store::whereIn('id', $storeIds)->whereIn('location_id', $locationIds)->get()
-                );
-            }
+        if ($data['type'] === Delivery::TYPE_PICKUP) {
+            $data['locations'] = PickupLocationResource::collection(self::$locations);
         }
-        elseif ($data['type'] == Delivery::TYPE_DELIVERY) {
+        elseif ($data['type'] === Delivery::TYPE_DELIVERY) {
             $data['dateIntervals'][] = [
                 'id' => $nowDate->format('y-m-d'),
                 "title" => $nowDate->translatedFormat('d M'),
@@ -51,12 +39,13 @@ class DeliveryResource extends JsonResource
                 "timeIntervals" => [["id" => '1', "title" => "с 10:00 до 20:00"]]
             ];
         }
+
         return $data;
     }
 
-    public static function customCollection($resource, array $data): AnonymousResourceCollection
+    public static function customCollection($resource, Collection $locations): AnonymousResourceCollection
     {
-        self::$data = $data;
+        self::$locations = $locations;
         return parent::collection($resource);
     }
 }

@@ -363,14 +363,14 @@
 
 .cart-remove,
 .favorite-remove {
-  display: inline-block;
-  font: 600 2rem/1 "Font Awesome 5 Free";
+  font-family: 'icon';
   text-align: center;
   color: rgba($secondary, 0.45);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
   &::before {
-    content: "\f00d";
+    content: "\ea0f";
     cursor: pointer;
   }
 }

@@ -42,10 +42,8 @@ class Offer extends Model
 
     public function checkout(int $quantity): void
     {
-        if ($quantity > $this->quantity) {
-            $message = $this->quantity > 0 ? "Доступно всего {$this->quantity} наименований." : 'Нет в наличии';
-            throw new \DomainException($message);
-        }
+        if ($quantity > $this->quantity)
+            throw new \DomainException($this->quantity > 0 ? "Доступно всего {$this->quantity} наименований." : 'Нет в наличии');
 
         $this->setQuantity($this->quantity - $quantity);
     }

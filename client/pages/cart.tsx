@@ -99,7 +99,7 @@ const Cart: FC = () => {
                     style={{ marginLeft: "auto" }}
                   />
                 </div>
-                <span className="col-2 col-md-1 cart-remove" />
+                {/* <span className="col-2 col-md-1 cart-remove" /> */}
               </div>
             ))}
 

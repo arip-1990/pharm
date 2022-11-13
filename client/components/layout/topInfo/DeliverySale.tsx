@@ -14,7 +14,7 @@ const DeliverySale: FC<Props> = ({text}) => {
 
 	useEffect(() => {
 		let timer: any = null;
-		if (isMounted()) timer = setTimeout(() => setShow(true), 1000);
+		if (isMounted()) timer = setTimeout(() => setShow(true), 500);
 
 		return () => clearTimeout(timer);
 	}, [isMounted]);

@@ -19,8 +19,8 @@ class DeliverySeeder extends Seeder
                 'max' => 0,
             ],
             'pickup' => [
-                'title' => 'Самовывоз из магазина',
-                'description' => 'Самовывоз заказа из магазина в день заказа',
+                'title' => 'Самовывоз из аптеки',
+                'description' => 'Самовывоз заказа из аптеки в день заказа',
                 'type' => Delivery::TYPE_PICKUP,
                 'price' => 0,
                 'min' => 0,

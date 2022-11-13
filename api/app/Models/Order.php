@@ -174,7 +174,6 @@ class Order extends Model
             $status->changeState($state);
             $statuses->add($status);
             $this->statuses = $statuses;
-            $this->status = $value;
         }
     }
 

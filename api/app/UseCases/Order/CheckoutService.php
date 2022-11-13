@@ -99,8 +99,10 @@ class CheckoutService
                     $items = new Collection();
                     $offers = new Collection();
                     foreach ($data['items'] as $item) {
-                        if (!$offer = Offer::where('store_id', $order->store_id)->where('product_id', $item['privateId'])->first())
-                            throw new \DomainException('Товара нет в наличии');
+                        if (!$offer = Offer::where('store_id', $order->store_id)->where('product_id', $item['privateId'])->first()) {
+//                            throw new \DomainException('Товара нет в наличии');
+                            continue;
+                        }
 
                         $offer->checkout($item['quantity']);
                         $offers->add($offer);
@@ -178,6 +180,7 @@ class CheckoutService
                     'product' => new ProductResource($offer->product)
                 ];
             });
+
         usort($stores, function ($a, $b) {
             $res = count($b['products']) - count($a['products']);
             if ($res) return $res;

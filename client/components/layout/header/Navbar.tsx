@@ -8,14 +8,14 @@ const Navbar: FC = () => {
   const router = useRouter();
 
   return (
-    <BaseNavbar expand="md" className="navbar-primary">
+    <BaseNavbar expand="lg" className="navbar-primary">
       <BaseNavbar.Toggle aria-controls="navbarCollapse">
         <i className="icon-menu" />
       </BaseNavbar.Toggle>
 
       <BaseNavbar.Collapse id="navbarCollapse">
-        <Nav className="m-md-0 ">
-          <Nav.Item className="text-md-center">
+        <Nav className="m-md-0 align-items-center">
+          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
             <Link href="/catalog">
               <a
                 className={classNames("nav-link", {
@@ -27,7 +27,7 @@ const Navbar: FC = () => {
               </a>
             </Link>
           </Nav.Item>
-          <Nav.Item className="text-md-center">
+          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
             <Link href="/store">
               <a
                 className={classNames("nav-link", {
@@ -39,7 +39,7 @@ const Navbar: FC = () => {
               </a>
             </Link>
           </Nav.Item>
-          <Nav.Item className="text-md-center">
+          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
             <Link href="/delivery-booking">
               <a
                 className={classNames("nav-link", {
@@ -51,7 +51,7 @@ const Navbar: FC = () => {
               </a>
             </Link>
           </Nav.Item>
-          <Nav.Item className="text-md-center">
+          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
             <Link href="/loyalty">
               <a
                 className={classNames("nav-link", {
@@ -60,6 +60,18 @@ const Navbar: FC = () => {
                 tabIndex={0}
               >
                 <i className="icon-loyalty" /> Программа лояльности
+              </a>
+            </Link>
+          </Nav.Item>
+          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
+            <Link href="/stock">
+              <a
+                className={classNames("nav-link", {
+                  active: router.pathname.startsWith("/stock"),
+                })}
+                tabIndex={0}
+              >
+                <i className="icon-gift" /> Акции
               </a>
             </Link>
           </Nav.Item>
