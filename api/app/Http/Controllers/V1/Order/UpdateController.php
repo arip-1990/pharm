@@ -12,7 +12,7 @@ class UpdateController extends Controller
 {
     public function __construct(private readonly RefundService $service) {}
 
-    private function isValidEditOrderXML($xml): bool
+    private function isValidOrderXML($xml): bool
     {
         return isset($xml->order->id) && isset($xml->order->status);
     }
@@ -44,7 +44,7 @@ class UpdateController extends Controller
     {
         $xml = file_get_contents("php://input");
         $xml = simplexml_load_string($xml);
-        if(!$this->isValidEditOrderXML($xml))
+        if(!$this->isValidOrderXML($xml))
             return response($this->orderError('Неверный XML', 1), 500);
 
         $id = intval($xml->order->id) - config('data.orderStartNumber');
@@ -68,6 +68,6 @@ class UpdateController extends Controller
 
         $order->save();
 
-        return response($this->orderSuccess($id));
+        return new Response($this->orderSuccess($id), headers: ['Content-Type' => 'application/xml']);
     }
 }

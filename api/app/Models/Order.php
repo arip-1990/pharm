@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\StatusCollectionCast;
+use App\Events\Order\OrderChangeStatus;
 use App\Events\Order\OrderPayFullRefund;
 use App\Events\Order\OrderSend;
 use App\Models\Status\OrderState;
@@ -174,6 +175,8 @@ class Order extends Model
             $status->changeState($state);
             $statuses->add($status);
             $this->statuses = $statuses;
+
+            OrderChangeStatus::dispatch($this);
         }
     }
 

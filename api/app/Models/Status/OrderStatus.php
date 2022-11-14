@@ -9,7 +9,7 @@ enum OrderStatus: string
     case STATUS_SEND = 'S'; // Отправка в 1с
     case STATUS_MESSAGE = 'M'; // Отправка почты
     case STATUS_DELIVERY = 'D'; // Доставка
-    case STATUS_REFUND = 'RR'; // Возврат денег
+    case STATUS_REFUND = 'RM'; // Возврат денег
 
     // 1C
     case STATUS_PROCESSING = 'O'; // В обработке
