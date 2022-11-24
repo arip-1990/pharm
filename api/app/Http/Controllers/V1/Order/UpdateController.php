@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\Order;
 
 use App\Models\Order;
+use App\Models\Status\OrderState;
 use App\Models\Status\OrderStatus;
 use App\UseCases\Order\RefundService;
 use Illuminate\Http\Response;
@@ -66,6 +67,7 @@ class UpdateController extends Controller
         if (isset($xml->order->products->product) and ($order->isAssembled() or $order->isReceived()))
             $this->service->partlyRefund($order, $xml->order->products->product);
 
+        $order->changeStatusState($status, OrderState::STATE_SUCCESS);
         $order->save();
 
         return new Response($this->orderSuccess($id), headers: ['Content-Type' => 'application/xml']);

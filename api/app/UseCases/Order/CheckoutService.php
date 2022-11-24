@@ -95,12 +95,13 @@ class CheckoutService
 
                 $order->setUserInfo($data['name'], $phone, $data['email'] ?? null);
 
-                DB::transaction(function () use ($order, $data) {
+                $items2 = new Collection();
+                DB::transaction(function () use ($order, $data, $items2) {
                     $items = new Collection();
                     $offers = new Collection();
                     foreach ($data['items'] as $item) {
                         if (!$offer = Offer::where('store_id', $order->store_id)->where('product_id', $item['privateId'])->first()) {
-//                            throw new \DomainException('Товара нет в наличии');
+                            $items2->add(['product' => $item['privateId'], 'quantity' => $item['quantity']]);
                             continue;
                         }
 

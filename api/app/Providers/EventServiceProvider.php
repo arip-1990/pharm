@@ -11,7 +11,7 @@ use App\Listeners\Order\OrderDeliveryListener;
 use App\Listeners\Order\OrderPayFullRefundListener;
 use App\Listeners\Order\OrderPayPartlyRefundListener;
 use App\Listeners\Order\OrderSendListener;
-use App\Listeners\Order\SendOrderStatusListener;
+use App\Listeners\Order\SendStatusListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -40,7 +40,7 @@ class EventServiceProvider extends ServiceProvider
             OrderPayFullRefundListener::class,
         ],
         OrderChangeStatus::class => [
-            SendOrderStatusListener::class
+            SendStatusListener::class
         ]
     ];
 

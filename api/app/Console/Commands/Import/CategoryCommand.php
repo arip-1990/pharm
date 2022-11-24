@@ -14,30 +14,18 @@ class CategoryCommand extends Command
     public function handle(): int
     {
         $client = Redis::connection('bot')->client();
-        try {
-            $data = $this->getData();
-            foreach ($data->categories->category as $item) {
-                $attr = $item->attributes();
+        $data = $this->getData();
+        foreach ($data->categories->category as $item) {
+            $attr = $item->attributes();
 
-                $category = Category::updateOrCreate(['id' => (int)$attr->id, 'name' => (string)$item]);
-                if ((int)$attr->parentId) {
-                    $category->parent_id = (int)$attr->parentId;
-                    $category->save();
-                }
+            $category = Category::updateOrCreate(['id' => (int)$attr->id, 'name' => (string)$item]);
+            if ((int)$attr->parentId) {
+                $category->parent_id = (int)$attr->parentId;
+                $category->save();
             }
         }
-        catch (\DomainException $e) {
-            $this->error($e->getMessage());
-            $client->publish("bot:import", json_encode([
-                'success' => false,
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'message' => $e->getMessage()
-            ]));
-            return 1;
-        }
 
-        $client->publish("bot:import", json_encode(['success' => true, 'message' => 'Категории успешно обновлены']));
+        $client->publish("bot:import", 'Категории успешно обновлены');
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff(Carbon::now())->format('%iм %sс'));
         return 0;
     }

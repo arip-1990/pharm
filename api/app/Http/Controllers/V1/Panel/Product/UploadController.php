@@ -24,7 +24,12 @@ class UploadController extends Controller
             $image->storeAs('images/original', $fileName);
 
             $sort = $product->photos()->orderByDesc('sort')->first();
-            Photo::query()->create(['product_id' => $product->id, 'file' => $fileName, 'sort' => $sort ? $sort->sort + 1 : 0]);
+            Photo::create([
+                'product_id' => $product->id,
+                'name' => $image->getClientOriginalName(),
+                'file' => $fileName,
+                'sort' => $sort ? $sort->sort + 1 : 0
+            ]);
         }
 
         return new JsonResponse();

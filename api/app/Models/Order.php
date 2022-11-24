@@ -162,6 +162,16 @@ class Order extends Model
         return $this->statuses->contains(fn(Status $s) => $s->equal($status) and $s->state === OrderState::STATE_SUCCESS);
     }
 
+    public function isStatusFailure(OrderStatus $status): bool
+    {
+        return $this->statuses->contains(fn(Status $s) => $s->equal($status) and $s->state === OrderState::STATE_ERROR);
+    }
+
+    public function isStatusWait(OrderStatus $status): bool
+    {
+        return $this->statuses->contains(fn(Status $s) => $s->equal($status) and $s->state === OrderState::STATE_WAIT);
+    }
+
     public function inStatus(OrderStatus $status): bool
     {
         return $this->statuses->contains('value', $status);

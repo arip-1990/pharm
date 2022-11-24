@@ -72,7 +72,7 @@ services:
         - traefik.http.routers.site.tls=true
         - traefik.http.routers.site.tls.certResolver=letsEncrypt
       mode: replicated
-      replicas: 1
+      replicas: 2
       update_config:
         parallelism: 1
         delay: 10s
@@ -81,7 +81,7 @@ services:
     image: ${REGISTRY}/pharm-client-node:${IMAGE_TAG}
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       update_config:
         parallelism: 1
         delay: 10s
@@ -102,7 +102,7 @@ services:
         - traefik.http.routers.panel.tls=true
         - traefik.http.routers.panel.tls.certResolver=letsEncrypt
       mode: replicated
-      replicas: 1
+      replicas: 2
       update_config:
         parallelism: 1
         delay: 10s
@@ -125,10 +125,10 @@ services:
         - traefik.http.routers.api.tls=true
         - traefik.http.routers.api.tls.certResolver=letsEncrypt
       mode: replicated
-      replicas: 1
+      replicas: 2
       update_config:
         parallelism: 1
-        delay: 5s
+        delay: 10s
 
   api-php-fpm:
     image: ${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG}
@@ -163,10 +163,10 @@ services:
       - uploads:/app/storage/app/public
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 2
       update_config:
         parallelism: 1
-        delay: 5s
+        delay: 10s
 
   api-migration:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
@@ -371,6 +371,7 @@ services:
     deploy:
       placement:
         constraints: [ node.role == manager ]
+      endpoint_mode: dnsrr
 
 volumes:
   api-db:

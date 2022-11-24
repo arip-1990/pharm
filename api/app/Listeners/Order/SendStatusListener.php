@@ -7,7 +7,7 @@ use App\Models\Status\Status;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendOrderStatusListener implements ShouldQueue
+class SendStatusListener implements ShouldQueue
 {
     private array $statuses = [
         'A' => 'placed', // создан
@@ -55,7 +55,7 @@ class SendOrderStatusListener implements ShouldQueue
     private function sendStatus(array $data): array
     {
         $url = 'https://api1.imshop.io/v1/clients/apteka120/statuses/sync/5f9c5363-917f-4588-83ab-ea4058ccdff6';
-        $client = new Client(['verify' => false]);
+        $client = new Client();
         $response = $client->post($url, ['json' => $data]);
 
         return json_decode($response->getBody(), true);

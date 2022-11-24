@@ -74,16 +74,15 @@ def test_data(message) -> None:
 def handle_import(data: dict) -> None:
     global update
 
-    if data['success']:
-        message = data['message']
-    else:
-        message = f"Ошибка обработки запроса!\nФайл: {data['file']}\nСтрока: {data['line']}\n{data['message']}"
-
-    bot.send_message(admin, message)
+    bot.send_message(admin, data['message'])
     # if update['chat'] and update['chat'] != admin:
     #     bot.send_message(update['chat'], message)
 
     update = {'chat': None, 'command': None}
+
+
+def handle_error(data: dict) -> None:
+    bot.send_message(admin, f"File: {data['file']}\nLine: {data['line']}\nMessage: {data['message']}")
 
 
 def listen_redis() -> None:
@@ -100,6 +99,8 @@ def listen_redis() -> None:
                         for key, item in json.loads(message.get('data')):
                             bot.send_message(admin, f'{key} => {item}')
                     elif type == 'import':
+                        handle_import(json.loads(message.get('data')))
+                    elif type == 'error':
                         handle_import(json.loads(message.get('data')))
                     elif type == 'test':
                         data = json.loads(message.get('data'))

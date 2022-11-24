@@ -11,14 +11,15 @@ use App\Models\Delivery;
 use App\Models\Location;
 use App\Models\Store;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
 class DeliveryController extends Controller
 {
     public function handle(DeliveryRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $locations = [];
         $deliveries = [];
+        $locations = new Collection();
         foreach (Delivery::all() as $item) {
             if ($item->equalType(Delivery::TYPE_PICKUP) and $city = City::where('name', Helper::trimPrefixCity($data['addressData']['city']))->first()) {
                 $productIds = array_column($data['items'], 'privateId');
@@ -26,9 +27,10 @@ class DeliveryController extends Controller
 
                 $locations = Store::join('offers', 'stores.id', 'offers.store_id')->select('stores.*')
                     ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', $productIds)
-                    ->whereIn('location_id', $locationIds)->groupBy('stores.id')->orderByRaw('count(*) desc')->get();
+                    ->whereIn('stores.id', config('data.mobileStores'))->whereIn('stores.location_id', $locationIds)
+                    ->groupBy('stores.id')->orderByRaw('count(*) desc')->get();
 
-                if (count($locations)) $deliveries[] = $item;
+                if ($locations->count()) $deliveries[] = $item;
             }
             else $deliveries[] = $item;
         }
