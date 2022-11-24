@@ -98,16 +98,23 @@ class CheckoutService
                 $items2 = new Collection();
                 DB::transaction(function () use ($order, $data, $items2) {
                     $items = new Collection();
-                    $offers = new Collection();
                     foreach ($data['items'] as $item) {
-                        if (!$offer = Offer::where('store_id', $order->store_id)->where('product_id', $item['privateId'])->first()) {
-                            $items2->add(['product' => $item['privateId'], 'quantity' => $item['quantity']]);
+                        $productId = $item['privateId'];
+                        $quantity = $item['quantity'];
+
+                        if (!$offer = Offer::where('store_id', $order->store_id)->where('product_id', $productId)->first()) {
+                            $items2->add(['product' => $productId, 'quantity' => $quantity]);
                             continue;
                         }
 
-                        $offer->checkout($item['quantity']);
-                        $offers->add($offer);
-                        $items->add(OrderItem::create($item['privateId'], $item['price'], $item['quantity']));
+                        if ($offer->quantity < $quantity) {
+                            $items2->add(['product' => $productId, 'quantity' => $quantity - $offer->quantity]);
+                            $quantity = $offer->quantity;
+                        }
+
+                        $offer->checkout($quantity);
+                        $offer->save();
+                        $items->add(OrderItem::create($productId, $offer->price, $quantity));
                     }
 
                     $order->save();
@@ -130,8 +137,6 @@ class CheckoutService
                         $delivery->location()->associate($location);
                         $order->orderDelivery()->save($delivery);
                     }
-
-                    $offers->each(fn(Offer $offer) => $offer->save());
                 });
 
                 if ($order->payment->equalType(Payment::TYPE_CASH)) {
