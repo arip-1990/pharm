@@ -119,11 +119,6 @@ class Product extends Model
         return $this->belongsTo(Discount::class)->where('active', true);
     }
 
-    public function addPhoto(): void
-    {
-        $this->photos()->create(['type' => Photo::TYPE_PICTURE]);
-    }
-
     public function photos(): BelongsToMany
     {
         return $this->belongsToMany(Photo::class)->where('type', Photo::TYPE_PICTURE)->orderBy('sort');
@@ -132,11 +127,6 @@ class Product extends Model
     public function checkedPhotos(): HasMany
     {
         return $this->photos()->where('status', Photo::STATUS_CHECKED);
-    }
-
-    public function addCertificate(): void
-    {
-        $this->certificates()->create(['type' => Photo::TYPE_CERTIFICATE]);
     }
 
     public function certificates(): BelongsToMany

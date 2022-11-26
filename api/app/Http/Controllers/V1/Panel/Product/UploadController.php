@@ -21,15 +21,18 @@ class UploadController extends Controller
             }
             while (Storage::exists('images/original/' . $fileName));
 
-            $image->storeAs('images/original', $fileName);
+            $image->storeAs('images/original/', $fileName);
 
             $sort = $product->photos()->orderByDesc('sort')->first();
-            Photo::create([
+            $fileName = explode('.', $fileName);
+
+            $product->photos()->sync(Photo::create([
                 'product_id' => $product->id,
-                'name' => $image->getClientOriginalName(),
-                'file' => $fileName,
+                'title' => explode('.', $image->getClientOriginalName())[0],
+                'name' => $fileName[0],
+                'extension' => $fileName[1],
                 'sort' => $sort ? $sort->sort + 1 : 0
-            ]);
+            ]));
         }
 
         return new JsonResponse();
