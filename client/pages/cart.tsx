@@ -2,7 +2,6 @@ import { FC, useCallback, useEffect, useState, MouseEvent } from "react";
 import Layout from "../components/layout";
 import defaultImage from "../assets/images/default.png";
 import Link from "next/link";
-import Head from "next/head";
 import BaseCart from "../components/cart";
 import { useLocalStorage } from "react-use-storage";
 import { ICart } from "../models/ICart";
@@ -42,12 +41,7 @@ const Cart: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Корзина</title>
-        <meta key="description" name="description" content="Корзина" />
-      </Head>
-
+    <Layout title="Корзина - Сеть аптек 120/80">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">

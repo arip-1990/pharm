@@ -1,5 +1,4 @@
 import Layout from "../../components/layout";
-import Head from "next/head";
 import { GetServerSideProps } from "next";
 import {FC, useCallback} from "react";
 import Page from "../../components/page";
@@ -26,12 +25,7 @@ const Store: FC = () => {
   ], [data]);
 
   return (
-    <Layout>
-      <Head>
-        <title>{data?.name}</title>
-        <meta key="description" name="description" content={data?.name} />
-      </Head>
-
+    <Layout title={data ? `${data?.name} - Сеть аптек 120/80` : 'Сеть аптек 120/80'}>
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page className="row">

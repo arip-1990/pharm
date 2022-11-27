@@ -1,7 +1,6 @@
 import Layout from "../components/layout";
 import Page from "../components/page";
 import { FC, useCallback } from "react";
-import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const Rent: FC = () => {
@@ -10,16 +9,7 @@ const Rent: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Развитие сети/Аренда</title>
-        <meta
-          key="description"
-          name="description"
-          content="Мы заинтересованы в активном развитии нашей сети. Просим Вас внимательно ознакомиться с требованиями, предъявляемыми нами к потенциальным помещениям."
-        />
-      </Head>
-
+    <Layout title="Развитие сети/Аренда - Сеть аптек 120/80" description="Мы заинтересованы в активном развитии нашей сети. Просим Вас внимательно ознакомиться с требованиями, предъявляемыми нами к потенциальным помещениям.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Развитие сети/Аренда">

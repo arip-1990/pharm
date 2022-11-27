@@ -63,7 +63,7 @@ const ChangePassword: FC = () => {
   });
 
   return (
-    <Layout>
+    <Layout title="Изменить пароль - Сеть аптек 120/80">
       <BaseProfile title="Изменить пароль" contentClassName="d-flex">
         <form
           onSubmit={formik.handleSubmit}

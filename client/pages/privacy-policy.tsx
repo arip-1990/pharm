@@ -1,7 +1,6 @@
 import Layout from "../components/layout";
 import Page from "../components/page";
 import { FC, useCallback } from "react";
-import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const PrivacyPolicy: FC = () => {
@@ -10,16 +9,7 @@ const PrivacyPolicy: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Политика конфиденциальности</title>
-        <meta
-          key="description"
-          name="description"
-          content="В соответствии с Федеральным законом № 152-ФЗ «О персональных данных» от 27.07.2006 года Вы подтверждаете свое согласие на обработку персональных данных: сбор, накопление, хранение, использование, блокирование, а также передачу информации третьим лицам."
-        />
-      </Head>
-
+    <Layout title="Политика конфиденциальности - Сеть аптек 120/80" description="В соответствии с Федеральным законом № 152-ФЗ «О персональных данных» от 27.07.2006 года Вы подтверждаете свое согласие на обработку персональных данных: сбор, накопление, хранение, использование, блокирование, а также передачу информации третьим лицам.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Политика конфиденциальности">

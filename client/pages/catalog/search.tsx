@@ -70,7 +70,7 @@ const Search: FC = () => {
   }, [city]);
 
   return (
-    <Layout>
+    <Layout title="Поиск товара - Сеть аптек 120/80">
         <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">

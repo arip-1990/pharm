@@ -7,7 +7,7 @@ const Profile: FC = () => {
   const { user } = useAuth();
 
   return (
-    <Layout>
+    <Layout title="Профиль - Сеть аптек 120/80">
       <BaseProfile title="Персональные данные">
         <div className="row">
           <div

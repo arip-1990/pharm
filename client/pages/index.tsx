@@ -35,7 +35,7 @@ const Home: FC = () => {
   useEffect(() => refetch(), [city]);
 
   return (
-    <Layout banner>
+    <Layout banner title="Сеть аптек 120/80">
       <Button />
 
       <div

@@ -14,7 +14,6 @@ import {
 import { useRouter } from "next/router";
 import { useCookie } from "../hooks/useCookie";
 import Breadcrumbs from "../components/breadcrumbs";
-import Head from "next/head";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -62,17 +61,8 @@ const Catalog: FC = () => {
     const getDefaultGenerator = useCallback(() => [{ href: '/catalog', text: "Наш ассортимент" }], []);
 
   return (
-    <Layout>
-        <Head>
-            <title>Сеть аптек 120/80 | Наш ассортимент</title>
-            <meta
-                key="description"
-                name="description"
-                content="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой."
-            />
-        </Head>
-
-        <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
+    <Layout title="Наш ассортимент - Сеть аптек 120/80" description="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой.">
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <nav className="col-md-3">

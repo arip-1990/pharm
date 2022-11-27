@@ -8,7 +8,7 @@ const Coupon: FC = () => {
   const { data } = useFetchCouponsQuery();
 
   return (
-    <Layout>
+    <Layout title="Купоны - Сеть аптек 120/80">
       <BaseProfile>
         <h4>Купоны</h4>
         {data && <BaseCoupon data={data} />}

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Row } from "react-bootstrap";
-import Head from "next/head";
 import Layout from "../components/layout";
 import Page from "../components/page";
 import Box from "../assets/images/content/box.svg";
@@ -19,16 +18,7 @@ const DeliveryBooking: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Доставка/Бронирование</title>
-        <meta
-          key="description"
-          name="description"
-          content="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой."
-        />
-      </Head>
-
+    <Layout title="Доставка/Бронирование - Сеть аптек 120/80" description="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Доставка/Бронирование">

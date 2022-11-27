@@ -59,7 +59,7 @@ const Store: FC = () => {
   };
 
   return (
-    <Layout>
+    <Layout title="Выбор аптеки - Сеть аптек 120/80">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">

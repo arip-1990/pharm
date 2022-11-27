@@ -12,7 +12,7 @@ const CheckoutFailed: FC = () => {
   useEffect(() => removeCarts(), []);
 
   return (
-    <Layout>
+    <Layout title="Ошибка оплаты - Сеть аптек 120/80">
       <h1 className="text-center"></h1>
 
       <div>

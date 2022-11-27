@@ -8,7 +8,7 @@ const Card: FC = () => {
   const { data } = useFetchCardsQuery();
 
   return (
-    <Layout>
+    <Layout title="Список карт - Сеть аптек 120/80">
       <Profile title="Список карт">{data && <BaseCard data={data} />}</Profile>
     </Layout>
   );

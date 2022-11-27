@@ -119,7 +119,7 @@ const Checkout: FC = () => {
   });
 
   return (
-    <Layout>
+    <Layout title="Оформление заказа - Сеть аптек 120/80">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <h1 className="text-center">Оформление заказа</h1>

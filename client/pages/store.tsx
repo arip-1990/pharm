@@ -4,7 +4,6 @@ import Layout from "../components/layout";
 import Page from "../components/page";
 import Pagination from "../components/pagination";
 import Link from "next/link";
-import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 import { wrapper } from "../store";
 import {
@@ -35,12 +34,7 @@ const Store: FC = () => {
   let points = [];
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Точки самовывоза</title>
-        <meta key="description" name="description" content="Точки самовывоза" />
-      </Head>
-
+    <Layout title="Точки самовывоза - Сеть аптек 120/80" description="Точки самовывоза.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Точки самовывоза">

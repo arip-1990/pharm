@@ -1,6 +1,6 @@
 import Layout from "../../components/layout";
 import Card from "../../components/card";
-import {FC, useEffect} from "react";
+import {FC, useEffect, useState} from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../../models/ICategory";
 import Image from "next/image";
@@ -58,15 +58,19 @@ const Catalog: FC = () => {
   const [city] = useCookie("city");
   const router = useRouter();
   const { slug, page } = router.query;
+  const [category, setCategory] = useState<ICategory>();
   const {data: categories} = useFetchCategoriesQuery();
   const { data, refetch } = useFetchProductsQuery({
     category: String(slug),
     page: Number(page),
   });
 
+  useEffect(() => {
+    if (categories) setCategory(getCategoryBySlug(String(slug), categories));
+  }, [categories]);
+
   const getDefaultGenerator = () => {
-    if (categories) {
-      const category = getCategoryBySlug(String(slug), categories);
+    if (category) {
       return [{href: '/catalog', text: "Наш ассортимент"}, ...getTreeCategories(category, categories).map(item => ({
         href: `/catalog/${item.slug}`,
         text: item.name
@@ -82,7 +86,7 @@ const Catalog: FC = () => {
   }, [city]);
 
   return (
-    <Layout>
+    <Layout title={category ? `${category.name} - Сеть аптек 120/80` : 'Сеть аптек 120/80'}>
         <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">

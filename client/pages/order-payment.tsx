@@ -1,7 +1,6 @@
 import Layout from "../components/layout";
 import Page from "../components/page";
 import { FC, useCallback } from "react";
-import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const OrderPayment: FC = () => {
@@ -10,16 +9,7 @@ const OrderPayment: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Оплата заказа</title>
-        <meta
-          key="description"
-          name="description"
-          content="Способы оплаты при получении заказа в аптеке: Наличными; Оплата банковской картой."
-        />
-      </Head>
-
+    <Layout title="Оплата заказа - Сеть аптек 120/80">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page>

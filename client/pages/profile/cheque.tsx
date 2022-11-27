@@ -11,7 +11,7 @@ const Cheque: FC = () => {
   const { data: bonuses } = useFetchBonusesQuery();
 
   return (
-    <Layout>
+    <Layout title="Покупки - Сеть аптек 120/80">
       <BaseProfile>
         <h4>Покупки</h4>
         {cheques && <BaseCheque className="mb-3" data={cheques} />}

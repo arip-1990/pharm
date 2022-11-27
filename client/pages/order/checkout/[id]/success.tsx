@@ -12,7 +12,7 @@ const CheckoutSuccess: FC = () => {
   useEffect(() => removeCarts(), []);
 
   return (
-    <Layout>
+    <Layout title="Заказ оформлен - Сеть аптек 120/80">
       <h1 className="text-center">Спасибо, заказ №{id} оформлен!</h1>
 
       <div>

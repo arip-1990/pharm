@@ -1,7 +1,6 @@
 import Layout from "../components/layout";
 import Page from "../components/page";
 import { FC, useCallback } from "react";
-import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const RulesRemotely: FC = () => {
@@ -10,16 +9,7 @@ const RulesRemotely: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Правила дистанционной торговли ЛС</title>
-        <meta
-          key="description"
-          name="description"
-          content="Правила торговли лекарственными препаратами дистанционным способом."
-        />
-      </Head>
-
+    <Layout title="Правила дистанционной торговли ЛС - Сеть аптек 120/80" description="Правила торговли лекарственными препаратами дистанционным способом.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page>

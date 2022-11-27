@@ -1,6 +1,5 @@
 import {FC, useCallback, useEffect} from "react";
 import { GetServerSideProps } from "next";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import Layout from "../components/layout";
 import Card from "../components/card";
@@ -31,16 +30,7 @@ const Stock: FC = () => {
     const getDefaultGenerator = useCallback(() => [{ href: '/stock', text: "Акции" }], []);
 
   return (
-    <Layout>
-      <Head>
-          <title>Сеть аптек 120/80 | Акции</title>
-          <meta
-              key="description"
-              name="description"
-              content="Акции."
-          />
-      </Head>
-
+    <Layout title="Акции - Сеть аптек 120/80" description="Акции сайта.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">

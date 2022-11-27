@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Link from "next/link";
 import {FC, useCallback} from "react";
 import { useLocalStorage } from "react-use-storage";
@@ -17,12 +16,8 @@ const Favorite: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Избранное</title>
-      </Head>
-
-        <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
+    <Layout title="Избранное - Сеть аптек 120/80">
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <div className="col">

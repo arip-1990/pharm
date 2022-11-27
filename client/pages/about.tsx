@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Row } from "react-bootstrap";
-import Head from "next/head";
 import Layout from "../components/layout";
 import Page from "../components/page";
 import distance_trading from "../assets/images/licenses/distance_trading.jpg";
@@ -19,16 +18,7 @@ const About: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | О компании</title>
-        <meta
-          key="description"
-          name="description"
-          content="Мы создаем новые стандарты обслуживания, внедряем новые технологии, стремимся удовлетворить запросы всех групп потребителей."
-        />
-      </Head>
-
+    <Layout title="О компании - Сеть аптек 120/80" description="Мы создаем новые стандарты обслуживания, внедряем новые технологии, стремимся удовлетворить запросы всех групп потребителей.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page>

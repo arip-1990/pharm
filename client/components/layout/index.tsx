@@ -1,4 +1,5 @@
 import { FC, ReactNode, useState } from "react";
+import Head from "next/head";
 import { Container, Row } from "react-bootstrap";
 import { NotificationContainer } from "react-notifications";
 
@@ -11,12 +12,14 @@ import TopInfo from "./topInfo";
 import Banner from "../banner";
 
 type Props = {
+  title: string;
+  description?: string;
   children?: ReactNode;
   banner?: boolean;
   type?: 'main' | 'loyalty';
 };
 
-const Layout: FC<Props> = ({ children, banner, type = 'main' }) => {
+const Layout: FC<Props> = ({ title, description, children, banner, type = 'main' }) => {
     const {isAuth} = useAuth();
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -26,6 +29,14 @@ const Layout: FC<Props> = ({ children, banner, type = 'main' }) => {
 
   return (
     <>
+      <Head>
+        <title>{title}</title>
+        <meta name='title' content={title} />
+        <meta
+          name="description"
+          content={description ? description : 'Добро пожаловать на наш сайт - сервис для покупки лекарств и товаров в собственной аптечной сети! Наши аптеки популярны, благодаря широкому ассортименту и высокой культуре обслуживания при доступных ценах. Гарантия качества и сервисное обслуживание – основные принципы нашей работы!'}
+        />
+      </Head>
       <TopInfo />
 
       <Header />

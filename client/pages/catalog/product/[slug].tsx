@@ -1,5 +1,4 @@
 import Layout from "../../../components/layout";
-import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { FC, useCallback, useEffect, useState } from "react";
 import defaultImage from "../../../assets/images/default.png";
@@ -63,11 +62,7 @@ const Product: FC = () => {
   useEffect(() => refetch(), [city]);
 
   return (
-    <Layout>
-      <Head>
-        <title>{data?.product.name}</title>
-      </Head>
-
+    <Layout title={data ? `${data.product.name} - Сеть аптек 120/80` : 'Сеть аптек 120/80'} description={data?.product.description}>
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Accordion>

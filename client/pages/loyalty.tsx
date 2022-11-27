@@ -1,7 +1,6 @@
 import Layout from "../components/layout";
 import Page from "../components/page";
 import { FC, useCallback, useState } from "react";
-import Head from "next/head";
 import Breadcrumbs from "../components/breadcrumbs";
 import Auth from "../components/auth";
 import BaseLoyalty from "../components/loyalty";
@@ -14,16 +13,7 @@ const Loyalty: FC = () => {
   ], []);
 
   return (
-    <Layout>
-      <Head>
-        <title>Сеть аптек 120/80 | Программа лояльности</title>
-        <meta
-          key="description"
-          name="description"
-          content="Мы заинтересованы в активном развитии нашей сети. Просим Вас внимательно ознакомиться с требованиями, предъявляемыми нами к потенциальным помещениям."
-        />
-      </Head>
-
+    <Layout title="Программа лояльности - Сеть аптек 120/80" description="Мы заинтересованы в активном развитии нашей сети. Просим Вас внимательно ознакомиться с требованиями, предъявляемыми нами к потенциальным помещениям.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Программа лояльности">
