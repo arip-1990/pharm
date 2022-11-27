@@ -6,8 +6,9 @@ use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Routing\Controller;
 
-class IndexController
+class IndexController extends Controller
 {
     public function index(Request $request): JsonResource
     {

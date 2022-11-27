@@ -7,15 +7,16 @@ use App\Models\Status\OrderState;
 use App\Models\Status\OrderStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 
-class PayController
+class PayController extends Controller
 {
     public function handle(Request $request): Response
     {
         $data = '';
-        foreach ($request->collect()->except('checksum', 'sign_alias')->sortKeys() as $key => $value) {
+        foreach ($request->collect()->except(['checksum', 'sign_alias'])->sortKeys() as $key => $value) {
             $data .= $key . ';' . $value . ';';
         }
 

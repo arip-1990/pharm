@@ -5,18 +5,17 @@ namespace App\Http\Controllers\V1\Auth\Verify;
 use App\Http\Requests\Auth\VerifyPhoneRequest;
 use App\Models\User;
 use App\UseCases\Auth\LoginService;
-use App\UseCases\Auth\RegisterService;
 use App\UseCases\PosService;
 use App\UseCases\User\PhoneVerifyService;
 use App\UseCases\User\UserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class VerifyPhoneController
+class VerifyPhoneController extends Controller
 {
     public function __construct(
-        private readonly RegisterService $registerService,
         private readonly LoginService $loginService,
         private readonly UserService $userService,
         private readonly PhoneVerifyService $verifyService,

@@ -7,8 +7,9 @@ use App\UseCases\PosService;
 use App\UseCases\User\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class IndexController
+class IndexController extends Controller
 {
     public function __construct(private readonly UserService $service, private readonly PosService $posService) {}
 

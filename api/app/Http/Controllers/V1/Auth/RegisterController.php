@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\Auth;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\UseCases\Auth\RegisterService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
-class RegisterController
+class RegisterController extends Controller
 {
     public function __construct(private readonly RegisterService $service) {}
 
@@ -14,7 +15,7 @@ class RegisterController
     {
         try {
             $user = $this->service->requestRegister($request);
-            
+
             $request->session()->put('userId', $user->id);
         }
         catch (\DomainException $e) {

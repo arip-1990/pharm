@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\User;
 use App\Http\Requests\User\UpdateRequest;
 use App\UseCases\User\UserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
-class UpdateController
+class UpdateController extends Controller
 {
     public function __construct(private readonly UserService $service) {}
 

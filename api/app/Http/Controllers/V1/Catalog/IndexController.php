@@ -10,25 +10,24 @@ use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class IndexController
+class IndexController extends Controller
 {
     public function handle(Request $request, Category $category = null): JsonResponse
     {
-        $productIds = Offer::query()->select('product_id')
-            ->whereCity($request->cookie('city', City::query()->find(1)?->name))
-            ->groupBy('product_id')->get()->pluck('product_id');
+        $productIds = Offer::select('product_id')->whereCity($request->cookie('city', City::find(1)?->name))
+            ->groupBy('product_id')->pluck('product_id');
 
-        $query = Product::query()->whereIn('id', $productIds);
+        $query = Product::whereIn('id', $productIds);
         if ($category) {
+            $categories = $category->children;
             $query->whereIn('category_id', $category->descendants()->pluck('id')->push($category->id));
         }
-        $products = $query->paginate($request->get('pageSize', 12));
-
-        if ($category)
-            $categories = $category->children;
         else
             $categories = Category::whereNull('parent_id')->get();
+
+        $products = $query->paginate($request->get('pageSize', 12));
 
         return new JsonResponse([
             'categories' => CategoryResource::collection($categories),

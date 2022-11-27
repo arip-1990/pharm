@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\Auth;
 use App\UseCases\Auth\LoginService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class LogoutController
+class LogoutController extends Controller
 {
     public function __construct(private readonly LoginService $service) {}
 

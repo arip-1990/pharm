@@ -6,8 +6,9 @@ use App\Http\Resources\CardResource;
 use App\UseCases\CardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class IndexController
+class IndexController extends Controller
 {
     public function __construct(private readonly CardService $service) {}
 

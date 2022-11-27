@@ -17,7 +17,7 @@ class IndexController extends Controller
         return new JsonResponse([
             'product' => new ProductResource($product),
             'offers' => OfferResource::collection(
-                $product->offers()->whereCity($request->cookie('city', City::query()->find(1)?->name))->get()
+                $product->offers()->whereCity($request->cookie('city', City::find(1)?->name))->get()
             )
         ]);
     }

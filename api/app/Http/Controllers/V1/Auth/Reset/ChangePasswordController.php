@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\Auth\Reset;
 use App\UseCases\Auth\PasswordService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class ChangePasswordController
+class ChangePasswordController extends Controller
 {
     public function __construct(private readonly PasswordService $passwordService) {}
 

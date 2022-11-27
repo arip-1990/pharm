@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\Order\Checkout;
 use App\UseCases\Order\CheckoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class StoreController
+class StoreController extends Controller
 {
     public function __construct(private readonly CheckoutService $service) {}
 

@@ -4,9 +4,10 @@ namespace App\Http\Controllers\V1\Auth;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class RefreshController
+class RefreshController extends Controller
 {
     public function handle(Request $request): JsonResponse
     {

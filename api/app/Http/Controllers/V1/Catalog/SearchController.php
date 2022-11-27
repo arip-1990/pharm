@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Routing\Controller;
 
-class SearchController
+class SearchController extends Controller
 {
     public function handle(Request $request): JsonResponse | JsonResource
     {
@@ -21,11 +22,11 @@ class SearchController
             ], 500);
         }
 
-        $paginator = Product::active($request->cookie('city', City::query()->find(1)?->name))
+        $paginator = Product::active($request->cookie('city', City::find(1)?->name))
             ->where(function(Builder $query) use ($searchText) {
                 $query->where('name', 'like', '%' . $searchText . '%')
                     ->orWhereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$searchText]);
-            })->paginate(30);
+            })->paginate(15);
 
         return ProductResource::collection($paginator);
     }

@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\User;
 use App\Http\Requests\User\UpdatePasswordRequest;
 use App\UseCases\User\UserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
-class UpdatePasswordController
+class UpdatePasswordController extends Controller
 {
     public function __construct(private readonly UserService $service) {}
 

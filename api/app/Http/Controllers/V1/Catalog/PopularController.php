@@ -9,19 +9,20 @@ use App\Models\Product;
 use App\Models\ProductStatistic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class PopularController
+class PopularController extends Controller
 {
     public function handle(Request $request): JsonResponse
     {
-        $popularIds = ProductStatistic::query()->select('id')->orderByDesc('orders')
+        $popularIds = ProductStatistic::select('id')->orderByDesc('orders')
             ->orderByDesc('views')->get()->pluck('id');
 
-        $categoryIds = Category::query()->whereIn('id', [536, 556])->get()
-            ->map(fn(Category $category) => $category->descendants->pluck('id'))->collapse()->push(536, 556);
+        $categoryIds = Category::whereIn('id', [536, 556])->get()
+            ->map(fn(Category $category) => $category->descendants()->pluck('id'))->collapse()->push(536, 556);
 
         $products = Product::active($request->cookie('city', City::query()->find(1)?->name))
-            ->whereNotIn('category_id', $categoryIds)->whereIn('id', $popularIds)->take(12)->get();
+            ->whereNotIn('category_id', $categoryIds)->whereIn('id', $popularIds)->take(16)->get();
 
         return new JsonResponse(ProductResource::collection($products));
     }

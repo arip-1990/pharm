@@ -6,8 +6,9 @@ use App\Http\Resources\CouponResource;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class IndexController
+class IndexController extends Controller
 {
     public function handle(Request $request): JsonResponse
     {

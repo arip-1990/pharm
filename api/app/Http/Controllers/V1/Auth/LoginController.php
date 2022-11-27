@@ -6,9 +6,10 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\UseCases\Auth\LoginService;
 use App\UseCases\User\PhoneVerifyService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class LoginController
+class LoginController extends Controller
 {
     public function __construct(private readonly LoginService $loginService, private readonly PhoneVerifyService $verifyService) {}
 

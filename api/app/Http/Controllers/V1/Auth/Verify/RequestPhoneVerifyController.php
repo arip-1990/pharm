@@ -5,8 +5,9 @@ namespace App\Http\Controllers\V1\Auth\Verify;
 use App\UseCases\Auth\RegisterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class RequestPhoneVerifyController
+class RequestPhoneVerifyController extends Controller
 {
     public function __construct(private readonly RegisterService $registerService) {}
 

@@ -1,4 +1,4 @@
-import {ICategory} from "./models/ICategory";
+import { ICategory } from "./models/ICategory";
 
 export const getCategoryById = (id: number, categories: ICategory[]): ICategory | undefined => {
 	for (const item of categories) {

@@ -10,14 +10,14 @@ use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class StockController
+class StockController extends Controller
 {
     public function handle(Request $request): JsonResponse
     {
-        $productIds = Offer::select('product_id')
-            ->whereCity($request->cookie('city', City::query()->find(1)?->name))
-            ->groupBy('product_id')->get()->pluck('product_id');
+        $productIds = Offer::select('product_id')->whereCity($request->cookie('city', City::find(1)?->name))
+            ->groupBy('product_id')->pluck('product_id');
 
         $products = Product::whereIn('id', $productIds)->whereNotNull('discount_id')
             ->paginate($request->get('pageSize', 20));

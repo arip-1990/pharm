@@ -7,8 +7,9 @@ use App\Models\Payment;
 use App\UseCases\AcquiringService;
 use App\UseCases\Order\CheckoutService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 
-class IndexController
+class IndexController extends Controller
 {
     public function __construct(
         private readonly CheckoutService $checkoutService,

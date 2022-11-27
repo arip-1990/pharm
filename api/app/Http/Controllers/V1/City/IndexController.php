@@ -5,13 +5,13 @@ namespace App\Http\Controllers\V1\City;
 use App\Http\Resources\CityResource;
 use App\Models\City;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class IndexController
+class IndexController extends Controller
 {
-    public function handle(Request $request): JsonResponse
+    public function handle(): JsonResponse
     {
-        $cities = City::query()->whereNull('parent_id')->get();
+        $cities = City::whereNull('parent_id')->get();
         return new JsonResponse(CityResource::collection($cities));
     }
 }

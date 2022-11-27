@@ -6,8 +6,9 @@ use App\UseCases\Auth\PasswordService;
 use App\UseCases\User\PhoneVerifyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
-class RequestChangePasswordController
+class RequestChangePasswordController extends Controller
 {
     public function __construct(private readonly PasswordService $passwordService, private readonly PhoneVerifyService $verifyService) {}
 
