@@ -32,7 +32,7 @@ class Payment extends Model
         'type',
     ];
 
-    public function equalType(string $type): bool
+    public function isType(string $type): bool
     {
         return $this->type === $type;
     }
