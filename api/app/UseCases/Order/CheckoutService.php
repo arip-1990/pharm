@@ -187,7 +187,7 @@ class CheckoutService
                         'uuid' => $data['uuid'],
                         'success' => true,
                         'price' => $order->cost,
-                        'items' => $order->items->map(function (OrderItem $item) use ($data) {
+                        'items' => $order->items->map(function (OrderItem $item) use ($data, $order) {
                             $tmp = $data['items'][0];
                             foreach ($data['items'] as $item2) {
                                 if ($item2['privateId'] == $item->product_id)
@@ -202,7 +202,8 @@ class CheckoutService
                                 'price' => $item->price,
                                 'quantity' => $item->quantity,
                                 'discount' => $tmp['discount'],
-                                'subtotal' => $item->getCost()
+                                'subtotal' => $item->getCost(),
+                                'deliveryGroup' => $order->delivery_id
                             ];
                         })
                     ];
@@ -214,7 +215,7 @@ class CheckoutService
                         'uuid' => $data['uuid'],
                         'success' => true,
                         'price' => $order2->cost,
-                        'items' => $order2->items->map(function (OrderItem $item) use ($data) {
+                        'items' => $order2->items->map(function (OrderItem $item) use ($data, $order2) {
                             $tmp = $data['items'][0];
                             foreach ($data['items'] as $item2) {
                                 if ($item2['privateId'] == $item->product_id)
@@ -229,7 +230,8 @@ class CheckoutService
                                 'price' => $item->price,
                                 'quantity' => $item->quantity,
                                 'discount' => $tmp['discount'],
-                                'subtotal' => $item->getCost()
+                                'subtotal' => $item->getCost(),
+                                'deliveryGroup' => $order2->delivery_id
                             ];
                         })->toArray()
                     ];
