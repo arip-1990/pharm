@@ -12,7 +12,7 @@ class PaymentController extends Controller
 {
     public function handle(PaymentRequest $request): JsonResponse
     {
-        $payments = Payment::query()->paginate($request->get('pageSize', 10));
+        $payments = Payment::paginate($request->get('pageSize', 10));
         return new JsonResponse([
             'payments' => PaymentResource::collection($payments)
         ]);

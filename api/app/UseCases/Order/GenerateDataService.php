@@ -19,7 +19,7 @@ class GenerateDataService
         $order_number = config('data.orderStartNumber') + $this->order->id;
 
         $delivery_xml = '';
-        if($this->order->delivery->equalType(Delivery::TYPE_PICKUP)) {
+        if($this->order->delivery->isType(Delivery::TYPE_PICKUP)) {
             $delivery_xml =
                 "<deliveries>
                         <delivery>
@@ -33,7 +33,7 @@ class GenerateDataService
                         </delivery>
                     </deliveries>";
         }
-        elseif($this->order->delivery->equalType(Delivery::TYPE_DELIVERY)) {
+        elseif($this->order->delivery->isType(Delivery::TYPE_DELIVERY)) {
             $delivery = $this->order->orderDelivery;
             $location = $delivery->location;
             $delivery_xml = "
@@ -78,7 +78,7 @@ class GenerateDataService
                         <phone>$phone</phone>
                     </customer>" . $delivery_xml;
 
-        if($this->order->payment->equalType(Payment::TYPE_CASH)) {
+        if($this->order->payment->isType(Payment::TYPE_CASH)) {
             $xml .=
                 "<payments>
                     <payment>
@@ -87,7 +87,7 @@ class GenerateDataService
                     </payment>
                 </payments>";
         }
-        elseif($this->order->payment->equalType(Payment::TYPE_CARD)) {
+        elseif($this->order->payment->isType(Payment::TYPE_CARD)) {
             $xml .=
                 "<payments>
                     <payment>
