@@ -24,7 +24,7 @@ const Profile: FC<Props> = ({
   if (className) classes = classes.concat(className.split(" "));
 
   useEffect(() => {
-    if (isAuth === false) router.push("/");
+    if (isAuth === false) router.replace("/");
   }, [isAuth]);
 
   const handleLogout = async (e: MouseEvent) => {

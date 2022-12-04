@@ -18,6 +18,7 @@ Route::prefix('acquiring')->group(function () {
     Route::post('/status', [Mobile\Acquiring\StatusController::class, 'handle']);
 });
 
+Route::post('/calc-order', [Mobile\CalcOrderController::class, 'handle']);
 Route::post('/checkout', [Mobile\CheckoutController::class, 'handle']);
 Route::post('/deliveries', [Mobile\DeliveryController::class, 'handle']);
 Route::post('/payments', [Mobile\PaymentController::class, 'handle']);

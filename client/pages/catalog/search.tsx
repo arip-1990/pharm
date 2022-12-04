@@ -18,6 +18,7 @@ import {
 } from "../../lib/categoryService";
 import { useCookie } from "../../hooks/useCookie";
 import Breadcrumbs from "../../components/breadcrumbs";
+import type { Error } from "../../lib/api";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -52,21 +53,24 @@ const Search: FC = () => {
   const [city] = useCookie("city");
   const router = useRouter();
   const { page, q } = router.query;
-  const { data: products, isFetching, refetch } = useSearchProductsQuery({
-    q: String(q),
+  const { data: products, isFetching, error, refetch } = useSearchProductsQuery({
+    q: q ? String(q) : '',
     page: Number(page) || 1,
   });
   const { data: categories } = useFetchCategoriesQuery();
 
-    const getDefaultGenerator = useCallback(() => [
-      {href: '/catalog', text: "Наш ассортимент"},
-      {href: '/', text: `Поиск по запросу "${q}"`}
-    ], [q]);
+  const errorData = error as Error;
+
+  const getDefaultGenerator = useCallback(() => [
+    {href: '/catalog', text: "Наш ассортимент"},
+    {href: '/', text: `Поиск по запросу "${q ?? ''}"`}
+  ], [q]);
 
   useEffect(() => {
-    const path = router.asPath.split("?")[0];
-    if (Number(page) > 1) router.push(path);
-    else refetch();
+    if (products) {
+      if (page) router.replace(router.asPath.replace(/[?&]page=\d+/i, ''));
+      else refetch();
+    }
   }, [city]);
 
   return (
@@ -94,7 +98,7 @@ const Search: FC = () => {
                 itemScope
                 itemType="https://schema.org/ItemList"
               >
-                <link itemProp="url" href={`/catalog/search?q=${q}`} />
+                <link itemProp="url" href={`/catalog/search?q=${q ?? ''}`} />
                 {products?.data.map((product) => (
                   <div key={product.id} className="col-10 offset-1 offset-sm-0">
                     <Card product={product} />
@@ -112,7 +116,7 @@ const Search: FC = () => {
               </div>
             </>
           ) : (
-            <h3 className="text-center">{isFetching ? `Идет поиск товара "${q}"` : `По запросу "${q}" ничего не найдено!`}</h3>
+            <h3 className="text-center">{isFetching ? `Идет поиск товара "${q ?? ''}"` : (errorData ? errorData?.data.message : `По запросу "${q ?? ''}" ничего не найдено!`)}</h3>
           )}
         </div>
       </div>
@@ -123,7 +127,7 @@ const Search: FC = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ params }) => {
     const page = Number(params?.page) || 1;
-    const q = String(params?.q) || "";
+    const q = params?.q ? String(params?.q) : "";
 
     store.dispatch(searchProducts.initiate({ q, page }));
     store.dispatch(fetchCategories.initiate());

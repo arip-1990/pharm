@@ -13,7 +13,7 @@ class OrderPayFullRefundListener implements ShouldQueue
     {
         $order = $event->order;
         try {
-            if ($order->payment->equalType(Payment::TYPE_CARD) and $order->isPay() and !$order->isFullRefund()) {
+            if ($order->payment->isType(Payment::TYPE_CARD) and $order->isPay() and !$order->isFullRefund()) {
                 $response = $this->getOrderInfo($order->sber_id);
                 if($response['errorCode'] == 0) {
                     $order->changeStatusState(OrderState::STATE_SUCCESS);

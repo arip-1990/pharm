@@ -19,7 +19,7 @@ class OrderSendListener implements ShouldQueue
         $order = $event->order;
         $orderNumber = config('data.orderStartNumber') + $order->id;
 
-        if ($order->payment->equalType(Payment::TYPE_CARD) and !$order->isPay() or $order->isSent())
+        if ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay() or $order->isSent())
             return;
 
         try {

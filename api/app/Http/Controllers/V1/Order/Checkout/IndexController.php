@@ -21,7 +21,7 @@ class IndexController extends Controller
         $paymentUrl = null;
         try {
             $order = $this->checkoutService->checkoutWeb($request);
-            if ($order->payment->equalType(Payment::TYPE_CARD))
+            if ($order->payment->isType(Payment::TYPE_CARD))
                 $paymentUrl = $this->acquiringService->sberPay($order->id)['paymentUrl'];
         }
         catch (\DomainException $e) {
