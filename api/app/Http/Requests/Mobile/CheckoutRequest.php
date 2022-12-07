@@ -67,7 +67,7 @@ class CheckoutRequest extends FormRequest
             'orders.*.items.*.name' => 'required|string',
             'orders.*.items.*.price' => 'required|numeric',
             'orders.*.items.*.quantity' => 'required|numeric',
-            'orders.*.items.*.discount' => 'required|numeric',
+            'orders.*.items.*.discount' => 'nullable|numeric',
             'orders.*.items.*.subtotal' => 'required|numeric',
         ];
     }

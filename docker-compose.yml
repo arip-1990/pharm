@@ -153,7 +153,6 @@ services:
       FILESYSTEM_DISK: public
     volumes:
       - ./api:/app
-      - uploads:/app/storage/app/public
 
   api-db:
     image: postgres:14.1-alpine

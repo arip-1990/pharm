@@ -42,7 +42,6 @@ class EmptyProductCommand extends Command
 
     private function description(): void
     {
-        $date = Carbon::now();
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Товары');
@@ -63,7 +62,7 @@ class EmptyProductCommand extends Command
         ]);
 
         $i = 2;
-        Product::query()->whereHas('offers', fn(Builder $query) => $query->whereIn('store_id', [
+        Product::whereHas('offers', fn(Builder $query) => $query->whereIn('store_id', [
             '6179a810-3e07-11eb-80ec-ac1f6bd1d36d',
             'fcd58bdb-f170-11e9-969d-005056011715',
             'af98853a-f0da-11e9-969d-005056011715',
