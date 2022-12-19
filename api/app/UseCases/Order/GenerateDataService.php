@@ -53,7 +53,7 @@ class GenerateDataService
             $delivery_xml .= $delivery->apartment ? "<apartment>{$delivery->apartment}</apartment>" : '';
             $delivery_xml .= $delivery->floor ? "<floor>{$delivery->floor}</floor>" : '';
             $delivery_xml .= $delivery->entrance ? "<entrance>{$delivery->entrance}</entrance>" : '';
-            $delivery_xml .= "<id_service>14</id_service>";
+            $delivery_xml .= "<id_service />";
 
             $delivery_xml .=
                 "<courier_phone>+79999999999</courier_phone>

@@ -20,8 +20,9 @@ class DeliveryController extends Controller
         $data = $request->validated();
         $deliveries = [];
         $locations = new Collection();
+        $city = $data['addressData']['city'] ? City::where('name', Helper::trimPrefixCity($data['addressData']['city']))->first() : City::find(1);
         foreach (Delivery::all() as $item) {
-            if ($item->isType(Delivery::TYPE_PICKUP) and $city = City::where('name', Helper::trimPrefixCity($data['addressData']['city']))->first()) {
+            if ($item->isType(Delivery::TYPE_PICKUP)) {
                 $productIds = array_column($data['items'], 'privateId');
                 $locationIds = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))->pluck('id');
 
