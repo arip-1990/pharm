@@ -1,12 +1,12 @@
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import { useNotification } from "../../hooks/useNotification";
 import api from "../../lib/api";
 import { useIMask } from "react-imask";
 import axios from "axios";
 import classNames from "classnames";
 import { useRouter } from "next/router";
+import { useAuth } from "../../hooks/useAuth";
 
 import styles from "./Auth.module.scss";
 

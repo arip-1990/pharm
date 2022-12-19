@@ -10,7 +10,6 @@ use App\UseCases\User\PhoneVerifyService;
 use App\UseCases\User\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class VerifyPhoneController extends Controller
@@ -30,21 +29,18 @@ class VerifyPhoneController extends Controller
                     throw new \DomainException('Ошибка');
 
                 $this->verifyService->verifyPhone($token, $request->get('smsCode'));
-                $data = $this->loginService->login($loginData['login'], $loginData['password']);
+                $session = $this->loginService->login($loginData['login'], $loginData['password']);
 
                 $request->session()->regenerate();
-                $request->session()->put('session', $data['session']);
+                $request->session()->put('session', $session);
 
-                return new JsonResponse([
-                    'accessToken' => $data['token'],
-                    'expiresIn' => Auth::factory()->getTTL() * 60,
-                ]);
+                return new JsonResponse();
             }
 
             if (!$request->session()->has('userId'))
                 throw new \DomainException('Ошибка');
 
-            $user = User::query()->find($request->session()->get('userId'));
+            $user = User::find($request->session()->get('userId'));
             $this->posService->getBalance($user->phone, validationCode: $request->get('smsCode'));
 
             $this->userService->updateInfo($user, [], $request->session()->get('session'));

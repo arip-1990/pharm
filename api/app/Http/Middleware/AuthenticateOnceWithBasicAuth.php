@@ -8,6 +8,6 @@ class AuthenticateOnceWithBasicAuth
 {
     public function handle($request, $next)
     {
-        return Auth::guard('web')->onceBasic('username') ?: $next($request);
+        return Auth::guard()->onceBasic('username') ?: $next($request);
     }
 }

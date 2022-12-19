@@ -11,5 +11,4 @@ export interface IUser {
     birth_date: moment.Moment | null;
     phone_verified_at: moment.Moment | null;
     email_verified_at: moment.Moment | null;
-    isAuth: boolean;
 }

@@ -1,3 +1,0 @@
-{
-  "excluded": ["api/vendor","client/node_modules","panel/node_modules"],
-}

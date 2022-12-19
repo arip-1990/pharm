@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @property string $id
@@ -38,9 +38,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Collection<ModerationProduct> $moderationProducts
  * @property Limit $priceLimit
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -111,15 +111,5 @@ class User extends Authenticatable implements JWTSubject
     public function grants(): BelongsTo
     {
         return $this->belongsTo(Grant::class);
-    }
-
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims(): array
-    {
-        return [];
     }
 }

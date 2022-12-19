@@ -31,14 +31,4 @@ unknown
     }
 }
 
-instance.interceptors.request.use(config => {
-        let token = localStorage.getItem('token');
-        token = token ? JSON.parse(token)?.accessToken : null;
-        if (token && config.headers) config.headers['Authorization'] = `Bearer ${token}`;
-        
-        return config;
-    },
-    error => Promise.reject(error)
-);
-
 export default instance;

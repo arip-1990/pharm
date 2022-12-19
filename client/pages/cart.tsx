@@ -7,10 +7,10 @@ import { useLocalStorage } from "react-use-storage";
 import { ICart } from "../models/ICart";
 import Auth from "../components/auth";
 import { useRouter } from "next/router";
-import { useAuth } from "../hooks/useAuth";
 import { useNotification } from "../hooks/useNotification";
 import { useMounted } from "../hooks/useMounted";
 import Breadcrumbs from "../components/breadcrumbs";
+import { useAuth } from "../hooks/useAuth";
 
 const Cart: FC = () => {
   const { isAuth } = useAuth();

@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { Sanctum } from "react-sanctum";
 import moment from "moment";
 
 import { wrapper } from "../store";
-import { Auth } from "../store/auth";
 import Loader from "../components/loader";
 
 import "swiper/css/bundle";
 import "react-notifications/lib/notifications.css";
 import "../styles/global.scss";
 import "moment/locale/ru";
+import { API_URL } from "../lib/api";
 
 moment.locale("ru");
+
+const sanctumConfig = {
+  apiUrl: API_URL,
+  csrfCookieRoute: "sanctum/csrf-cookie",
+  signInRoute: "v1/auth/login",
+  signOutRoute: "v1/auth/logout",
+  userObjectRoute: "v1/user",
+  usernameKey: 'login'
+};
 
 const App = ({ Component, pageProps }) => {
   const router = useRouter();
@@ -41,10 +51,10 @@ const App = ({ Component, pageProps }) => {
   }, []);
 
   return (
-    <Auth>
+    <Sanctum config={sanctumConfig}>
       {loading && <Loader />}
       <Component {...pageProps} />
-    </Auth>
+    </Sanctum>
   );
 };
 

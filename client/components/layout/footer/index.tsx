@@ -3,8 +3,8 @@ import { Container, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import Logo from "../../../assets/images/logo_min.svg";
 import { FC, MouseEvent, useState } from "react";
-import { useAuth } from "../../../hooks/useAuth";
 import Auth from "../../auth";
+import { useAuth } from "../../../hooks/useAuth";
 
 import styles from "./Footer.module.scss";
 

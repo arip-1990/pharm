@@ -11,12 +11,11 @@ class LoginController extends Controller
 {
     public function handle(LoginRequest $request): JsonResponse
     {
-        if (!$token = Auth::attempt($request->only(['email', 'password'])))
-            return response()->json('Учетные данные не совпадают', 401);
+        if (!Auth::attempt($request->only(['email', 'password'])))
+            return new JsonResponse('Учетные данные не совпадают', 401);
 
-        return new JsonResponse([
-            'accessToken' => $token,
-            'expiresIn' => Auth::factory()->getTTL() * 60,
-        ]);
+        $request->session()->regenerate();
+
+        return new JsonResponse();
     }
 }

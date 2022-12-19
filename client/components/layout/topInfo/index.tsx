@@ -2,9 +2,9 @@ import {FC, MouseEvent, useState} from "react";
 import {SetCity} from "./SetCity";
 import {Container} from "react-bootstrap";
 import Link from "next/link";
-import {useAuth} from "../../../hooks/useAuth";
 import Auth from "../../auth";
 import DeliverySale from "./DeliverySale";
+import { useAuth } from "../../../hooks/useAuth";
 
 import styles from './TopInfo.module.scss';
 

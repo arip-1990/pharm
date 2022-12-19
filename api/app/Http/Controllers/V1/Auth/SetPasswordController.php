@@ -8,7 +8,6 @@ use App\UseCases\User\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
 
 class SetPasswordController extends Controller
 {
@@ -28,10 +27,10 @@ class SetPasswordController extends Controller
                 throw new \DomainException('Нет пользователя');
 
             $this->service->setPassword($data['contactID'], $request->get('password'));
-            $data = $this->loginService->phoneAuth($loginData['login'], $request->get('password'));
+            $session = $this->loginService->login($loginData['login'], $request->get('password'));
 
             $request->session()->regenerate();
-            $request->session()->put('session', $data['session']);
+            $request->session()->put('session', $session);
         }
         catch (\DomainException $e) {
             return new JsonResponse([
@@ -40,9 +39,6 @@ class SetPasswordController extends Controller
             ], 500);
         }
 
-        return new JsonResponse([
-            'accessToken' => $data['token'],
-            'expiresIn' => Auth::factory()->getTTL() * 60,
-        ]);
+        return new JsonResponse();
     }
 }

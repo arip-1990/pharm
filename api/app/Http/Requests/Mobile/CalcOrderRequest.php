@@ -21,10 +21,10 @@ class CalcOrderRequest extends FormRequest
             'promocode' => 'nullable|string',
 
             'city' => 'required|string',
-            'cityKladr' => 'required|string',
-            'fiasCode' => 'required|string',
-            'deliveryId' => 'nullable|string',
+            'cityKladr' => 'nullable|string',
+            'fiasCode' => 'nullable|string',
             'paymentId' => 'nullable|string',
+            'deliveryId' => 'nullable|string',
 
             'deliveryPickupId' => 'nullable|string',
             'preferredPickupId' => 'nullable|string',
@@ -32,6 +32,11 @@ class CalcOrderRequest extends FormRequest
             'giftCards' => 'nullable|array',
             'giftCards.*.pin' => 'required|string',
             'giftCards.*.number' => 'required|string',
+
+            'user' => 'nullable|array',
+            'user.name' => 'required|string',
+            'user.email' => 'required|string',
+            'user.phone' => 'required|string',
 
             'promoGroup' => 'nullable|array',
             'promoGroup.*.id' => 'required|string',
@@ -49,7 +54,7 @@ class CalcOrderRequest extends FormRequest
             'items.*.subtotal' => 'required|numeric',
             'items.*.discount' => 'nullable|numeric',
             'items.*.deliveryGroup' => 'nullable|string',
-            'items.*.appliedDiscounts' => 'nullable|string'
+            'items.*.appliedDiscounts' => 'nullable|array'
         ];
     }
 }

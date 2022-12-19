@@ -64,10 +64,7 @@ Route::prefix('auth')->group(function () {
         Route::post('/phone', [V1\Auth\Verify\VerifyPhoneController::class, 'handle']);
     });
 
-    Route::middleware('auth')->group(function () {
-        Route::post('/logout', [V1\Auth\LogoutController::class, 'handle']);
-        Route::post('/refresh', [V1\Auth\RefreshController::class, 'handle']);
-    });
+    Route::middleware('auth')->post('/logout', [V1\Auth\LogoutController::class, 'handle']);
 });
 
 Route::middleware('auth')->group(function () {

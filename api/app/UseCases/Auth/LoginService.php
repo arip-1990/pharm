@@ -8,7 +8,6 @@ use App\UseCases\User\UserService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use JetBrains\PhpStorm\ArrayShape;
 
 class LoginService extends LoyaltyService
 {
@@ -16,8 +15,7 @@ class LoginService extends LoyaltyService
         parent::__construct();
     }
 
-    #[ArrayShape(['token' => "string", 'session' => "string"])]
-    public function login(string $phone, string $password): array
+    public function login(string $phone, string $password): string
     {
         $url = $this->urls['lk'] . '/Identity/AdvancedPhoneEmailLogin';
         $data = [
@@ -53,10 +51,9 @@ class LoginService extends LoyaltyService
         $user->phone_verified_at = $user->phone_verified_at ?? Carbon::now();
         $user->save();
 
-        return [
-            'token' => Auth::login($user),
-            'session' => $session
-        ];
+        Auth::login($user);
+
+        return $session;
     }
 
     public function logout(User $user, string $session): void

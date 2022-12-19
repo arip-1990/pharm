@@ -7,9 +7,9 @@ import Header from "./header";
 import Footer from "./footer";
 import Loyalty from "../loyalty";
 import Auth from "../auth";
-import {useAuth} from "../../hooks/useAuth";
 import TopInfo from "./topInfo";
 import Banner from "../banner";
+import { useAuth } from "../../hooks/useAuth";
 
 type Props = {
   title: string;

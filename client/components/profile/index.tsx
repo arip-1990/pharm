@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, MouseEvent, ReactNode, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+
 import styles from "./Profile.module.scss";
 
 type Props = {

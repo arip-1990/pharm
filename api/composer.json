@@ -17,11 +17,11 @@
         "hisorange/browser-detect": "^4.5",
         "kalnoy/nestedset": "^6.0",
         "laravel/framework": "^9.2",
+        "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "phpoffice/phpspreadsheet": "^1.24",
         "predis/predis": "^2.0",
-        "psr/simple-cache": "^2.0",
-        "tymon/jwt-auth": "^1.0"
+        "psr/simple-cache": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

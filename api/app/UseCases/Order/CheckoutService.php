@@ -85,18 +85,17 @@ class CheckoutService
             $store = Store::find($data['pickupLocationId']);
             $city = City::where('name', Helper::trimPrefixCity($data['city']))->first();
             $payment = Payment::find((int)explode('/', $data['payment'])[1]);
-            $delivery = Delivery::find((int)explode('/', $data['delivery'])[1]);
             $phone = str_replace('+', '', $data['phone']);
             $user = User::where('phone', $phone)->first(); // User::find($data['externalUserId']),
-            $tmp = $this->service->handle($data['items'], $city, $store?->id);
+            $tmp = $this->service->handle($data['items'], $city, $store?->id, (int)explode('/', $data['delivery'])[1]);
 
             foreach ($tmp['data'] as $key => $item) {
                 try {
-                    $order = Order::create(Store::find($key), $payment, $item['totalPrice'], $delivery, $data['deliveryComment'] ?? null);
+                    $order = Order::create(Store::find($key), $payment, $item['totalPrice'], Delivery::find($item['delivery']), $data['deliveryComment'] ?? null);
                     if ($user) $order->user()->associate($user);
                     $order->setUserInfo($data['name'], $phone, $data['email'] ?? null);
 
-                    DB::transaction(function () use ($order, $data, $item) {
+                    DB::transaction(function () use ($order, $data, $item, $city) {
                         $orderItems = $this->checkout($item['items'], $order->store_id);
                         if (!$orderItems->count()) throw new \DomainException('Нет товаров в наличии!');
 
@@ -112,7 +111,7 @@ class CheckoutService
                             );
 
                             $location = Location::firstOrCreate([
-                                'city_id' => 1,
+                                'city_id' => $city->id,
                                 'street' => $data['addressData']['street'],
                                 'house' => $data['addressData']['house']
                             ]);
@@ -148,7 +147,7 @@ class CheckoutService
                                 'quantity' => $item->quantity,
                                 'discount' => 0,
                                 'subtotal' => $item->getCost(),
-                                'deliveryGroup' => $order->store_id
+                                'deliveryGroup' => (string)$order->delivery_id
                             ];
                         })
                     ];
@@ -190,7 +189,7 @@ class CheckoutService
 
             $offer->checkout($item['quantity']);
             $offer->save();
-            $orderItems->add(OrderItem::create($offer->product_id, $offer->price, $item['quantity']));
+            $orderItems->add(OrderItem::create($offer->product_id, $item['price'], $item['quantity']));
         }
 
         return $orderItems;

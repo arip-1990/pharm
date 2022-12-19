@@ -1,7 +1,7 @@
 import {FC} from "react";
 import Layout from "../components/layout";
 import BaseProfile from "../components/profile";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from '../hooks/useAuth';
 
 const Profile: FC = () => {
   const { user } = useAuth();

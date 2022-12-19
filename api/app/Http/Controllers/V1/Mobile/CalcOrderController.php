@@ -19,6 +19,7 @@ class CalcOrderController extends Controller
         $city = City::where('name', Helper::trimPrefixCity($request->city))->first();
         $data = ['items' => [], 'totalPrice' => 0];
         $tmp = $this->service->handle($request->items, $city, $request->deliveryPickupId);
+
         foreach ($tmp['data'] as $item) {
             array_push($data['items'], ...$item['items']);
             $data['totalPrice'] += $item['totalPrice'];

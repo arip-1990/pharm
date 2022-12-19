@@ -32,11 +32,7 @@ class RouteServiceProvider extends ServiceProvider
                     Route::prefix('panel')->group(base_path('routes/panel.php'));
                 });
 
-                Route::middleware('api')->group(function () {
-                    Route::group([], base_path('routes/rest.php'));
-
-                    Route::prefix('mobile')->group(base_path('routes/mobile.php'));
-                });
+                Route::middleware('api')->group(base_path('routes/api.php'));
             });
         });
     }
@@ -44,8 +40,8 @@ class RouteServiceProvider extends ServiceProvider
     /** Configure the rate limiters for the application. */
     protected function configureRateLimiting(): void
     {
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
+        RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
+
+        RateLimiter::for('none', fn (Request $request) => Limit::none());
     }
 }

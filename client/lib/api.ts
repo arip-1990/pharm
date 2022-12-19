@@ -35,14 +35,4 @@ export const apiBaseQuery = (): BaseQueryFn<Args, unknown, Error> => async ({ ur
     }
 }
 
-instance.interceptors.request.use(config => {
-    if (typeof window !== "undefined") {
-        let token = localStorage.getItem('token');
-        token = token ? JSON.parse(token)?.accessToken : null;
-        if (token && config.headers) config.headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    return config;
-}, error => Promise.reject(error));
-
 export default instance;
