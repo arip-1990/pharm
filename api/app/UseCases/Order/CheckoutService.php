@@ -80,19 +80,20 @@ class CheckoutService
         $data = [];
         foreach ($request->validated('orders') as $item) {
             $phone = str_replace('+', '', $item['phone']);
-            $user = User::where('phone', $phone)->first(); // User::find($data['externalUserId'])
-
-            $order = Order::create(
-                Store::find($item['pickupLocationId']),
-                Payment::find((int)explode('/', $item['payment'])[1]),
-                Delivery::find((int)explode('/', $item['delivery'])[1]),
-                    $item['deliveryComment'] ?? null
-            );
-
-            if ($user) $order->user()->associate($user);
-            $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
 
             try {
+                $user = User::where('phone', $phone)->first(); // User::find($data['externalUserId'])
+
+                $order = Order::create(
+                    Store::find($item['pickupLocationId']),
+                    Payment::find((int)explode('/', $item['payment'])[1]),
+                    Delivery::find((int)explode('/', $item['delivery'])[1]),
+                    $item['deliveryComment'] ?? null
+                );
+
+                if ($user) $order->user()->associate($user);
+                $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
+
                 DB::transaction(function () use ($item, $order) {
                     $orderItems = $this->checkout($item['items'], $order->store_id, $order->delivery_id === 3);
 
