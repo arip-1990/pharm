@@ -225,7 +225,7 @@ services:
   #     restart_policy:
   #       condition: none
 
-  api-cheduler:
+  api-scheduler:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80

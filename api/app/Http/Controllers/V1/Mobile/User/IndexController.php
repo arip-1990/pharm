@@ -14,7 +14,9 @@ class IndexController
     public function handle(Request $request): JsonResponse
     {
         try {
-            $user = User::find($request->get('userIdentifier'));
+            if (!$user = User::find($request->get('userIdentifier')))
+                throw new \DomainException('Пользователь не найден');
+
             $items = $this->cardService->getAllByUser($user->id);
 
             $card = [];
@@ -30,34 +32,37 @@ class IndexController
                     'cardTextColor' => '#111'
                 ];
             }
+
+            return new JsonResponse([
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->getFullName(),
+                    'phone' => $user->phone,
+                    'email' => $user->email,
+                    'emailConfirmed' => true,
+                    'gender' => $user->getGenderLabel(),
+                    'age' => $user->birth_date?->age,
+                    'cardNumber' => $card['Number'],
+                    'bonuses' => $card['Balance'],
+                    'units' => 'Бонусов', // $this->bonusTypeLabel($card['BonusType']),
+                    'cardPercent' => $card['Discount'],
+                    'status' => $card['CardType'],
+                    'pendingBonuses' => 0,
+                    'pendingBonusesTitle' => 'Будет накоплено',
+                    'expressBonuses' => 0,
+                    'exressBonusesTitle' => 'Экспресс-бонусы',
+                    'cardColor' => '#000',
+                    'cardTextColor' => '#111',
+                    'loyaltyProgram' => $cards,
+                ]
+            ]);
         }
         catch (\Exception $e) {
-            return new JsonResponse(['error' => ['message' => $e->getMessage()]], 500);
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        return new JsonResponse([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->getFullName(),
-                'phone' => $user->phone,
-                'email' => $user->email,
-                'emailConfirmed' => true,
-                'gender' => $user->getGenderLabel(),
-                'age' => $user->birth_date?->age,
-                'cardNumber' => $card['Number'],
-                'bonuses' => $card['Balance'],
-                'units' => 'Бонусов', // $this->bonusTypeLabel($card['BonusType']),
-                'cardPercent' => $card['Discount'],
-                'status' => $card['CardType'],
-                'pendingBonuses' => 0,
-                'pendingBonusesTitle' => 'Будет накоплено',
-                'expressBonuses' => 0,
-                'exressBonusesTitle' => 'Экспресс-бонусы',
-                'cardColor' => '#000',
-                'cardTextColor' => '#111',
-                'loyaltyProgram' => $cards,
-            ]
-        ]);
     }
 
     private function bonusTypeLabel(int $bonusType): string

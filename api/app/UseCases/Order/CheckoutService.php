@@ -2,7 +2,6 @@
 
 namespace App\UseCases\Order;
 
-use App\Helper;
 use App\Http\Requests;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StoreResource;
@@ -22,8 +21,6 @@ use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
-    public function __construct(private readonly CalculateService $service) {}
-
     public function checkoutWeb(Requests\Order\CheckoutRequest $request): Order
     {
         $data = $request->validated();
@@ -80,116 +77,96 @@ class CheckoutService
 
     public function checkoutMobile(Requests\Mobile\CheckoutRequest $request): array
     {
-        $orders = [];
-        foreach ($request->validated('orders') as $data) {
-            $store = Store::find($data['pickupLocationId']);
-            $city = City::where('name', Helper::trimPrefixCity($data['city']))->first();
-            $payment = Payment::find((int)explode('/', $data['payment'])[1]);
-            $phone = str_replace('+', '', $data['phone']);
-            $user = User::where('phone', $phone)->first(); // User::find($data['externalUserId']),
-            $tmp = $this->service->handle($data['items'], $city, $store?->id, (int)explode('/', $data['delivery'])[1]);
+        $data = [];
+        foreach ($request->validated('orders') as $item) {
+            $phone = str_replace('+', '', $item['phone']);
+            $user = User::where('phone', $phone)->first(); // User::find($data['externalUserId'])
 
-            foreach ($tmp['data'] as $key => $item) {
-                try {
-                    $order = Order::create(Store::find($key), $payment, $item['totalPrice'], Delivery::find($item['delivery']), $data['deliveryComment'] ?? null);
-                    if ($user) $order->user()->associate($user);
-                    $order->setUserInfo($data['name'], $phone, $data['email'] ?? null);
+            $order = Order::create(
+                Store::find($item['pickupLocationId']),
+                Payment::find((int)explode('/', $item['payment'])[1]),
+                Delivery::find((int)explode('/', $item['delivery'])[1]),
+                    $item['deliveryComment'] ?? null
+            );
 
-                    DB::transaction(function () use ($order, $data, $item, $city) {
-                        $orderItems = $this->checkout($item['items'], $order->store_id);
-                        if (!$orderItems->count()) throw new \DomainException('Нет товаров в наличии!');
+            if ($user) $order->user()->associate($user);
+            $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
 
+            try {
+                DB::transaction(function () use ($item, $order) {
+                    $orderItems = $this->checkout($item['items'], $order->store_id, $order->delivery_id === 3);
+
+                    $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
+                    $order->save();
+                    $order->items()->saveMany($orderItems);
+
+                    if ($order->delivery_id === 2 and $order->payment->isType(Payment::TYPE_CASH)) {
+                        $order->sent();
                         $order->save();
-                        $order->items()->saveMany($orderItems);
+                    }
+                });
 
-                        if ($order->delivery->isType(Delivery::TYPE_DELIVERY)) {
-                            $delivery = OrderDelivery::create(
-                                $data['entrance'] ?? null,
-                                $data['floor'] ?? null,
-                                $data['addressData']['apt'] ?? null,
-                                $data['service_to_door'] ?? false
-                            );
-
-                            $location = Location::firstOrCreate([
-                                'city_id' => $city->id,
-                                'street' => $data['addressData']['street'],
-                                'house' => $data['addressData']['house']
-                            ]);
-
-                            $delivery->location()->associate($location);
-                            $order->orderDelivery()->save($delivery);
+                $data[] = [
+                    'id' => (string)$order->id,
+                    'uuid' => $item['uuid'],
+                    'success' => true,
+                    'price' => $order->cost,
+                    'items' => $order->items->map(function (OrderItem $orderItem) use ($item, $order) {
+                        $tmp = $item['items'][0];
+                        foreach ($item['items'] as $item2) {
+                            if ($item2['privateId'] == $orderItem->product_id)
+                                $tmp = $item2;
                         }
 
-                        if ($order->payment->isType(Payment::TYPE_CASH)) {
-                            $order->sent();
-                            $order->save();
-                        }
-                    });
-
-                    $orders[] = [
-                        'id' => (string)$order->id,
-                        'uuid' => $data['uuid'],
-                        'success' => true,
-                        'price' => $order->cost,
-                        'items' => $order->items->map(function (OrderItem $item) use ($data, $order) {
-                            $tmp = $data['items'][0];
-                            foreach ($data['items'] as $item2) {
-                                if ($item2['privateId'] == $item->product_id)
-                                    $tmp = $item2;
-                            }
-
-                            return [
-                                'id' => $tmp['id'],
-                                'privateId' => $item->product_id,
-                                'configurationId' => $item->product_id,
-                                'name' => $item->product->name,
-                                'price' => $item->price,
-                                'quantity' => $item->quantity,
-                                'discount' => 0,
-                                'subtotal' => $item->getCost(),
-                                'deliveryGroup' => (string)$order->delivery_id
-                            ];
-                        })
-                    ];
-                }
-                catch (\DomainException $e) {
-                    $orders[] = [
-                        'id' => null,
-                        'uuid' => $data['uuid'],
-                        'success' => false,
-                        'errorCode' => $e->getCode(),
-                        'errorMessage' => $e->getMessage(),
-                        'price' => $data['price'],
-                        'items' => $data['items']
-                    ];
-                }
+                        return [
+                            'id' => $tmp['id'],
+                            'privateId' => $orderItem->product_id,
+                            'configurationId' => $orderItem->product_id,
+                            'name' => $orderItem->product->name,
+                            'price' => $orderItem->price,
+                            'quantity' => $orderItem->quantity,
+                            'discount' => 0,
+                            'subtotal' => $orderItem->getCost(),
+                            'deliveryGroups' => $order->delivery_id === 2 ? ['2', '3'] : ['3']
+                        ];
+                    })
+                ];
             }
-
-            if (count($tmp['notItems'])) {
-                $orders[] = [
+            catch (\DomainException $e) {
+                $data[] = [
                     'id' => null,
-                    'uuid' => $data['uuid'],
+                    'uuid' => $item['uuid'],
                     'success' => false,
-                    'errorCode' => 0,
-                    'errorMessage' => 'Нет в наличии',
-                    'price' => $data['price'],
-                    'items' => $tmp['notItems']
+                    'errorCode' => $e->getCode(),
+                    'errorMessage' => $e->getMessage(),
+                    'price' => $item['price'],
+                    'items' => $item['items']
                 ];
             }
         }
 
-        return $orders;
+        return $data;
     }
 
-    private function checkout(array $items, string $storeId): Collection
+    private function checkout(array $items, string $storeId, bool $isBooking = false): Collection
     {
         $orderItems = new Collection();
-        foreach ($items as $item) {
-            $offer = Offer::where('store_id', $storeId)->where('product_id', $item['id'])->first();
+        if (!$isBooking) {
+            foreach ($items as $item) {
+                $productId = $item['privateId'] ?? $item['id'];
+                if (!$offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->first())
+                    throw new \DomainException('Нет в наличии!');
 
-            $offer->checkout($item['quantity']);
-            $offer->save();
-            $orderItems->add(OrderItem::create($offer->product_id, $item['price'], $item['quantity']));
+                $offer->checkout($item['quantity']);
+                $offer->save();
+                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
+            }
+        }
+        else {
+            foreach ($items as $item) {
+                $productId = $item['privateId'] ?? $item['id'];
+                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
+            }
         }
 
         return $orderItems;

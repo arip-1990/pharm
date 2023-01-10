@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,6 +35,11 @@ class Delivery extends Model
         'min',//минимальный срок доставки
         'max',//максимальный срок доставки
     ];
+
+    public function scopeWhereType(Builder $query, string $type): Builder
+    {
+        return $query->where('type', $type);
+    }
 
     public function isType(string $type): bool
     {

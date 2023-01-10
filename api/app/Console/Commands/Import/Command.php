@@ -23,6 +23,7 @@ class Command extends BaseCommand
             'http_errors' => false,
             'verify' => false
         ]);
+
         parent::__construct();
     }
 

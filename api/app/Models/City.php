@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $prefix
  * @property int $type
+ * @property ?int $parent_id
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
@@ -30,6 +31,16 @@ class City extends Model
     public function getName(): string
     {
         return $this->parent ? $this->parent->name : $this->name;
+    }
+
+    public function isDeliveryAvailable(): bool
+    {
+        return $this->id === 1;
+    }
+
+    public function isBookingAvailable(): bool
+    {
+        return $this->parent ? $this->parent_id === 1 : $this->id === 1;
     }
 
     public function locations(): HasMany

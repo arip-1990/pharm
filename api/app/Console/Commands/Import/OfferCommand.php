@@ -17,16 +17,30 @@ class OfferCommand extends Command
     public function handle(): int
     {
         $client = Redis::connection('bot')->client();
-        switch ($this->argument('type')) {
-            case 'change':
-                $this->change();
-                break;
-            case 'stock':
-                $this->stock();
-                break;
-            default:
-                $this->all();
-                $client->publish("bot:import", 'Остатки успешно обновлены');
+        try {
+            switch ($this->argument('type')) {
+                case 'change':
+                    $this->change();
+                    break;
+                case 'stock':
+                    $this->stock();
+                    break;
+                default:
+                    $this->all();
+                    $client->publish("bot:import", json_encode([
+                        'success' => true,
+                        'message' => 'Остатки успешно обновлены'
+                    ]));
+            }
+        }
+        catch (\Exception $e) {
+            $client->publish("bot:import", json_encode([
+                'success' => false,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'message' => $e->getMessage()
+            ]));
+            return 1;
         }
 
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff()->format('%iм %sс'));

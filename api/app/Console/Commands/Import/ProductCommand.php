@@ -16,49 +16,64 @@ class ProductCommand extends Command
     public function handle(): int
     {
         $client = Redis::connection('bot')->client();
-        $data = $this->getData();
-        $productFields = [];
-        $valueFields = [];
-        $i = 0;
-        foreach ($data->goods->good as $item) {
-            $productFields[] = [
-                'id' => (string)$item->uuid,
-                'category_id' => (int)$item->category ?: null,
-                'name' => (string)$item->name,
-                'code' => (int)$item->code,
-                'recipe' => (string)$item->recipe === 'true' ? true : (Product::find((string)$item->uuid)?->recipe ?? false),
-                'marked' => (string)$item->is_marked === 'true',
-            ];
 
-            if ($vendor = (string)$item->vendor) {
-                $valueFields[] = [
-                    'attribute_id' => 1,
-                    'product_id' => (string)$item->uuid,
-                    'value' => $vendor
+        try {
+            $data = $this->getData();
+            $productFields = [];
+            $valueFields = [];
+            $i = 0;
+            foreach ($data->goods->good as $item) {
+                $productFields[] = [
+                    'id' => (string)$item->uuid,
+                    'category_id' => (int)$item->category ?: null,
+                    'name' => (string)$item->name,
+                    'code' => (int)$item->code,
+                    'recipe' => (string)$item->recipe === 'true' ? true : (Product::find((string)$item->uuid)?->recipe ?? false),
+                    'marked' => (string)$item->is_marked === 'true',
                 ];
+
+                if ($vendor = (string)$item->vendor) {
+                    $valueFields[] = [
+                        'attribute_id' => 1,
+                        'product_id' => (string)$item->uuid,
+                        'value' => $vendor
+                    ];
+                }
+
+                $i++;
+
+                if ($i >= 1000) {
+                    Product::upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
+                    Value::upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
+                    $productFields = [];
+                    $valueFields = [];
+                    $i = 0;
+                }
             }
 
-            $i++;
-
-            if ($i >= 1000) {
+            if ($i) {
                 Product::upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
                 Value::upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
-                $productFields = [];
-                $valueFields = [];
-                $i = 0;
+            }
+
+            foreach (Product::whereNull('slug')->get() as $product) {
+                $product->update(['slug' => SlugService::createSlug(Product::class, 'slug', $product->name)]);
             }
         }
-
-        if ($i) {
-            Product::upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
-            Value::upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
+        catch (\Exception $e) {
+            $client->publish("bot:import", json_encode([
+                'success' => false,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'message' => $e->getMessage()
+            ]));
+            return 1;
         }
 
-        foreach (Product::whereNull('slug')->get() as $product) {
-            $product->update(['slug' => SlugService::createSlug(Product::class, 'slug', $product->name)]);
-        }
-
-        $client->publish("bot:import", 'Товары успешно обновлены');
+        $client->publish("bot:import", json_encode([
+            'success' => true,
+            'message' => 'Товары успешно обновлены'
+        ]));
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff(Carbon::now())->format('%iм %sс'));
         return 0;
     }

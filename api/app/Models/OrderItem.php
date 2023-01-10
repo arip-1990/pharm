@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property float $price
  * @property int $quantity
+ * @property string $product_id
  *
  * @property Product $product
  */
@@ -25,7 +26,7 @@ class OrderItem extends Model
         return $item;
     }
 
-    public function getCost(): int
+    public function getCost(): float
     {
         return $this->price * $this->quantity;
     }

@@ -8,7 +8,6 @@ use App\Http\Requests\Mobile\DeliveryRequest;
 use App\Http\Resources\Mobile\DeliveryResource;
 use App\Models\City;
 use App\Models\Delivery;
-use App\Models\Location;
 use App\Models\Store;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -17,25 +16,43 @@ class DeliveryController extends Controller
 {
     public function handle(DeliveryRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $deliveries = [];
-        $locations = new Collection();
-        $city = $data['addressData']['city'] ? City::where('name', Helper::trimPrefixCity($data['addressData']['city']))->first() : City::find(1);
-        foreach (Delivery::all() as $item) {
-            if ($item->isType(Delivery::TYPE_PICKUP)) {
-                $productIds = array_column($data['items'], 'privateId');
-                $locationIds = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))->pluck('id');
+        try {
+            $data = $request->validated();
+            $deliveries = [];
+            $locations = new Collection();
+            if (!$city = City::where('name', Helper::trimPrefixCity($data['city'] ?? $data['addressData']['settlement']))->first())
+                throw new \DomainException('Город неизвестен');
 
-                $locations = Store::join('offers', 'stores.id', 'offers.store_id')->select('stores.*')
-                    ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', $productIds)
-                    ->whereIn('stores.id', config('data.mobileStores'))->whereIn('stores.location_id', $locationIds)
-                    ->groupBy('stores.id')->orderByRaw('count(*) desc')->get();
+            foreach (Delivery::where('active', true)->get() as $item) {
+                if ($item->id === 3 and !$city->isBookingAvailable())
+                    continue;
 
-                if ($locations->count()) $deliveries[] = $item;
+                if ($item->isType(Delivery::TYPE_PICKUP)) {
+                    $productIds = array_column($data['items'], 'privateId');
+
+                    $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->id])
+                        ->groupBy('stores.id')->orderByRaw('count(*) desc');
+
+                    if ($item->id === 2) {
+                        $query->join('offers', 'stores.id', 'offers.store_id')
+                            ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', $productIds);
+                    }
+
+                    if ($query->count()) {
+                        $locations->put($item->id, $query->get());
+                        $deliveries[] = $item;
+                    }
+                }
+                else $deliveries[] = $item;
             }
-            else $deliveries[] = $item;
-        }
 
-        return new JsonResponse(['deliveries' => DeliveryResource::customCollection($deliveries, $locations)]);
+            return new JsonResponse(['deliveries' => DeliveryResource::customCollection($deliveries, $locations)]);
+        }
+        catch (\DomainException $e) {
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

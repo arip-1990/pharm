@@ -25,6 +25,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float $cost
  * @property ?string $note
  * @property ?string $cancel_reason
+ * @property string $store_id
+ * @property string $payment_id
+ * @property string $delivery_id
  * @property ?string $sber_id
  * @property ?string $yandex_id
  * @property ?Carbon $created_at
@@ -49,16 +52,20 @@ class Order extends Model
         'statuses' => StatusCollectionCast::class
     ];
 
-    public static function create(Store $store, Payment $payment, float $cost, Delivery $delivery, string $note = null): self
+    public static function create(Store $store, Payment $payment, Delivery $delivery, string $note = null): self
     {
         $item = new static();
         $item->store_id = $store->id;
         $item->payment_id = $payment->id;
         $item->delivery_id = $delivery->id;
-        $item->cost = $cost;
         $item->note = $note;
-        $item->addStatus(OrderStatus::STATUS_ACCEPTED, OrderState::STATE_SUCCESS);
+        $item->addStatus(OrderStatus::STATUS_ACCEPTED);
         return $item;
+    }
+
+    public function setCost(float $totalPrice): void
+    {
+        $this->cost = $totalPrice;
     }
 
     public function setUserInfo(string $name, string $phone, string $email = null): void

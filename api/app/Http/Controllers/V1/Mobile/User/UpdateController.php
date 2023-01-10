@@ -23,7 +23,10 @@ class UpdateController
                 $middleName = $fullName[2] ?? null;
             }
 
-            $user = User::find($data['userIdentifier']);
+            $phone = str_replace('+', '', $data['phone']);
+            if (!$user = User::where('id', $data['userIdentifier'])->orWhere('phone', $phone)->first())
+                throw new \DomainException('Пользователь не найден');
+
             $this->userService->updateInfo($user, [
                 'firstName' => $firstName ?? null,
                 'lastName' => $lastName ?? null,
@@ -33,22 +36,25 @@ class UpdateController
             ]);
 
             $data = $this->posService->getBalance($user->phone);
+
+            return new JsonResponse([
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->getFullName(),
+                    'phone' => $user->phone,
+                    'email' => $user->email,
+                    'gender' => $user->getGenderLabel(),
+                    'age' => $user->birth_date?->age,
+                    'cardNumber' => $data['cardNumber'],
+                    'bonuses' => $data['cardBalance'],
+                ]
+            ]);
         }
         catch (\Exception $e) {
-            return new JsonResponse(['error' => ['message' => $e->getMessage()]], 500);
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        return new JsonResponse([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->getFullName(),
-                'phone' => $user->phone,
-                'email' => $user->email,
-                'gender' => $user->getGenderLabel(),
-                'age' => $user->birth_date?->age,
-                'cardNumber' => $data['cardNumber'],
-                'bonuses' => $data['cardBalance'],
-            ]
-        ]);
     }
 }

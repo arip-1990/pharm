@@ -39,9 +39,9 @@ class EventServiceProvider extends ServiceProvider
         OrderPayFullRefund::class => [
             OrderPayFullRefundListener::class,
         ],
-        OrderChangeStatus::class => [
-            SendStatusListener::class
-        ]
+//        OrderChangeStatus::class => [
+//            SendStatusListener::class
+//        ]
     ];
 
     /** Register any events for your application. */

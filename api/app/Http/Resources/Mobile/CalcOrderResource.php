@@ -10,7 +10,7 @@ class CalcOrderResource extends JsonResource
     {
         return [
             'totalPrice' => $this['totalPrice'],
-//            'appliedPromocode' => $this->appliedPromocode ?? null,
+            'appliedPromocode' => null,
 //            'discount' => $this->discount,
             'items' => $this['items'],
             'bonuses' => [

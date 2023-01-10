@@ -129,6 +129,8 @@ return [
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', 6379),
             'database' => env('REDIS_DB', 0),
+            'timeout' => 0,
+            'read_write_timeout' => 0
         ],
 
         'cache' => [
@@ -142,7 +144,7 @@ return [
             'host' => env('REDIS_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', 6379),
-            'database' => env('REDIS_BOT_DB', 2),
+            'database' => env('REDIS_BOT_DB', 2)
         ],
 
     ],

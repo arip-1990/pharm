@@ -6,6 +6,7 @@ use App\Helper;
 use App\Http\Requests\Mobile\CalcOrderRequest;
 use App\Http\Resources\Mobile\CalcOrderResource;
 use App\Models\City;
+use App\Models\Store;
 use App\UseCases\Order\CalculateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
@@ -16,17 +17,24 @@ class CalcOrderController extends Controller
 
     public function handle(CalcOrderRequest $request): JsonResponse
     {
-        $city = City::where('name', Helper::trimPrefixCity($request->city))->first();
-        $data = ['items' => [], 'totalPrice' => 0];
-        $tmp = $this->service->handle($request->items, $city, $request->deliveryPickupId);
+        try {
+            $validatedData = $request->validated();
+            if (!$city = City::where('name', Helper::trimPrefixCity($validatedData['city'] ?? $validatedData['addressData']['settlement']))->first())
+                throw new \DomainException('Город неизвестен');
 
-        foreach ($tmp['data'] as $item) {
-            array_push($data['items'], ...$item['items']);
-            $data['totalPrice'] += $item['totalPrice'];
+            if (!count($validatedData['items']))
+                throw new \DomainException('Нет товаров для расчета');
+
+            $storeId = $validatedData['deliveryPickupId'] ?? $validatedData['preferredPickupId'] ?? null;
+            $data = $this->service->handle($validatedData['items'], $city, Store::find($storeId), true);
+
+            return new JsonResponse(new CalcOrderResource($data));
         }
-
-        if (count($tmp['notItems'])) array_push($data['items'], ...$tmp['notItems']);
-
-        return new JsonResponse(new CalcOrderResource($data));
+        catch (\Exception $e) {
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -43,15 +43,16 @@ class CheckoutRequest extends FormRequest
 
             'orders.*.payment' => 'required|string',
             'orders.*.delivery' => 'required|string',
+            'orders.*.pickupLocationId' => 'required|uuid',
             'orders.*.deliveryDate' => 'nullable',
             'orders.*.deliveryComment' => 'nullable|string',
-            'orders.*.pickupLocationId' => 'nullable|uuid',
 
-            'orders.*.city' => 'required|string',
+            'orders.*.city' => 'nullable|string',
             'orders.*.address' => 'nullable|string',
             'orders.*.addressData' => 'required|array',
             'orders.*.addressData.region' => 'required|string',
             'orders.*.addressData.city' => 'required|string',
+            'orders.*.addressData.settlement' => 'nullable|string',
             'orders.*.addressData.street' => 'nullable|string',
             'orders.*.addressData.house' => 'nullable|string',
             'orders.*.addressData.building' => 'nullable|string',

@@ -7,7 +7,7 @@ from telebot import TeleBot
 
 bot = TeleBot('5264546096:AAHH7gzUFdZim4deJs0o78RwZ8x8q6vC6Io')
 r = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, decode_responses=True)
-update = {'chat': None, 'command': None}
+import_data = {'chat': None, 'command': None}
 test_command = False
 admin = 1195813156
 
@@ -25,35 +25,36 @@ def help(message) -> None:
 
 @bot.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer'])
 def update_data(message) -> None:
-    global update
+    global import_data
     send_message = ''
 
-    if update['command']:
-        if update['command'] == 'category':
+    if import_data['command']:
+        if import_data['command'] == 'category':
             send_message = 'Обновление категории не завершено'
-        elif update['command'] == 'product':
+        elif import_data['command'] == 'product':
             send_message = 'Обновление товаров не завершено'
-        elif update['command'] == 'store':
+        elif import_data['command'] == 'store':
             send_message = 'Обновление аптек не завершено'
-        elif update['command'] == 'offer':
+        elif import_data['command'] == 'offer':
             send_message = 'Обновление остатков не завершено'
-        elif update['command'] == 'test':
-            send_message = 'Обработка запроса не завершено'
+        else:
+            import_data = {'chat': None, 'command': None}
+            send_message = 'Попробуйте повторить запрос пожалуйста))'
 
         bot.reply_to(message, send_message)
     else:
-        update['command'] = message.text.split(' ')[0].split('_')[1].strip()
-        if update['command'] == 'category':
+        import_data['command'] = message.text.split(' ')[0].split('_')[1].strip()
+        if import_data['command'] == 'category':
             send_message = 'Обновляем категории...'
-        elif update['command'] == 'product':
+        elif import_data['command'] == 'product':
             send_message = 'Обновляем товары...'
-        elif update['command'] == 'store':
+        elif import_data['command'] == 'store':
             send_message = 'Обновляем аптеки...'
-        elif update['command'] == 'offer':
+        elif import_data['command'] == 'offer':
             send_message = 'Обновляем остатки...'
 
-        update['chat'] = message.chat.id
-        r.publish('update', json.dumps({'type': update['command']}))
+        import_data['chat'] = message.chat.id
+        r.publish('update', json.dumps({'type': import_data['command']}))
         bot.send_message(message.chat.id, send_message)
 
 
@@ -72,13 +73,17 @@ def test_data(message) -> None:
 
 
 def handle_import(data: dict) -> None:
-    global update
+    global import_data
 
-    bot.send_message(admin, data['message'])
-    # if update['chat'] and update['chat'] != admin:
-    #     bot.send_message(update['chat'], message)
+    if data['success']:
+        bot.send_message(admin, data['message'])
 
-    update = {'chat': None, 'command': None}
+        if import_data['chat'] and import_data['chat'] != admin:
+            bot.send_message(import_data['chat'], data['message'])
+    else:
+        handle_error(data)
+
+    import_data = {'chat': None, 'command': None}
 
 
 def handle_error(data: dict) -> None:
@@ -86,22 +91,19 @@ def handle_error(data: dict) -> None:
 
 
 def listen_redis() -> None:
-    global update, test_command
-    p = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, 3, decode_responses=True).pubsub()
+    global test_command
+    p = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, 2, decode_responses=True).pubsub()
     p.psubscribe('bot:*')
 
     for message in p.listen():
-        if message is not None and isinstance(message, dict):
+        if message and isinstance(message, dict):
             try:
                 if message.get('type') == 'pmessage':
                     type = message.get('channel').split(':')[1]
-                    if type == 'pay':
-                        for key, item in json.loads(message.get('data')):
-                            bot.send_message(admin, f'{key} => {item}')
-                    elif type == 'import':
+                    if type == 'import':
                         handle_import(json.loads(message.get('data')))
                     elif type == 'error':
-                        handle_import(json.loads(message.get('data')))
+                        handle_error(json.loads(message.get('data')))
                     elif type == 'test':
                         data = json.loads(message.get('data'))
                         bot.send_message(data['chatId'], data['message'])

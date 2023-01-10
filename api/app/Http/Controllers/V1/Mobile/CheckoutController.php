@@ -14,6 +14,11 @@ class CheckoutController
     {
         try {
             $orders = $this->service->checkoutMobile($request);
+
+            return new JsonResponse([
+                'message' => 'Обратите внимание, заказ оформится для товаров в наличии в выбранной  вами аптеке, для уточнения деталей заказа с вами свяжется оператор',
+                'orders' => $orders
+            ]);
         }
         catch (\DomainException $e) {
             return new JsonResponse([
@@ -21,10 +26,5 @@ class CheckoutController
                 'message' => $e->getMessage()
             ], 500);
         }
-
-        return new JsonResponse([
-            'message' => 'Обратите внимание, заказ оформится для товаров в наличии в выбранной  вами аптеке, для уточнения деталей заказа с вами свяжется оператор',
-            'orders' => $orders
-        ]);
     }
 }
