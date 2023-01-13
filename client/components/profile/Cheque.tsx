@@ -20,7 +20,6 @@ const Cheque: FC<Props> = ({ data, className }) => {
         <tr>
           <th>Дата чека</th>
           <th>Номер чека</th>
-          <th>Компания</th>
           <th>Магазин</th>
           <th>Начислено бонусов</th>
           <th>Списано бонусов</th>
@@ -33,7 +32,6 @@ const Cheque: FC<Props> = ({ data, className }) => {
           <tr key={item.id}>
             <td>{item.date.format("L")}</td>
             <td>{item.number}</td>
-            <td>{}</td>
             <td>{item.orgUnitName}</td>
             <td>{item.bonus}</td>
             <td>{item.paidByBonus}</td>

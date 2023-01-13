@@ -16,7 +16,6 @@ const Bonus: FC<Props> = ({ data, className }) => {
       <thead>
         <tr>
           <th>Дата операции</th>
-          <th>Компания</th>
           <th>Начислено бонусов</th>
           <th>Дата активации</th>
           <th>Дата сгорания</th>
@@ -26,7 +25,6 @@ const Bonus: FC<Props> = ({ data, className }) => {
         {data.map((item) => (
           <tr key={item.id}>
             <td>{item.createdDate.format("L")}</td>
-            <td>{item.campaignName}</td>
             <td>{item.debet}</td>
             <td>{item.actualStart.format("L")}</td>
             <td>{item.actualEnd.format("L")}</td>
