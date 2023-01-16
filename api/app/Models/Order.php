@@ -207,6 +207,11 @@ class Order extends Model
         }
     }
 
+    public function changeState(OrderState $state): void
+    {
+        $this->statuses->last()->changeState($state);
+    }
+
     ##########################
 
     public function items(): HasMany

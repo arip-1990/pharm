@@ -13,6 +13,7 @@ use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
+use App\Models\Status\OrderState;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -67,10 +68,12 @@ class CheckoutService
             $offers->each(fn(Offer $offer) => $offer->save());
         });
 
+        $order->changeState(OrderState::STATE_SUCCESS);
         if ($order->payment->isType(Payment::TYPE_CASH)) {
             $order->sent();
-            $order->save();
         }
+
+        $order->save();
 
         return $order;
     }
@@ -100,12 +103,14 @@ class CheckoutService
                     $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
                     $order->save();
                     $order->items()->saveMany($orderItems);
-
-                    if ($order->delivery_id === 2 and $order->payment->isType(Payment::TYPE_CASH)) {
-                        $order->sent();
-                        $order->save();
-                    }
                 });
+
+                $order->changeState(OrderState::STATE_SUCCESS);
+                if ($order->delivery_id === 2 and $order->payment->isType(Payment::TYPE_CASH)) {
+                    $order->sent();
+                }
+
+                $order->save();
 
                 $data[] = [
                     'id' => (string)$order->id,
