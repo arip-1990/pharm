@@ -15,9 +15,9 @@ class CalculateService
         if ($isMobile) $storeIds = config('data.mobileStores')[$city->id];
         else $storeIds = Store::whereIn('location_id', Location::whereCity($city)->pluck('id'))->pluck('id');
 
-        $store = Store::whereIn('id', $storeIds)->with(['offers' => function ($query) use ($items) {
-            $query->where('quantity', '>', 0)->whereIn('product_id', array_column($items, 'privateId'));
-        }])->get()->sortByDesc(fn(Store $store) => $store->offers->count())->first();
+        $store = Store::select('stores.*')->join('offers', 'stores.id', '=', 'offers.store_id')
+            ->whereIn('stores.id', $storeIds)->whereIn('offers.product_id', array_column($items, 'privateId'))
+            ->groupBy('stores.id')->orderByRaw('count(stores.id) desc')->first();
 
         return $this->calc($items, $store);
     }
@@ -29,7 +29,7 @@ class CalculateService
             $productId = $item['privateId'] ?? $item['id'];
             $quantity = $item['quantity'];
 
-            if (!$offer = $store->offers->firstWhere('product_id', $productId) or $offer->quantity < 1) {
+            if ($item['deliveryGroup'] == '3' or !$offer = $store->offers()->firstWhere('product_id', $productId) or $offer->quantity < 1) {
                 $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $quantity, ['3']);
             }
             else {
