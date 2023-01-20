@@ -15,24 +15,25 @@ class UpdateController
     public function handle(UpdateUserRequest $request): JsonResponse
     {
         try {
-            $data = $request->validated();
-            if (isset($data['name'])) {
-                $fullName = explode(' ', $data['name']);
-                $firstName = $fullName[1] ?? $fullName[0];
-                $lastName = isset($fullName[1]) ? $fullName[0] : null;
-                $middleName = $fullName[2] ?? null;
+            if ($request->has('name')) {
+                $fullName = $request->string('name')->explode(' ');
+                if ($firstName = $fullName->get(1))
+                    $lastName = $fullName->get(0);
+                else
+                    $firstName = $fullName->get(0);
+
+                $middleName = $fullName->get(2);
             }
 
-            $phone = str_replace('+', '', $data['phone']);
-            if (!$user = User::where('id', $data['userIdentifier'])->orWhere('phone', $phone)->first())
+            if (!$user = User::where('id', $request->string('userIdentifier'))->orWhere('phone', $request->string('phone'))->first())
                 throw new \DomainException('Пользователь не найден');
 
             $this->userService->updateInfo($user, [
                 'firstName' => $firstName ?? null,
                 'lastName' => $lastName ?? null,
                 'middleName' => $middleName ?? null,
-                'email' => $data['email'] ?? null,
-                'birthDate' => $data['birthday'] ?? null
+                'email' => $request->string('email'),
+                'birthDate' => $request->date('birthday')
             ]);
 
             $data = $this->posService->getBalance($user->phone);

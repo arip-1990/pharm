@@ -29,7 +29,7 @@ class CalculateService
             $productId = $item['privateId'] ?? $item['id'];
             $quantity = $item['quantity'];
 
-            if ($item['deliveryGroup'] == '3' or !$offer = $store->offers()->firstWhere('product_id', $productId) or $offer->quantity < 1) {
+            if ((isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3') or !$offer = $store->offers()->firstWhere('product_id', $productId) or $offer->quantity < 1) {
                 $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $quantity, ['3']);
             }
             else {

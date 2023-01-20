@@ -18,7 +18,7 @@ class UpdateUserRequest extends FormRequest
             'name' => 'nullable|string',
             'phone' => 'nullable|regex:/^7\d{10}$/',
             'email' => 'nullable|email|max:100',
-            'birthday' => 'nullable|date'
+            'birthday' => 'nullable|date_format:Y-m-d'
         ];
     }
 
