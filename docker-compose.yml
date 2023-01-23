@@ -107,8 +107,6 @@ services:
       APP_URL: http://api.pharm.test
       APP_ENV: local
       APP_DEBUG: true
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
       DB_CONNECTION: pgsql
       DB_HOST: api-db
       DB_DATABASE: app
@@ -137,8 +135,6 @@ services:
       APP_URL: http://api.pharm.test
       APP_ENV: local
       APP_DEBUG: true
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
       DB_CONNECTION: pgsql
       DB_HOST: api-db
       DB_DATABASE: app
@@ -182,6 +178,8 @@ services:
     networks:
       - traefik-public
       - default
+    ports:
+      - "6379:6379"
 
   # parser:
   #   build:

@@ -135,8 +135,7 @@ services:
     environment:
       APP_NAME: Сеть аптек 120/80
       APP_URL: https://api.120на80.рф
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
+      LOG_CHANNEL: stderr
       DB_CONNECTION: pgsql
       DB_HOST: api-db
       DB_DATABASE: app
@@ -230,8 +229,7 @@ services:
     environment:
       APP_NAME: Сеть аптек 120/80
       APP_URL: https://api.120на80.рф
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
+      LOG_CHANNEL: stderr
       DB_CONNECTION: pgsql
       DB_HOST: api-db
       DB_DATABASE: app
@@ -258,8 +256,7 @@ services:
     environment:
       APP_NAME: Сеть аптек 120/80
       APP_URL: https://api.120на80.рф
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
+      LOG_CHANNEL: stderr
       DB_CONNECTION: pgsql
       DB_HOST: api-db
       DB_DATABASE: app
@@ -290,8 +287,7 @@ services:
     environment:
       APP_NAME: Сеть аптек 120/80
       APP_URL: https://api.120на80.рф
-      LOG_CHANNEL: stack
-      LOG_LEVEL: debug
+      LOG_CHANNEL: stderr
       DB_CONNECTION: pgsql
       DB_HOST: api-db
       DB_DATABASE: app

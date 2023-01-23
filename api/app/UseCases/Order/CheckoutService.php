@@ -69,9 +69,7 @@ class CheckoutService
         });
 
         $order->changeState(OrderState::STATE_SUCCESS);
-        if ($order->payment->isType(Payment::TYPE_CASH)) {
-            $order->sent();
-        }
+        if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
 
         $order->save();
 
@@ -106,9 +104,7 @@ class CheckoutService
                 });
 
                 $order->changeState(OrderState::STATE_SUCCESS);
-                if ($order->delivery_id === 2 and $order->payment->isType(Payment::TYPE_CASH)) {
-                    $order->sent();
-                }
+                if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
 
                 $order->save();
 

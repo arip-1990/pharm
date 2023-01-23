@@ -14,13 +14,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('import:store')->dailyAt('0:05');
         $schedule->command('import:product')->dailyAt('0:10');
         $schedule->command('import:offer')->dailyAt('0:30');
-        $schedule->command('import:offer change')->hourly()->unlessBetween('0:00', '1:00');
-//        $schedule->command('import:offer stock')->everyMinute()->unlessBetween('0:00', '1:00');
+
+        $schedule->command('import:offer change')->everyFiveMinutes()->unlessBetween('0:00', '1:00');
+        $schedule->command('import:offer stock')->everyFiveMinutes()->unlessBetween('0:00', '1:00');
 
 //        $schedule->command('import:emptyProduct')->hourly();
 //        $schedule->command('export:emptyProduct description')->dailyAt('1:00');
-
-        $schedule->command('order:check-booking')->dailyAt('1:00');
     }
 
     /** Register the commands for the application. */
