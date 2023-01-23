@@ -25,21 +25,22 @@ class CalculateService
     private function calc(array $items, Store $store): array
     {
         $data = ['items' => [], 'totalPrice' => 0];
+        $offers = $store->offers()->whereIn('product_id', array_column($items, 'privateId') ?: array_column($items, 'id'))
+            ->where('quantity', '>', 0)->get();
         foreach ($items as $item) {
             $productId = $item['privateId'] ?? $item['id'];
-            $quantity = $item['quantity'];
 
-            if ((isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3') or !$offer = $store->offers()->firstWhere('product_id', $productId) or $offer->quantity < 1) {
-                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $quantity, ['3']);
+            if (!$offer = $offers->firstWhere('product_id', $productId) or (isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3')) {
+                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['3']);
             }
             else {
                 $error = null;
-                if ($quantity > $offer->quantity) $error = "Доступно всего {$offer->quantity} количество";
+                if ($item['quantity'] > $offer->quantity) $error = "Доступно всего {$offer->quantity} количество";
 
-                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $quantity, ['2','3'], $error);
+                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['2','3'], $error);
             }
 
-            $data['totalPrice'] += $item['price'] * $quantity;
+            $data['totalPrice'] += $item['price'] * $item['quantity'];
         }
 
         return $data;
