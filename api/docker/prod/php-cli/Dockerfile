@@ -6,13 +6,13 @@ RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd 
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --quiet
 
 WORKDIR /app
 
 COPY ./composer.json ./composer.lock ./
 
-RUN composer install --no-dev --no-scripts --prefer-dist --no-progress --no-suggest --optimize-autoloader \
+RUN composer install --no-dev --no-scripts --prefer-dist --no-progress --optimize-autoloader \
     && rm -rf /root/.composer/cache
 
 ### CLI ###
