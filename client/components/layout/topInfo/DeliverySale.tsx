@@ -21,7 +21,7 @@ const DeliverySale: FC<Props> = ({text}) => {
 
 	return (
 		<div className={classNames(styles.deliverySale, {[styles.show]: show})}>
-			<span className={styles.deliverySale_text}>{text || 'При заказе от 2000 рублей доставка бесплатно'}</span>
+			<span className={styles.deliverySale_text}>{text || 'Бесплатная доставка при заказе от 2000 рублей'}</span>
 		</div>
 	);
 }
