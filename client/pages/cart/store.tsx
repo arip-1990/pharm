@@ -4,7 +4,7 @@ import { useLocalStorage } from "react-use-storage";
 import api from "../../lib/api";
 import { ICart } from "../../models/ICart";
 import defaultImage from "../../assets/images/default.png";
-import Layout from "../../components/layout";
+import Layout from "../../templates";
 import Accordion from "../../components/accordion";
 import { useCookie } from "../../hooks/useCookie";
 import Loader from "../../components/loader";

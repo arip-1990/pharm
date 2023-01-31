@@ -4,7 +4,7 @@ import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { useLocalStorage } from "react-use-storage";
 import axios from "axios";
 
-import Layout from "../../../components/layout";
+import Layout from "../../../templates";
 import { ICart } from "../../../models/ICart";
 import { Delivery, Payment } from "../../../components/checkout";
 import { useNotification } from "../../../hooks/useNotification";

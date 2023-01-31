@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Container, Row, Col } from "react-bootstrap";
 import moment from "moment";
-import Logo from "../../../assets/images/logo_min.svg";
+import Logo from "../../assets/images/logo_min.svg";
 import { FC, MouseEvent, useState } from "react";
-import Auth from "../../auth";
-import { useAuth } from "../../../hooks/useAuth";
+import Auth from "../../components/auth";
+import { useAuth } from "../../hooks/useAuth";
 
 import styles from "./Footer.module.scss";
 
@@ -96,7 +96,7 @@ const Footer: FC = () => {
               </h4>
             </li>
             <li>
-              <Link href="/loyalty">
+              <Link href="/loyalty-rule">
                 <a>Программа лояльности</a>
               </Link>
             </li>

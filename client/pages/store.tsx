@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { FC, useCallback, useEffect } from "react";
-import Layout from "../components/layout";
+import Layout from "../templates";
 import Page from "../components/page";
 import Pagination from "../components/pagination";
 import Link from "next/link";

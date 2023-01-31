@@ -36,7 +36,7 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (\Throwable $e) {
-            $this->sendBot($e);
+//            $this->sendBot($e);
         });
     }
 

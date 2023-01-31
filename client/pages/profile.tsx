@@ -1,6 +1,6 @@
 import {FC} from "react";
-import Layout from "../components/layout";
-import BaseProfile from "../components/profile";
+import Layout from "../templates";
+import BaseProfile from "../templates/profile";
 import { useAuth } from '../hooks/useAuth';
 
 const Profile: FC = () => {

@@ -55,7 +55,7 @@ const Navbar: FC = () => {
             <Link href="/loyalty">
               <a
                 className={classNames("nav-link", {
-                  active: router.pathname.startsWith("/loyalty"),
+                  active: router.pathname.startsWith("/loyalty") && !router.pathname.startsWith("/loyalty-rule"),
                 })}
                 tabIndex={0}
               >

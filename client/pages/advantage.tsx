@@ -1,4 +1,4 @@
-import Layout from "../components/layout";
+import Layout from "../templates";
 import Page from "../components/page";
 import BaseAdvantage from "../components/advantage";
 

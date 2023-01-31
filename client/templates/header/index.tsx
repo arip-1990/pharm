@@ -2,13 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container, Row, Col } from "react-bootstrap";
 import Navbar from "./Navbar";
-import Logo from "../../../assets/images/logo.svg";
-import heart from "../../../assets/images/heart.png";
-import cart from "../../../assets/images/cart.png";
+import Logo from "../../assets/images/logo.svg";
+import heart from "../../assets/images/heart.png";
+import cart from "../../assets/images/cart.png";
 import { FC, useEffect, useState } from "react";
-import { ICart } from "../../../models/ICart";
+import { ICart } from "../../models/ICart";
 import { useLocalStorage } from "react-use-storage";
-import { IProduct } from "../../../models/IProduct";
+import { IProduct } from "../../models/IProduct";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 

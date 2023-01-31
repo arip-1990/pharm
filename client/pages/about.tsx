@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Row } from "react-bootstrap";
-import Layout from "../components/layout";
+import Layout from "../templates";
 import Page from "../components/page";
 import distance_trading from "../assets/images/licenses/distance_trading.jpg";
 import license_1 from "../assets/images/licenses/license_1.jpg";

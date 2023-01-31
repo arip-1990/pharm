@@ -81,22 +81,20 @@ class CheckoutService
         $data = [];
         foreach ($request->validated('orders') as $item) {
             $phone = str_replace('+', '', $item['phone']);
+            $order = Order::create(
+                Store::find($item['pickupLocationId']),
+                Payment::find((int)explode('/', $item['payment'])[1]),
+                Delivery::find((int)explode('/', $item['delivery'])[1]),
+                $item['deliveryComment'] ?? null
+            );
 
             try {
-                $user = User::where('phone', $phone)->first(); // User::find($data['externalUserId'])
-
-                $order = Order::create(
-                    Store::find($item['pickupLocationId']),
-                    Payment::find((int)explode('/', $item['payment'])[1]),
-                    Delivery::find((int)explode('/', $item['delivery'])[1]),
-                    $item['deliveryComment'] ?? null
-                );
-
-                if ($user) $order->user()->associate($user);
+                // User::find($data['externalUserId'])
+                if ($user = User::where('phone', $phone)->first()) $order->user()->associate($user);
                 $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
 
                 DB::transaction(function () use ($item, $order) {
-                    $orderItems = $this->checkout($item['items'], $order->store_id, $order->delivery_id === 3);
+                    $orderItems = $this->checkout($item['items'], $order->store_id, $order->delivery_id == 3);
 
                     $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
                     $order->save();
@@ -105,8 +103,6 @@ class CheckoutService
 
                 $order->changeState(OrderState::STATE_SUCCESS);
                 if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
-
-                $order->save();
 
                 $data[] = [
                     'id' => (string)$order->id,
@@ -129,12 +125,14 @@ class CheckoutService
                             'quantity' => $orderItem->quantity,
                             'discount' => 0,
                             'subtotal' => $orderItem->getCost(),
-                            'deliveryGroups' => $order->delivery_id === 2 ? ['2', '3'] : ['3']
+                            'deliveryGroups' => $order->delivery_id == 2 ? ['2', '3'] : ['3']
                         ];
                     })
                 ];
             }
             catch (\DomainException $e) {
+                $order->changeState(OrderState::STATE_ERROR);
+
                 $data[] = [
                     'id' => null,
                     'uuid' => $item['uuid'],
@@ -145,6 +143,8 @@ class CheckoutService
                     'items' => $item['items']
                 ];
             }
+
+            $order->save();
         }
 
         return $data;
@@ -157,7 +157,7 @@ class CheckoutService
             foreach ($items as $item) {
                 $productId = $item['privateId'] ?? $item['id'];
                 if (!$offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->first())
-                    throw new \DomainException('Нет в наличии!');
+                    throw new \DomainException('Товара нет в наличии!');
 
                 $offer->checkout($item['quantity']);
                 $offer->save();
@@ -165,10 +165,8 @@ class CheckoutService
             }
         }
         else {
-            foreach ($items as $item) {
-                $productId = $item['privateId'] ?? $item['id'];
-                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-            }
+            foreach ($items as $item)
+                $orderItems->add(OrderItem::create($item['privateId'] ?? $item['id'], $item['price'], $item['quantity']));
         }
 
         return $orderItems;

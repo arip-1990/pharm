@@ -13,7 +13,7 @@ const Page: FC<Props> = ({ children, title, className, style = {} }) => {
 
   return (
     <>
-      {title && <h3 className="text-center">{title}</h3>}
+      {title && <h5 className="text-center">{title}</h5>}
       <div className={classes.join(" ")} style={style}>
         {children}
       </div>

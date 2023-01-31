@@ -1,7 +1,7 @@
 import {FC, useCallback, useEffect} from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import Layout from "../components/layout";
+import Layout from "../templates";
 import Card from "../components/card";
 import Pagination from "../components/pagination";
 import { wrapper } from "../store";
@@ -33,7 +33,7 @@ const Stock: FC = () => {
     <Layout title="Акции - Сеть аптек 120/80" description="Акции сайта.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
-      <h3 className="text-center">Период действия акции с 1 по 28 февраля 2023г.</h3>
+      <h5 className="text-center">Период действия акции с 1 по 28 февраля 2023г.</h5>
       <div className="row">
         {data?.products.length ? (
           <>
