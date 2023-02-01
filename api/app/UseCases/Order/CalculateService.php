@@ -25,20 +25,20 @@ class CalculateService
     private function calc(array $items, Store $store): array
     {
         $data = ['items' => [], 'totalPrice' => 0];
-        $offers = $store->offers()->whereIn('product_id', array_column($items, 'privateId') ?: array_column($items, 'id'))
-            ->where('quantity', '>', 0)->get();
+        $offers = $store->offers()->whereIn('product_id', array_column($items, 'privateId') ?: array_column($items, 'id'))->get();
         foreach ($items as $item) {
             $productId = $item['privateId'] ?? $item['id'];
 
-            if (!$offer = $offers->firstWhere('product_id', $productId) or (isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3')) {
-                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['3']);
-            }
-            else {
-                $error = null;
-                if ($item['quantity'] > $offer->quantity) $error = "Доступно всего {$offer->quantity} количество";
+//            if (!$offer = $offers->firstWhere('product_id', $productId) or (isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3')) {
+//                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['3']);
+//            }
+//            else {
+            $error = null;
+            if (!$offer = $offers->firstWhere('product_id', $productId) or $offer->quantity < 1) $error = 'Нет в наличии';
+            elseif ($item['quantity'] > $offer->quantity) $error = "Доступно всего {$offer->quantity} количество";
 
-                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['2','3'], $error);
-            }
+            $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], error: $error);
+//            }
 
             $data['totalPrice'] += $item['price'] * $item['quantity'];
         }

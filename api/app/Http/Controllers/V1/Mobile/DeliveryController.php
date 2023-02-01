@@ -24,17 +24,17 @@ class DeliveryController extends Controller
                 throw new \DomainException('Город неизвестен');
 
             foreach (Delivery::where('active', true)->get() as $item) {
-                if ($item->id === 3 and !$city->isBookingAvailable())
-                    continue;
+//                if ($item->id === 3 and !$city->isBookingAvailable())
+//                    continue;
 
                 if ($item->isType(Delivery::TYPE_PICKUP)) {
                     $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->id])
                         ->groupBy('stores.id')->orderByRaw('count(*) desc');
 
-                    if ($item->id === 2) {
-                        $query->join('offers', 'stores.id', 'offers.store_id')
-                            ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', array_column($data['items'], 'privateId'));
-                    }
+//                    if ($item->id === 2) {
+                    $query->join('offers', 'stores.id', 'offers.store_id')
+                        ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', $productIds);
+//                    }
 
                     if ($query->count()) {
                         $locations->put($item->id, $query->get());
