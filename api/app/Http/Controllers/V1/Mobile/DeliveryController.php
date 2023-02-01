@@ -33,7 +33,7 @@ class DeliveryController extends Controller
 
 //                    if ($item->id === 2) {
                     $query->join('offers', 'stores.id', 'offers.store_id')
-                        ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', $productIds);
+                        ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', array_column($data['items'], 'privateId'));
 //                    }
 
                     if ($query->count()) {
