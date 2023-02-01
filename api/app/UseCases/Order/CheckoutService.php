@@ -96,7 +96,7 @@ class CheckoutService
                 $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
 
                 DB::transaction(function () use ($item, $order) {
-                    $orderItems = $this->checkout($item['items'], $order->store_id, $order->delivery_id === 3);
+                    $orderItems = $this->checkout($item['items'], $order->store_id);
 
                     $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
                     $order->save();
@@ -129,7 +129,7 @@ class CheckoutService
                             'quantity' => $orderItem->quantity,
                             'discount' => 0,
                             'subtotal' => $orderItem->getCost(),
-                            'deliveryGroups' => $order->delivery_id === 2 ? ['2', '3'] : ['3']
+//                            'deliveryGroups' => $order->delivery_id === 2 ? ['2', '3'] : ['3']
                         ];
                     })
                 ];
@@ -153,22 +153,34 @@ class CheckoutService
     private function checkout(array $items, string $storeId, bool $isBooking = false): Collection
     {
         $orderItems = new Collection();
-        if (!$isBooking) {
-            foreach ($items as $item) {
-                $productId = $item['privateId'] ?? $item['id'];
-                if (!$offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->first())
-                    throw new \DomainException('Нет в наличии!');
+//        if (!$isBooking) {
+//            foreach ($items as $item) {
+//                $productId = $item['privateId'] ?? $item['id'];
+//                if (!$offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->first())
+//                    throw new \DomainException('Нет в наличии!');
+//
+//                $offer->checkout($item['quantity']);
+//                $offer->save();
+//                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
+//            }
+//        }
+//        else {
+//            foreach ($items as $item) {
+//                $productId = $item['privateId'] ?? $item['id'];
+//                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
+//            }
+//        }
 
-                $offer->checkout($item['quantity']);
-                $offer->save();
-                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
+        foreach ($items as $item) {
+            $productId = $item['privateId'] ?? $item['id'];
+            try {
+                $offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->where('quantity', '>', 0)->first();
+                $offer?->checkout($item['quantity']);
+                $offer?->save();
             }
-        }
-        else {
-            foreach ($items as $item) {
-                $productId = $item['privateId'] ?? $item['id'];
-                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-            }
+            catch (\DomainException $e) {}
+
+            $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
         }
 
         return $orderItems;
