@@ -1,0 +1,26 @@
+.table {
+  width: 100%;
+  box-shadow: 4px 4px 8px 0px rgb(34 60 80 / 20%);
+
+  tr {
+    background: #fff;
+
+    &:first-child {
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+    }
+
+    &:last-child {
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+    }
+
+    &:nth-child(odd) {
+      background: #ddd;
+    }
+
+    td {
+      padding: 0.25rem 0.5rem;
+    }
+  }
+}
