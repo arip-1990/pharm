@@ -2,9 +2,9 @@
 
 .profile {
   display: grid;
-  grid-template-columns: 0.3fr 0.7fr 1fr;
+  grid-template-columns: 0.3fr 0.5fr 1fr;
   grid-template-rows: 0.25fr 1fr;
-  grid-gap: 1rem;
+  grid-gap: 1.5rem;
   background-color: #fff;
   border-radius: 2.5rem;
   box-shadow: 16px 16px 16px 8px rgba(34, 60, 80, 0.25);
@@ -104,7 +104,14 @@
     min-height: 100%;
     color: #000;
     border-radius: 1rem;
-    background: linear-gradient(90deg, #27bfc1, #c6fafb);
+    background: #fff;
+    box-shadow: 4px 4px 8px 0px rgb(34 60 80 / 20%);
     padding: 1rem;
+
+    h4 {
+      color: blue;
+      font-weight: bold;
+      margin-bottom: 2rem;
+    }
   }
 }

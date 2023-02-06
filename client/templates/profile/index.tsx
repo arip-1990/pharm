@@ -83,7 +83,7 @@ const Profile: FC<Props> = ({
 
       <span className={styles.profile_logo}>Бонусная программа</span>
 
-      <Table>
+      <Table shadow rounded striped>
         <tr>
           <td>№ карты:</td>
           <td>{user?.card.number}</td>
@@ -111,7 +111,7 @@ const Profile: FC<Props> = ({
       </Table>
 
       <article className={classNames(styles.profile_content, contentClassName)}>
-        {title && <h5 className="mb-0 mt-auto">{title}</h5>}
+        {title && <h4>{title}</h4>}
         {children}
       </article>
     </section>

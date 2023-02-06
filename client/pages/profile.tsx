@@ -10,7 +10,7 @@ const Profile: FC = () => {
   return (
     <Layout title="Профиль - Сеть аптек 120/80">
       <BaseProfile title="Персональные данные">
-        <Table>
+        <Table rounded striped>
           <tr>
             <td>Фамилия:</td>
             <td>{user?.lastName}</td>
