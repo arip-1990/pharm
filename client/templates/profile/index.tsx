@@ -7,6 +7,9 @@ import { useAuth } from "../../hooks/useAuth";
 
 import styles from "./Profile.module.scss";
 
+import loyaltyCard from "../../assets/images/loyalty-card.png";
+import Image from "next/image";
+
 interface Props {
   title?: string;
   className?: string;
@@ -44,23 +47,33 @@ const Profile: FC<Props> = ({
       <aside className={styles.profile_sidebar}>
         <nav className={styles["profile_sidebar-menu"]}>
           <Link href="/">
-            <a>Главная</a>
+            <a>
+              <i className="icon-home" /> Главная
+            </a>
           </Link>
           <Link href="/profile/cheque">
-            <a>Покупки</a>
+            <a>
+              <i className="icon-cart" /> Покупки
+            </a>
           </Link>
           <Link href="/profile/coupon">
-            <a>Купоны</a>
+            <a>
+              <i className="icon-stack" /> Купоны
+            </a>
           </Link>
           <Link href="/profile">
-            <a>Анкета</a>
+            <a>
+              <i className="icon-file-text" /> Анкета
+            </a>
           </Link>
           <a href="#" onClick={handleLogout}>
-            Выход
+            <i className="icon-cross" /> Выход
           </a>
         </nav>
 
-        <div className={styles["profile_sidebar-card"]}></div>
+        <div className={styles["profile_sidebar-card"]}>
+          <Image src={loyaltyCard} />
+        </div>
 
         <ul className={styles["profile_sidebar-sub-menu"]}>
           <li className={styles["profile_sidebar-sub-menu__item"]}>
@@ -83,32 +96,34 @@ const Profile: FC<Props> = ({
 
       <span className={styles.profile_logo}>Бонусная программа</span>
 
-      <Table shadow rounded striped>
-        <tr>
-          <td>№ карты:</td>
-          <td>{user?.card.number}</td>
-        </tr>
-        <tr>
-          <td>Количество покупок:</td>
-          <td>{user?.quantity}</td>
-        </tr>
-        <tr>
-          <td>Получено баллов:</td>
-          <td>{user?.card.chargedBonus}</td>
-        </tr>
-        <tr>
-          <td>Потрачено баллов:</td>
-          <td>{user?.card.writeoffBonus}</td>
-        </tr>
-        <tr>
-          <td>Общий баланс:</td>
-          <td>{user?.balance}</td>
-        </tr>
-        <tr>
-          <td>Активный баланс:</td>
-          <td>{user?.activeBalance}</td>
-        </tr>
-      </Table>
+      <div className={styles["profile_card-info"]}>
+        <Table shadow rounded striped>
+          <tr>
+            <td>№ карты</td>
+            <td>{user?.card.number}</td>
+          </tr>
+          <tr>
+            <td>Количество покупок</td>
+            <td>{user?.quantity}</td>
+          </tr>
+          <tr>
+            <td>Получено баллов</td>
+            <td>{user?.card.chargedBonus}</td>
+          </tr>
+          <tr>
+            <td>Потрачено баллов</td>
+            <td>{user?.card.writeoffBonus}</td>
+          </tr>
+          <tr>
+            <td>Общий баланс</td>
+            <td>{user?.balance}</td>
+          </tr>
+          <tr>
+            <td>Активный баланс</td>
+            <td>{user?.activeBalance}</td>
+          </tr>
+        </Table>
+      </div>
 
       <article className={classNames(styles.profile_content, contentClassName)}>
         {title && <h4>{title}</h4>}

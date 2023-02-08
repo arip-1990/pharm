@@ -1,37 +1,29 @@
 import { FC } from "react";
+import { Table } from "../../components/table";
 import { IBonus } from "../../models/IBonus";
-import styles from "./Table.module.scss";
 
 type Props = {
   data: IBonus[];
-  className?: string;
 };
 
-const Bonus: FC<Props> = ({ data, className }) => {
-  let classes = [styles.table];
-  if (className) classes = classes.concat(className.split(" "));
-
+const Bonus: FC<Props> = ({ data }) => {
   return (
-    <table className={classes.join(" ")}>
-      <thead>
-        <tr>
-          <th>Дата операции</th>
-          <th>Начислено бонусов</th>
-          <th>Дата активации</th>
-          <th>Дата сгорания</th>
+    <Table rounded striped>
+      <tr>
+        <th>Дата операции</th>
+        <th>Начислено бонусов</th>
+        <th>Дата активации</th>
+        <th>Дата сгорания</th>
+      </tr>
+      {data.map((item) => (
+        <tr key={item.id}>
+          <td>{item.createdDate.format("L")}</td>
+          <td>{item.debet}</td>
+          <td>{item.actualStart.format("L")}</td>
+          <td>{item.actualEnd.format("L")}</td>
         </tr>
-      </thead>
-      <tbody>
-        {data.map((item) => (
-          <tr key={item.id}>
-            <td>{item.createdDate.format("L")}</td>
-            <td>{item.debet}</td>
-            <td>{item.actualStart.format("L")}</td>
-            <td>{item.actualEnd.format("L")}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      ))}
+    </Table>
   );
 };
 

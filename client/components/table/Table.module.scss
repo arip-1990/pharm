@@ -3,8 +3,16 @@
   font-size: 0.9rem;
   background: #fff;
 
-  td {
-    padding: 0.25rem 0.5rem;
+  tr {
+    td,
+    th {
+      height: 36px;
+      padding: 0.25rem 0.75rem;
+    }
+
+    td:last-child {
+      text-align: center;
+    }
   }
 
   &__striped {

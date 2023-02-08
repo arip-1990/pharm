@@ -12,9 +12,8 @@ const Cheque: FC = () => {
 
   return (
     <Layout title="Покупки - Сеть аптек 120/80">
-      <BaseProfile>
-        <h4>Покупки</h4>
-        {cheques && <BaseCheque className="mb-3" data={cheques} />}
+      <BaseProfile title="Покупки">
+        {cheques && <BaseCheque data={cheques} />}
         <h4>Бонусы</h4>
         {bonuses && <Bonus data={bonuses} />}
       </BaseProfile>

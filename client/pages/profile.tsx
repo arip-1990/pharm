@@ -12,31 +12,31 @@ const Profile: FC = () => {
       <BaseProfile title="Персональные данные">
         <Table rounded striped>
           <tr>
-            <td>Фамилия:</td>
+            <td>Фамилия</td>
             <td>{user?.lastName}</td>
           </tr>
           <tr>
-            <td>Имя:</td>
+            <td>Имя</td>
             <td>{user?.firstName}</td>
           </tr>
           <tr>
-            <td>Отчество:</td>
+            <td>Отчество</td>
             <td>{user?.middleName}</td>
           </tr>
           <tr>
-            <td>Дата рождения:</td>
+            <td>Дата рождения</td>
             <td>{user?.birthDate?.format("DD.MM.Y")}</td>
           </tr>
           <tr>
-            <td>Мобильный телефон:</td>
+            <td>Мобильный телефон</td>
             <td>{user?.phone}</td>
           </tr>
           <tr>
-            <td>Дата регистрации:</td>
+            <td>Дата регистрации</td>
             <td>{user?.registrationDate?.format("DD.MM.Y")}</td>
           </tr>
           <tr>
-            <td>Магазины регистрации:</td>
+            <td>Магазины регистрации</td>
             <td>{user?.orgUnitName}</td>
           </tr>
         </Table>

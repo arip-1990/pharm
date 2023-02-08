@@ -3,9 +3,13 @@
 .profile {
   display: grid;
   grid-template-columns: 0.3fr 0.5fr 1fr;
-  grid-template-rows: 0.25fr 1fr;
+  grid-template-rows: 96px 1fr;
   grid-gap: 1.5rem;
-  background-color: #fff;
+  font-family: "Montserrat", sans-serif;
+  background: #fff;
+  background-image: url(../../assets/images/bg-profile.png);
+  background-repeat: repeat-x;
+  background-size: contain;
   border-radius: 2.5rem;
   box-shadow: 16px 16px 16px 8px rgba(34, 60, 80, 0.25);
   padding: 2.5rem 3rem;
@@ -26,12 +30,14 @@
       border-radius: 0.5rem;
 
       > a {
+        display: flex;
+        align-items: center;
         width: 100%;
-        font-weight: 600;
+        font-weight: 500;
         text-align: center;
-        color: #ccc;
+        color: #27bfc1;
         background: #fff;
-        padding: 0.25rem;
+        padding: 0.25rem 1rem 0.25rem 3rem;
 
         &:hover {
           background: #eee;
@@ -50,12 +56,17 @@
         &:not(:last-child) {
           border-bottom: 1.5px solid #eee;
         }
+
+        [class^="icon-"] {
+          font-size: 0.75rem;
+          margin-right: 1rem;
+        }
       }
     }
 
-    &-card {
-      border: 1px solid #ccc;
-      border-radius: 1rem;
+    &-card img {
+      border-radius: 0.25rem;
+      box-shadow: 4px 4px 8px 0px rgb(34 60 80 / 20%);
     }
 
     &-sub-menu {
@@ -65,16 +76,18 @@
       margin: 0;
 
       &__item {
-        font-size: 0.75rem;
-        border-radius: 0.25rem;
+        font-size: 0.7rem;
+        border-radius: 0px 20px 20px 0px;
         background: linear-gradient(
-          0deg,
-          rgb(255, 255, 255) 50%,
-          rgb(220, 220, 220)
+          180deg,
+          #f3efef 0%,
+          rgba(255, 255, 255, 0) 100%
         );
+        padding: 0.5rem 0.25rem;
 
         a {
-          color: #ddd;
+          font-size: 0.8rem;
+          color: #0f5aa5;
         }
       }
     }
@@ -83,14 +96,29 @@
   &_logo {
     grid-column: 2/3;
     grid-row: 1/2;
-    font-size: 1.25rem;
+    align-self: end;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 68px;
     font-weight: 700;
     letter-spacing: 2px;
     color: #fff;
     background-color: #27bfc1;
     border-radius: 1rem;
-    box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2) inset;
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 1.5rem 0.5rem 40%;
+
+    &::before {
+      content: "";
+      background-image: url(../../assets/images/gift.png);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: absolute;
+      left: -10px;
+      width: 82px;
+      height: 84px;
+    }
   }
 
   &_card-info {
@@ -109,9 +137,10 @@
     padding: 1rem;
 
     h4 {
-      color: blue;
+      text-align: center;
+      color: #0f5aa5;
       font-weight: bold;
-      margin-bottom: 2rem;
+      margin: 1.5rem 0;
     }
   }
 }
