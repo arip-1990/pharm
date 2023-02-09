@@ -41,7 +41,7 @@ class PayController extends Controller
             case 'deposited':
                 if ($status === 1) {
                     $order->changeStatusState(OrderStatus::STATUS_PAID, OrderState::STATE_SUCCESS);
-                    $order->sent();
+//                    $order->sent();
                 }
                 elseif ($status === 0) {
                     $order->changeStatusState(OrderStatus::STATUS_PAID, OrderState::STATE_ERROR);

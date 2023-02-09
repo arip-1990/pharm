@@ -50,7 +50,7 @@ class UpdateController extends Controller
 
         $id = intval($xml->order->id) - config('data.orderStartNumber');
         if (!$order = Order::find($id))
-            return response($this->orderError('Не найден заказ №' . $id . '!', 2, $id), 500);
+            return response($this->orderError('Не найден заказ №' . $id . '!', 2, $id), 404);
 
         switch ($status = OrderStatus::from((string)$xml->order->status)) {
             case OrderStatus::STATUS_ASSEMBLED:
