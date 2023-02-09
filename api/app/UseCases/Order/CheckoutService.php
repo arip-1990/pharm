@@ -102,7 +102,7 @@ class CheckoutService
                 });
 
                 $order->changeState(OrderState::STATE_SUCCESS);
-                if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
+//                if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
 
                 $data[] = [
                     'id' => (string)$order->id,
@@ -125,7 +125,7 @@ class CheckoutService
                             'quantity' => $orderItem->quantity,
                             'discount' => 0,
                             'subtotal' => $orderItem->getCost(),
-//                            'deliveryGroups' => $order->delivery_id === 2 ? ['2', '3'] : ['3']
+                            'deliveryGroups' => $order->delivery_id == 2 ? ['2', '3'] : ['3']
                         ];
                     })
                 ];
@@ -150,27 +150,9 @@ class CheckoutService
         return $data;
     }
 
-    private function checkout(array $items, string $storeId, bool $isBooking = false): Collection
+    private function checkout(array $items, string $storeId): Collection
     {
         $orderItems = new Collection();
-//        if (!$isBooking) {
-//            foreach ($items as $item) {
-//                $productId = $item['privateId'] ?? $item['id'];
-//                if (!$offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->first())
-//                    throw new \DomainException('Нет в наличии!');
-//
-//                $offer->checkout($item['quantity']);
-//                $offer->save();
-//                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-//            }
-//        }
-//        else {
-//            foreach ($items as $item) {
-//                $productId = $item['privateId'] ?? $item['id'];
-//                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-//            }
-//        }
-
         foreach ($items as $item) {
             $productId = $item['privateId'] ?? $item['id'];
             try {
