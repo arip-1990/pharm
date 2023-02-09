@@ -7,7 +7,12 @@
     td,
     th {
       height: 36px;
+      font-size: 0.8rem;
       padding: 0.25rem 0.75rem;
+    }
+
+    th {
+      text-align: center;
     }
 
     td:last-child {

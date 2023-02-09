@@ -77,18 +77,24 @@ const Profile: FC<Props> = ({
 
         <ul className={styles["profile_sidebar-sub-menu"]}>
           <li className={styles["profile_sidebar-sub-menu__item"]}>
-            <Link href="/profile/card/block">
-              <a>Заблокировать карту</a>
+            <Link href="/profile/card/lock">
+              <a>
+                <i className="icon-lock" /> Заблокировать карту
+              </a>
             </Link>
           </li>
           <li className={styles["profile_sidebar-sub-menu__item"]}>
             <Link href="/profile/change-password">
-              <a>Сменить пароль</a>
+              <a>
+                <i className="icon-loop" /> Сменить пароль
+              </a>
             </Link>
           </li>
           <li className={styles["profile_sidebar-sub-menu__item"]}>
             <Link href="/profile/card">
-              <a>Список карт</a>
+              <a>
+                <i className="icon-card" /> Список карт
+              </a>
             </Link>
           </li>
         </ul>
@@ -126,7 +132,7 @@ const Profile: FC<Props> = ({
       </div>
 
       <article className={classNames(styles.profile_content, contentClassName)}>
-        {title && <h4>{title}</h4>}
+        {title && <h5>{title}</h5>}
         {children}
       </article>
     </section>
