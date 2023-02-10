@@ -36,7 +36,7 @@ class CalculateService
                 $error = null;
                 if ($item['quantity'] > $offer->quantity) $error = "Доступно всего {$offer->quantity} количество";
 
-                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], error: $error);
+                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['2', '3'], $error);
             }
 
             $data['totalPrice'] += $item['price'] * $item['quantity'];

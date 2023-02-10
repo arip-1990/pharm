@@ -134,6 +134,11 @@ class Order extends Model
         return $cost - $this->cost;
     }
 
+    public function isAvailableItem(OrderItem $item): bool
+    {
+        return $this->store->offers()->where('product_id', $item->product_id)->where('quantity', '>', 0)->exists();
+    }
+
     public function isPay(): bool
     {
         return $this->isStatusSuccess(OrderStatus::STATUS_PAID);

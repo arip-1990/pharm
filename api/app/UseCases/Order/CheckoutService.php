@@ -125,7 +125,7 @@ class CheckoutService
                             'quantity' => $orderItem->quantity,
                             'discount' => 0,
                             'subtotal' => $orderItem->getCost(),
-                            'deliveryGroups' => $order->delivery_id == 2 ? ['2', '3'] : ['3']
+                            'deliveryGroups' => $order->isAvailableItem($orderItem) ? ['2', '3'] : ['3']
                         ];
                     })
                 ];
