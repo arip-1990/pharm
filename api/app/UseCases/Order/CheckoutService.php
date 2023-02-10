@@ -28,9 +28,10 @@ class CheckoutService
         $order = Order::create(
             Store::find($data['store']),
             Payment::find($data['payment'] ?: 2),
-            $data['price'],
             Delivery::find($data['delivery'] ?: 2)
         );
+
+        $order->setCost($data['price']);
 
         $user = $request->user();
         $order->user()->associate($user);
