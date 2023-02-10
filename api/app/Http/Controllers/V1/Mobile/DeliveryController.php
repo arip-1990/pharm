@@ -20,6 +20,7 @@ class DeliveryController extends Controller
             $data = $request->validated();
             $deliveries = [];
             $locations = new Collection();
+            /** @var City $city */
             if (!$city = City::where('name', Helper::trimPrefixCity($data['city'] ?? $data['addressData']['settlement']))->first())
                 throw new \DomainException('Город неизвестен');
 
@@ -28,7 +29,7 @@ class DeliveryController extends Controller
                     continue;
 
                 if ($item->isType(Delivery::TYPE_PICKUP)) {
-                    $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->id])
+                    $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->parent_id ?: $city->id])
                         ->groupBy('stores.id')->orderByRaw('count(*) desc');
 
                     if ($item->id === 2) {

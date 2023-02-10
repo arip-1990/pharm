@@ -25,11 +25,12 @@ class CalculateService
     private function calc(array $items, Store $store): array
     {
         $data = ['items' => [], 'totalPrice' => 0];
-        $offers = $store->offers()->whereIn('product_id', array_column($items, 'privateId') ?: array_column($items, 'id'))->get();
+        $offers = $store->offers()->where('quantity', '>', 0)
+            ->whereIn('product_id', array_column($items, 'privateId') ?: array_column($items, 'id'))->get();
         foreach ($items as $item) {
             $productId = $item['privateId'] ?? $item['id'];
 
-            if (!$offer = $offers->firstWhere('product_id', $productId) or $offer->quantity < 1 or (isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3')) {
+            if ((isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3') or !$offer = $offers->firstWhere('product_id', $productId)) {
                 $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['3']);
             }
             else {

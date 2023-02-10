@@ -22,6 +22,7 @@ class SendCommand extends Command
     {
         $client = Redis::connection('bot')->client();
         try {
+            $checked = [];
             $orders = Order::where('created_at', '>=', Carbon::now()->subMinutes(2))->get();
             foreach ($orders as $order) {
                 if ($order->isSent() or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
@@ -30,6 +31,7 @@ class SendCommand extends Command
                 if (!$order2 = $orders->first(fn(Order $item) => $item->phone == $order->phone and $item->store_id == $order->store_id)) {
                     $order->sent();
                     $order->save();
+                    continue;
                 }
 
                 if ($order2->isSent() or ($order2->payment->isType(Payment::TYPE_CARD) and !$order2->isPay()))

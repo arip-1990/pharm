@@ -57,6 +57,7 @@ class StoreCommand extends Command
                 'line' => $e->getLine(),
                 'message' => $e->getMessage()
             ]));
+            $this->info($e->getMessage());
             return 1;
         }
 
