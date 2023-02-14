@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState, MouseEvent } from "react";
-import Layout from "../components/layout";
+import Layout from "../templates";
 import defaultImage from "../assets/images/default.png";
 import Link from "next/link";
 import BaseCart from "../components/cart";

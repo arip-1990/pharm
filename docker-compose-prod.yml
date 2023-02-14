@@ -143,13 +143,14 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DISK: public
       CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
       SESSION_DRIVER: redis
       SESSION_CONNECTION: cache
       SESSION_SECURE_COOKIE: 'true'
       SESSION_DOMAIN: '.xn--12080-6ve4g.xn--p1ai'
       CORS_ORIGIN: 'https://panel.xn--12080-6ve4g.xn--p1ai|https://xn--12080-6ve4g.xn--p1ai'
       REDIS_HOST: redis
+      QUEUE_CONNECTION: rabbitmq
+      RABBITMQ_HOST: rabbitmq
       MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120-na-80.ru
@@ -236,7 +237,6 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
-      CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
     command: sh -c 'php artisan schedule:run'
@@ -263,7 +263,6 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
-      CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       MAIL_HOST: smtp.mail.ru
@@ -282,36 +281,35 @@ services:
         max_attempts: 5
         window: 120s
 
-  api-subscribe:
-    image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
-    environment:
-      APP_NAME: Сеть аптек 120/80
-      APP_URL: https://api.120на80.рф
-      LOG_CHANNEL: stderr
-      DB_CONNECTION: pgsql
-      DB_HOST: api-db
-      DB_DATABASE: app
-      DB_USERNAME: app
-      DB_PASSWORD: ${DB_PASSWORD}
-      FILESYSTEM_DRIVER: public
-      CACHE_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      REDIS_HOST: redis
-      MAIL_HOST: smtp.mail.ru
-      MAIL_PORT: 465
-      MAIL_USERNAME: info@120-na-80.ru
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      MAIL_FROM_ADDRESS: info@120-na-80.ru
-      MAIL_FROM_NAME: Сеть аптек 120/80
-    command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan redis:subscribe'
-    volumes:
-      - uploads:/app/storage/app/public
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-        max_attempts: 5
-        window: 120s
+  # api-subscribe:
+  #   image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
+  #   environment:
+  #     APP_NAME: Сеть аптек 120/80
+  #     APP_URL: https://api.120на80.рф
+  #     LOG_CHANNEL: stderr
+  #     DB_CONNECTION: pgsql
+  #     DB_HOST: api-db
+  #     DB_DATABASE: app
+  #     DB_USERNAME: app
+  #     DB_PASSWORD: ${DB_PASSWORD}
+  #     FILESYSTEM_DRIVER: public
+  #     QUEUE_CONNECTION: redis
+  #     REDIS_HOST: redis
+  #     MAIL_HOST: smtp.mail.ru
+  #     MAIL_PORT: 465
+  #     MAIL_USERNAME: info@120-na-80.ru
+  #     MAIL_PASSWORD: ${MAIL_PASSWORD}
+  #     MAIL_FROM_ADDRESS: info@120-na-80.ru
+  #     MAIL_FROM_NAME: Сеть аптек 120/80
+  #   command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan redis:subscribe'
+  #   volumes:
+  #     - uploads:/app/storage/app/public
+  #   deploy:
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 10s
+  #       max_attempts: 5
+  #       window: 120s
 
   # parser:
   #   image: ${REGISTRY}/pharm-parser:${IMAGE_TAG}
@@ -331,8 +329,8 @@ services:
     image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
-      REDIS_HOST: redis
-    command: sh -c 'wait-for-it redis:6379 -t 60 && python main.py'
+      RABBITMQ_HOST: rabbitmq
+    command: sh -c 'wait-for-it rabbitmq:5672 -t 60 && python main.py'
     deploy:
       mode: replicated
       replicas: 1
@@ -364,6 +362,13 @@ services:
 
   redis:
     image: redis:6.2-alpine
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
+      endpoint_mode: dnsrr
+  
+  rabbitmq:
+    image: rabbitmq:3.11-alpine
     deploy:
       placement:
         constraints: [ node.role == manager ]

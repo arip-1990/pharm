@@ -33,6 +33,7 @@ class OrderSendListener implements ShouldQueue
         }
         catch (\Exception $e) {
             $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
+
             throw new \DomainException($e->getMessage());
         } finally {
             $order->save();

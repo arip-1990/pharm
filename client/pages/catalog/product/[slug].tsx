@@ -1,4 +1,4 @@
-import Layout from "../../../components/layout";
+import Layout from "../../../templates";
 import { GetServerSideProps } from "next";
 import { FC, useCallback, useEffect, useState } from "react";
 import defaultImage from "../../../assets/images/default.png";

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { FC } from "react";
-import Layout from "../../components/layout";
-import BaseProfile from "../../components/profile";
+import Layout from "../../templates";
+import BaseProfile from "../../templates/profile";
 import api from "../../lib/api";
 import { useNotification } from "../../hooks/useNotification";
 

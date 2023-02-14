@@ -26,8 +26,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $note
  * @property ?string $cancel_reason
  * @property string $store_id
- * @property string $payment_id
- * @property string $delivery_id
+ * @property int $payment_id
+ * @property int $delivery_id
  * @property ?string $sber_id
  * @property ?string $yandex_id
  * @property ?Carbon $created_at
@@ -132,6 +132,11 @@ class Order extends Model
             $cost += $archive->quantity * $archive->price;
 
         return $cost - $this->cost;
+    }
+
+    public function isAvailableItem(OrderItem $item): bool
+    {
+        return $this->store->offers()->where('product_id', $item->product_id)->where('quantity', '>', 0)->exists();
     }
 
     public function isPay(): bool

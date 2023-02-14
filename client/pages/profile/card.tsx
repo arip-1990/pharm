@@ -1,7 +1,7 @@
 import { FC } from "react";
-import Layout from "../../components/layout";
-import Profile from "../../components/profile";
-import BaseCard from "../../components/profile/Card";
+import Layout from "../../templates";
+import Profile from "../../templates/profile";
+import BaseCard from "../../templates/profile/Card";
 import { useFetchCardsQuery } from "../../lib/cardService";
 
 const Card: FC = () => {

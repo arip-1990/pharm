@@ -1,8 +1,8 @@
 import { FC } from "react";
-import Layout from "../../components/layout";
-import BaseProfile from "../../components/profile";
-import BaseCheque from "../../components/profile/Cheque";
-import Bonus from "../../components/profile/Bonus";
+import Layout from "../../templates";
+import BaseProfile from "../../templates/profile";
+import BaseCheque from "../../templates/profile/Cheque";
+import Bonus from "../../templates/profile/Bonus";
 import { useFetchChequesQuery } from "../../lib/chequeService";
 import { useFetchBonusesQuery } from "../../lib/bonusService";
 
@@ -15,7 +15,7 @@ const Cheque: FC = () => {
       <BaseProfile>
         <h4>Покупки</h4>
         {cheques && <BaseCheque className="mb-3" data={cheques} />}
-        <h4>Подарочные бонусы</h4>
+        <h4>Бонусы</h4>
         {bonuses && <Bonus data={bonuses} />}
       </BaseProfile>
     </Layout>

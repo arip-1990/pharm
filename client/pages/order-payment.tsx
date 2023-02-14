@@ -1,4 +1,4 @@
-import Layout from "../components/layout";
+import Layout from "../templates";
 import Page from "../components/page";
 import { FC, useCallback } from "react";
 import Breadcrumbs from "../components/breadcrumbs";

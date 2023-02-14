@@ -5,7 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Queue;
 use Psr\Log\LogLevel;
 
 class Handler extends ExceptionHandler
@@ -43,14 +43,16 @@ class Handler extends ExceptionHandler
     public function sendBot(\Throwable $e): void
     {
         try {
+            $connection = Queue::connection();
             if (LogLevel::ERROR == Arr::first($this->levels, fn ($level, $type) => $e instanceof $type, LogLevel::ERROR)) {
-                $client = Redis::connection('bot')->client();
-
-                $client->publish("bot:error", json_encode([
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'message' => $e->getMessage()
-                ]));
+                $connection->pushRaw(json_encode([
+                    'type' => 'error',
+                    'data' => [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'message' => $e->getMessage()
+                    ]
+                ]), 'bot');
             }
         }
         catch (\Exception $e) {

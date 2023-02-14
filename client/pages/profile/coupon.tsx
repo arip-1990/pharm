@@ -1,7 +1,7 @@
 import { FC } from "react";
-import Layout from "../../components/layout";
-import BaseProfile from "../../components/profile";
-import BaseCoupon from "../../components/profile/Coupon";
+import Layout from "../../templates";
+import BaseProfile from "../../templates/profile";
+import BaseCoupon from "../../templates/profile/Coupon";
 import { useFetchCouponsQuery } from "../../lib/couponService";
 
 const Coupon: FC = () => {

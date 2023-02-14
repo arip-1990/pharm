@@ -1,4 +1,4 @@
-@import "../../../styles/variables";
+@import "../../styles/variables";
 
 .footer {
   .ofer {
@@ -11,7 +11,7 @@
   }
 
   .info {
-    background: url(../../../assets/images/footer.png) $primary;
+    background: url(../../assets/images/footer.png) $primary;
     color: #fff;
     padding: 1.5rem;
     margin-top: 1rem;

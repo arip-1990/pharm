@@ -22,8 +22,9 @@ class IndexController
 
             $data = $this->service->sberPay((int)$data['orderId']);
         }
-        catch (\DomainException $e) {
+        catch (\Exception $e) {
             return new JsonResponse([
+                "error" => $e->getMessage(),
                 "success" => false,
                 "paymentId" => null,
                 "paymentUrl" => null,

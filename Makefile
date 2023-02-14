@@ -1,7 +1,7 @@
 init: init-ci panel-ready client-ready
 init-ci: docker-down-clear panel-clear api-clear client-clear \
 	docker-pull docker-build docker-up \
-	panel-init api-init client-init
+	panel-init client-init api-init
 up: docker-up
 down: docker-down
 restart: down up

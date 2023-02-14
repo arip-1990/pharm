@@ -1,4 +1,4 @@
-import Layout from "../../components/layout";
+import Layout from "../../templates";
 import Card from "../../components/card";
 import {FC, useCallback, useEffect} from "react";
 import { GetServerSideProps } from "next";

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {FC, useCallback} from "react";
 import { useLocalStorage } from "react-use-storage";
-import Layout from "../components/layout";
+import Layout from "../templates";
 import { IProduct } from "../models/IProduct";
 import defaultImage from "../assets/images/default.png";
 import { useMounted } from "../hooks/useMounted";

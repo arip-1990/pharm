@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Row } from "react-bootstrap";
-import Layout from "../components/layout";
+import Layout from "../templates";
 import Page from "../components/page";
 import Box from "../assets/images/content/box.svg";
 import Delivery from "../assets/images/content/delivery.svg";

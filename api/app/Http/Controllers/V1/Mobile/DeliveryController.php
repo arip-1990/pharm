@@ -20,23 +20,22 @@ class DeliveryController extends Controller
             $data = $request->validated();
             $deliveries = [];
             $locations = new Collection();
+            /** @var City $city */
             if (!$city = City::where('name', Helper::trimPrefixCity($data['city'] ?? $data['addressData']['settlement']))->first())
                 throw new \DomainException('Город неизвестен');
 
             foreach (Delivery::where('active', true)->get() as $item) {
-//                if ($item->id === 3 and !$city->isBookingAvailable())
-//                    continue;
+                if ($item->id === 3 and !$city->isBookingAvailable())
+                    continue;
 
                 if ($item->isType(Delivery::TYPE_PICKUP)) {
-                    $productIds = array_column($data['items'], 'privateId');
-
-                    $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->id])
+                    $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->parent_id ?: $city->id])
                         ->groupBy('stores.id')->orderByRaw('count(*) desc');
 
-//                    if ($item->id === 2) {
-                    $query->join('offers', 'stores.id', 'offers.store_id')
-                        ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', $productIds);
-//                    }
+                    if ($item->id === 2) {
+                        $query->join('offers', 'stores.id', 'offers.store_id')
+                            ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', array_column($data['items'], 'privateId'));
+                    }
 
                     if ($query->count()) {
                         $locations->put($item->id, $query->get());

@@ -28,26 +28,18 @@ class CheckoutService
         $order = Order::create(
             Store::find($data['store']),
             Payment::find($data['payment'] ?: 2),
-            $data['price'],
             Delivery::find($data['delivery'] ?: 2)
         );
+
+        $order->setCost($data['price']);
 
         $user = $request->user();
         $order->user()->associate($user);
         $order->setUserInfo($user->first_name, $user->phone, $user->email);
 
         DB::transaction(function () use ($order, $data) {
-            $items = new Collection();
-            $offers = new Collection();
-            foreach ($data['items'] as $item) {
-                $offer = Offer::where('store_id', $data['store'])->where('product_id', $item['id'])->first();
-                $offer->checkout($item['quantity']);
-                $offers->add($offer);
-                $items->add(OrderItem::create($item['id'], $item['price'], $item['quantity']));
-            }
-
             $order->save();
-            $order->items()->saveMany($items);
+            $order->items()->saveMany($this->checkout($data['items']));
 
             if ($order->delivery->isType(Delivery::TYPE_DELIVERY)) {
                 $delivery = OrderDelivery::create(
@@ -64,8 +56,6 @@ class CheckoutService
                 $delivery->location()->associate($location);
                 $order->orderDelivery()->save($delivery);
             }
-
-            $offers->each(fn(Offer $offer) => $offer->save());
         });
 
         $order->changeState(OrderState::STATE_SUCCESS);
@@ -81,22 +71,20 @@ class CheckoutService
         $data = [];
         foreach ($request->validated('orders') as $item) {
             $phone = str_replace('+', '', $item['phone']);
+            $order = Order::create(
+                Store::find($item['pickupLocationId']),
+                Payment::find((int)explode('/', $item['payment'])[1]),
+                Delivery::find((int)explode('/', $item['delivery'])[1]),
+                $item['deliveryComment'] ?? null
+            );
 
             try {
-                $user = User::where('phone', $phone)->first(); // User::find($data['externalUserId'])
-
-                $order = Order::create(
-                    Store::find($item['pickupLocationId']),
-                    Payment::find((int)explode('/', $item['payment'])[1]),
-                    Delivery::find((int)explode('/', $item['delivery'])[1]),
-                    $item['deliveryComment'] ?? null
-                );
-
-                if ($user) $order->user()->associate($user);
+                // User::find($data['externalUserId'])
+                if ($user = User::where('phone', $phone)->first()) $order->user()->associate($user);
                 $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
 
                 DB::transaction(function () use ($item, $order) {
-                    $orderItems = $this->checkout($item['items'], $order->store_id);
+                    $orderItems = $this->checkout($item['items']);
 
                     $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
                     $order->save();
@@ -104,9 +92,7 @@ class CheckoutService
                 });
 
                 $order->changeState(OrderState::STATE_SUCCESS);
-                if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
-
-                $order->save();
+//                if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
 
                 $data[] = [
                     'id' => (string)$order->id,
@@ -129,12 +115,14 @@ class CheckoutService
                             'quantity' => $orderItem->quantity,
                             'discount' => 0,
                             'subtotal' => $orderItem->getCost(),
-//                            'deliveryGroups' => $order->delivery_id === 2 ? ['2', '3'] : ['3']
+                            'deliveryGroups' => $order->isAvailableItem($orderItem) ? ['2', '3'] : ['3']
                         ];
                     })
                 ];
             }
             catch (\DomainException $e) {
+                $order->changeState(OrderState::STATE_ERROR);
+
                 $data[] = [
                     'id' => null,
                     'uuid' => $item['uuid'],
@@ -145,43 +133,18 @@ class CheckoutService
                     'items' => $item['items']
                 ];
             }
+
+            $order->save();
         }
 
         return $data;
     }
 
-    private function checkout(array $items, string $storeId, bool $isBooking = false): Collection
+    private function checkout(array $items): Collection
     {
         $orderItems = new Collection();
-//        if (!$isBooking) {
-//            foreach ($items as $item) {
-//                $productId = $item['privateId'] ?? $item['id'];
-//                if (!$offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->first())
-//                    throw new \DomainException('Нет в наличии!');
-//
-//                $offer->checkout($item['quantity']);
-//                $offer->save();
-//                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-//            }
-//        }
-//        else {
-//            foreach ($items as $item) {
-//                $productId = $item['privateId'] ?? $item['id'];
-//                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-//            }
-//        }
-
-        foreach ($items as $item) {
-            $productId = $item['privateId'] ?? $item['id'];
-            try {
-                $offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->where('quantity', '>', 0)->first();
-                $offer?->checkout($item['quantity']);
-                $offer?->save();
-            }
-            catch (\DomainException $e) {}
-
-            $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-        }
+        foreach ($items as $item)
+            $orderItems->add(OrderItem::create($item['privateId'] ?? $item['id'], $item['price'], $item['quantity']));
 
         return $orderItems;
     }

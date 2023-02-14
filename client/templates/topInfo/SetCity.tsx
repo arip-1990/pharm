@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Dropdown } from "react-bootstrap";
-import { useFetchCitiesQuery } from "../../../lib/cityService";
-import { useCookie } from "../../../hooks/useCookie";
+import { useFetchCitiesQuery } from "../../lib/cityService";
+import { useCookie } from "../../hooks/useCookie";
 
 type Props = {
   className?: string;
@@ -29,7 +29,7 @@ const SetCity: FC<Props> = ({ className }) => {
             as="a"
             style={{ cursor: "pointer" }}
           >
-            {city || data[0].name}
+            {city || data[0]?.name}
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
@@ -46,10 +46,10 @@ const SetCity: FC<Props> = ({ className }) => {
           </Dropdown.Menu>
         </Dropdown>
         <div className="city-choose" style={city ? {} : { display: "flex" }}>
-          <h5 className="w-100 mb-3">Ваш город {data[0].name}?</h5>
+          <h5 className="w-100 mb-3">Ваш город {data[0]?.name}?</h5>
           <button
             className="btn btn-primary btn-sm"
-            onClick={() => handleSetCity(data[0].name)}
+            onClick={() => handleSetCity(data[0]?.name)}
           >
             Да, все верно
           </button>

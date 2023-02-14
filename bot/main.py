@@ -1,12 +1,18 @@
 import os
 import json
-import redis
+import pika
 import threading
 from telebot import TeleBot
 
 
 bot = TeleBot('5264546096:AAHH7gzUFdZim4deJs0o78RwZ8x8q6vC6Io')
-r = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, decode_responses=True)
+# r = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, decode_responses=True)
+connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv('RABBITMQ_HOST', 'localhost')))
+
+channel = connection.channel()
+channel.queue_declare('bot', durable=True)
+channel.queue_declare('import', durable=True)
+
 import_data = {'chat': None, 'command': None}
 test_command = False
 admin = 1195813156
@@ -90,32 +96,40 @@ def handle_error(data: dict) -> None:
     bot.send_message(admin, f"File: {data['file']}\nLine: {data['line']}\nMessage: {data['message']}")
 
 
-def listen_redis() -> None:
+def listen_messages() -> None:
     global test_command
-    p = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, 2, decode_responses=True).pubsub()
-    p.psubscribe('bot:*')
 
-    for message in p.listen():
-        if message and isinstance(message, dict):
-            try:
-                if message.get('type') == 'pmessage':
-                    type = message.get('channel').split(':')[1]
-                    if type == 'import':
-                        handle_import(json.loads(message.get('data')))
-                    elif type == 'error':
-                        handle_error(json.loads(message.get('data')))
-                    elif type == 'test':
-                        data = json.loads(message.get('data'))
-                        bot.send_message(data['chatId'], data['message'])
-                        test_command = False
-                    else:
-                        bot.send_message(admin, message.get('data'))
-            except ValueError:
-                bot.send_message(admin, message.get('data'))
+    def callback(ch, method, properties, body):
+        data = json.loads(body)
+        if data['type'] == 'error':
+            handle_error(data['data'])
+
+    channel.basic_consume(queue='bot', on_message_callback=callback, auto_ack=True)
+
+    print(' [*] Waiting for messages')
+    channel.start_consuming()
+
+    # for message in p.listen():
+    #     if message and isinstance(message, dict):
+    #         try:
+    #             if message.get('type') == 'pmessage':
+    #                 type = message.get('channel').split(':')[1]
+    #                 if type == 'import':
+    #                     handle_import(json.loads(message.get('data')))
+    #                 elif type == 'error':
+    #                     handle_error(json.loads(message.get('data')))
+    #                 elif type == 'test':
+    #                     data = json.loads(message.get('data'))
+    #                     bot.send_message(data['chatId'], data['message'])
+    #                     test_command = False
+    #                 else:
+    #                     bot.send_message(admin, message.get('data'))
+    #         except ValueError:
+    #             bot.send_message(admin, message.get('data'))
 
 
 def main():
-    threading.Thread(target=listen_redis).start()
+    threading.Thread(target=listen_messages).start()
 
     bot.infinity_polling()
 

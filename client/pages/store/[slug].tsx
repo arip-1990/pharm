@@ -1,4 +1,4 @@
-import Layout from "../../components/layout";
+import Layout from "../../templates";
 import { GetServerSideProps } from "next";
 import {FC, useCallback} from "react";
 import Page from "../../components/page";
