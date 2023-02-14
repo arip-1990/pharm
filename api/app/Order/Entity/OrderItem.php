@@ -18,7 +18,7 @@ class OrderItem extends Model
 {
     public $timestamps = false;
 
-    public static function create(string $productId, float $price, int $quantity = 1): self
+    public static function create(string $productId, float $price, int $quantity): self
     {
         $item = new static();
         $item->product_id = $productId;

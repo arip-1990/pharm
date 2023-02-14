@@ -3,67 +3,63 @@
 namespace App\Order\UseCase;
 
 use App\Http\Requests;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\StoreResource;
 use App\Models\City;
-use App\Models\Delivery;
+use App\Order\Entity\Delivery;
 use App\Models\Location;
+use App\Order\Entity\OrderDelivery;
 use App\Models\Offer;
-use App\Models\Payment;
-use App\Models\Store;
-use App\Models\User;
 use App\Order\Entity\Order;
 use App\Order\Entity\OrderItem;
-use App\Order\Entity\OrderRepository;
+use App\Order\Entity\Payment;
 use App\Order\Entity\Status\OrderState;
+use App\Models\Store;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
-    public function __construct(private readonly OrderRepository $repository) {}
-
     public function checkoutWeb(Requests\Order\CheckoutRequest $request): Order
     {
         $data = $request->validated();
-        $order = $this->repository->create(
+        $order = Order::create(
             Store::find($data['store']),
             Payment::find($data['payment'] ?: 2),
             Delivery::find($data['delivery'] ?: 2)
         );
+
+        $order->setCost($data['price']);
 
         $user = $request->user();
         $order->user()->associate($user);
         $order->setUserInfo($user->first_name, $user->phone, $user->email);
 
         DB::transaction(function () use ($order, $data) {
-            $items = new Collection();
-            $offers = new Collection();
-            foreach ($data['items'] as $item) {
-                $offer = Offer::where('store_id', $data['store'])->where('product_id', $item['id'])->first();
-                $offer->checkout($item['quantity']);
-                $offers->add($offer);
-                $items->add(OrderItem::create($item['id'], $item['price'], $item['quantity']));
-            }
-
             $order->save();
-            $order->items()->saveMany($items);
+            $order->items()->saveMany($this->checkout($data['items']));
 
             if ($order->delivery->isType(Delivery::TYPE_DELIVERY)) {
+                $delivery = OrderDelivery::create(
+                    $data['entrance'] ?? null,
+                    $data['floor'] ?? null,
+                    $data['apartment'] ?? null,
+                    $data['service_to_door']
+                );
+
                 $city = City::find(1);
                 $location = Location::whereIn('city_id', $city->children()->pluck('id')->add($city->id))
                     ->firstOrCreate(['street' => $data['street'], 'house' => $data['house']], ['city_id' => $city->id]);
 
-                $delivery = $this->repository->createDelivery($location, $data['entrance'] ?? null, $data['floor'] ?? null, $data['apartment'] ?? null, $data['service_to_door']);
-
+                $delivery->location()->associate($location);
                 $order->orderDelivery()->save($delivery);
             }
-
-            $offers->each(fn(Offer $offer) => $offer->save());
         });
 
         $order->changeState(OrderState::STATE_SUCCESS);
-        if ($order->payment->isType(Payment::TYPE_CASH)) {
-            $order->sent();
-        }
+        if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
 
         $order->save();
 
@@ -75,22 +71,20 @@ class CheckoutService
         $data = [];
         foreach ($request->validated('orders') as $item) {
             $phone = str_replace('+', '', $item['phone']);
+            $order = Order::create(
+                Store::find($item['pickupLocationId']),
+                Payment::find((int)explode('/', $item['payment'])[1]),
+                Delivery::find((int)explode('/', $item['delivery'])[1]),
+                $item['deliveryComment'] ?? null
+            );
 
             try {
-                $user = User::where('phone', $phone)->first(); // User::find($data['externalUserId'])
-
-                $order = $this->repository->create(
-                    Store::find($item['pickupLocationId']),
-                    Payment::find((int)explode('/', $item['payment'])[1]),
-                    Delivery::find((int)explode('/', $item['delivery'])[1]),
-                    $item['deliveryComment'] ?? null
-                );
-
-                if ($user) $order->user()->associate($user);
+                // User::find($data['externalUserId'])
+                if ($user = User::where('phone', $phone)->first()) $order->user()->associate($user);
                 $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
 
                 DB::transaction(function () use ($item, $order) {
-                    $orderItems = $this->checkout($item['items'], $order->store_id, $order->delivery_id == 3);
+                    $orderItems = $this->checkout($item['items']);
 
                     $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
                     $order->save();
@@ -98,11 +92,7 @@ class CheckoutService
                 });
 
                 $order->changeState(OrderState::STATE_SUCCESS);
-                if ($order->delivery_id == 2 and $order->payment->isType(Payment::TYPE_CASH)) {
-                    $order->sent();
-                }
-
-                $order->save();
+//                if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
 
                 $data[] = [
                     'id' => (string)$order->id,
@@ -125,12 +115,14 @@ class CheckoutService
                             'quantity' => $orderItem->quantity,
                             'discount' => 0,
                             'subtotal' => $orderItem->getCost(),
-                            'deliveryGroups' => $order->delivery_id == 2 ? ['2', '3'] : ['3']
+                            'deliveryGroups' => $order->isAvailableItem($orderItem) ? ['2', '3'] : ['3']
                         ];
                     })
                 ];
             }
             catch (\DomainException $e) {
+                $order->changeState(OrderState::STATE_ERROR);
+
                 $data[] = [
                     'id' => null,
                     'uuid' => $item['uuid'],
@@ -141,32 +133,60 @@ class CheckoutService
                     'items' => $item['items']
                 ];
             }
+
+            $order->save();
         }
 
         return $data;
     }
 
-    private function checkout(array $items, string $storeId, bool $isBooking = false): Collection
+    private function checkout(array $items): Collection
     {
         $orderItems = new Collection();
-        if (!$isBooking) {
-            foreach ($items as $item) {
-                $productId = $item['privateId'] ?? $item['id'];
-                if (!$offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->first())
-                    throw new \DomainException('Нет в наличии!');
-
-                $offer->checkout($item['quantity']);
-                $offer->save();
-                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-            }
-        }
-        else {
-            foreach ($items as $item) {
-                $productId = $item['privateId'] ?? $item['id'];
-                $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-            }
-        }
+        foreach ($items as $item)
+            $orderItems->add(OrderItem::create($item['privateId'] ?? $item['id'], $item['price'], $item['quantity']));
 
         return $orderItems;
+    }
+
+    public function getStores(Request $request): array
+    {
+        $carts = $request->collect();
+        if (!count($carts))
+            throw new \DomainException('Нет товаров в корзине');
+
+        $stores = [];
+        Offer::whereIn('product_id', $carts->keys())
+            ->whereCity($request->cookie('city', City::find(1)?->name))
+            ->each(function (Offer $offer) use ($carts, &$stores) {
+                $cartQuantity = (int)$carts[$offer->product_id];
+                $stores[$offer->store_id]['store'] = new StoreResource($offer->store);
+                $stores[$offer->store_id]['products'][] = [
+                    'price' => $offer->price,
+                    'quantity' => min($cartQuantity, $offer->quantity),
+                    'product' => new ProductResource($offer->product)
+                ];
+            });
+
+        usort($stores, function ($a, $b) {
+            $res = count($b['products']) - count($a['products']);
+            if ($res) return $res;
+            else {
+                $price_a = 0;
+                $price_b = 0;
+                $quantity_a = 0;
+                $quantity_b = 0;
+                for ($i = 0; $i < count($a['products']); $i++) {
+                    $quantity_a = $a['products'][$i]['quantity'];
+                    $quantity_b = $b['products'][$i]['quantity'];
+                    $price_a += $quantity_a * $a['products'][$i]['price'];
+                    $price_b += $quantity_b * $b['products'][$i]['price'];
+                }
+                $res = $quantity_b - $quantity_a;
+                return $res ?: $price_a - $price_b;
+            }
+        });
+
+        return $stores;
     }
 }

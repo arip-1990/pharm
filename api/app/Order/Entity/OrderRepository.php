@@ -3,9 +3,7 @@
 namespace App\Order\Entity;
 
 use App\Events\Order\OrderChangeStatus;
-use App\Models\Delivery;
 use App\Models\Location;
-use App\Models\Payment;
 use App\Models\Store;
 use App\Models\User;
 use App\Order\Entity\Status\OrderStatus;

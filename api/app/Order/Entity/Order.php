@@ -3,10 +3,9 @@
 namespace App\Order\Entity;
 
 use App\Casts\StatusCollectionCast;
+use App\Events\Order\OrderChangeStatus;
 use App\Events\Order\OrderPayFullRefund;
 use App\Events\Order\OrderSend;
-use App\Models\Delivery;
-use App\Models\Payment;
 use App\Models\Store;
 use App\Models\User;
 use App\Order\Entity\Status\OrderState;
@@ -29,8 +28,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $note
  * @property ?string $cancel_reason
  * @property string $store_id
- * @property string $payment_id
- * @property string $delivery_id
+ * @property int $payment_id
+ * @property int $delivery_id
  * @property ?string $sber_id
  * @property ?string $yandex_id
  * @property ?Carbon $created_at
@@ -50,9 +49,21 @@ class Order extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = ['user_id'];
     protected $casts = [
         'statuses' => StatusCollectionCast::class
     ];
+
+    public static function create(Store $store, Payment $payment, Delivery $delivery, string $note = null): self
+    {
+        $item = new static();
+        $item->store_id = $store->id;
+        $item->payment_id = $payment->id;
+        $item->delivery_id = $delivery->id;
+        $item->note = $note;
+        $item->addStatus(OrderStatus::STATUS_ACCEPTED);
+        return $item;
+    }
 
     public function setCost(float $totalPrice): void
     {
@@ -115,6 +126,21 @@ class Order extends Model
         return $this->cost;
     }
 
+    //TODO remove archives
+    public function getDifferenceOfRefund(): int
+    {
+        $cost = 0;
+        foreach ($this->archives as $archive)
+            $cost += $archive->quantity * $archive->price;
+
+        return $cost - $this->cost;
+    }
+
+    public function isAvailableItem(OrderItem $item): bool
+    {
+        return $this->store->offers()->where('product_id', $item->product_id)->where('quantity', '>', 0)->exists();
+    }
+
     public function isPay(): bool
     {
         return $this->isStatusSuccess(OrderStatus::STATUS_PAID);
@@ -165,14 +191,26 @@ class Order extends Model
         return $this->statuses->contains('value', $status);
     }
 
-    public function addStatus(OrderStatus $value): void
+    public function addStatus(OrderStatus $value, OrderState $state = OrderState::STATE_WAIT): void
     {
         if (!$this->inStatus($value)) {
             $statuses = $this->statuses;
             $status = new Status($value, Carbon::now());
-            $status->changeState(OrderState::STATE_WAIT);
+            $status->changeState($state);
             $statuses->add($status);
             $this->statuses = $statuses;
+
+            OrderChangeStatus::dispatch($this);
+        }
+    }
+
+    public function changeStatusState(OrderStatus $status, OrderState $state): void
+    {
+        foreach ($this->statuses as $item) {
+            if ($item->equal($status)) {
+                $item->changeState($state);
+                break;
+            }
         }
     }
 
