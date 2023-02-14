@@ -38,17 +38,8 @@ class CheckoutService
         $order->setUserInfo($user->first_name, $user->phone, $user->email);
 
         DB::transaction(function () use ($order, $data) {
-            $items = new Collection();
-            $offers = new Collection();
-            foreach ($data['items'] as $item) {
-                $offer = Offer::where('store_id', $data['store'])->where('product_id', $item['id'])->first();
-                $offer->checkout($item['quantity']);
-                $offers->add($offer);
-                $items->add(OrderItem::create($item['id'], $item['price'], $item['quantity']));
-            }
-
             $order->save();
-            $order->items()->saveMany($items);
+            $order->items()->saveMany($this->checkout($data['items']));
 
             if ($order->delivery->isType(Delivery::TYPE_DELIVERY)) {
                 $delivery = OrderDelivery::create(
@@ -65,8 +56,6 @@ class CheckoutService
                 $delivery->location()->associate($location);
                 $order->orderDelivery()->save($delivery);
             }
-
-            $offers->each(fn(Offer $offer) => $offer->save());
         });
 
         $order->changeState(OrderState::STATE_SUCCESS);
@@ -95,7 +84,7 @@ class CheckoutService
                 $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
 
                 DB::transaction(function () use ($item, $order) {
-                    $orderItems = $this->checkout($item['items'], $order->store_id);
+                    $orderItems = $this->checkout($item['items']);
 
                     $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
                     $order->save();
@@ -151,20 +140,11 @@ class CheckoutService
         return $data;
     }
 
-    private function checkout(array $items, string $storeId): Collection
+    private function checkout(array $items): Collection
     {
         $orderItems = new Collection();
-        foreach ($items as $item) {
-            $productId = $item['privateId'] ?? $item['id'];
-            try {
-                $offer = Offer::where('store_id', $storeId)->where('product_id', $productId)->where('quantity', '>', 0)->first();
-                $offer?->checkout($item['quantity']);
-                $offer?->save();
-            }
-            catch (\DomainException $e) {}
-
-            $orderItems->add(OrderItem::create($productId, $item['price'], $item['quantity']));
-        }
+        foreach ($items as $item)
+            $orderItems->add(OrderItem::create($item['privateId'] ?? $item['id'], $item['price'], $item['quantity']));
 
         return $orderItems;
     }

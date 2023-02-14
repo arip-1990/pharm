@@ -11,7 +11,7 @@ use App\UseCases\Order\GenerateDataService;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Queue;
 
 class SendCommand extends Command
 {
@@ -20,15 +20,14 @@ class SendCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::connection('bot')->client();
+        $connection = Queue::connection();
         try {
-            $checked = [];
             $orders = Order::where('created_at', '>=', Carbon::now()->subMinutes(2))->get();
             foreach ($orders as $order) {
                 if ($order->isSent() or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
                     continue;
 
-                if (!$order2 = $orders->first(fn(Order $item) => $item->phone == $order->phone and $item->store_id == $order->store_id)) {
+                if (!$order2 = $orders->first(fn(Order $item) => $item->id != $order->id and $item->phone == $order->phone and $item->store_id == $order->store_id)) {
                     $order->sent();
                     $order->save();
                     continue;
@@ -38,13 +37,17 @@ class SendCommand extends Command
                     continue;
 
                 $tmp = clone $order;
+                $tmpItems = clone $order->items;
                 foreach ($order2->items as $item) {
-                    if ($tmpItem = $tmp->items->first(fn(OrderItem $item2) => $item2->product_id === $item->product_id))
+                    if ($tmpItem = $tmpItems->first(fn(OrderItem $item2) => $item2->product_id === $item->product_id))
                         $tmpItem->quantity += $item->quantity;
-                    else $tmp->items->push($item);
-
+                    else $tmpItems->push($item);
                 }
 
+                $tmp->items = $tmpItems;
+
+                $order->addStatus(OrderStatus::STATUS_SEND);
+                $order2->addStatus(OrderStatus::STATUS_SEND);
                 try {
                     $orderNumber = config('data.orderStartNumber') + $tmp->id;
                     $response = simplexml_load_string($this->orderSend($tmp));
@@ -61,12 +64,14 @@ class SendCommand extends Command
                     $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
                     $order2->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
 
-                    $client->publish("bot:error", json_encode([
-                        'success' => false,
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                        'message' => $e->getMessage()
-                    ]));
+                    $connection->pushRaw(json_encode([
+                        'type' => 'error',
+                        'data' => [
+                            'file' => $e->getFile(),
+                            'line' => $e->getLine(),
+                            'message' => $e->getMessage()
+                        ]
+                    ]), 'bot');
                 } finally {
                     $order->save();
                     $order2->save();
@@ -74,12 +79,14 @@ class SendCommand extends Command
             }
         }
         catch (\Exception $e) {
-            $client->publish("bot:error", json_encode([
-                'success' => false,
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'message' => $e->getMessage()
-            ]));
+            $connection->pushRaw(json_encode([
+                'type' => 'error',
+                'data' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'message' => $e->getMessage()
+                ]
+            ]), 'bot');
         }
 
         $this->info('Процесс завершен!');

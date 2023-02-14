@@ -2,7 +2,7 @@ FROM php:8.1-cli-alpine AS builder
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache
+RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache sockets
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
@@ -23,7 +23,7 @@ RUN apk add --no-cache fcgi
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache
+RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache sockets
 
 RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 
