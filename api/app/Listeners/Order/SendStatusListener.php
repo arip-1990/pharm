@@ -11,7 +11,7 @@ class SendStatusListener implements ShouldQueue
 {
     private array $statuses = [
         'A' => 'placed', // создан
-        'O' => 'processing', // в обработке
+        'O' => 'processing', // в обработке -> ожидается подтверждение аптеки
         'H' => 'ready_for_pickup', // готов к выдаче
         'F' => 'done', // выполнен. выкуплен
         'R' => 'canceled', // отменен
