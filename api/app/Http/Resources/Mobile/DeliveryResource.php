@@ -24,7 +24,8 @@ class DeliveryResource extends JsonResource
             'hasPickupLocations' => false,
             'price' => $this->price,
             'min' => $this->min,
-            'max' => $this->max
+            'max' => $this->max,
+//            'timeLabel' => $this->id === 3 ? 'Ожидание 2-3 дня' : 'В день заказа'
         ];
 
         if ($data['type'] === Delivery::TYPE_PICKUP) {
