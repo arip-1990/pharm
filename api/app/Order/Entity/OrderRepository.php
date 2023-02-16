@@ -14,7 +14,7 @@ class OrderRepository
     public function getById(int $id): Order
     {
         if (!$order = Order::find($id))
-            throw new \DomainException("Не найден заказ с номером $id!");
+            throw new \DomainException("Не найден заказ с номером $id!", 2);
 
         return $order;
     }

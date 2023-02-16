@@ -6,13 +6,9 @@ use App\Http\Requests;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StoreResource;
 use App\Models\City;
-use App\Order\Entity\Delivery;
 use App\Models\Location;
-use App\Order\Entity\OrderDelivery;
 use App\Models\Offer;
-use App\Order\Entity\Order;
-use App\Order\Entity\OrderItem;
-use App\Order\Entity\Payment;
+use App\Order\Entity\{Delivery, Order, OrderDelivery, OrderItem, Payment};
 use App\Order\Entity\Status\OrderState;
 use App\Models\Store;
 use App\Models\User;
@@ -151,13 +147,15 @@ class CheckoutService
 
     public function getStores(Request $request): array
     {
+        if (!$city = $request->cookie('city', City::find(1)?->name))
+            throw new \DomainException('Не указан город!');
+
         $carts = $request->collect();
-        if (!count($carts))
-            throw new \DomainException('Нет товаров в корзине');
+        if (!$carts->count())
+            throw new \DomainException('Нет товаров в корзине!');
 
         $stores = [];
-        Offer::whereIn('product_id', $carts->keys())
-            ->whereCity($request->cookie('city', City::find(1)?->name))
+        Offer::whereIn('product_id', $carts->keys())->whereCity($city)
             ->each(function (Offer $offer) use ($carts, &$stores) {
                 $cartQuantity = (int)$carts[$offer->product_id];
                 $stores[$offer->store_id]['store'] = new StoreResource($offer->store);

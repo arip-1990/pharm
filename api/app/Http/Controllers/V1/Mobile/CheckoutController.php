@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Mobile;
 
 use App\Http\Requests\Mobile\CheckoutRequest;
-use App\UseCases\Order\CheckoutService;
+use App\Order\UseCase\CheckoutService;
 use Illuminate\Http\JsonResponse;
 
 class CheckoutController
@@ -20,7 +20,7 @@ class CheckoutController
                 'orders' => $orders
             ]);
         }
-        catch (\DomainException $e) {
+        catch (\Exception $e) {
             return new JsonResponse([
                 'code' => $e->getCode(),
                 'message' => $e->getMessage()

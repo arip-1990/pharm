@@ -6,7 +6,7 @@ use App\Models\City;
 use App\Models\Location;
 use App\Models\Store;
 use Cviebrock\EloquentSluggable\Services\SlugService;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Queue;
 
 class StoreCommand extends Command
 {
@@ -15,8 +15,7 @@ class StoreCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::connection('bot')->client();
-
+        $connection = Queue::connection();
         try {
             $data = $this->getData(2);
             $fields = [];
@@ -51,20 +50,22 @@ class StoreCommand extends Command
             Store::upsert($fields, 'id', ['name', 'slug', 'phone', 'schedule']);
         }
         catch (\Exception $e) {
-            $client->publish("bot:import", json_encode([
-                'success' => false,
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'message' => $e->getMessage()
-            ]));
+            $connection->pushRaw(json_encode([
+                'type' => 'error',
+                'data' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'message' => $e->getMessage()
+                ]
+            ]), 'bot');
             $this->info($e->getMessage());
             return 1;
         }
 
-        $client->publish("bot:import", json_encode([
-            'success' => true,
+        $connection->pushRaw(json_encode([
+            'type' => 'info',
             'message' => 'Аптеки успешно обновлены'
-        ]));
+        ]), 'bot');
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff()->format('%iм %sс'));
         return 0;
     }

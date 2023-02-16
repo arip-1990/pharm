@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners\Order;
+namespace App\Order\Listener;
 
 use App\Events\Order\OrderPayPartlyRefund;
 use App\Models\Status\OrderState;

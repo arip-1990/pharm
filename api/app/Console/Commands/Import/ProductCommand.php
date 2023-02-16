@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\Value;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Services\SlugService;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Queue;
 
 class ProductCommand extends Command
 {
@@ -15,8 +15,7 @@ class ProductCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::connection('bot')->client();
-
+        $connection = Queue::connection();
         try {
             $data = $this->getData();
             $productFields = [];
@@ -61,20 +60,22 @@ class ProductCommand extends Command
             }
         }
         catch (\Exception $e) {
-            $client->publish("bot:import", json_encode([
-                'success' => false,
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'message' => $e->getMessage()
-            ]));
+            $connection->pushRaw(json_encode([
+                'type' => 'error',
+                'data' => [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'message' => $e->getMessage()
+                ]
+            ]), 'bot');
             $this->info($e->getMessage());
             return 1;
         }
 
-        $client->publish("bot:import", json_encode([
-            'success' => true,
+        $connection->pushRaw(json_encode([
+            'type' => 'info',
             'message' => 'Товары успешно обновлены'
-        ]));
+        ]), 'bot');
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff(Carbon::now())->format('%iм %sс'));
         return 0;
     }

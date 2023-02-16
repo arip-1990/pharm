@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Listeners\Order;
+namespace App\Order\Listener;
 
-use App\Events\Order\OrderPayFullRefund;
-use App\Models\Payment;
-use App\Models\Status\OrderState;
+use App\Order\Entity\Status\OrderStatus;
+use App\Order\Event\OrderPayFullRefund;
+use App\Order\Entity\Payment;
+use App\Order\Entity\Status\OrderState;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OrderPayFullRefundListener implements ShouldQueue
@@ -13,10 +14,10 @@ class OrderPayFullRefundListener implements ShouldQueue
     {
         $order = $event->order;
         try {
-            if ($order->payment->isType(Payment::TYPE_CARD) and $order->isPay() and !$order->isFullRefund()) {
+            if ($order->payment->isType(Payment::TYPE_CARD) and $order->isPay() and !$order->isRefund()) {
                 $response = $this->getOrderInfo($order->sber_id);
                 if($response['errorCode'] == 0) {
-                    $order->changeStatusState(OrderState::STATE_SUCCESS);
+                    $order->changeStatusState(OrderStatus::STATUS_REFUND, OrderState::STATE_SUCCESS);
                 }
                 elseif (!isset($response['errorCode'])) {
                     throw new \DomainException('Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id);
@@ -27,7 +28,7 @@ class OrderPayFullRefundListener implements ShouldQueue
             }
         }
         catch (\Exception $exception) {
-            $order->changeStatusState(OrderState::STATE_ERROR);
+            $order->changeStatusState(OrderStatus::STATUS_REFUND, OrderState::STATE_ERROR);
             $order->save();
             return;
         }

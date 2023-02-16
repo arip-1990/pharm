@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\V1\Order;
 
-use App\Models\Order;
-use App\Models\Status\OrderState;
-use App\Models\Status\OrderStatus;
-use App\UseCases\Order\RefundService;
+use App\Order\Entity\Status\{OrderStatus, OrderState};
+use App\Order\Entity\OrderRepository;
+use App\Order\UseCase\RefundService;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
 class UpdateController extends Controller
 {
-    public function __construct(private readonly RefundService $service) {}
+    public function __construct(private readonly RefundService $service, private readonly OrderRepository $repository) {}
 
     private function isValidOrderXML($xml): bool
     {
@@ -44,32 +43,36 @@ class UpdateController extends Controller
     public function handle(): Response
     {
         $xml = file_get_contents("php://input");
-        $xml = simplexml_load_string($xml);
-        if(!$this->isValidOrderXML($xml))
-            return response($this->orderError('Неверный XML', 1), 500);
+        try {
+            $xml = simplexml_load_string($xml);
+            if(!$this->isValidOrderXML($xml)) throw new \Exception('Неверный XML', 1);
 
-        $id = intval($xml->order->id) - config('data.orderStartNumber');
-        if (!$order = Order::find($id))
-            return response($this->orderError('Не найден заказ №' . $id . '!', 2, $id), 404);
+            $order = $this->repository->getById(intval($xml->order->id) - config('data.orderStartNumber'));
 
-        switch ($status = OrderStatus::from((string)$xml->order->status)) {
-            case OrderStatus::STATUS_ASSEMBLED:
-                $order->assembled();
-                break;
-            case OrderStatus::STATUS_CANCELLED:
-                $order->cancel();
-                $this->service->fullRefund($order);
-                break;
-            default:
-                $order->addStatus($status);
+            switch ($status = OrderStatus::from((string)$xml->order->status)) {
+                case OrderStatus::STATUS_ASSEMBLED:
+                    $order->assembled();
+                    break;
+                case OrderStatus::STATUS_CANCELLED:
+                    $order->cancel();
+                    $this->service->fullRefund($order);
+                    break;
+                default:
+                    $order->addStatus($status);
+            }
+
+            if (isset($xml->order->products->product) and ($order->isAssembled() or $order->isReceived()))
+                $this->service->partlyRefund($order, $xml->order->products->product);
+
+            $order->changeStatusState($status, OrderState::STATE_SUCCESS);
+            $order->save();
+
+            return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);
         }
+        catch (\Exception | \DomainException $exception) {
+            $status = $exception instanceof \DomainException ? 404 : 500;
 
-        if (isset($xml->order->products->product) and ($order->isAssembled() or $order->isReceived()))
-            $this->service->partlyRefund($order, $xml->order->products->product);
-
-        $order->changeStatusState($status, OrderState::STATE_SUCCESS);
-        $order->save();
-
-        return new Response($this->orderSuccess($id), headers: ['Content-Type' => 'application/xml']);
+            return new Response($this->orderError($exception->getMessage(), $exception->getCode()), $status);
+        }
     }
 }

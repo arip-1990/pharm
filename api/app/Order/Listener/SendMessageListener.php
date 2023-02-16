@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners\Order;
+namespace App\Order\Listener;
 
 use App\Events\Order\OrderChangeStatus;
 use App\Mail\Order\CreateOrder;

@@ -2,12 +2,9 @@
 
 namespace App\Console\Commands\Order;
 
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Payment;
-use App\Models\Status\OrderState;
-use App\Models\Status\OrderStatus;
-use App\UseCases\Order\GenerateDataService;
+use App\Order\UseCase\GenerateDataService;
+use App\Order\Entity\{Order, OrderItem, Payment};
+use App\Order\Entity\Status\{OrderStatus, OrderState};
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;

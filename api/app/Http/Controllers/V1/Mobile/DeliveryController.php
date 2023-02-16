@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Mobile\DeliveryRequest;
 use App\Http\Resources\Mobile\DeliveryResource;
 use App\Models\City;
-use App\Models\Delivery;
 use App\Models\Store;
+use App\Order\Entity\Delivery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
@@ -20,7 +20,6 @@ class DeliveryController extends Controller
             $data = $request->validated();
             $deliveries = [];
             $locations = new Collection();
-            /** @var City $city */
             if (!$city = City::where('name', Helper::trimPrefixCity($data['city'] ?? $data['addressData']['settlement']))->first())
                 throw new \DomainException('Город неизвестен');
 
@@ -47,7 +46,7 @@ class DeliveryController extends Controller
 
             return new JsonResponse(['deliveries' => DeliveryResource::customCollection($deliveries, $locations)]);
         }
-        catch (\DomainException $e) {
+        catch (\Exception $e) {
             return new JsonResponse([
                 'code' => $e->getCode(),
                 'message' => $e->getMessage()

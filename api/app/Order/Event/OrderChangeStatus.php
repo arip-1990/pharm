@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Events\Order;
+namespace App\Order\Event;
 
-use App\Models\Order;
+use App\Order\Entity\Order;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderPayPartlyRefund
+class OrderChangeStatus
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

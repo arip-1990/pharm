@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\V1\Order\Checkout;
 
-use App\UseCases\Order\CheckoutService;
+use App\Order\UseCase\CheckoutService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -14,15 +14,13 @@ class StoreController extends Controller
     public function handle(Request $request): JsonResponse
     {
         try {
-            $stores = $this->service->getStores($request);
+            return new JsonResponse($this->service->getStores($request));
         }
-        catch (\DomainException $e) {
+        catch (\Exception $e) {
             return new JsonResponse([
                 'code' => $e->getCode(),
                 'message' => $e->getMessage()
             ], 500);
         }
-
-        return new JsonResponse($stores);
     }
 }

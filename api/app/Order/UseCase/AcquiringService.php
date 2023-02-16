@@ -1,22 +1,20 @@
 <?php
 
-namespace App\UseCases;
+namespace App\Order\UseCase;
 
-use App\Models\Order;
+use App\Order\Entity\OrderRepository;
 use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
 
 class AcquiringService
 {
-    public function __construct(private readonly Client $client) {}
+    public function __construct(private readonly Client $client, private readonly OrderRepository $repository) {}
 
     #[ArrayShape(['paymentId' => "string", 'paymentUrl' => "string"])]
     public function sberPay(int $orderId, string $successUrl = null, string $failUrl = null): array
     {
         $config =  config('app.env') === 'production' ? config('data.pay.sber.prod') : config('data.pay.sber.test');
-        if (!$order = Order::find($orderId))
-            throw new \DomainException('Не найден заказ');
-
+        $order = $this->repository->getById($orderId);
         $data = [
             'userName'      => $config['username'],
             'password'      => $config['password'],

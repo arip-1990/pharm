@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Listeners\Order;
+namespace App\Order\Listener;
 
-use App\Events\Order\OrderDelivery;
-use App\Models\Delivery;
-use App\Models\Status\OrderState;
-use App\Models\Status\OrderStatus;
-use App\UseCases\Order\GenerateDataService;
+use App\Order\Event\OrderDelivery;
+use App\Order\Entity\Delivery;
+use App\Order\Entity\Status\{OrderState, OrderStatus};
+use App\Order\UseCase\GenerateDataService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OrderDeliveryListener implements ShouldQueue

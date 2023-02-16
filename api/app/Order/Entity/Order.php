@@ -3,14 +3,10 @@
 namespace App\Order\Entity;
 
 use App\Casts\StatusCollectionCast;
-use App\Events\Order\OrderChangeStatus;
-use App\Events\Order\OrderPayFullRefund;
-use App\Events\Order\OrderSend;
 use App\Models\Store;
 use App\Models\User;
-use App\Order\Entity\Status\OrderState;
-use App\Order\Entity\Status\OrderStatus;
-use App\Order\Entity\Status\Status;
+use App\Order\Entity\Status\{OrderState, OrderStatus, Status};
+use App\Order\Event\{OrderChangeStatus, OrderPayFullRefund, OrderSend};
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
