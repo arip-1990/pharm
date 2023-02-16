@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Mobile;
 
-use App\Models\Delivery;
+use App\Order\Entity\Delivery;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;

@@ -32,7 +32,7 @@ class Handler extends ExceptionHandler
                 $connection->pushRaw(json_encode([
                     'type' => 'error',
                     'data' => [
-                        'file' => self::class,
+                        'file' => $e->getFile() . ' (' . $e->getLine() . ')',
                         'message' => $e->getMessage()
                     ]
                 ]), 'bot');

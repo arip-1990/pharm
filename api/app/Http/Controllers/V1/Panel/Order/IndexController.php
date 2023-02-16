@@ -14,7 +14,7 @@ class IndexController extends Controller
     public function handle(Request $request): ResourceCollection | JsonResponse
     {
         try {
-            $query = Order::query()->select('orders.*');
+            $query = Order::select('orders.*');
             if ($user = $request->get('userName')) $query->where('user_id', $user);
 
             if ($field = $request->get('orderField')) {

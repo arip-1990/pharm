@@ -41,8 +41,8 @@ class DeliveryController extends Controller
                     }
 
                     if ($query->count()) {
-                        if (!isset($data['skipPickupLocations']) or !$data['skipPickupLocations'])
-                            $locations->put($item->id, $query->get());
+//                        if (!isset($data['skipPickupLocations']) or !$data['skipPickupLocations'])
+                        $locations->put($item->id, $query->get());
 
                         $deliveries[] = $item;
                     }

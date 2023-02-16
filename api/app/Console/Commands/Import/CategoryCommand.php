@@ -30,7 +30,7 @@ class CategoryCommand extends Command
             $connection->pushRaw(json_encode([
                 'type' => 'error',
                 'data' => [
-                    'file' => self::class,
+                    'file' => self::class . ' (' . $e->getLine() . ')',
                     'message' => $e->getMessage()
                 ]
             ]), 'bot');
