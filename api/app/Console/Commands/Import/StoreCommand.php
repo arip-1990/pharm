@@ -53,13 +53,13 @@ class StoreCommand extends Command
             $connection->pushRaw(json_encode([
                 'type' => 'error',
                 'data' => [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
+                    'file' => self::class,
                     'message' => $e->getMessage()
                 ]
             ]), 'bot');
             $this->info($e->getMessage());
-            return 1;
+
+            return self::FAILURE;
         }
 
         $connection->pushRaw(json_encode([
@@ -67,6 +67,7 @@ class StoreCommand extends Command
             'message' => 'Аптеки успешно обновлены'
         ]), 'bot');
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff()->format('%iм %sс'));
-        return 0;
+
+        return self::SUCCESS;
     }
 }

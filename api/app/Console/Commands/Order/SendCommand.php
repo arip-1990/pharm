@@ -64,8 +64,7 @@ class SendCommand extends Command
                     $connection->pushRaw(json_encode([
                         'type' => 'error',
                         'data' => [
-                            'file' => $e->getFile(),
-                            'line' => $e->getLine(),
+                            'file' => self::class,
                             'message' => $e->getMessage()
                         ]
                     ]), 'bot');
@@ -79,15 +78,17 @@ class SendCommand extends Command
             $connection->pushRaw(json_encode([
                 'type' => 'error',
                 'data' => [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
+                    'file' => self::class,
                     'message' => $e->getMessage()
                 ]
             ]), 'bot');
+
+            return self::FAILURE;
         }
 
         $this->info('Процесс завершен!');
-        return 0;
+
+        return self::SUCCESS;
     }
 
     private function orderSend(Order $order): string

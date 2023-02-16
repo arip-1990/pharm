@@ -8,6 +8,7 @@ use App\Http\Resources\StoreResource;
 use App\Models\City;
 use App\Models\Location;
 use App\Models\Offer;
+use App\Models\Status\MobilePlatform;
 use App\Order\Entity\{Delivery, Order, OrderDelivery, OrderItem, Payment};
 use App\Order\Entity\Status\OrderState;
 use App\Models\Store;
@@ -65,6 +66,7 @@ class CheckoutService
     public function checkoutMobile(Requests\Mobile\CheckoutRequest $request): array
     {
         $data = [];
+        $platform = $request->input('device.platform', 'android');
         foreach ($request->validated('orders') as $item) {
             $phone = str_replace('+', '', $item['phone']);
             $order = Order::create(
@@ -73,6 +75,7 @@ class CheckoutService
                 Delivery::find((int)explode('/', $item['delivery'])[1]),
                 $item['deliveryComment'] ?? null
             );
+            $order->setPlatform($platform);
 
             try {
                 // User::find($data['externalUserId'])

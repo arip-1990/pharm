@@ -2,10 +2,9 @@
 
 namespace App\Order\Listener;
 
-use App\Events\Order\OrderChangeStatus;
 use App\Mail\Order\CreateOrder;
-use App\Models\Status\OrderState;
-use App\Models\Status\OrderStatus;
+use App\Order\Entity\Status\{OrderState, OrderStatus};
+use App\Order\Event\OrderChangeStatus;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 

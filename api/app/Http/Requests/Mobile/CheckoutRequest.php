@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Mobile;
 
 use App\Models\Status\MobilePlatform;
-use App\Models\Status\MobileStatus;
+use App\Order\Entity\Status\MobileStatus;
 use App\Rules\CustomDate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;

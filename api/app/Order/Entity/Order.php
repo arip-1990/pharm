@@ -6,7 +6,7 @@ use App\Casts\StatusCollectionCast;
 use App\Models\Store;
 use App\Models\User;
 use App\Order\Entity\Status\{OrderState, OrderStatus, Status};
-use App\Order\Event\{OrderChangeStatus, OrderPayFullRefund, OrderSend};
+use App\Order\Event\{OrderPayFullRefund, OrderSend};
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $delivery_id
  * @property ?string $sber_id
  * @property ?string $yandex_id
+ * @property string $platform
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
@@ -38,8 +39,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Delivery $delivery
  * @property OrderDelivery $orderDelivery
  *
- * @property Collection<int, Status> $statuses
- * @property Collection<int, OrderItem> $items
+ * @property Collection<Status> $statuses
+ * @property Collection<OrderItem> $items
  */
 class Order extends Model
 {
@@ -64,6 +65,11 @@ class Order extends Model
     public function setCost(float $totalPrice): void
     {
         $this->cost = $totalPrice;
+    }
+
+    public function setPlatform(string $platform): void
+    {
+        $this->platform = $platform;
     }
 
     public function setUserInfo(string $name, string $phone, string $email = null): void
@@ -195,8 +201,6 @@ class Order extends Model
             $status->changeState($state);
             $statuses->add($status);
             $this->statuses = $statuses;
-
-            OrderChangeStatus::dispatch($this);
         }
     }
 

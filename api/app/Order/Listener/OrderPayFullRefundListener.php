@@ -2,10 +2,9 @@
 
 namespace App\Order\Listener;
 
-use App\Order\Entity\Status\OrderStatus;
-use App\Order\Event\OrderPayFullRefund;
 use App\Order\Entity\Payment;
-use App\Order\Entity\Status\OrderState;
+use App\Order\Entity\Status\{OrderState, OrderStatus};
+use App\Order\Event\OrderPayFullRefund;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OrderPayFullRefundListener implements ShouldQueue

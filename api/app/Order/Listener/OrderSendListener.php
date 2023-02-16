@@ -2,12 +2,10 @@
 
 namespace App\Order\Listener;
 
-use App\Events\Order\OrderSend;
-use App\Models\Order;
-use App\Models\Payment;
-use App\Models\Status\OrderState;
-use App\Models\Status\OrderStatus;
-use App\UseCases\Order\GenerateDataService;
+use App\Order\Entity\{Order, Payment};
+use App\Order\UseCase\GenerateDataService;
+use App\Order\Entity\Status\{OrderState, OrderStatus};
+use App\Order\Event\OrderSend;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;

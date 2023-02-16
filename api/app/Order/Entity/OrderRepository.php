@@ -2,11 +2,11 @@
 
 namespace App\Order\Entity;
 
-use App\Events\Order\OrderChangeStatus;
 use App\Models\Location;
 use App\Models\Store;
 use App\Models\User;
 use App\Order\Entity\Status\OrderStatus;
+use App\Order\Event\OrderChangeStatus;
 use Illuminate\Contracts\Pagination\Paginator;
 
 class OrderRepository

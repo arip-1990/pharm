@@ -2,8 +2,8 @@
 
 namespace App\Order\Listener;
 
-use App\Events\Order\OrderChangeStatus;
-use App\Models\Status\Status;
+use App\Order\Entity\Status\Status;
+use App\Order\Event\OrderChangeStatus;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 

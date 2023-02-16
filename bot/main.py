@@ -6,7 +6,6 @@ from telebot import TeleBot
 
 
 bot = TeleBot('5264546096:AAHH7gzUFdZim4deJs0o78RwZ8x8q6vC6Io')
-# r = redis.Redis(os.getenv('REDIS_HOST', 'localhost'), 6379, decode_responses=True)
 connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv('RABBITMQ_HOST', 'localhost')))
 
 channel = connection.channel()
@@ -92,8 +91,12 @@ def handle_import(data: dict) -> None:
     import_data = {'chat': None, 'command': None}
 
 
-def handle_error(data: dict) -> None:
-    bot.send_message(admin, f"File: {data['file']}\nLine: {data['line']}\nMessage: {data['message']}")
+def handle_api_info(message: str) -> None:
+    bot.send_message(admin, message)
+
+
+def handle_api_error(data: dict) -> None:
+    bot.send_message(admin, f"File: {data['file']}\nMessage: {data['message']}")
 
 
 def listen_messages() -> None:
@@ -101,8 +104,10 @@ def listen_messages() -> None:
 
     def callback(ch, method, properties, body):
         data = json.loads(body)
-        if data['type'] == 'error':
-            handle_error(data['data'])
+        if data['type'] == 'info':
+            handle_api_info(data['message'])
+        elif data['type'] == 'error':
+            handle_api_error(data['data'])
 
     channel.basic_consume(queue='bot', on_message_callback=callback, auto_ack=True)
 
