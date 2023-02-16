@@ -18,6 +18,7 @@ class DeliveryRequest extends FormRequest
             "country" => "nullable|string",
             "city" => "nullable|string",
             "hasPreorderItems" => "nullable|boolean",
+            "skipPickupLocations" => "nullable|boolean",
             "promocode" => "nullable|string",
             "bonusesSpent" => "nullable|numeric",
             "position" => "nullable|string",
@@ -43,6 +44,7 @@ class DeliveryRequest extends FormRequest
             "items.*.privateId" => "required|uuid",
             "items.*.configurationId" => "nullable|uuid",
             "items.*.quantity" => "nullable|numeric",
+//            'items.*.deliveryGroup' => 'nullable|string',
         ];
     }
 }
