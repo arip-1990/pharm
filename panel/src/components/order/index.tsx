@@ -85,6 +85,10 @@ const Order: React.FC = () => {
       width: 640,
     },
     {
+      title: "Платформа",
+      dataIndex: "platform",
+    },
+    {
       title: "Дата",
       dataIndex: "created_at",
       sorter: true,
@@ -168,6 +172,7 @@ const Order: React.FC = () => {
                   deliveryType={item.deliveryType}
                 />
               ),
+              platform: item.platform,
               created_at: item.createdAt.format("DD.MM.YYYY[г.]"),
             }))}
             onChange={handleChange}

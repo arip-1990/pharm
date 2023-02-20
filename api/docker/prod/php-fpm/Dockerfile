@@ -31,6 +31,12 @@ COPY ./docker/common/php/conf.d /usr/local/etc/php/conf.d
 COPY ./docker/common/php/php-fpm.d /usr/local/etc/php-fpm.d
 COPY ./docker/prod/php/conf.d /usr/local/etc/php/conf.d
 
+# Russian certificates
+COPY ./docker/common/php/trusted_root_ca.crt /usr/local/share/ca-certificates/trusted_root_ca.crt
+COPY ./docker/common/php/trusted_sub_ca.crt /usr/local/share/ca-certificates/trusted_sub_ca.crt
+
+RUN update-ca-certificates
+
 WORKDIR /app
 
 COPY --from=builder /app ./

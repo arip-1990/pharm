@@ -2,6 +2,7 @@
 
 namespace App\Order\UseCase;
 
+use App\Helper;
 use App\Http\Requests;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StoreResource;
@@ -68,6 +69,9 @@ class CheckoutService
         $data = [];
         $platform = $request->input('device.platform', 'android');
         foreach ($request->validated('orders') as $item) {
+            if (!$city = City::where('name', Helper::trimPrefixCity($item['city'] ?? $item['addressData']['settlement']))->first())
+                throw new \DomainException('Город неизвестен');
+
             $phone = str_replace('+', '', $item['phone']);
             $order = Order::create(
                 Store::find($item['pickupLocationId']),
@@ -91,7 +95,8 @@ class CheckoutService
                 });
 
                 $order->changeState(OrderState::STATE_SUCCESS);
-//                if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
+                if (!$city->isBookingAvailable() and $order->payment->isType(Payment::TYPE_CASH))
+                    $order->sent();
 
                 $data[] = [
                     'id' => (string)$order->id,

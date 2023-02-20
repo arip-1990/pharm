@@ -63,20 +63,6 @@ def update_data(message) -> None:
         bot.send_message(message.chat.id, send_message)
 
 
-@bot.message_handler(commands=['test'])
-def test_data(message) -> None:
-    global test_command
-
-    if test_command:
-        bot.reply_to(message, 'Обработка запроса не завершено!')
-    else:
-        test_command = True
-
-        order_id = message.text.split(' ')[1].strip()
-        r.publish('update', json.dumps({'chatId': message.chat.id, 'type': 'test', 'orderId': order_id}))
-        bot.send_message(message.chat.id, 'Обрабатываем запрос...')
-
-
 def handle_import(data: dict) -> None:
     global import_data
 
@@ -86,7 +72,7 @@ def handle_import(data: dict) -> None:
         if import_data['chat'] and import_data['chat'] != admin:
             bot.send_message(import_data['chat'], data['message'])
     else:
-        handle_error(data)
+        handle_api_error(data)
 
     import_data = {'chat': None, 'command': None}
 

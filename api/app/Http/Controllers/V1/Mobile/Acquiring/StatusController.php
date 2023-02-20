@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Mobile\Acquiring;
 
 use App\Http\Requests\Mobile\Acquiring\StatusRequest;
-use App\Models\Order;
+use App\Order\Entity\Order;
 use Illuminate\Http\JsonResponse;
 
 class StatusController

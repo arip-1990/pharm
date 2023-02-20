@@ -4,8 +4,8 @@ namespace App\Http\Controllers\V1\Order\Checkout;
 
 use App\Http\Requests\Order\CheckoutRequest;
 use App\Order\Entity\Payment;
+use App\Order\UseCase\AcquiringService;
 use App\Order\UseCase\CheckoutService;
-use App\UseCases\AcquiringService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

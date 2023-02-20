@@ -35,7 +35,7 @@ class City extends Model
 
     public function isDeliveryAvailable(): bool
     {
-        return $this->id === 1;
+        return $this->parent_id ? $this->parent_id === 1 : $this->id === 1;
     }
 
     public function isBookingAvailable(): bool

@@ -21,6 +21,7 @@ export interface IOrder {
   deliveryAddress: string;
   note: string | null;
   cancel_reason: string | null;
+  platform: string;
   createdAt: moment.Moment;
   updatedAt: moment.Moment;
   customer: {

@@ -12,6 +12,12 @@ COPY ./common/php/conf.d /usr/local/etc/php/conf.d
 COPY ./common/php/php-fpm.d /usr/local/etc/php-fpm.d
 COPY ./dev/php-fpm/conf.d /usr/local/etc/php/conf.d
 
+# Russian certificates
+COPY ./common/php/trusted_root_ca.crt /usr/local/share/ca-certificates/trusted_root_ca.crt
+COPY ./common/php/trusted_sub_ca.crt /usr/local/share/ca-certificates/trusted_sub_ca.crt
+
+RUN update-ca-certificates
+
 WORKDIR /app
 
 COPY ./dev/php-fpm/entrypoint.sh /usr/local/bin/docker-php-entrypoint

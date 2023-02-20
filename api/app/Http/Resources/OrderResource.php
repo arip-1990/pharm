@@ -44,6 +44,7 @@ class OrderResource extends JsonResource
                 'state' => $status->state ?? 2,
                 'createdAt' => $status->created_at->format('d.m.Y')
             ]),
+            'platform' => $this->platform,
             'items' => $this->items->map(fn(OrderItem $item) => [
                 'product' => new ProductResource($item->product),
                 'price' => $item->price,

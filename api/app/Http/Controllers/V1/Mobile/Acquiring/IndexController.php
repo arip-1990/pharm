@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Mobile\Acquiring;
 
 use App\Http\Requests\Mobile\Acquiring\IndexRequest;
-use App\UseCases\AcquiringService;
+use App\Order\UseCase\AcquiringService;
 use Illuminate\Http\JsonResponse;
 
 class IndexController
