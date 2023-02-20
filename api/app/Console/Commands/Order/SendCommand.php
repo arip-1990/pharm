@@ -8,7 +8,7 @@ use App\Order\Entity\Status\{OrderStatus, OrderState};
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
 
 class SendCommand extends Command
 {
@@ -17,14 +17,17 @@ class SendCommand extends Command
 
     public function handle(): int
     {
-        $connection = Queue::connection();
+        $queueClient = Redis::connection('bot')->client();
+
         try {
-            $orders = Order::where('created_at', '>=', Carbon::now()->subMinutes(2))->get();
+            $orders = Order::where('created_at', '>=', Carbon::now()->subMinutes(10))->get();
             foreach ($orders as $order) {
                 if ($order->isSent() or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
                     continue;
 
-                if (!$order2 = $orders->first(fn(Order $item) => $item->id != $order->id and $item->phone == $order->phone and $item->store_id == $order->store_id)) {
+                if (!$order2 = $orders->first(function (Order $item) use ($order) {
+                    return $item->id != $order->id and $item->phone == $order->phone and $item->store_id == $order->store_id and $item->created_at->diffInMinutes($order->created_at) < 1;
+                })) {
                     $order->sent();
                     $order->save();
                     continue;
@@ -61,13 +64,10 @@ class SendCommand extends Command
                     $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
                     $order2->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
 
-                    $connection->pushRaw(json_encode([
-                        'type' => 'error',
-                        'data' => [
-                            'file' => self::class . ' (' . $e->getLine() . ')',
-                            'message' => $e->getMessage()
-                        ]
-                    ]), 'bot');
+                    $queueClient->publish('bot:error', json_encode([
+                        'file' => self::class . ' (' . $e->getLine() . ')',
+                        'message' => $e->getMessage()
+                    ], JSON_UNESCAPED_UNICODE));
                 } finally {
                     $order->save();
                     $order2->save();
@@ -75,13 +75,10 @@ class SendCommand extends Command
             }
         }
         catch (\Exception $e) {
-            $connection->pushRaw(json_encode([
-                'type' => 'error',
-                'data' => [
-                    'file' => self::class . ' (' . $e->getLine() . ')',
-                    'message' => $e->getMessage()
-                ]
-            ]), 'bot');
+            $queueClient->publish('bot:error', json_encode([
+                'file' => self::class . ' (' . $e->getLine() . ')',
+                'message' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE));
 
             return self::FAILURE;
         }

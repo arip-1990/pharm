@@ -2,10 +2,7 @@
 
 namespace App\Providers;
 
-use App\Events\Order\OrderDelivery;
-use App\Events\Order\OrderPayFullRefund;
-use App\Events\Order\OrderPayPartlyRefund;
-use App\Events\Order\OrderSend;
+use App\Order\Event\{OrderSend, OrderDelivery, OrderPayPartlyRefund, OrderPayFullRefund};
 use App\Order\Listener\OrderDeliveryListener;
 use App\Order\Listener\OrderPayFullRefundListener;
 use App\Order\Listener\OrderPayPartlyRefundListener;

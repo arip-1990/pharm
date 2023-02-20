@@ -2,10 +2,7 @@ version: '3.9'
 services:
   traefik:
     image: traefik:2.8
-    command:
-      --providers.docker=true
-      --providers.docker.exposedByDefault=false
-      --entryPoints.http.address=:80
+    command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80
     ports:
       - "80:80"
     networks:
@@ -112,13 +109,13 @@ services:
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: secret
+      QUEUE_CONNECTION: redis
       CACHE_DRIVER: redis
       SESSION_DRIVER: redis
+      SESSION_STORE: redis
       SESSION_CONNECTION: cache
       SESSION_DOMAIN: .pharm.test
       REDIS_HOST: redis
-      QUEUE_CONNECTION: rabbitmq
-      RABBITMQ_HOST: rabbitmq
       MAIL_HOST: mailer
       MAIL_FROM_ADDRESS: info@localhost
       MAIL_FROM_NAME: Сеть аптек 120/80
@@ -141,9 +138,8 @@ services:
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: secret
-      QUEUE_CONNECTION: rabbitmq
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_QUEUE: import
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
       MAIL_HOST: mailer
       MAIL_FROM_ADDRESS: info@localhost
       MAIL_FROM_NAME: Сеть аптек 120/80
@@ -190,7 +186,7 @@ services:
       dockerfile: docker/Dockerfile
     environment:
       APP_NAME: Сеть аптек 120/80
-      RABBITMQ_HOST: rabbitmq
+      REDIS_HOST: redis
     volumes:
       - ./bot:/app
 
@@ -219,15 +215,6 @@ services:
       - default
     ports:
       - "6379:6379"
-  
-  rabbitmq:
-    image: rabbitmq:3.11-management
-    networks:
-      - traefik-public
-      - default
-    ports:
-      - "5672:5672"
-      - "15672:15672"
 
 volumes:
   api-db:

@@ -36,6 +36,8 @@ class GenerateDataService
         elseif($this->order->delivery->isType(Delivery::TYPE_DELIVERY)) {
             $delivery = $this->order->orderDelivery;
             $location = $delivery->location;
+            $address = "{$location->city->name}, ул. {$location->street}, д. {$location->house}";
+            if ($delivery->apartment) $address .= ", кв. {$delivery->apartment}";
             $delivery_xml = "
                 <deliveries>
                     <delivery>
@@ -45,7 +47,7 @@ class GenerateDataService
                             <lon>0.773499</lon>
                             <lat>0.679043</lat>
                         </coordinates>
-                        <address>{$location->city->name}, ул. {$location->street}, д. {$location->house}, кв. {$delivery->apartment}</address>
+                        <address>{$address}</address>
                         <city>{$location->city->name}</city>
                         <street>{$location->street}</street>
                         <house>{$location->house}</house>";
@@ -53,7 +55,7 @@ class GenerateDataService
             $delivery_xml .= $delivery->apartment ? "<apartment>{$delivery->apartment}</apartment>" : '';
             $delivery_xml .= $delivery->floor ? "<floor>{$delivery->floor}</floor>" : '';
             $delivery_xml .= $delivery->entrance ? "<entrance>{$delivery->entrance}</entrance>" : '';
-            $delivery_xml .= "<id_service />";
+            $delivery_xml .= "<id_service>0</id_service>";
 
             $delivery_xml .=
                 "<courier_phone>+79999999999</courier_phone>

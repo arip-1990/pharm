@@ -2,6 +2,7 @@
 
 namespace App\Order\Listener;
 
+use Illuminate\Support\Facades\Redis;
 use App\Order\Entity\{Order, Payment};
 use App\Order\UseCase\GenerateDataService;
 use App\Order\Entity\Status\{OrderState, OrderStatus};
@@ -14,6 +15,7 @@ class OrderSendListener implements ShouldQueue
 {
     public function handle(OrderSend $event): void
     {
+        $queueClient = Redis::connection('bot')->client();
         $order = $event->order;
         $orderNumber = config('data.orderStartNumber') + $order->id;
 
@@ -32,6 +34,10 @@ class OrderSendListener implements ShouldQueue
         catch (\Exception $e) {
             $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
 
+            $queueClient->publish('bot:error', json_encode([
+                'file' => self::class . ' (' . $e->getLine() . ')',
+                'message' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE));
             throw new \DomainException($e->getMessage());
         } finally {
             $order->save();

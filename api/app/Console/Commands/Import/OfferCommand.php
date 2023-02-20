@@ -5,7 +5,7 @@ namespace App\Console\Commands\Import;
 use App\Models\Product;
 use App\Models\Offer;
 use App\Models\Store;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
 
 class OfferCommand extends Command
 {
@@ -16,7 +16,8 @@ class OfferCommand extends Command
 
     public function handle(): int
     {
-        $connection = Queue::connection();
+        $queueClient = Redis::connection('bot')->client();
+
         try {
             switch ($this->argument('type')) {
                 case 'change':
@@ -27,20 +28,14 @@ class OfferCommand extends Command
                     break;
                 default:
                     $this->all();
-                    $connection->pushRaw(json_encode([
-                        'type' => 'info',
-                        'message' => 'Остатки успешно обновлены'
-                    ]), 'bot');
+                    $queueClient->publish('bot:info', 'Остатки успешно обновлены');
             }
         }
         catch (\Exception $e) {
-            $connection->pushRaw(json_encode([
-                'type' => 'error',
-                'data' => [
-                    'file' => self::class . ' (' . $e->getLine() . ')',
-                    'message' => $e->getMessage()
-                ]
-            ]), 'bot');
+            $queueClient->publish('bot:error', json_encode([
+                'file' => self::class . ' (' . $e->getLine() . ')',
+                'message' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE));
             $this->info($e->getMessage());
 
             return self::FAILURE;

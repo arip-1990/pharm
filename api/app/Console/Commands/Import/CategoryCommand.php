@@ -4,7 +4,7 @@ namespace App\Console\Commands\Import;
 
 use App\Models\Category;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
 
 class CategoryCommand extends Command
 {
@@ -13,7 +13,8 @@ class CategoryCommand extends Command
 
     public function handle(): int
     {
-        $connection = Queue::connection();
+        $queueClient = Redis::connection('bot')->client();
+
         try {
             $data = $this->getData();
             foreach ($data->categories->category as $item) {
@@ -27,23 +28,17 @@ class CategoryCommand extends Command
             }
         }
         catch (\Exception $e) {
-            $connection->pushRaw(json_encode([
-                'type' => 'error',
-                'data' => [
-                    'file' => self::class . ' (' . $e->getLine() . ')',
-                    'message' => $e->getMessage()
-                ]
-            ]), 'bot');
+            $queueClient->publish('bot:error', json_encode([
+                'file' => self::class . ' (' . $e->getLine() . ')',
+                'message' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE));
 
             $this->info($e->getMessage());
 
             return self::FAILURE;
         }
 
-        $connection->pushRaw(json_encode([
-            'type' => 'info',
-            'message' => 'Категории успешно обновлены'
-        ]), 'bot');
+        $queueClient->publish('bot:info', 'Категории успешно обновлены');
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff(Carbon::now())->format('%iм %sс'));
 
         return self::SUCCESS;

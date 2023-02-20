@@ -23,13 +23,15 @@ class DeliveryController extends Controller
             if (!$city = City::where('name', Helper::trimPrefixCity($data['city'] ?? $data['addressData']['settlement']))->first())
                 throw new \DomainException('Город неизвестен');
 
-//            if (isset($item['deliveryGroup'])) {
-//                $delivery = Delivery::find()
-//            }
-
             foreach (Delivery::where('active', true)->get() as $item) {
                 if ($item->id === 3 and !$city->isBookingAvailable())
                     continue;
+
+                if (isset($data['skipPickupLocations']) and $data['skipPickupLocations']) {
+                    $locations->put($item->id, []);
+                    $deliveries[] = $item;
+                    continue;
+                }
 
                 if ($item->isType(Delivery::TYPE_PICKUP)) {
                     $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->parent_id ?: $city->id])
@@ -41,9 +43,7 @@ class DeliveryController extends Controller
                     }
 
                     if ($query->count()) {
-//                        if (!isset($data['skipPickupLocations']) or !$data['skipPickupLocations'])
                         $locations->put($item->id, $query->get());
-
                         $deliveries[] = $item;
                     }
                 }

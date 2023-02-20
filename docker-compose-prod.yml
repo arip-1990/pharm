@@ -12,17 +12,7 @@ services:
 
   traefik:
     image: traefik:2.8
-    command:
-      --providers.docker=true
-      --providers.docker.watch=true
-      --providers.docker.swarmMode=true
-      --providers.docker.exposedByDefault=false
-      --entryPoints.http.address=:80
-      --entryPoints.https.address=:443
-      --certificatesResolvers.letsEncrypt.acme.httpChallenge=true
-      --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http
-      --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info
-      --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
+    command: --providers.docker=true --providers.docker.watch=true --providers.docker.swarmMode=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80 --entryPoints.https.address=:443 --certificatesResolvers.letsEncrypt.acme.httpChallenge=true --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
     ports:
       - target: 80
         published: 80
@@ -141,15 +131,15 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DISK: public
+      QUEUE_CONNECTION: redis
       CACHE_DRIVER: redis
       SESSION_DRIVER: redis
+      SESSION_STORE: redis
       SESSION_CONNECTION: cache
       SESSION_SECURE_COOKIE: 'true'
       SESSION_DOMAIN: '.xn--12080-6ve4g.xn--p1ai'
       CORS_ORIGIN: 'https://panel.xn--12080-6ve4g.xn--p1ai|https://xn--12080-6ve4g.xn--p1ai'
       REDIS_HOST: redis
-      QUEUE_CONNECTION: rabbitmq
-      RABBITMQ_HOST: rabbitmq
       MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120-na-80.ru
@@ -235,8 +225,8 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
-      QUEUE_CONNECTION: rabbitmq
-      RABBITMQ_HOST: rabbitmq
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
     command: sh -c 'php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public
@@ -260,15 +250,15 @@ services:
       DB_USERNAME: app
       DB_PASSWORD: ${DB_PASSWORD}
       FILESYSTEM_DRIVER: public
-      QUEUE_CONNECTION: rabbitmq
-      RABBITMQ_HOST: rabbitmq
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
       MAIL_HOST: smtp.mail.ru
       MAIL_PORT: 465
       MAIL_USERNAME: info@120-na-80.ru
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
-    command: sh -c 'wait-for-it rabbitmq:5672 -t 60 && php artisan queue:work'
+    command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan queue:work'
     volumes:
       - uploads:/app/storage/app/public
     deploy:
@@ -296,8 +286,8 @@ services:
     image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}
     environment:
       APP_NAME: Сеть аптек 120/80
-      RABBITMQ_HOST: rabbitmq
-    command: sh -c 'wait-for-it rabbitmq:5672 -t 60 && python main.py'
+      REDIS_HOST: redis
+    command: sh -c 'wait-for-it redis:6379 -t 60 && python main.py'
     deploy:
       mode: replicated
       replicas: 1
@@ -333,19 +323,13 @@ services:
       placement:
         constraints: [ node.role == manager ]
       endpoint_mode: dnsrr
-  
-  rabbitmq:
-    image: rabbitmq:3.11-alpine
-    deploy:
-      placement:
-        constraints: [ node.role == manager ]
-      endpoint_mode: dnsrr
 
 volumes:
   api-db:
   uploads:
   traefik-certs:
   es-data:
+
 
 networks:
   traefik-public:
