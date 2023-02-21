@@ -36,9 +36,14 @@ const Pagination: FC<Props> = (props) => {
 
   const handlePage = (page: any) => {
     let url = router.asPath;
-    if (page === 1) url.replace(/[?&]page=\d+/i, '');
-    else if (url.includes('page=')) url = url.replace(/page=\d+/i, `page=${page}`);
-    else url = url.split('?').length > 1 ? url += `&page=${page}` : url += `?page=${page}`;
+    if (page === 1) url = url.replace(/[?&]page=\d+/i, "");
+    else if (url.includes("page="))
+      url = url.replace(/page=\d+/i, `page=${page}`);
+    else
+      url =
+        url.split("?").length > 1
+          ? (url += `&page=${page}`)
+          : (url += `?page=${page}`);
     router.push(url);
   };
 

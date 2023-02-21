@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useCallback, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import classNames from "classnames";
 import Accordion from "../accordion";
 import { FormikErrors } from "formik";
@@ -51,6 +51,11 @@ const Delivery: FC<Props> = ({
     },
     [defaultValue]
   );
+
+  useEffect(() => {
+    if (!deliveryAvailabe) setValue(0);
+    else if (recipe) setValue(0);
+  }, [deliveryAvailabe, recipe]);
 
   return (
     <Accordion activeKey={value.toString()}>
@@ -109,6 +114,15 @@ const Delivery: FC<Props> = ({
         </div>
         <Accordion.Body>
           <>
+            <h5
+              style={{
+                textAlign: "center",
+                color: "#d63517",
+                marginTop: "1rem",
+              }}
+            >
+              Укажите адрес доставки!
+            </h5>
             <div className="row">
               <div className="col-sm-3 offset-xl-1">
                 <label htmlFor="city" className="form-label">

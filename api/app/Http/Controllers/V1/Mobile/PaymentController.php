@@ -13,7 +13,7 @@ class PaymentController extends Controller
     public function handle(PaymentRequest $request): JsonResponse
     {
         try {
-            $payments = Payment::query()->whereNot('type', Payment::TYPE_CARD)->get();
+            $payments = Payment::whereNot('type', Payment::TYPE_CARD)->get();
 
             return new JsonResponse(['payments' => PaymentResource::collection($payments)]);
         }

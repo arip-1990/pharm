@@ -76,7 +76,7 @@ class Helper
             }
             else {
                 $phone = str_replace('8722', ' (8722) ', $phone);
-                $tmp = substr_replace($phone, '-' . substr($phone, -3), -3);
+                $tmp = '+' . substr_replace($phone, '-' . substr($phone, -3), -3);
             }
         }
 

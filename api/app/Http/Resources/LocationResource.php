@@ -13,7 +13,7 @@ class LocationResource extends JsonResource
         return [
             'id' => $this->id,
             'city' => $this->city->getName(),
-            'address' => $this->getAddress(),
+            'address' => $this->getAddress(true),
             'coordinate' => $this->coordinate,
         ];
     }

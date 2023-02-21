@@ -36,12 +36,18 @@ class Location extends Model
         'coordinate' => AsCollection::class
     ];
 
-    public function getAddress(): string
+    public function getAddress(bool $full = false): string
     {
-        $city = $this->city->parent ? $this->city->prefix . '. ' . $this->city->name . ' ' : '';
+        $cityName = '';
+        if ($full) {
+            $city = $this->city->parent ?? $this->city;
+            $cityName = $city->prefix . '. ' . $city->name . ', ';
+        }
+
+        $cityName .= $this->city->parent ? $this->city->prefix . '. ' . $this->city->name . ', ' : '';
         $prefix = $this->prefix ? $this->prefix . '. ' : ($this->type === self::TYPE_AVENUE ? 'пр. ' : 'ул. ');
 
-        return $city . $prefix . $this->street . ', ' . $this->house;
+        return $cityName . $prefix . $this->street . ', д. ' . $this->house;
     }
 
     public function scopeWhereCity(Builder $query, City $city): Builder
