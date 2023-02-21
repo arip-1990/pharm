@@ -13,9 +13,9 @@ class PaymentController extends Controller
     public function handle(PaymentRequest $request): JsonResponse
     {
         try {
-            return new JsonResponse([
-                'payments' => PaymentResource::collection(Payment::paginate($request->get('pageSize', 10)))
-            ]);
+            $payments = Payment::query()->whereNot('type', Payment::TYPE_CARD)->get();
+
+            return new JsonResponse(['payments' => PaymentResource::collection($payments)]);
         }
         catch (\Exception $e) {
             return new JsonResponse([

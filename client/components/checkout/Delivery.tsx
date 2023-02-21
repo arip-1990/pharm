@@ -5,6 +5,7 @@ import { FormikErrors } from "formik";
 
 interface Props {
   recipe: boolean;
+  deliveryAvailabe: boolean;
   defaultValue?: number;
   deliveryValues?: {
     city?: string;
@@ -35,6 +36,7 @@ const ErrorField: FC<{ name: string; errors: FormikErrors<any> }> = ({
 
 const Delivery: FC<Props> = ({
   recipe,
+  deliveryAvailabe,
   defaultValue = 0,
   deliveryValues,
   errors,
@@ -93,7 +95,7 @@ const Delivery: FC<Props> = ({
                 value={1}
                 checked={value === 1}
                 onChange={handleChecked}
-                disabled={recipe}
+                disabled={recipe || !deliveryAvailabe}
               />
               <p className="radio-button_text">
                 Доставка<span>Указать адрес доставки.</span>

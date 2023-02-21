@@ -135,6 +135,7 @@ const Checkout: FC = () => {
           <h4 className="text-center">Способ получения</h4>
           <Delivery
             recipe={recipe}
+            deliveryAvailabe={city?.toLowerCase() == 'махачкала'}
             defaultValue={formik.values.delivery}
             onChange={formik.handleChange}
             deliveryValues={formik.values}
