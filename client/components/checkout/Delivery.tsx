@@ -103,8 +103,8 @@ const Delivery: FC<Props> = ({
             </Accordion.Header>
           </div>
           <div className="col-10 col-lg-6 col-xl-5 col-xxl-5 offset-1 offset-lg-0 offset-xl-1">
-            Доставка осуществляется с 9:00 до 21:00, без выходных. Доставка
-            осуществляется по тарифам такси.
+            Доставка осуществляется в границах города Махачкалы с 9:00 до 21:00,
+            без выходных.
           </div>
         </div>
         <Accordion.Body>
