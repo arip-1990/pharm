@@ -21,30 +21,33 @@ class TestCommand extends Command
 
     public function handle(): int
     {
-        $queueClient = Redis::connection('bot')->client();
-        $order = Order::find((int)$this->argument('orderId'));
-        $order->addStatus(OrderStatus::STATUS_SEND);
-        try {
-            $orderNumber = config('data.orderStartNumber') + $order->id;
-            $response = simplexml_load_string($this->orderSend($order));
+        $queueClient = Redis::connection()->client();
 
-            if(isset($response->errors->error->code))
-                throw new \DomainException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");
-
-            if(isset($response->success->order_id))
-                $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_SUCCESS);
-        }
-        catch (\Exception $e) {
-            $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
-            Log::info($e->getMessage());
-
-            $queueClient->publish('bot:error', json_encode([
-                'file' => self::class . ' (' . $e->getLine() . ')',
-                'message' => $e->getMessage()
-            ], JSON_UNESCAPED_UNICODE));
-        } finally {
-            $order->save();
-        }
+        $data = $queueClient->publish('bot', 'test');
+        print_r($data);
+//        $order = Order::find((int)$this->argument('orderId'));
+//        $order->addStatus(OrderStatus::STATUS_SEND);
+//        try {
+//            $orderNumber = config('data.orderStartNumber') + $order->id;
+//            $response = simplexml_load_string($this->orderSend($order));
+//
+//            if(isset($response->errors->error->code))
+//                throw new \DomainException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");
+//
+//            if(isset($response->success->order_id))
+//                $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_SUCCESS);
+//        }
+//        catch (\Exception $e) {
+//            $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
+//            Log::info($e->getMessage());
+//
+//            $queueClient->publish('bot:error', json_encode([
+//                'file' => self::class . ' (' . $e->getLine() . ')',
+//                'message' => $e->getMessage()
+//            ], JSON_UNESCAPED_UNICODE));
+//        } finally {
+//            $order->save();
+//        }
 
         $this->info("Процесс завершена!");
         return self::SUCCESS;
