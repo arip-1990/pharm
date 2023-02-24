@@ -14,14 +14,18 @@ class UploadController extends Controller
 {
     public function handle(Product $product, Request $request): JsonResponse
     {
-        if($request->hasFile('file') and $request->file('file')->isValid()) {
+        try {
+            if (!$request->hasFile('file') or !$request->file('file')->isValid())
+                throw new \DomainException('Файл не определен!');
+
             $image = $request->file('file');
             do {
-                $fileName = Str::random() . '.' . $image->getClientOriginalExtension();
+                $fileName = Str::random() . '.' . strtolower($image->getClientOriginalExtension());
             }
             while (Storage::exists('images/original/' . $fileName));
 
-            $image->storeAs('images/original/', $fileName);
+            if (!$image->storeAs('images/original/', $fileName))
+                throw new \DomainException('Не удалось сохранить фото');
 
             $sort = $product->photos()->orderByDesc('sort')->first();
             $fileName = explode('.', $fileName);
@@ -33,6 +37,9 @@ class UploadController extends Controller
                 'extension' => $fileName[1],
                 'sort' => $sort ? $sort->sort + 1 : 0
             ]));
+        }
+        catch (\Exception $e) {
+            return new JsonResponse(['message' => $e->getMessage()], 500);
         }
 
         return new JsonResponse();

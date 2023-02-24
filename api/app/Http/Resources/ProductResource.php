@@ -22,7 +22,8 @@ class ProductResource extends JsonResource
             'barcode' => $this->barcodes,
             'photos' => $this->photos->map(fn(Photo $photo) => [
                 'id' => $photo->id,
-                'url' => $photo->getUrl()
+                'url' => $photo->getUrl(),
+                'status' => $photo->status
             ]),
             'description' => $this->description,
             'status' => $this->status,

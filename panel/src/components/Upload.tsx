@@ -114,13 +114,16 @@ const Upload: React.FC<UploadPropsType> = ({
 
     const data = new FormData();
     data.append("file", file);
+
     try {
       await addPhoto({
         slug,
         data,
-        onProgress: (event: any) =>
-          onProgress({ percent: (event.loaded / event.total) * 100 }),
+        onProgress: (event: ProgressEvent) => {
+          onProgress({ percent: (event.loaded / event.total) * 100 });
+        },
       }).unwrap();
+
       onSuccess("Ok");
     } catch (error) {
       const err = error as any;

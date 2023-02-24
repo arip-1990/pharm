@@ -14,7 +14,7 @@ class IndexController extends Controller
 {
     public function handle(Request $request): ResourceCollection
     {
-        $query = Product::query()->select('products.*');
+        $query = Product::select('products.*');
 
         if ($status = $request->get('status')) {
             $status === 'on' ? $query->active() : $query->doesntHave('offers');

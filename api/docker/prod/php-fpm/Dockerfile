@@ -42,7 +42,7 @@ WORKDIR /app
 COPY --from=builder /app ./
 COPY ./ ./
 
-RUN chown www-data:www-data ./storage ./bootstrap/cache -R \
+RUN chown www-data:www-data -R ./storage ./bootstrap/cache \
     && php artisan key:generate --ansi && php artisan storage:link --ansi
 
 HEALTHCHECK --interval=5s --timeout=3s --start-period=1s \
