@@ -19,7 +19,7 @@ class ProductResource extends JsonResource
             'category' => $this->category ? new CategoryResource($this->category) : null,
             'name' => $this->name,
             'code' => $this->code,
-            'barcode' => $this->barcode,
+            'barcode' => $this->barcodes,
             'photos' => $this->photos->map(fn(Photo $photo) => [
                 'id' => $photo->id,
                 'url' => $photo->getUrl()
