@@ -16,13 +16,12 @@ interface StorageType {
 const Order: React.FC = () => {
   const [filters, setFilters] = useSessionStorage<StorageType>("orderFilters", {
     order: { field: null, direction: "asc" },
-    pagination: { current: 1, pageSize: 10 },
+    pagination: { current: 1, pageSize: 50 },
     filters: [],
   });
   const { data: users } = useFetchUsersQuery();
-  const { data: orders, isFetching: ordersLoading } = useFetchOrdersQuery(
-    filters
-  );
+  const { data: orders, isFetching: ordersLoading } =
+    useFetchOrdersQuery(filters);
   const navigate = useNavigate();
 
   const columns = [

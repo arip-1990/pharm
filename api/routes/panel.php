@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function () {
     Route::post('/login', [V1\Panel\Auth\LoginController::class, 'handle']);
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'panel'])->group(function () {
         Route::post('/logout', [V1\Panel\Auth\LogoutController::class, 'handle']);
         Route::get('/user', [V1\Panel\Auth\UserController::class, 'handle']);
     });
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'panel'])->group(function () {
     Route::prefix('user')->group(function () {
         Route::get('/', [V1\Panel\User\IndexController::class, 'handle']);
         Route::get('/{user}', [V1\Panel\User\ShowController::class, 'handle']);

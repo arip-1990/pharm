@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useAuth } from "../hooks/useAuth";
+import axios from "axios";
 
 const Login: React.FC = () => {
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -21,7 +22,9 @@ const Login: React.FC = () => {
     try {
       await login(values.email, values.password);
     } catch (error) {
-      // message.error(error?.response?.data.message);
+      if (axios.isAxiosError(error)) {
+        message.error(error.response?.data.message);
+      }
       console.log(error);
     }
     setLoading(false);

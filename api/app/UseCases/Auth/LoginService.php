@@ -2,6 +2,7 @@
 
 namespace App\UseCases\Auth;
 
+use App\Models\Role;
 use App\Models\User;
 use App\UseCases\LoyaltyService;
 use App\UseCases\User\UserService;
@@ -48,6 +49,7 @@ class LoginService extends LoyaltyService
             ]);
         }
 
+        if (!$user->role) $user->role()->associate(Role::where('name', Role::ROLE_USER)->first());
         $user->phone_verified_at = $user->phone_verified_at ?? Carbon::now();
         $user->save();
 

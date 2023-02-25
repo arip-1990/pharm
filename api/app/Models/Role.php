@@ -26,6 +26,11 @@ class Role extends Model
     const ROLE_MODERATOR = 'Moderator';
     const ROLE_ADMIN = 'Admin';
 
+    public function isUser(): bool
+    {
+        return $this->name === self::ROLE_USER;
+    }
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

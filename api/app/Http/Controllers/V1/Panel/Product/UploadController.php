@@ -30,7 +30,7 @@ class UploadController extends Controller
             $sort = $product->photos()->orderByDesc('sort')->first();
             $fileName = explode('.', $fileName);
 
-            $product->photos()->sync(Photo::create([
+            $product->photos()->syncWithoutDetaching(Photo::create([
                 'product_id' => $product->id,
                 'title' => explode('.', $image->getClientOriginalName())[0],
                 'name' => $fileName[0],
