@@ -14,16 +14,15 @@ class RequestChangePasswordController extends Controller
 
     public function handle(Request $request): JsonResponse
     {
+        $phone = $request->get('phone');
         try {
-            $token = $this->passwordService->requestResetPassword($request->get('phone'));
-
-            $request->session()->put('token', $token);
+            $request->session()->put('token', $this->passwordService->requestResetPassword($phone));
         }
         catch (\DomainException $e) {
             $code = $e->getCode();
             if ($code === 100033) {
-                $token = $this->verifyService->requestVerify($request->get('phone'));
-                $request->session()->put('token', $token);
+                $request->session()->put('phone', $phone);
+                $request->session()->put('token', $this->verifyService->requestVerify($phone));
             }
 
             return new JsonResponse([

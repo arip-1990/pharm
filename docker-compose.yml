@@ -112,8 +112,6 @@ services:
       QUEUE_CONNECTION: redis
       CACHE_DRIVER: redis
       SESSION_DRIVER: redis
-      SESSION_STORE: redis
-      SESSION_CONNECTION: cache
       SESSION_DOMAIN: .pharm.test
       REDIS_HOST: redis
       MAIL_HOST: mailer

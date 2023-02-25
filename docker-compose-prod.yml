@@ -134,8 +134,6 @@ services:
       QUEUE_CONNECTION: redis
       CACHE_DRIVER: redis
       SESSION_DRIVER: redis
-      SESSION_STORE: redis
-      SESSION_CONNECTION: cache
       SESSION_SECURE_COOKIE: 'true'
       SESSION_DOMAIN: '.xn--12080-6ve4g.xn--p1ai'
       CORS_ORIGIN: 'https://panel.xn--12080-6ve4g.xn--p1ai|https://xn--12080-6ve4g.xn--p1ai'
