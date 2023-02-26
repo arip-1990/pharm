@@ -30,13 +30,17 @@ class UploadController extends Controller
             $sort = $product->photos()->orderByDesc('sort')->first();
             $fileName = explode('.', $fileName);
 
-            $product->photos()->syncWithoutDetaching(Photo::create([
+            $photo = new Photo([
                 'product_id' => $product->id,
                 'title' => explode('.', $image->getClientOriginalName())[0],
                 'name' => $fileName[0],
                 'extension' => $fileName[1],
                 'sort' => $sort ? $sort->sort + 1 : 0
-            ]));
+            ]);
+            $photo->creator()->associate($request->user());
+            $photo->save();
+
+            $product->photos()->syncWithoutDetaching($photo);
         }
         catch (\Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
