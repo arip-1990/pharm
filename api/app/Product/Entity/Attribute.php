@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Product\Entity;
 
-use App\Product\Entity\Category;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Collection;

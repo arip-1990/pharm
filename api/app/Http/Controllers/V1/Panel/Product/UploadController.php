@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\V1\Panel\Product;
 
-use App\Models\Photo;
-use App\Models\Product;
+use App\Product\Entity\{Photo, Product};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

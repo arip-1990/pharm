@@ -3,9 +3,7 @@
 namespace App\Order\UseCase;
 
 use App\Helper;
-use App\Order\Entity\Delivery;
-use App\Order\Entity\Order;
-use App\Order\Entity\Payment;
+use App\Order\Entity\{Delivery, Order, Payment};
 use Carbon\Carbon;
 
 class GenerateDataService

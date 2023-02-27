@@ -2,9 +2,7 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Models\City;
-use App\Models\Location;
-use App\Models\Store;
+use App\Models\{City, Location, Store};
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Support\Facades\Redis;
 

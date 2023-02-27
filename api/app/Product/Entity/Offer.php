@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Product\Entity;
 
-use App\Product\Entity\Product;
+use App\Models\Store;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

@@ -3,8 +3,7 @@
 namespace App\UseCases\Auth;
 
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\Role;
-use App\Models\User;
+use App\Models\{Role, User};
 use App\UseCases\LoyaltyService;
 use App\UseCases\PosService;
 use Ramsey\Uuid\Uuid;

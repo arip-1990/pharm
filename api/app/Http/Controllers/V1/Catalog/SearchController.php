@@ -4,7 +4,7 @@ namespace App\Http\Controllers\V1\Catalog;
 
 use App\Http\Resources\ProductResource;
 use App\Models\City;
-use App\Models\Product;
+use App\Product\Entity\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

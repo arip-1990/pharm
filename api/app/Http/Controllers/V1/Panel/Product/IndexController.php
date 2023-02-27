@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\V1\Panel\Product;
 
-use App\Models\Photo;
-use App\Models\Product;
 use App\Http\Resources\ProductResource;
+use App\Product\Entity\{Photo, Product};
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;

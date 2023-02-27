@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Image;
 
-use App\Models\Product;
+use App\Product\Entity\Product;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;

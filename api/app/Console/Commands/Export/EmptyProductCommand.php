@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Export;
 
-use App\Models\Product;
+use App\Product\Entity\Product;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;

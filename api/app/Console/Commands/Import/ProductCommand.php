@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Models\Product;
-use App\Models\Value;
+use App\Product\Entity\{Product, Value};
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Support\Facades\Redis;

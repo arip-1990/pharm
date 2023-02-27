@@ -2,8 +2,7 @@
 
 namespace App\UseCases\Auth;
 
-use App\Models\Role;
-use App\Models\User;
+use App\Models\{Role, User};
 use App\UseCases\LoyaltyService;
 use App\UseCases\User\UserService;
 use Carbon\Carbon;

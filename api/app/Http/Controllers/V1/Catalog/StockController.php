@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\V1\Catalog;
 
-use App\Http\Resources\CategoryResource;
-use App\Http\Resources\ProductResource;
-use App\Models\Category;
+use App\Http\Resources\{CategoryResource, ProductResource};
 use App\Models\City;
-use App\Models\Offer;
-use App\Models\Product;
+use App\Product\Entity\{Category, Offer, Product};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Product\Entity;
 
-use App\Product\Entity\Category;
-use App\Product\Entity\Photo;
-use App\Product\Entity\ProductStatistic;
-use App\Product\Entity\Value;
+use App\Models\Store;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
@@ -131,7 +128,7 @@ class Product extends Model
         return $this->belongsToMany(Photo::class)->where('type', Photo::TYPE_PICTURE)->orderBy('sort');
     }
 
-    public function checkedPhotos(): HasMany
+    public function checkedPhotos(): BelongsToMany
     {
         return $this->photos()->where('status', Photo::STATUS_CHECKED);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\V1\Catalog\Product;
 
-use App\Models\Product;
+use App\Product\Entity\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

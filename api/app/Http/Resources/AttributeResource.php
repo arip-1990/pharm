@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Attribute;
+use App\Product\Entity\Attribute;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AttributeResource extends JsonResource

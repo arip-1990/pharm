@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\V1\Panel\Product\Moderation;
 
 use App\Http\Resources\ProductResource;
-use App\Models\ModerationProduct;
-use App\Models\Product;
+use App\Product\Entity\{ModerationProduct, Product};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 

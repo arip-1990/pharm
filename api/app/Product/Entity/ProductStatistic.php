@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Product\Entity;
 
-use App\Product\Entity\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,8 +15,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float $rating
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
- *
- * @property User $user
  */
 class ProductStatistic extends Model
 {

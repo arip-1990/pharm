@@ -3,7 +3,7 @@
 namespace App\UseCases;
 
 use App\Http\Requests\Catalog\SearchRequest;
-use App\Models\Product;
+use App\Product\Entity\Product;
 use Elasticsearch\Client;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Query\Expression;

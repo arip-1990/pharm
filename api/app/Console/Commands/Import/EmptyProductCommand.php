@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Models\Product;
+use App\Product\Entity\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

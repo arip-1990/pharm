@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Category;
+use App\Product\Entity\Category;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CategoryResource extends JsonResource

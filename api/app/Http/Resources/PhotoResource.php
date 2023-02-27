@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Photo;
+use App\Product\Entity\Photo;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PhotoResource extends JsonResource

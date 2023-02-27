@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\V1\Panel\Product;
 
-use App\Models\Product;
 use App\Http\Requests\Panel\Product\BaseRequest;
+use App\Product\Entity\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

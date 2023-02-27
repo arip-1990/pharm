@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\V1\Panel\Product;
 
-use App\Models\Attribute;
-use App\Models\Product;
-use App\Models\Value;
+use App\Product\Entity\{Attribute, Product, Value};
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

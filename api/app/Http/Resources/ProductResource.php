@@ -3,8 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\City;
-use App\Models\Product;
-use App\Models\Value;
+use App\Product\Entity\{Product, Value};
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource

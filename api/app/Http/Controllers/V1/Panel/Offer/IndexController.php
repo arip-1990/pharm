@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Panel\Offer;
 
 use App\Http\Resources\ProductResource;
-use App\Models\Product;
+use App\Product\Entity\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controller;

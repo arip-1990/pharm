@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Offer;
+use App\Product\Entity\Offer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OfferResource extends JsonResource

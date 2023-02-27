@@ -2,9 +2,7 @@
 
 namespace App\Order\UseCase;
 
-use App\Models\City;
-use App\Models\Location;
-use App\Models\Store;
+use App\Models\{City, Location, Store};
 
 class CalculateService
 {

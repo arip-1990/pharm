@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Panel\Product;
 
 use App\Http\Requests\Panel\Product\UpdatePhotosRequest;
-use App\Models\Photo;
+use App\Product\Entity\Photo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

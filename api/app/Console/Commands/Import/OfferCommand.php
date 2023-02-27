@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Models\Product;
-use App\Models\Offer;
 use App\Models\Store;
+use App\Product\Entity\{Offer, Product};
 use Illuminate\Support\Facades\Redis;
 
 class OfferCommand extends Command

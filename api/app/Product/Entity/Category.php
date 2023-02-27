@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Product\Entity;
 
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Services\SlugService;
@@ -22,8 +22,8 @@ use Kalnoy\Nestedset\NodeTrait;
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
- * @property ?\App\Product\Entity\Category $parent
- * @property Collection<\App\Product\Entity\Category> $children
+ * @property ?Category $parent
+ * @property Collection<Category> $children
  * @property Collection<Attribute> $attributes
  */
 class Category extends Model
