@@ -13,7 +13,7 @@ class CategoryCommand extends Command
 
     public function handle(): int
     {
-        $client = Redis::connection('bot')->client();
+        $queueClient = Redis::connection('bot')->client();
 
         try {
             $data = $this->getData();
@@ -28,20 +28,19 @@ class CategoryCommand extends Command
             }
         }
         catch (\Exception $e) {
-            $client->publish("bot:import", json_encode([
-                'success' => false,
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
+            $queueClient->publish('bot:error', json_encode([
+                'file' => self::class . ' (' . $e->getLine() . ')',
                 'message' => $e->getMessage()
-            ]));
-            return 1;
+            ], JSON_UNESCAPED_UNICODE));
+
+            $this->info($e->getMessage());
+
+            return self::FAILURE;
         }
 
-        $client->publish("bot:import", json_encode([
-            'success' => true,
-            'message' => 'Категории успешно обновлены'
-        ]));
+        $queueClient->publish('bot:info', 'Категории успешно обновлены');
         $this->info('Загрузка успешно завершена! ' . $this->startTime->diff(Carbon::now())->format('%iм %sс'));
-        return 0;
+
+        return self::SUCCESS;
     }
 }

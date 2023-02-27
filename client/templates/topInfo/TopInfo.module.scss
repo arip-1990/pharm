@@ -30,14 +30,14 @@
       width: 100%;
 
       &::before {
-        content: '';
+        content: "";
       }
     }
 
     &_text {
       font-size: 0.75rem;
       font-weight: 600;
-      color: #f00;
+      color: #d63517;
       white-space: nowrap;
       overflow: hidden;
     }

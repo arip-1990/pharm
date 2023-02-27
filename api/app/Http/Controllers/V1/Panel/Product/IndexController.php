@@ -14,10 +14,10 @@ class IndexController extends Controller
 {
     public function handle(Request $request): ResourceCollection
     {
-        $query = Product::query()->select('products.*');
+        $query = Product::select('products.*');
 
-        if ($status = $request->get('status')) {
-            $status === 'on' ? $query->active() : $query->doesntHave('offers');
+        if ($status = $request->get('offer')) {
+            $status === 'on' ? $query->has('offers') : $query->doesntHave('offers');
         }
 
         if ($sale = $request->get('sale')) {
@@ -64,6 +64,9 @@ class IndexController extends Controller
             if ($request->get('orderField') === 'category') {
                 $query->join('categories', 'categories.id', '=', 'products.category_id')
                     ->orderBy('categories.name', $request->get('orderDirection'));
+            }
+            elseif ($request->get('orderField') === 'barcode') {
+                $query->orderByRaw('json_array_length(barcodes) ' . $request->get('orderDirection'));
             }
             else {
                 $query->orderBy($request->get('orderField'), $request->get('orderDirection'));

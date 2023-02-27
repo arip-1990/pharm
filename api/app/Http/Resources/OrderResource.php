@@ -3,9 +3,8 @@
 namespace App\Http\Resources;
 
 use App\Helper;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Status\Status;
+use App\Order\Entity\{Order, OrderItem};
+use App\Order\Entity\Status\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
@@ -32,8 +31,8 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'otherId' => $this->id + config('data.orderStartNumber'),
             'cost' => $this->cost,
-            'paymentType' => $this->payment->type,
-            'deliveryType' => $this->delivery->type,
+            'paymentType' => $this->payment?->type,
+            'deliveryType' => $this->delivery?->type,
             'note' => $this->note,
             'cancel_reason' => $this->cancel_reason,
             'createdAt' => $this->created_at,
@@ -45,6 +44,7 @@ class OrderResource extends JsonResource
                 'state' => $status->state ?? 2,
                 'createdAt' => $status->created_at->format('d.m.Y')
             ]),
+            'platform' => $this->platform,
             'items' => $this->items->map(fn(OrderItem $item) => [
                 'product' => new ProductResource($item->product),
                 'price' => $item->price,

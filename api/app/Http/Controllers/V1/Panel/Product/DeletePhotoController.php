@@ -6,7 +6,6 @@ use App\Http\Requests\Panel\Product\DeletePhotosRequest;
 use App\Models\Photo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Storage;
 
 class DeletePhotoController extends Controller
 {
@@ -14,8 +13,10 @@ class DeletePhotoController extends Controller
     {
         try {
             foreach ($request->get('items') as $item) {
-                if ($photo = Photo::find($item) and Storage::delete("images/original/{$photo->name}.{$photo->extension}"))
+                if ($photo = Photo::find($item)) {
+                    $photo->destroyer()->associate($request->user())->save();
                     $photo->delete();
+                }
             }
         }
         catch (\Exception $e) {

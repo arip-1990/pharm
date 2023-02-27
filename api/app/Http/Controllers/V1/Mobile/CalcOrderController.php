@@ -7,7 +7,7 @@ use App\Http\Requests\Mobile\CalcOrderRequest;
 use App\Http\Resources\Mobile\CalcOrderResource;
 use App\Models\City;
 use App\Models\Store;
-use App\UseCases\Order\CalculateService;
+use App\Order\UseCase\CalculateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

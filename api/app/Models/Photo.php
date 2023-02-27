@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Storage;
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
  *
+ * @property User $creator
+ * @property User $destroyer
  * @property Collection<Product> $products
  */
 class Photo extends Model
@@ -68,6 +71,16 @@ class Photo extends Model
 //        }
 //        return null;
 //    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function destroyer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'destroyer_id');
+    }
 
     public function products(): BelongsToMany
     {

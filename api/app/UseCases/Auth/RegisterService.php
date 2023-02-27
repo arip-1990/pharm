@@ -3,6 +3,7 @@
 namespace App\UseCases\Auth;
 
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\Role;
 use App\Models\User;
 use App\UseCases\LoyaltyService;
 use App\UseCases\PosService;
@@ -38,6 +39,7 @@ class RegisterService extends LoyaltyService
         $user->password = $data['password'];
         $user->birth_date = $data['birthDate'];
         $user->gender = $data['gender'];
+        $user->role()->associate(Role::where('name', Role::ROLE_USER)->first());
 
         $user->id = $this->posService->createCard($user)['contactID'];
         $this->posService->getBalance($user->phone, true);

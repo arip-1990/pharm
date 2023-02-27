@@ -16,13 +16,12 @@ interface StorageType {
 const Order: React.FC = () => {
   const [filters, setFilters] = useSessionStorage<StorageType>("orderFilters", {
     order: { field: null, direction: "asc" },
-    pagination: { current: 1, pageSize: 10 },
+    pagination: { current: 1, pageSize: 50 },
     filters: [],
   });
   const { data: users } = useFetchUsersQuery();
-  const { data: orders, isFetching: ordersLoading } = useFetchOrdersQuery(
-    filters
-  );
+  const { data: orders, isFetching: ordersLoading } =
+    useFetchOrdersQuery(filters);
   const navigate = useNavigate();
 
   const columns = [
@@ -83,6 +82,10 @@ const Order: React.FC = () => {
       title: "Статус",
       dataIndex: "status",
       width: 640,
+    },
+    {
+      title: "Платформа",
+      dataIndex: "platform",
     },
     {
       title: "Дата",
@@ -168,6 +171,7 @@ const Order: React.FC = () => {
                   deliveryType={item.deliveryType}
                 />
               ),
+              platform: item.platform,
               created_at: item.createdAt.format("DD.MM.YYYY[г.]"),
             }))}
             onChange={handleChange}

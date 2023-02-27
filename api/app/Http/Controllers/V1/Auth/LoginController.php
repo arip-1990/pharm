@@ -14,17 +14,18 @@ class LoginController extends Controller
 
     public function handle(LoginRequest $request): JsonResponse
     {
+        $data = $request->validated();
         try {
-            $session = $this->loginService->login($request->get('login'), $request->get('password'));
+            $session = $this->loginService->login($data['login'], $data['password']);
 
             $request->session()->regenerate();
             $request->session()->put('session', $session);
         }
         catch (\DomainException $e) {
             $code = $e->getCode();
-            $request->session()->put('loginData', $request->validated());
+            $request->session()->put('loginData', $data);
             if ($code === 100033) {
-                $token = $this->verifyService->requestVerify($request->get('login'));
+                $token = $this->verifyService->requestVerify($data['login']);
                 $request->session()->put('token', $token);
             }
 

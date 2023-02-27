@@ -74,7 +74,7 @@ class EmptyProductCommand extends \Illuminate\Console\Command
                 }
             }
         }
-        catch (Exception|\RuntimeException $e) {
+        catch (Exception | \RuntimeException $e) {
             $this->error($e->getMessage());
             return 1;
         }

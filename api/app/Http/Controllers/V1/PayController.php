@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Models\Order;
-use App\Models\Status\OrderState;
-use App\Models\Status\OrderStatus;
+use App\Order\Entity\Order;
+use App\Order\Entity\Status\{OrderState, OrderStatus};
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -41,7 +40,7 @@ class PayController extends Controller
             case 'deposited':
                 if ($status === 1) {
                     $order->changeStatusState(OrderStatus::STATUS_PAID, OrderState::STATE_SUCCESS);
-                    $order->sent();
+//                    $order->sent();
                 }
                 elseif ($status === 0) {
                     $order->changeStatusState(OrderStatus::STATUS_PAID, OrderState::STATE_ERROR);

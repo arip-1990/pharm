@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
+        'panel' => \App\Http\Middleware\AuthPanel::class,
         'statistic' => \App\Http\Middleware\Statistic::class,
     ];
 }

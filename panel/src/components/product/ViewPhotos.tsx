@@ -37,7 +37,7 @@ const ViewPhotos: React.FC<PropsType> = ({ slug, photos, loading }) => {
     setActionPhotoIds([]);
   }, [photos]);
 
-  const selectDeletePhotos = (id: number, add: boolean) => {
+  const selectPhoto = (id: number, add: boolean) => {
     if (add) setActionPhotoIds([...actionPhotoIds, id]);
     else setActionPhotoIds(actionPhotoIds.filter((item) => item !== id));
   };
@@ -48,7 +48,6 @@ const ViewPhotos: React.FC<PropsType> = ({ slug, photos, loading }) => {
   };
 
   const handleSelect = ({ key }: any) => {
-    console.log(key);
     if (key === "delete") {
       deletePhotos(actionPhotoIds);
     } else if (key === "checked") {
@@ -96,7 +95,7 @@ const ViewPhotos: React.FC<PropsType> = ({ slug, photos, loading }) => {
         slug={slug || ""}
         photos={items}
         changePhotos={handleChangePhotos}
-        deletePhoto={selectDeletePhotos}
+        selectPhoto={selectPhoto}
       />
     </Card>
   );

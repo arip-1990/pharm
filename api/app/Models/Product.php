@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -49,6 +50,9 @@ class Product extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = ['id', 'name', 'code', 'description', 'marked', 'recipe', 'status'];
+    protected $casts = [
+        'barcodes' => AsCollection::class
+    ];
 
     public function sluggable(): array
     {

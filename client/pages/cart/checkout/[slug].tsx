@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import {FC, useCallback, useEffect, useState} from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { useLocalStorage } from "react-use-storage";
 import axios from "axios";
@@ -62,11 +62,14 @@ const Checkout: FC = () => {
     setTotalPrice(tmp.totalPrice);
   }, [slug]);
 
-  const getDefaultGenerator = useCallback(() => [
-    {href: '/cart', text: "Корзина"},
-    {href: '/cart/store', text: "Выбор аптеки"},
-    {href: `/cart/checkout/${String(slug)}`, text: "Оформление заказа"}
-  ], []);
+  const getDefaultGenerator = useCallback(
+    () => [
+      { href: "/cart", text: "Корзина" },
+      { href: "/cart/store", text: "Выбор аптеки" },
+      { href: `/cart/checkout/${String(slug)}`, text: "Оформление заказа" },
+    ],
+    []
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -122,7 +125,7 @@ const Checkout: FC = () => {
     <Layout title="Оформление заказа - Сеть аптек 120/80">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
-      <h1 className="text-center">Оформление заказа</h1>
+      <h5 className="text-center">Оформление заказа</h5>
       {recipe ? (
         <div className="alert alert-danger" role="alert">
           Заказать рецептурный препарат на сайте, можно только путем самовывоза
@@ -132,21 +135,22 @@ const Checkout: FC = () => {
 
       <form className="row row-cols-1 checkout" onSubmit={formik.handleSubmit}>
         <div className="col-md-8 p-4" style={{ border: "2px solid #f7f7f7" }}>
-          <h4 className="text-center">Способ получения</h4>
+          <h5 className="text-center">Способ получения</h5>
           <Delivery
             recipe={recipe}
+            deliveryAvailabe={city?.toLowerCase().includes("махачкала")}
             defaultValue={formik.values.delivery}
             onChange={formik.handleChange}
             deliveryValues={formik.values}
             errors={formik.errors}
           />
 
-          <h4
+          <h5
             className="text-center p-4 mt-3"
             style={{ borderTop: "2px solid #f7f7f7" }}
           >
             Способ оплаты
-          </h4>
+          </h5>
           <Payment
             defaultValue={formik.values.payment}
             onChange={formik.handleChange}
@@ -173,7 +177,7 @@ const Checkout: FC = () => {
         </div>
 
         <div className="col-md-4 p-4" style={{ border: "2px solid #f7f7f7" }}>
-          <h4 className="text-center">Ваш заказ</h4>
+          <h5 className="text-center">Ваш заказ</h5>
           {isMounted() &&
             carts.map((item) => (
               <div key={item.product.id} className="row mb-3">

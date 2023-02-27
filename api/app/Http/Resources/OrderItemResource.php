@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\OrderItem;
+use App\Order\Entity\OrderItem;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderItemResource extends JsonResource

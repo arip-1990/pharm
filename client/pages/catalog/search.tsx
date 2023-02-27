@@ -1,6 +1,6 @@
 import Layout from "../../templates";
 import Card from "../../components/card";
-import {FC, useCallback, useEffect} from "react";
+import { FC, useCallback, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../../models/ICategory";
 import Link from "next/link";
@@ -53,29 +53,76 @@ const Search: FC = () => {
   const [city] = useCookie("city");
   const router = useRouter();
   const { page, q } = router.query;
-  const { data: products, isFetching, error, refetch } = useSearchProductsQuery({
-    q: q ? String(q) : '',
+  const {
+    data: products,
+    isFetching,
+    error,
+    refetch,
+  } = useSearchProductsQuery({
+    q: q ? String(q) : "",
     page: Number(page) || 1,
   });
   const { data: categories } = useFetchCategoriesQuery();
 
   const errorData = error as Error;
 
-  const getDefaultGenerator = useCallback(() => [
-    {href: '/catalog', text: "Наш ассортимент"},
-    {href: '/', text: `Поиск по запросу "${q ?? ''}"`}
-  ], [q]);
+  const getDefaultGenerator = useCallback(
+    () => [
+      { href: "/catalog", text: "Наш ассортимент" },
+      { href: "/", text: `Поиск по запросу "${q ?? ""}"` },
+    ],
+    [q]
+  );
 
   useEffect(() => {
     if (products) {
-      if (page) router.replace(router.asPath.replace(/[?&]page=\d+/i, ''));
+      if (page) router.replace(router.asPath.replace(/[?&]page=\d+/i, ""));
       else refetch();
     }
   }, [city]);
 
+  const generateData = () => {
+    if (isFetching)
+      return (
+        <h4 style={{ textAlign: "center" }}>Идет поиск товара "{q ?? ""}"</h4>
+      );
+    if (errorData)
+      return <h4 style={{ textAlign: "center" }}>{errorData.data.message}</h4>;
+
+    return products?.data.length ? (
+      <>
+        <div
+          className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4"
+          itemScope
+          itemType="https://schema.org/ItemList"
+        >
+          <link itemProp="url" href={`/catalog/search?q=${q ?? ""}`} />
+          {products?.data.map((product) => (
+            <div key={product.id} className="col-10 offset-1 offset-sm-0">
+              <Card product={product} />
+            </div>
+          ))}
+        </div>
+        <div className="row mt-3">
+          <div className="col">
+            <Pagination
+              currentPage={products?.meta.current_page}
+              totalCount={products?.meta.total}
+              pageSize={products?.meta.per_page}
+            />
+          </div>
+        </div>
+      </>
+    ) : (
+      <h4 style={{ textAlign: "center" }}>
+        По запросу "{q ?? ""}" ничего не найдено!
+      </h4>
+    );
+  };
+
   return (
     <Layout title="Поиск товара - Сеть аптек 120/80">
-        <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <nav className="col-md-3">
@@ -90,42 +137,14 @@ const Search: FC = () => {
           </ul>
         </nav>
 
-        <div className="col-md-9 mt-3 mt-md-0">
-          {products?.data.length ? (
-            <>
-              <div
-                className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4"
-                itemScope
-                itemType="https://schema.org/ItemList"
-              >
-                <link itemProp="url" href={`/catalog/search?q=${q ?? ''}`} />
-                {products?.data.map((product) => (
-                  <div key={product.id} className="col-10 offset-1 offset-sm-0">
-                    <Card product={product} />
-                  </div>
-                ))}
-              </div>
-              <div className="row mt-3">
-                <div className="col">
-                  <Pagination
-                    currentPage={products?.meta.current_page}
-                    totalCount={products?.meta.total}
-                    pageSize={products?.meta.per_page}
-                  />
-                </div>
-              </div>
-            </>
-          ) : (
-            <h3 className="text-center">{isFetching ? `Идет поиск товара "${q ?? ''}"` : (errorData ? errorData?.data.message : `По запросу "${q ?? ''}" ничего не найдено!`)}</h3>
-          )}
-        </div>
+        <div className="col-md-9 mt-3 mt-md-0">{generateData()}</div>
       </div>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async ({ params }) => {
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps((store) => async ({ params }) => {
     const page = Number(params?.page) || 1;
     const q = params?.q ? String(params?.q) : "";
 
@@ -135,7 +154,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     await Promise.all(getRunningOperationPromises());
 
     return { props: {} };
-  }
-);
+  });
 
 export default Search;

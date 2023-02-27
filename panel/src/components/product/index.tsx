@@ -32,7 +32,7 @@ const Product: React.FC = () => {
       search: { column: "", text: "" },
       order: { field: null, direction: "asc" },
       filters: [],
-      pagination: { current: 1, pageSize: 10 },
+      pagination: { current: 1, pageSize: 50 },
     }
   );
   const { data: products, isFetching } = useFetchProductsQuery(filters);
@@ -203,28 +203,24 @@ const Product: React.FC = () => {
       filterMultiple: false,
     },
     {
-      title: "Статус",
-      dataIndex: "status",
+      title: "Наличие",
+      dataIndex: "offer",
       filters: [
         {
-          text: "Активен",
+          text: "Есть",
           value: "on",
         },
         {
-          text: "Не активен",
+          text: "Нет",
           value: "off",
         },
       ],
       filteredValue: filters.filters
-        .filter((item) => item.field === "status")
+        .filter((item) => item.field === "offer")
         .map((item) => item.value),
       filterMultiple: false,
-      render: (status: boolean) =>
-        status ? (
-          <Tag color="green">Активен</Tag>
-        ) : (
-          <Tag color="red">Не активен</Tag>
-        ),
+      render: (offers: number) =>
+        offers ? <Tag color="green">Есть</Tag> : <Tag color="red">Нет</Tag>,
     },
   ];
 
@@ -313,10 +309,10 @@ const Product: React.FC = () => {
               photo: { url: item.photos[0]?.url, total: item.photos?.length },
               sale: item.sale,
               code: item.code,
-              barcode: item.barcode,
+              barcode: item.barcodes.join(", "),
               name: item.name,
               category: item.category?.name,
-              status: item.totalOffers,
+              offer: item.offers.length,
             }))}
             onChange={handleChange}
             pagination={{

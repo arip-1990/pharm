@@ -13,12 +13,16 @@ import { FC, useCallback } from "react";
 import Breadcrumbs from "../components/breadcrumbs";
 
 const DeliveryBooking: FC = () => {
-  const getDefaultGenerator = useCallback(() => [
-    { href: '/delivery-booking', text: "Доставка/Бронирование" }
-  ], []);
+  const getDefaultGenerator = useCallback(
+    () => [{ href: "/delivery-booking", text: "Доставка/Бронирование" }],
+    []
+  );
 
   return (
-    <Layout title="Доставка/Бронирование - Сеть аптек 120/80" description="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой.">
+    <Layout
+      title="Доставка/Бронирование - Сеть аптек 120/80"
+      description="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой."
+    >
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Доставка/Бронирование">
@@ -38,9 +42,8 @@ const DeliveryBooking: FC = () => {
             <Delivery width={60} height={60} />
             <p className="fw-bold">Доставка</p>
             <p>
-              Доставка осуществляется с 9:00 до 21:00, без выходных.
-              <br />
-              По другим городам доставка осуществляется по таксометру.
+              Доставка осуществляется в границах города Махачкалы с 9:00 до
+              21:00, без выходных.
               <br />
               Стоимость доставки по Махачкале от 2000&#8381; бесплатно.
             </p>

@@ -65,6 +65,10 @@ const View: React.FC = () => {
                   ),
                 },
                 {
+                  key: 'Платформа',
+                  value: order.platform
+                },
+                {
                   key: "Тип оплаты / Тип доставки",
                   value:
                     (order.paymentType === "card"

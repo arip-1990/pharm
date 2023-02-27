@@ -52,13 +52,12 @@ class Statistic
 
     public function getIp(Request $request): string
     {
-        $xForwardedFor = $request->headers->get('x-forwarded-for');
-        if (empty($xForwardedFor)) {
-            $ip = $request->header('cf-connecting-ip', $request->ip());
-        } else {
+        if ($xForwardedFor = $request->header('x-forwarded-for')) {
             $ips = explode(',', $xForwardedFor);
             $ip = trim($ips[0]);
         }
+        else $ip = $request->header('cf-connecting-ip', $request->ip());
+
         return $ip;
     }
 }

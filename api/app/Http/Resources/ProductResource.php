@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\City;
-use App\Models\Photo;
 use App\Models\Product;
 use App\Models\Value;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,11 +18,8 @@ class ProductResource extends JsonResource
             'category' => $this->category ? new CategoryResource($this->category) : null,
             'name' => $this->name,
             'code' => $this->code,
-            'barcode' => $this->barcode,
-            'photos' => $this->photos->map(fn(Photo $photo) => [
-                'id' => $photo->id,
-                'url' => $photo->getUrl()
-            ]),
+            'barcodes' => $this->barcodes,
+            'photos' => PhotoResource::collection($this->photos),
             'description' => $this->description,
             'status' => $this->status,
             'marked' => $this->marked,
@@ -38,7 +34,7 @@ class ProductResource extends JsonResource
             'discount' => $this->discount?->percent,
             'offers' => OfferResource::collection($this->offers),
             'minPrice' => $this->getPrice(),
-            'totalOffers' => $this->getCountByCity($request->cookie('city', City::query()->find(1)?->name)),
+            'totalOffers' => $this->getCountByCity($request->cookie('city', City::find(1)?->name)),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

@@ -203,7 +203,7 @@ const ViewAttributes: React.FC<PropsType> = ({ product, loading }) => {
         visible={showModal}
         attributes={attributes?.filter(
           (item) =>
-            product?.attributes.some((item2) => item2.id !== item.id) &&
+            !product?.attributes.some((item2) => item2.id === item.id) &&
             !item.required &&
             !newAttributes.includes(item.id)
         )}

@@ -2,9 +2,7 @@
 
 namespace App\Casts;
 
-use App\Models\Status\OrderStatus;
-use App\Models\Status\OrderState;
-use App\Models\Status\Status;
+use App\Order\Entity\Status\{OrderStatus, OrderState, Status};
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Collection;

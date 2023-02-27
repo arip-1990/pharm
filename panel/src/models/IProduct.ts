@@ -19,13 +19,13 @@ export interface IProduct {
   } | null;
   name: string;
   code: number;
-  barcode: string | null;
+  barcodes: string[];
   photos: IPhoto[];
   description: string | null;
   marked: boolean;
   recipe: boolean;
   sale: boolean;
-  status: number;
+  status: boolean;
   offers: IOffer[];
   totalOffers: number;
   attributes: IAttribute[];

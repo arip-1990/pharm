@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Mobile;
 
 use App\Http\Requests\Mobile\CheckoutRequest;
-use App\UseCases\Order\CheckoutService;
+use App\Order\UseCase\CheckoutService;
 use Illuminate\Http\JsonResponse;
 
 class CheckoutController
@@ -16,11 +16,12 @@ class CheckoutController
             $orders = $this->service->checkoutMobile($request);
 
             return new JsonResponse([
-                'message' => 'Обратите внимание, заказ оформится для товаров в наличии в выбранной  вами аптеке, для уточнения деталей заказа с вами свяжется оператор',
+                // 'message' => 'Обратите внимание, заказ оформится для товаров в наличии в выбранной  вами аптеке, для уточнения деталей заказа с вами свяжется оператор',
+                'message' => '',
                 'orders' => $orders
             ]);
         }
-        catch (\DomainException $e) {
+        catch (\Exception $e) {
             return new JsonResponse([
                 'code' => $e->getCode(),
                 'message' => $e->getMessage()

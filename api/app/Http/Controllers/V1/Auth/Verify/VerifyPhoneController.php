@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Auth\Verify;
 use App\Http\Requests\Auth\VerifyPhoneRequest;
 use App\Models\User;
 use App\UseCases\Auth\LoginService;
+use App\UseCases\Auth\PasswordService;
 use App\UseCases\PosService;
 use App\UseCases\User\PhoneVerifyService;
 use App\UseCases\User\UserService;
@@ -18,17 +19,19 @@ class VerifyPhoneController extends Controller
         private readonly LoginService $loginService,
         private readonly UserService $userService,
         private readonly PhoneVerifyService $verifyService,
+        private readonly PasswordService $passwordService,
         private readonly PosService $posService
     ) {}
 
     public function handle(VerifyPhoneRequest $request): JsonResponse
     {
+        $data = $request->validated();
         try {
             if ($loginData = $request->session()->get('loginData')) {
                 if (!$token = $request->session()->get('token'))
-                    throw new \DomainException('Ошибка');
+                    throw new \DomainException('Невалидный токен');
 
-                $this->verifyService->verifyPhone($token, $request->get('smsCode'));
+                $this->verifyService->verifyPhone($token, $data['smsCode']);
                 $session = $this->loginService->login($loginData['login'], $loginData['password']);
 
                 $request->session()->regenerate();
@@ -37,11 +40,21 @@ class VerifyPhoneController extends Controller
                 return new JsonResponse();
             }
 
+            if ($phone = $request->session()->get('phone')) {
+                if (!$token = $request->session()->get('token'))
+                    throw new \DomainException('Невалидный токен');
+
+                $this->verifyService->verifyPhone($token, $data['smsCode']);
+                $request->session()->put('token', $this->passwordService->requestResetPassword($phone));
+
+                return new JsonResponse();
+            }
+
             if (!$request->session()->has('userId'))
-                throw new \DomainException('Ошибка');
+                throw new \DomainException('Ошибка данных');
 
             $user = User::find($request->session()->get('userId'));
-            $this->posService->getBalance($user->phone, validationCode: $request->get('smsCode'));
+            $this->posService->getBalance($user->phone, validationCode: $data['smsCode']);
 
             $this->userService->updateInfo($user, [], $request->session()->get('session'));
             $this->userService->setPassword($user->id, $user->password);

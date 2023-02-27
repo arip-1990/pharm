@@ -2,53 +2,69 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Product;
+use App\Order\Entity\Order;
+use App\Order\Entity\Status\OrderState;
+use App\Order\Entity\Status\OrderStatus;
+use App\Order\UseCase\GenerateDataService;
+use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 ini_set('memory_limit', -1);
 
 class TestCommand extends Command
 {
-    protected $signature = 'test';
+    protected $signature = 'test {orderId}';
     protected $description = 'test';
 
     public function handle(): int
     {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Товары');
-        $sheet->setCellValue('A1', 'Код');
-        $sheet->setCellValue('B1', 'Наименование');
-        $sheet->getStyle('A1')->applyFromArray([
-            'font' => ['bold' => true],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
-        ]);
-        $sheet->getStyle('B1')->applyFromArray([
-            'font' => ['bold' => true],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
-        ]);
+        $queueClient = Redis::connection()->client();
 
-        $i = 2;
-        Product::has('offers')->where(function ($query) {
-            $query->whereNull('description')->orWhereHas('values', null, '<=', 5);
-        })->chunk(1000, function ($products) use ($sheet, &$i) {
-            /** @var Product $product */
-            foreach ($products as $product) {
-                $sheet->setCellValue('A' . $i, $product->code);
-                $sheet->setCellValue('B' . $i, $product->name);
-
-                $i++;
-            }
-        });
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save(Storage::path("Товары без описания.xlsx"));
+        $data = $queueClient->publish('bot', 'test');
+        print_r($data);
+//        $order = Order::find((int)$this->argument('orderId'));
+//        $order->addStatus(OrderStatus::STATUS_SEND);
+//        try {
+//            $orderNumber = config('data.orderStartNumber') + $order->id;
+//            $response = simplexml_load_string($this->orderSend($order));
+//
+//            if(isset($response->errors->error->code))
+//                throw new \DomainException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");
+//
+//            if(isset($response->success->order_id))
+//                $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_SUCCESS);
+//        }
+//        catch (\Exception $e) {
+//            $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
+//            Log::info($e->getMessage());
+//
+//            $queueClient->publish('bot:error', json_encode([
+//                'file' => self::class . ' (' . $e->getLine() . ')',
+//                'message' => $e->getMessage()
+//            ], JSON_UNESCAPED_UNICODE));
+//        } finally {
+//            $order->save();
+//        }
 
         $this->info("Процесс завершена!");
-        return 0;
+        return self::SUCCESS;
+    }
+
+    private function orderSend(Order $order): string
+    {
+        $service = new GenerateDataService($order);
+        $config = config('data.1c');
+
+        $client = new Client([
+            'base_uri' => $config['base_url'],
+            'auth' => [$config['login'], $config['password']],
+            'verify' => false
+        ]);
+        $response = $client->post($config['urls'][5], ['body' => $service->generateSenData(Carbon::now())]);
+
+        return $response->getBody()->getContents();
     }
 }

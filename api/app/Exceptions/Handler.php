@@ -10,47 +10,30 @@ use Psr\Log\LogLevel;
 
 class Handler extends ExceptionHandler
 {
-    /**
-     * A list of the exception types that are not reported.
-     *
-     * @var array<int, class-string<\Throwable>>
-     */
     protected $dontReport = [];
-
-    /**
-     * A list of the inputs that are never flashed for validation exceptions.
-     *
-     * @var array<int, string>
-     */
     protected $dontFlash = [
         'current_password',
         'password',
         'password_confirmation',
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     *
-     * @return void
-     */
-    public function register()
+    public function register():void
     {
         $this->reportable(function (\Throwable $e) {
-//            $this->sendBot($e);
+            $this->sendBot($e);
         });
     }
 
     public function sendBot(\Throwable $e): void
     {
         try {
-            if (LogLevel::ERROR == Arr::first($this->levels, fn ($level, $type) => $e instanceof $type, LogLevel::ERROR)) {
-                $client = Redis::connection('bot')->client();
+            $queueClient = Redis::connection('bot')->client();
 
-                $client->publish("bot:error", json_encode([
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
+            if (LogLevel::ERROR == Arr::first($this->levels, fn ($level, $type) => $e instanceof $type, LogLevel::ERROR)) {
+                $queueClient->publish('bot:error', json_encode([
+                    'file' => $e->getFile() . ' (' . $e->getLine() . ')',
                     'message' => $e->getMessage()
-                ]));
+                ], JSON_UNESCAPED_UNICODE));
             }
         }
         catch (\Exception $e) {

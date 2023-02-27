@@ -25,11 +25,10 @@ const Order: React.FC = () => {
   const [filters, setFilters] = useSessionStorage<StorageType>("offerFilters", {
     search: { column: "", text: "" },
     order: { field: null, direction: "asc" },
-    pagination: { current: 1, pageSize: 10 },
+    pagination: { current: 1, pageSize: 50 },
   });
-  const { data: offers, isFetching: fetchLoading } = useFetchOffersQuery(
-    filters
-  );
+  const { data: offers, isFetching: fetchLoading } =
+    useFetchOffersQuery(filters);
   const navigate = useNavigate();
 
   const getColumnSearchProps = (dataIndex: string) => ({

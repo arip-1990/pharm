@@ -97,14 +97,14 @@ interface UploadPropsType {
   slug: string;
   photos: IPhoto[];
   changePhotos: (items: IPhoto[]) => void;
-  deletePhoto: (id: number, add: boolean) => void;
+  selectPhoto: (id: number, add: boolean) => void;
 }
 
 const Upload: React.FC<UploadPropsType> = ({
   slug,
   photos,
   changePhotos,
-  deletePhoto,
+  selectPhoto,
 }) => {
   const [addPhoto] = useAddPhotoProductMutation();
   const [deletePhotos] = useDeletePhotosProductMutation();
@@ -114,13 +114,16 @@ const Upload: React.FC<UploadPropsType> = ({
 
     const data = new FormData();
     data.append("file", file);
+
     try {
       await addPhoto({
         slug,
         data,
-        onProgress: (event: any) =>
-          onProgress({ percent: (event.loaded / event.total) * 100 }),
+        onProgress: (event: ProgressEvent) => {
+          onProgress({ percent: (event.loaded / event.total) * 100 });
+        },
       }).unwrap();
+
       onSuccess("Ok");
     } catch (error) {
       const err = error as any;
@@ -188,7 +191,7 @@ const Upload: React.FC<UploadPropsType> = ({
                           >
                             <Image
                               item={item}
-                              selectPhoto={deletePhoto}
+                              selectPhoto={selectPhoto}
                               deletePhoto={(id) => deletePhotos([id])}
                             />
                           </div>

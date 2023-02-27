@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Mobile\DeliveryRequest;
 use App\Http\Resources\Mobile\DeliveryResource;
 use App\Models\City;
-use App\Models\Delivery;
 use App\Models\Store;
+use App\Order\Entity\Delivery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
@@ -24,17 +24,23 @@ class DeliveryController extends Controller
                 throw new \DomainException('Город неизвестен');
 
             foreach (Delivery::where('active', true)->get() as $item) {
-//                if ($item->id === 3 and !$city->isBookingAvailable())
-//                    continue;
+                if ($item->id === 3 and !$city->isBookingAvailable())
+                    continue;
+
+                if (isset($data['skipPickupLocations']) and $data['skipPickupLocations']) {
+                    $locations->put($item->id, []);
+                    $deliveries[] = $item;
+                    continue;
+                }
 
                 if ($item->isType(Delivery::TYPE_PICKUP)) {
-                    $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->id])
+                    $query = Store::select('stores.*')->whereIn('stores.id', config('data.mobileStores')[$city->parent_id ?: $city->id])
                         ->groupBy('stores.id')->orderByRaw('count(*) desc');
 
-//                    if ($item->id === 2) {
-                    $query->join('offers', 'stores.id', 'offers.store_id')
-                        ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', array_column($data['items'], 'privateId'));
-//                    }
+                    if ($item->id === 2) {
+                        $query->join('offers', 'stores.id', 'offers.store_id')
+                            ->where('offers.quantity', '>', 0)->whereIn('offers.product_id', array_column($data['items'], 'privateId'));
+                    }
 
                     if ($query->count()) {
                         $locations->put($item->id, $query->get());
@@ -46,7 +52,7 @@ class DeliveryController extends Controller
 
             return new JsonResponse(['deliveries' => DeliveryResource::customCollection($deliveries, $locations)]);
         }
-        catch (\DomainException $e) {
+        catch (\Exception $e) {
             return new JsonResponse([
                 'code' => $e->getCode(),
                 'message' => $e->getMessage()

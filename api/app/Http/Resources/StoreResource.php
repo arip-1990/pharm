@@ -22,7 +22,7 @@ class StoreResource extends JsonResource
             'schedule' => Helper::formatSchedule($this->schedule, static::$long),
             'route' => $this->route,
             'delivery' => $this->delivery,
-            'status' => $this->status,
+            'active' => $this->active,
             'location' => new LocationResource($this->location)
         ];
     }
@@ -30,8 +30,7 @@ class StoreResource extends JsonResource
     public static function customCollection(mixed $resource, bool $long = false): JsonResource | AnonymousResourceCollection
     {
         static::$long = $long;
-        if ($resource instanceof Store)
-            return new self($resource);
+        if ($resource instanceof Store) return new self($resource);
 
         return parent::collection($resource);
     }

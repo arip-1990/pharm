@@ -2,10 +2,7 @@ version: '3.9'
 services:
   traefik:
     image: traefik:2.8
-    command:
-      --providers.docker=true
-      --providers.docker.exposedByDefault=false
-      --entryPoints.http.address=:80
+    command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80
     ports:
       - "80:80"
     networks:
@@ -112,10 +109,9 @@ services:
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: secret
-      CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
+      CACHE_DRIVER: redis
       SESSION_DRIVER: redis
-      SESSION_CONNECTION: cache
       SESSION_DOMAIN: .pharm.test
       REDIS_HOST: redis
       MAIL_HOST: mailer
@@ -140,7 +136,6 @@ services:
       DB_DATABASE: app
       DB_USERNAME: app
       DB_PASSWORD: secret
-      CACHE_DRIVER: redis
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       MAIL_HOST: mailer
@@ -173,14 +168,6 @@ services:
       - traefik.http.routers.mailer.entryPoints=http
       - traefik.http.services.mailer.loadBalancer.server.port=8025
 
-  redis:
-    image: redis:6.2-alpine
-    networks:
-      - traefik-public
-      - default
-    ports:
-      - "6379:6379"
-
   # parser:
   #   build:
   #     context: parser
@@ -200,8 +187,6 @@ services:
       REDIS_HOST: redis
     volumes:
       - ./bot:/app
-    depends_on:
-      - redis
 
   # elasticsearch:
   #   image: elasticsearch:8.3.2
@@ -220,6 +205,14 @@ services:
   #     - esdata:/usr/share/elasticsearch/data
   #   ports:
   #     - 9200:9200
+
+  redis:
+    image: redis:6.2-alpine
+    networks:
+      - traefik-public
+      - default
+    ports:
+      - "6379:6379"
 
 volumes:
   api-db:

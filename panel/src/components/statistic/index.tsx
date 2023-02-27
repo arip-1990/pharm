@@ -15,7 +15,7 @@ const Statistic: React.FC = () => {
     "statisticFilters",
     {
       order: { field: null, direction: "asc" },
-      pagination: { current: 1, pageSize: 10 },
+      pagination: { current: 1, pageSize: 50 },
     }
   );
   const { data: statistics, isFetching } = useFetchStatisticsQuery(filters);

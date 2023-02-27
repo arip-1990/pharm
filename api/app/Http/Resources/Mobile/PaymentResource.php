@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Mobile;
 
-use App\Models\Payment;
+use App\Order\Entity\Payment;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentResource extends JsonResource
