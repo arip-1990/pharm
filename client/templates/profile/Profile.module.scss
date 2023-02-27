@@ -2,8 +2,7 @@
 
 .profile {
   display: grid;
-  grid-template-columns: 0.3fr 0.5fr 1fr;
-  grid-template-rows: 96px 1fr;
+  grid-template-rows: 36px 68px auto;
   grid-gap: 1.5rem;
   font-family: "Montserrat", sans-serif;
   background: #fff;
@@ -12,27 +11,23 @@
   background-size: contain;
   border-radius: 2.5rem;
   box-shadow: 16px 16px 16px 8px rgba(34, 60, 80, 0.25);
-  padding: 2.5rem 3rem;
+  padding: 2rem 1rem;
 
   &_sidebar {
-    grid-column: 1/2;
-    grid-row: 1/3;
-    grid-gap: 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    grid-row: 1/2;
 
     &-menu {
       display: flex;
       align-items: center;
-      flex-direction: column;
       box-shadow: 4px 4px 8px 0px rgb(34 60 80 / 20%);
       border-radius: 0.5rem;
 
       a {
         display: flex;
         align-items: center;
+        justify-content: center;
         width: 100%;
+        font-size: 0.75rem;
         font-weight: 500;
         text-align: center;
         color: #27bfc1;
@@ -44,59 +39,64 @@
         }
 
         &:first-child {
-          border-top-left-radius: 0.5rem;
-          border-top-right-radius: 0.5rem;
+          display: none;
+        }
+
+        &:nth-child(2) {
+          border-radius: 0.5rem 0 0 0.5rem;
         }
 
         &:last-child {
-          border-bottom-left-radius: 0.5rem;
-          border-bottom-right-radius: 0.5rem;
-        }
-
-        &:not(:last-child) {
-          border-bottom: 1.5px solid #eee;
+          border-radius: 0 0.5rem 0.5rem 0;
         }
 
         [class^="icon-"] {
-          font-size: 0.75rem;
-          margin-right: 1rem;
+          font-size: 0.6rem;
+          margin-right: 0.5rem;
         }
       }
     }
 
-    &-card img {
-      border-radius: 0.25rem;
-      box-shadow: 4px 4px 8px 0px rgb(34 60 80 / 20%);
-    }
+    &-card {
+      display: none;
 
-    &-sub-menu {
-      list-style: none;
-      background: #fff;
-      padding: 0;
-      margin: 0;
-
-      &__item {
-        font-size: 0.7rem;
-        border-radius: 0px 20px 20px 0px;
-        background: linear-gradient(
-          180deg,
-          #f3efef 0%,
-          rgba(255, 255, 255, 0) 100%
-        );
-        padding: 0.25rem 0.5rem;
-
-        a {
-          font-size: 0.7rem;
-          color: #0f5aa5;
-        }
+      img {
+        border-radius: 0.25rem;
+        box-shadow: 4px 4px 8px 0px rgb(34 60 80 / 20%);
       }
     }
   }
 
+  &-sub-menu {
+    list-style: none;
+    background: #fff;
+    padding: 0;
+    margin: 0;
+
+    &_item {
+      font-size: 0.7rem;
+      text-align: center;
+      border-radius: 0px 20px 20px 0px;
+      background: linear-gradient(
+        180deg,
+        #f3efef 0%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      padding: 0.25rem 0.5rem;
+
+      a {
+        font-size: 0.7rem;
+        color: #0f5aa5;
+      }
+    }
+
+    &__desktop {
+      display: none;
+    }
+  }
+
   &_logo {
-    grid-column: 2/3;
-    grid-row: 1/2;
-    align-self: end;
+    grid-row: 2/3;
     position: relative;
     display: flex;
     align-items: center;
@@ -122,13 +122,11 @@
   }
 
   &_card-info {
-    grid-column: 2/3;
-    grid-row: 2/3;
+    grid-row: 3/4;
   }
 
   &_content {
-    grid-column: 3/4;
-    grid-row: 1/3;
+    grid-row: 4/5;
     min-height: 100%;
     color: #000;
     border-radius: 1rem;
@@ -157,17 +155,66 @@
       grid-column: 1/2;
       grid-row: 1/3;
       grid-gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
 
       &-menu {
+        flex-direction: column;
+
         a {
+          justify-content: start;
+          font-size: 0.75rem;
           padding-left: 1rem;
+
+          &:first-child {
+            display: flex;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+          }
+
+          &:nth-child(2) {
+            border-radius: 0;
+          }
+
+          &:last-child {
+            border-radius: 0 0 0.5rem 0.5rem;
+          }
+
+          &:not(:last-child) {
+            border-bottom: 1.5px solid #eee;
+          }
+
+          [class^="icon-"] {
+            font-size: 0.75rem;
+            margin-right: 1rem;
+          }
         }
+      }
+
+      &-card {
+        display: block;
+      }
+    }
+
+    &-sub-menu {
+      &_item {
+        text-align: start;
+      }
+
+      &__mobile {
+        display: none;
+      }
+
+      &__desktop {
+        display: block;
       }
     }
 
     &_logo {
       grid-column: 2/3;
       grid-row: 1/2;
+      align-self: end;
     }
 
     &_card-info {

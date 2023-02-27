@@ -75,22 +75,27 @@ const Profile: FC<Props> = ({
           <Image src={loyaltyCard} />
         </div>
 
-        <ul className={styles["profile_sidebar-sub-menu"]}>
-          <li className={styles["profile_sidebar-sub-menu__item"]}>
+        <ul
+          className={classNames(
+            styles["profile-sub-menu"],
+            styles["profile-sub-menu__desktop"]
+          )}
+        >
+          <li className={styles["profile-sub-menu_item"]}>
             <Link href="/profile/card/lock">
               <a>
                 <i className="icon-lock" /> Заблокировать карту
               </a>
             </Link>
           </li>
-          <li className={styles["profile_sidebar-sub-menu__item"]}>
+          <li className={styles["profile-sub-menu_item"]}>
             <Link href="/profile/change-password">
               <a>
                 <i className="icon-loop" /> Сменить пароль
               </a>
             </Link>
           </li>
-          <li className={styles["profile_sidebar-sub-menu__item"]}>
+          <li className={styles["profile-sub-menu_item"]}>
             <Link href="/profile/card">
               <a>
                 <i className="icon-card" /> Список карт
@@ -135,6 +140,35 @@ const Profile: FC<Props> = ({
         {title && <h5>{title}</h5>}
         {children}
       </article>
+
+      <ul
+        className={classNames(
+          styles["profile-sub-menu"],
+          styles["profile-sub-menu__mobile"]
+        )}
+      >
+        <li className={styles["profile-sub-menu_item"]}>
+          <Link href="/profile/card/lock">
+            <a>
+              <i className="icon-lock" /> Заблокировать карту
+            </a>
+          </Link>
+        </li>
+        <li className={styles["profile-sub-menu_item"]}>
+          <Link href="/profile/change-password">
+            <a>
+              <i className="icon-loop" /> Сменить пароль
+            </a>
+          </Link>
+        </li>
+        <li className={styles["profile-sub-menu_item"]}>
+          <Link href="/profile/card">
+            <a>
+              <i className="icon-card" /> Список карт
+            </a>
+          </Link>
+        </li>
+      </ul>
     </section>
   );
 };
