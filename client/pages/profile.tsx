@@ -36,7 +36,7 @@ const Profile: FC = () => {
             <td>{user?.registrationDate?.format("DD.MM.Y")}</td>
           </tr>
           <tr>
-            <td>Магазины регистрации</td>
+            <td>Аптека регистрации</td>
             <td>{user?.orgUnitName}</td>
           </tr>
         </Table>

@@ -1,21 +1,20 @@
 import { FC } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useFetchCitiesQuery } from "../../lib/cityService";
-import { useCookie } from "../../hooks/useCookie";
 
 type Props = {
   className?: string;
+  city?: string;
+  setCity: (city: string) => void;
 };
 
-const SetCity: FC<Props> = ({ className }) => {
-  const [city, setCookie, removeCookie] = useCookie("city");
+const SetCity: FC<Props> = ({ className, city, setCity }) => {
   const { data } = useFetchCitiesQuery();
   let classes = ["menu-city"];
   if (className) classes = classes.concat(className.split(" "));
 
   const handleSetCity = async (newCity: string) => {
-    removeCookie();
-    setCookie(newCity);
+    setCity(newCity);
   };
 
   if (data) {

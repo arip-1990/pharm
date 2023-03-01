@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::create('photo_product', function (Blueprint $table) {
             $table->id();
-
             $table->unique(['photo_id', 'product_id']);
 
             $table->foreignId('photo_id')->constrained()->onUpdate('cascade')->onDelete('cascade');

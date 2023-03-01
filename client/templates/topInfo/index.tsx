@@ -5,11 +5,13 @@ import Link from "next/link";
 import Auth from "../../components/auth";
 import DeliverySale from "./DeliverySale";
 import { useAuth } from "../../hooks/useAuth";
+import { useCookie } from "../../hooks/useCookie";
 
 import styles from "./TopInfo.module.scss";
 
 const TopInfo: FC = () => {
-  const { isAuth } = useAuth();
+  const { isAuth, user } = useAuth();
+  const [city, setCookie, removeCookie] = useCookie("city");
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleSignIn = (e: MouseEvent) => {
@@ -17,19 +19,24 @@ const TopInfo: FC = () => {
     setShowModal(true);
   };
 
+  const setCity = (city: string) => {
+    removeCookie();
+    setCookie(city);
+  }
+
   return (
     <Container className="my-3">
       <div className={styles.topInfo}>
-        <SetCity />
+        <SetCity city={city} setCity={setCity} />
 
-        <DeliverySale />
+        {city?.toLowerCase().includes('махачкала') && <DeliverySale />}
 
         <div className="auth text-end">
           <span className="phone">+7 (8722) 606-366</span>
           <span className="d-inline-block">
             {isAuth ? (
               <Link href="/profile">
-                <a>Личный кабинет</a>
+                <a>{user?.firstName + (user?.lastName ? user.lastName.charAt(0) : '')}</a>
               </Link>
             ) : (
               <a href="#" onClick={handleSignIn}>

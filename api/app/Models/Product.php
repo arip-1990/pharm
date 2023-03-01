@@ -29,7 +29,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $deleted_at
  *
  * @property ?Category $category
- * @property ?Discount $discount
  * @property ?ProductStatistic $statistic
  *
  * @property Collection<Photo> $photos
@@ -37,6 +36,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Collection<Photo> $certificates
  * @property Collection<Offer> $offers
  * @property Collection<Value> $values
+ * @property Collection<Discount> $discounts
  */
 class Product extends Model
 {
@@ -117,9 +117,9 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function discount(): BelongsTo
+    public function discounts(): BelongsToMany
     {
-        return $this->belongsTo(Discount::class)->where('active', true);
+        return $this->belongsToMany(Discount::class)->where('active', true);
     }
 
     public function photos(): BelongsToMany

@@ -6,7 +6,6 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\City;
-use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,10 +15,7 @@ class StockController extends Controller
 {
     public function handle(Request $request): JsonResponse
     {
-        $productIds = Offer::select('product_id')->whereCity($request->cookie('city', City::find(1)?->name))
-            ->groupBy('product_id')->pluck('product_id');
-
-        $products = Product::whereIn('id', $productIds)->whereNotNull('discount_id')
+        $products = Product::active($request->cookie('city', City::find(1)?->name))->has('discounts')
             ->paginate($request->get('pageSize', 20));
 
         return new JsonResponse([

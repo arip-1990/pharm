@@ -64,14 +64,15 @@ const ChangePassword: FC = () => {
 
   return (
     <Layout title="Изменить пароль - Сеть аптек 120/80">
-      <BaseProfile title="Изменить пароль" contentClassName="d-flex">
+      <BaseProfile title="Изменить пароль">
         <form
           onSubmit={formik.handleSubmit}
-          style={{ maxWidth: 320, margin: "auto" }}
+          style={{ maxWidth: 320, margin: "3rem auto" }}
         >
           <div className="mb-3">
             <input
               className="form-control"
+              style={{fontSize: '0.75rem'}}
               type="password"
               name="oldPassword"
               placeholder="*Старый пароль"
@@ -84,6 +85,7 @@ const ChangePassword: FC = () => {
           <div className="mb-3">
             <input
               className="form-control"
+              style={{fontSize: '0.75rem'}}
               type="password"
               name="password"
               placeholder="*Новый пароль"
@@ -96,6 +98,7 @@ const ChangePassword: FC = () => {
           <div className="mb-3">
             <input
               className="form-control"
+              style={{fontSize: '0.75rem'}}
               type="password"
               name="password_confirmation"
               placeholder="*Повторить новый пароль"
@@ -105,11 +108,11 @@ const ChangePassword: FC = () => {
             />
             <ErrorField name="password_confirmation" errors={formik.errors} />
           </div>
-          <div className="row align-items-center">
+          <div style={{textAlign: 'center'}}>
             <span className="col-5 text-end">
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="btn btn-sm btn-primary"
                 disabled={formik.isSubmitting}
               >
                 Сохранить
