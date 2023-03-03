@@ -37,6 +37,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Store $store
  * @property ?Payment $payment
  * @property ?Delivery $delivery
+ * @property ?OrderGroup $group
  * @property OrderDelivery $orderDelivery
  *
  * @property Collection<Status> $statuses
@@ -249,5 +250,10 @@ class Order extends Model
     public function delivery(): BelongsTo
     {
         return $this->belongsTo(Delivery::class);
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(OrderGroup::class);
     }
 }

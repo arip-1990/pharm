@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Order;
 
 use App\Order\UseCase\GenerateDataService;
-use App\Order\Entity\{Order, OrderItem, Payment};
+use App\Order\Entity\{Order, OrderGroup, OrderItem, Payment};
 use App\Order\Entity\Status\{OrderStatus, OrderState};
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -48,6 +48,9 @@ class SendCommand extends Command
 
                 $order->addStatus(OrderStatus::STATUS_SEND);
                 $order2->addStatus(OrderStatus::STATUS_SEND);
+
+                $group = OrderGroup::create();
+                $group->orders()->saveMany([$order, $order2]);
                 try {
                     $orderNumber = config('data.orderStartNumber') + $tmp->id;
                     $response = simplexml_load_string($this->orderSend($tmp));

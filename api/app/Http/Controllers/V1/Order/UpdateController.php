@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\V1\Order;
 
+use App\Models\Product;
+use App\Order\Entity\Delivery;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use App\Order\Entity\Status\{OrderStatus, OrderState};
 use App\Order\Entity\OrderRepository;
 use App\Order\UseCase\RefundService;
@@ -40,11 +44,10 @@ class UpdateController extends Controller
             </orders_result>';
     }
 
-    public function handle(): Response
+    public function handle(Request $request)
     {
-        $xml = file_get_contents("php://input");
         try {
-            $xml = simplexml_load_string($xml);
+            $xml = simplexml_load_string($request->getContent());
             if(!$this->isValidOrderXML($xml)) throw new \Exception('Неверный XML', 1);
 
             $order = $this->repository->getById(intval($xml->order->id) - config('data.orderStartNumber'));
@@ -65,6 +68,15 @@ class UpdateController extends Controller
                 $this->service->partlyRefund($order, $xml->order->products->product);
 
             $order->changeStatusState($status, OrderState::STATE_SUCCESS);
+
+//            if (isset($xml->order_transfer->id)) {
+//                if ($order->delivery_id !== 3) {
+//                    $order2 =
+//                }
+//                foreach ($xml->order_transfer->products as $item) {
+//                    $product = Product::where('code', (int)$item->product->code)->first();
+//                }
+//            }
             $order->save();
 
             return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);
