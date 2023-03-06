@@ -31,7 +31,7 @@ const Price: FC<Props> = ({ slug, totalOffers }) => {
   if (!totalOffers) {
     return (
       <p className={styles.card_marker + " " + styles.card_marker__red}>
-        <i className="fas fa-map-marker-alt" /> Нет в наличии
+        <i className="icon-marker" /> Нет в наличии
       </p>
     );
   }
@@ -39,7 +39,7 @@ const Price: FC<Props> = ({ slug, totalOffers }) => {
   return (
     <>
       <p className={styles.card_marker}>
-        <i className="fas fa-map-marker-alt" />
+        <i className="icon-marker" />
         {`В наличии в ${totalOffers} ` +
           (totalOffers === 1 ? "аптеке" : "аптеках")}
       </p>

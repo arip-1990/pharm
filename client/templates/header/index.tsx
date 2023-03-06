@@ -56,7 +56,7 @@ const Header: FC = () => {
                 type="search"
                 name="q"
                 className="form-control"
-                placeholder="Введите: название препарата"
+                placeholder="Введите название препарата"
                 onChange={formik.handleChange}
                 value={formik.values.q}
               />

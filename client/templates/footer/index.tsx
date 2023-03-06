@@ -79,6 +79,11 @@ const Footer: FC = () => {
                 <a>Условия возврата</a>
               </Link>
             </li>
+            <li>
+              <Link href="/delivery-booking">
+                <a>Доставка/бронирование</a>
+              </Link>
+            </li>
           </ul>
         </Col>
         <Col
