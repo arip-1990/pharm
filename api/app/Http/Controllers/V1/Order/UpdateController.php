@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\V1\Order;
 
 use App\Models\Product;
-use App\Order\Entity\Delivery;
-use Illuminate\Http\JsonResponse;
+use App\Order\Entity\Order;
+use App\Order\Entity\OrderGroup;
+use App\Order\Entity\OrderItem;
 use Illuminate\Http\Request;
 use App\Order\Entity\Status\{OrderStatus, OrderState};
 use App\Order\Entity\OrderRepository;
@@ -50,7 +51,54 @@ class UpdateController extends Controller
             $xml = simplexml_load_string($request->getContent());
             if(!$this->isValidOrderXML($xml)) throw new \Exception('Неверный XML', 1);
 
-            $order = $this->repository->getById(intval($xml->order->id) - config('data.orderStartNumber'));
+            $order1cId = intval($xml->order->id);
+            if (isset($xml->order_transfer->id) and $group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
+                /** @var Order $order2 */
+                $order = $group->orders->whereFirst('delivery_id', 2);
+                $order2 = $group->orders->whereFirst('delivery_id', 3);
+
+                foreach ($xml->order_transfer->products as $item) {
+                    $price = (float)$item->product->price;
+                    $quantity = (int)$item->product->quantity;
+                    $product = Product::where('code', (int)$item->product->code)->first();
+                    $orderItem = $order->items->firstWhere('product_id', $product->id);
+
+                    if (!$orderItem2 = $order2->items->firstWhere('product_id', $product->id)) {
+                        $orderItem2 = OrderItem::create($product->id, $price, $quantity);
+
+                        if ($orderItem) {
+                            if ($orderItem->quantity > $orderItem2->quantity) {
+                                $orderItem->update(['quantity' => $orderItem->quantity - $orderItem2->quantity]);
+                            }
+                            else {
+                                $orderItem->delete();
+                            }
+                        }
+
+                        $order2->items()->save($orderItem2);
+                    }
+                    else {
+                        if ($quantity != $orderItem2->quantity) {
+                            if ($orderItem) {
+                                if ($quantity > $orderItem2->quantity) {
+                                    $orderItem->update(['quantity' => $orderItem->quantity - ($quantity - $orderItem2->quantity)]);
+                                }
+                                else {
+                                    $orderItem->update(['quantity' => $orderItem->quantity + ($orderItem2->quantity - $quantity)]);
+                                }
+                            }
+
+                            $orderItem2->update(['quantity' => $quantity]);
+                        }
+                    }
+                }
+
+                $order2->addStatus(OrderStatus::from((string)$xml->order_transfer->status), OrderState::STATE_SUCCESS);
+                $order2->save();
+            }
+            else {
+                $order = $this->repository->getById($order1cId - config('data.orderStartNumber'));
+            }
 
             switch ($status = OrderStatus::from((string)$xml->order->status)) {
                 case OrderStatus::STATUS_ASSEMBLED:
@@ -68,15 +116,6 @@ class UpdateController extends Controller
                 $this->service->partlyRefund($order, $xml->order->products->product);
 
             $order->changeStatusState($status, OrderState::STATE_SUCCESS);
-
-//            if (isset($xml->order_transfer->id)) {
-//                if ($order->delivery_id !== 3) {
-//                    $order2 =
-//                }
-//                foreach ($xml->order_transfer->products as $item) {
-//                    $product = Product::where('code', (int)$item->product->code)->first();
-//                }
-//            }
             $order->save();
 
             return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);

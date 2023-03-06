@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Order\Entity\Order;
+use App\Order\Entity\OrderGroup;
+use App\Order\Entity\OrderItem;
 use App\Order\Entity\Status\OrderState;
 use App\Order\Entity\Status\OrderStatus;
 use App\Order\UseCase\GenerateDataService;
@@ -21,10 +23,6 @@ class TestCommand extends Command
 
     public function handle(): int
     {
-        $queueClient = Redis::connection()->client();
-
-        $data = $queueClient->publish('bot', 'test');
-        print_r($data);
 //        $order = Order::find((int)$this->argument('orderId'));
 //        $order->addStatus(OrderStatus::STATUS_SEND);
 //        try {

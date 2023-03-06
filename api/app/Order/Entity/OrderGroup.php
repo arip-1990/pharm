@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
+ * @property int $order_1c_id
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class OrderGroup extends Model
 {
+    protected $fillable = ['order_1c_id'];
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);

@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('order_groups', function (Blueprint $table) {
             $table->id();
+            $table->integer('order_1c_id')->unique();
             $table->timestamps();
         });
 
