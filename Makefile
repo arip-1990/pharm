@@ -55,7 +55,7 @@ client-ready:
 
 
 api-clear:
-	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf .ready storage/framework/cache/data/* storage/framework/sessions/* storage/framework/testing/* storage/framework/views/* storage/logs/*'
+	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf storage/framework/cache/data/* storage/framework/sessions/* storage/framework/testing/* storage/framework/views/* storage/logs/*'
 
 api-init: api-permissions api-composer-install api-wait-db api-migrations
 
@@ -97,7 +97,7 @@ build-api:
 	docker --log-level=debug build --pull --file=api/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-api:${IMAGE_TAG} api
 	docker --log-level=debug build --pull --file=api/docker/prod/php-fpm/Dockerfile --tag=${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG} api
 	docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG} api
-	# docker --log-level=debug build --pull --file=api/docker/common/postgres-backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} api/docker/common
+	docker --log-level=debug build --pull --file=api/docker/common/backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} api/docker/common
 
 push: push-client push-panel push-parser push-bot push-api
 
@@ -118,7 +118,7 @@ push-api:
 	docker push ${REGISTRY}/pharm-api:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-api-php-fpm:${IMAGE_TAG}
 	docker push ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
-	# docker push ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
+	docker push ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
 
 deploy:
 	ssh -o StrictHostKeyChecking=no arip@${HOST} 'docker network create --driver=overlay traefik-public || true'

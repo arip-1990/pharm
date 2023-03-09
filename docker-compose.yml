@@ -144,6 +144,19 @@ services:
       FILESYSTEM_DISK: public
     volumes:
       - ./api:/app
+  
+  db-backup:
+    build:
+      context: api/docker
+      dockerfile: common/backup/Dockerfile
+    environment:
+      BACKUP_NAME: pharm-test-db
+      POSTGRES_HOST: api-db
+      POSTGRES_USERNAME: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+      NAS_HOST: ${NAS_HOST}
+      RSYNC_PASSWORD: ${NAS_PASSWORD}
 
   api-db:
     image: postgres:14.1-alpine
