@@ -53,6 +53,11 @@
     justify-content: space-between;
     margin-top: 1rem;
 
+    .title {
+      text-align: center;
+      font-weight: 600;
+    }
+
     a {
       color: #337ab7;
 
@@ -210,7 +215,8 @@
   &_marker {
     text-align: center;
     color: #28a745;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 600;
 
     &__red {
       color: $red;

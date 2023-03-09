@@ -58,6 +58,14 @@
   }
 }
 
+.chooseCity {
+  font-weight: 600;
+
+  .city {
+    font-size: 0.9rem;
+  }
+}
+
 @media (min-width: 768px) {
   .topInfo {
     grid-template-columns: auto 1fr auto;

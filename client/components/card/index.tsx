@@ -64,7 +64,7 @@ const Card: FC<Props> = ({ product }) => {
       </div>
 
       <div className={styles.card_body}>
-        <h6 style={{ textAlign: "center" }}>
+        <h6 className={styles.title}>
           <Link href={`/catalog/product/${product.slug}`}>
             <a itemProp="url">
               <span itemProp="name">{product.name}</span>

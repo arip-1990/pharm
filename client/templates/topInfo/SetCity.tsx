@@ -2,16 +2,15 @@ import { FC } from "react";
 import { Dropdown } from "react-bootstrap";
 import { useFetchCitiesQuery } from "../../lib/cityService";
 
+import styles from './TopInfo.module.scss';
+
 type Props = {
-  className?: string;
   city?: string;
   setCity: (city: string) => void;
 };
 
-const SetCity: FC<Props> = ({ className, city, setCity }) => {
+const SetCity: FC<Props> = ({ city, setCity }) => {
   const { data } = useFetchCitiesQuery();
-  let classes = ["menu-city"];
-  if (className) classes = classes.concat(className.split(" "));
 
   const handleSetCity = async (newCity: string) => {
     setCity(newCity);
@@ -19,9 +18,9 @@ const SetCity: FC<Props> = ({ className, city, setCity }) => {
 
   if (data) {
     return (
-      <div className={classes.join(" ")}>
+      <div className={styles.chooseCity}>
         <Dropdown onSelect={(eventKey) => handleSetCity(eventKey)}>
-          <span>Ваш город: </span>
+          <span className={styles.city}>Ваш город: </span>
           <Dropdown.Toggle
             variant="success"
             id="city"
