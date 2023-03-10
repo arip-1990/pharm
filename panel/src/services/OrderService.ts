@@ -13,7 +13,7 @@ export const orderApi = createApi({
       pagination: { current: number, pageSize: number },
       order: { field: string | null, direction: string },
       filters?: { field: string, value: string }[],
-      platform?: 'mobile|ios|android|web'
+      platform?: 'mobile' | 'ios' | 'android' | 'web'
     }>({
       query: (args) => {
         let params: any = {

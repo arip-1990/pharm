@@ -11,6 +11,7 @@ interface StorageType {
   order: { field: string | null; direction: "asc" | "desc" };
   filters: { field: string; value: string }[];
   pagination: { current: number; pageSize: number };
+  platform: 'mobile' | 'ios' | 'android' | 'web';
 }
 
 const Order: React.FC = () => {
