@@ -7,13 +7,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('throttle:none')->group(function () {
     Route::post('/pay', [V1\PayController::class, 'handle']);
 
-    Route::post('/order', [V1\Order\UpdateController::class, 'handle']);
     Route::middleware('auth.basic.once')->group(function () {
         // 1c
         Route::prefix('1c')->group(function () {
             Route::get('/category', [V1\Category\IndexController::class, 'handle']);
             Route::post('/feed', [V1\FeedController::class, 'handle']);
-
+            Route::post('/order', [V1\Order\UpdateController::class, 'handle']);
         });
     });
 

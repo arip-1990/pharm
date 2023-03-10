@@ -9,22 +9,29 @@ use App\Http\Resources\Mobile\DeliveryResource;
 use App\Models\City;
 use App\Models\Store;
 use App\Order\Entity\Delivery;
+use App\Order\UseCase\CalculateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
 class DeliveryController extends Controller
 {
+    public function __construct(private readonly CalculateService $calculateService) {}
+
     public function handle(DeliveryRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
             $deliveries = [];
+            $availablePickup = true;
             $locations = new Collection();
             if (!$city = City::where('name', Helper::trimPrefixCity($data['city'] ?? $data['addressData']['settlement']))->first())
                 throw new \DomainException('Город неизвестен');
 
+            if (isset($data['preferredPickupId']) and $store = Store::find($data['preferredPickupId']))
+                $availablePickup = $this->calculateService->isPickupAvailable($data['items'], $store);
+
             foreach (Delivery::where('active', true)->get() as $item) {
-                if ($item->id === 3 and !$city->isBookingAvailable())
+                if (($item->id === 2 and !$availablePickup) or ($item->id === 3 and !$city->isBookingAvailable()))
                     continue;
 
                 if (isset($data['skipPickupLocations']) and $data['skipPickupLocations']) {

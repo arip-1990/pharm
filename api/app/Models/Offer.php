@@ -62,15 +62,14 @@ class Offer extends Model
 
     public function scopeWhereInMultiple(Builder $query, array $columns, array $values): Builder
     {
-        collect($values)
-            ->transform(function ($v) use ($columns) {
-                $clause = [];
-                foreach ($columns as $index => $column) $clause[] = [$column, '=', $v[$index]];
-                return $clause;
-            })
-            ->each(function($clause, $index) use ($query) {
-                $query->where($clause, boolean: $index === 0 ? 'and' : 'or');
-            });
+        collect($values)->transform(function ($v) use ($columns) {
+            $clause = [];
+            foreach ($columns as $index => $column) $clause[] = [$column, '=', $v[$index]];
+            return $clause;
+        })
+        ->each(function($clause, $index) use ($query) {
+            $query->where($clause, boolean: $index === 0 ? 'and' : 'or');
+        });
 
         return $query;
     }

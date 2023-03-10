@@ -15,6 +15,11 @@ class IndexController extends Controller
     {
         try {
             $query = Order::select('orders.*');
+            if ($platform = $request->get('platform')) {
+                if ($platform == 'mobile') $query->whereIn('platform', ['android', 'ios']);
+                else $query->where('platform', $platform);
+            }
+
             if ($user = $request->get('userName')) $query->where('user_id', $user);
 
             if ($field = $request->get('orderField')) {

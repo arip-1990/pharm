@@ -5,6 +5,8 @@ namespace App\Order\UseCase;
 use App\Models\City;
 use App\Models\Location;
 use App\Models\Store;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class CalculateService
 {
@@ -22,6 +24,16 @@ class CalculateService
         return $this->calc($items, $store, $city->isBookingAvailable());
     }
 
+    public function isPickupAvailable(array $items, Store $store): bool
+    {
+        return $store->offers()->where(function (Builder $query) use ($items) {
+            foreach ($items as $item) {
+                $query->orWhere('product_id', $item['privateId'] ?? $item['id'])
+                    ->where('quantity', '>=', $item['quantity']);
+            }
+        })->count() >= count($items);
+    }
+
     private function calc(array $items, Store $store, bool $isBooking = false): array
     {
         $data = ['items' => [], 'totalPrice' => 0];
@@ -29,17 +41,15 @@ class CalculateService
             ->whereIn('product_id', array_column($items, 'privateId') ?: array_column($items, 'id'))->get();
         foreach ($items as $item) {
             $productId = $item['privateId'] ?? $item['id'];
+            $error = null;
+            $deliveries = ['2'];
 
-            if ($isBooking and (isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3') or !$offer = $offers->firstWhere('product_id', $productId)) {
-                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['3']);
-            }
-            else {
-                $error = null;
-                if ($item['quantity'] > $offer->quantity) $error = "Доступно всего {$offer->quantity} количество";
-
-                $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['2'], $error);
+            if (!$offer = $offers->firstWhere('product_id', $productId) or $item['quantity'] > $offer->quantity) {
+                if ($isBooking) $deliveries = ['3'];
+                else $error = $offer ? "Доступно всего {$offer->quantity} количество" : "Товара нет в наличии";
             }
 
+            $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], $deliveries, $error);
             $data['totalPrice'] += $item['price'] * $item['quantity'];
         }
 

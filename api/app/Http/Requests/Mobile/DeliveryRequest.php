@@ -14,7 +14,8 @@ class DeliveryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "externalUserId" => "nullable|string",
+            "externalUserId" => "nullable|uuid",
+            "preferredPickupId" => "nullable|uuid",
             "country" => "nullable|string",
             "city" => "nullable|string",
             "hasPreorderItems" => "nullable|boolean",
@@ -44,7 +45,6 @@ class DeliveryRequest extends FormRequest
             "items.*.privateId" => "required|uuid",
             "items.*.configurationId" => "nullable|uuid",
             "items.*.quantity" => "nullable|numeric",
-//            'items.*.deliveryGroup' => 'nullable|string',
         ];
     }
 }
