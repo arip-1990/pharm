@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\V1\Order;
 
-use App\Models\Product;
-use App\Order\Entity\Order;
 use App\Order\Entity\OrderGroup;
 use App\Order\Entity\OrderItem;
 use Illuminate\Http\Request;
@@ -52,43 +50,36 @@ class UpdateController extends Controller
             if(!$this->isValidOrderXML($xml)) throw new \Exception('Неверный XML', 1);
 
             $order1cId = intval($xml->order->id);
-            if (isset($xml->order_transfer->id) and $group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
-                /** @var Order $order2 */
-                $order = $group->orders->whereFirst('delivery_id', 2);
-                $order2 = $group->orders->whereFirst('delivery_id', 3);
+            if ($group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
+                $order = $group->orders->firstWhere('delivery_id', 2);
+                $order2 = $group->orders->firstWhere('delivery_id', 3);
 
-                foreach ($xml->order_transfer->products as $item) {
-                    $price = (float)$item->product->price;
-                    $quantity = (int)$item->product->quantity;
-                    $product = Product::where('code', (int)$item->product->code)->first();
-                    $orderItem = $order->items->firstWhere('product_id', $product->id);
+                if (isset($xml->order->products->product)) {
+                    foreach ($xml->order->products as $item) {
+                        $price = (float)$item->product->price;
+                        $quantity = (int)$item->product->quantity;
+                        $productId = (string)$item->product->code;
 
-                    if (!$orderItem2 = $order2->items->firstWhere('product_id', $product->id)) {
-                        $orderItem2 = OrderItem::create($product->id, $price, $quantity);
-
-                        if ($orderItem) {
-                            if ($orderItem->quantity > $orderItem2->quantity) {
-                                $orderItem->update(['quantity' => $orderItem->quantity - $orderItem2->quantity]);
-                            }
-                            else {
-                                $orderItem->delete();
-                            }
+                        if (!$orderItem = $order->items->firstWhere('product_id', $productId)) {
+                            $order->items()->save(OrderItem::create($productId, $price, $quantity));
                         }
-
-                        $order2->items()->save($orderItem2);
+                        else {
+                            $orderItem->update(['quantity' => $quantity]);
+                        }
                     }
-                    else {
-                        if ($quantity != $orderItem2->quantity) {
-                            if ($orderItem) {
-                                if ($quantity > $orderItem2->quantity) {
-                                    $orderItem->update(['quantity' => $orderItem->quantity - ($quantity - $orderItem2->quantity)]);
-                                }
-                                else {
-                                    $orderItem->update(['quantity' => $orderItem->quantity + ($orderItem2->quantity - $quantity)]);
-                                }
-                            }
+                }
 
-                            $orderItem2->update(['quantity' => $quantity]);
+                if (isset($xml->order_transfer->products->product)) {
+                    foreach ($xml->order_transfer->products as $item) {
+                        $price = (float)$item->product->price;
+                        $quantity = (int)$item->product->quantity;
+                        $productId = (string)$item->product->code;
+
+                        if (!$orderItem = $order2->items->firstWhere('product_id', $productId)) {
+                            $order2->items()->save(OrderItem::create($productId, $price, $quantity));
+                        }
+                        else {
+                            $orderItem->update(['quantity' => $quantity]);
                         }
                     }
                 }
@@ -117,13 +108,12 @@ class UpdateController extends Controller
 
             $order->changeStatusState($status, OrderState::STATE_SUCCESS);
             $order->save();
-
             return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);
         }
         catch (\Exception | \DomainException $exception) {
             $status = $exception instanceof \DomainException ? 404 : 500;
 
-            return new Response($this->orderError($exception->getMessage(), $exception->getCode()), $status);
+            return new Response($this->orderError($exception->getMessage(), (int)$exception->getCode()), $status);
         }
     }
 }

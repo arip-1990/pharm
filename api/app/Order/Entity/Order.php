@@ -68,6 +68,11 @@ class Order extends Model
         $this->cost = $totalPrice;
     }
 
+    public function recalculationCost(): void
+    {
+        $this->cost = $this->items->sum(fn(OrderItem $item) => $item->getCost());
+    }
+
     public function setPlatform(string $platform): void
     {
         $this->platform = $platform;

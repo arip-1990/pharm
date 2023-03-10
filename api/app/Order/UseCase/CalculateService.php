@@ -10,7 +10,7 @@ class CalculateService
 {
     public function handle(array $items, City $city, Store $store = null, bool $isMobile = false): array
     {
-        if ($store) return $this->calc($items, $store);
+        if ($store) return $this->calc($items, $store, $city->isBookingAvailable());
 
         if ($isMobile) $storeIds = config('data.mobileStores')[$city->id];
         else $storeIds = Store::whereIn('location_id', Location::whereCity($city)->pluck('id'))->pluck('id');
@@ -19,10 +19,10 @@ class CalculateService
             ->whereIn('stores.id', $storeIds)->whereIn('offers.product_id', array_column($items, 'privateId'))
             ->groupBy('stores.id')->orderByRaw('count(stores.id) desc')->first();
 
-        return $this->calc($items, $store);
+        return $this->calc($items, $store, $city->isBookingAvailable());
     }
 
-    private function calc(array $items, Store $store): array
+    private function calc(array $items, Store $store, bool $isBooking = false): array
     {
         $data = ['items' => [], 'totalPrice' => 0];
         $offers = $store->offers()->where('quantity', '>', 0)
@@ -30,7 +30,7 @@ class CalculateService
         foreach ($items as $item) {
             $productId = $item['privateId'] ?? $item['id'];
 
-            if ((isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3') or !$offer = $offers->firstWhere('product_id', $productId)) {
+            if ($isBooking and (isset($item['deliveryGroup']) and $item['deliveryGroup'] == '3') or !$offer = $offers->firstWhere('product_id', $productId)) {
                 $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], ['3']);
             }
             else {
