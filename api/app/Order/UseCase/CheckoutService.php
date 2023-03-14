@@ -6,7 +6,6 @@ use App\Helper;
 use App\Http\Requests;
 use App\Http\Resources\{ProductResource, StoreResource};
 use App\Models\{City, Location, Offer, Store, User};
-use App\Models\Status\MobilePlatform;
 use App\Order\Entity\{Delivery, Order, OrderDelivery, OrderItem, Payment};
 use App\Order\Entity\Status\OrderState;
 use Illuminate\Http\Request;

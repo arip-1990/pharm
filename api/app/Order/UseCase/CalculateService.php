@@ -6,7 +6,6 @@ use App\Models\City;
 use App\Models\Location;
 use App\Models\Store;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 
 class CalculateService
 {

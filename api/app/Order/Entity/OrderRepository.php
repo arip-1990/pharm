@@ -5,6 +5,7 @@ namespace App\Order\Entity;
 use App\Models\Location;
 use App\Models\Store;
 use App\Models\User;
+use App\Order\Entity\Status\OrderState;
 use App\Order\Entity\Status\OrderStatus;
 use App\Order\Event\OrderChangeStatus;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -58,13 +59,13 @@ class OrderRepository
         return $delivery;
     }
 
-    public function changeStatus(Order $order, OrderStatus $status): void
+    public function changeStatus(Order $order, OrderStatus $status, OrderState $state = OrderState::STATE_WAIT): void
     {
         if (!$order->inStatus($status))
             throw new \DomainException("Статус '$status->value' уже присвоен");
 
-        $order->addStatus($status);
-        OrderChangeStatus::dispatch($this);
+        $order->addStatus($status, $state);
+        OrderChangeStatus::dispatch($order);
     }
 
     public function delete(Order $order): void

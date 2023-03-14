@@ -31,7 +31,7 @@ class RefundService
 
     public function fullRefund(Order $order): void
     {
-        $order->delete();
+//        $order->delete();
         $order->refund();
     }
 }
