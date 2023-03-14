@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\V1\Order;
 
-use App\Models\Product;
-use App\Order\Entity\Order;
 use App\Order\Entity\OrderGroup;
 use App\Order\Entity\OrderItem;
 use Illuminate\Http\Request;
@@ -122,13 +120,12 @@ class UpdateController extends Controller
 
             $order->changeStatusState($status, OrderState::STATE_SUCCESS);
             $order->save();
-
             return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);
         }
         catch (\Exception | \DomainException $exception) {
             $status = $exception instanceof \DomainException ? 404 : 500;
 
-            return new Response($this->orderError($exception->getMessage(), $exception->getCode()), $status);
+            return new Response($this->orderError($exception->getMessage(), (int)$exception->getCode()), $status);
         }
     }
 }

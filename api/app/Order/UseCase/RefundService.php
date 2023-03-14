@@ -12,7 +12,7 @@ class RefundService
 //        $refund = false;
 //        foreach ($order->items as $item) {
 //            foreach ($products as $product) {
-//                if ($product->code === $item->product->code and $product->price === $item->price) {
+//                if ($product->code === $item->product_id and $product->price === $item->price) {
 //                    if ($item->quantity > $product->quantity) {
 //                        $refund = true;
 //                        $item->quantity = $product->quantity;

@@ -4,7 +4,7 @@ import { Layout, Menu, Switch } from "antd";
 import {
   ShoppingCartOutlined,
   ShoppingOutlined,
-  BulbOutlined,
+  MobileOutlined,
   DashboardOutlined,
   ShopOutlined,
 } from "@ant-design/icons";
@@ -50,6 +50,13 @@ const Sidebar: React.FC<PropsType> = ({ theme, collapsed, switchTheme }) => {
           <Menu.Item key="moderation">
             <Link to="/product/moderation" state={{ menuItem: ["moderation"] }}>
               Модерация
+            </Link>
+          </Menu.Item>
+        </Menu.SubMenu>
+        <Menu.SubMenu title="Мобилка" icon={<MobileOutlined />}>
+          <Menu.Item key="mobile_order">
+            <Link to="mobile/order" state={{ menuItem: ["mobile_order"] }}>
+              Заказы
             </Link>
           </Menu.Item>
         </Menu.SubMenu>
