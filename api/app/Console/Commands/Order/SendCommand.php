@@ -30,8 +30,10 @@ class SendCommand extends Command
                 if (!$order2 = $orders->first(function (Order $item) use ($order) {
                     return $item->id != $order->id and $item->phone == $order->phone and $item->store_id == $order->store_id and $item->delivery_id != $order->delivery_id and $item->created_at->diffInMinutes($order->created_at) < 1;
                 })) {
-                    $order->sent();
-                    $order->save();
+                    if (Carbon::now()->diffInMinutes($order->created_at) >= 1) {
+                        $order->sent();
+                        $order->save();
+                    }
                     continue;
                 }
 

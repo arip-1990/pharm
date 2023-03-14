@@ -52,49 +52,54 @@ class UpdateController extends Controller
             if(!$this->isValidOrderXML($xml)) throw new \Exception('Неверный XML', 1);
 
             $order1cId = intval($xml->order->id);
-            if (isset($xml->order_transfer->id) and $group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
-                /** @var Order $order2 */
-                $order = $group->orders->whereFirst('delivery_id', 2);
-                $order2 = $group->orders->whereFirst('delivery_id', 3);
+            if (isset($xml->order_transfer->id)) {
+                if ($group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
+                    /** @var Order $order2 */
+                    $order = $group->orders->whereFirst('delivery_id', 2);
+                    $order2 = $group->orders->whereFirst('delivery_id', 3);
 
-                foreach ($xml->order_transfer->products as $item) {
-                    $price = (float)$item->product->price;
-                    $quantity = (int)$item->product->quantity;
-                    $product = Product::where('code', (int)$item->product->code)->first();
-                    $orderItem = $order->items->firstWhere('product_id', $product->id);
+                    foreach ($xml->order_transfer->products as $item) {
+                        $price = (float)$item->product->price;
+                        $quantity = (int)$item->product->quantity;
+                        $product = Product::where('code', (int)$item->product->code)->first();
+                        $orderItem = $order->items->firstWhere('product_id', $product->id);
 
-                    if (!$orderItem2 = $order2->items->firstWhere('product_id', $product->id)) {
-                        $orderItem2 = OrderItem::create($product->id, $price, $quantity);
+                        if (!$orderItem2 = $order2->items->firstWhere('product_id', $product->id)) {
+                            $orderItem2 = OrderItem::create($product->id, $price, $quantity);
 
-                        if ($orderItem) {
-                            if ($orderItem->quantity > $orderItem2->quantity) {
-                                $orderItem->update(['quantity' => $orderItem->quantity - $orderItem2->quantity]);
-                            }
-                            else {
-                                $orderItem->delete();
-                            }
-                        }
-
-                        $order2->items()->save($orderItem2);
-                    }
-                    else {
-                        if ($quantity != $orderItem2->quantity) {
                             if ($orderItem) {
-                                if ($quantity > $orderItem2->quantity) {
-                                    $orderItem->update(['quantity' => $orderItem->quantity - ($quantity - $orderItem2->quantity)]);
+                                if ($orderItem->quantity > $orderItem2->quantity) {
+                                    $orderItem->update(['quantity' => $orderItem->quantity - $orderItem2->quantity]);
                                 }
                                 else {
-                                    $orderItem->update(['quantity' => $orderItem->quantity + ($orderItem2->quantity - $quantity)]);
+                                    $orderItem->delete();
                                 }
                             }
 
-                            $orderItem2->update(['quantity' => $quantity]);
+                            $order2->items()->save($orderItem2);
+                        }
+                        else {
+                            if ($quantity != $orderItem2->quantity) {
+                                if ($orderItem) {
+                                    if ($quantity > $orderItem2->quantity) {
+                                        $orderItem->update(['quantity' => $orderItem->quantity - ($quantity - $orderItem2->quantity)]);
+                                    }
+                                    else {
+                                        $orderItem->update(['quantity' => $orderItem->quantity + ($orderItem2->quantity - $quantity)]);
+                                    }
+                                }
+
+                                $orderItem2->update(['quantity' => $quantity]);
+                            }
                         }
                     }
-                }
 
-                $order2->addStatus(OrderStatus::from((string)$xml->order_transfer->status), OrderState::STATE_SUCCESS);
-                $order2->save();
+                    $order2->addStatus(OrderStatus::from((string)$xml->order_transfer->status), OrderState::STATE_SUCCESS);
+                    $order2->save();
+                }
+                else {
+                    $order = $this->repository->getById($order1cId - config('data.orderStartNumber'));
+                }
             }
             else {
                 $order = $this->repository->getById($order1cId - config('data.orderStartNumber'));
