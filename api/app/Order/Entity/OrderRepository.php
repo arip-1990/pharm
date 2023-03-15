@@ -7,7 +7,9 @@ use App\Models\Store;
 use App\Models\User;
 use App\Order\Entity\Status\OrderState;
 use App\Order\Entity\Status\OrderStatus;
+use App\Order\Entity\Status\Status;
 use App\Order\Event\OrderChangeStatus;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 
 class OrderRepository
@@ -39,7 +41,7 @@ class OrderRepository
             'note' => $note
         ]);
 
-        $this->changeStatus($order, OrderStatus::STATUS_ACCEPTED);
+        $this->addStatus($order, OrderStatus::STATUS_ACCEPTED);
 
         return $order;
     }
@@ -59,12 +61,17 @@ class OrderRepository
         return $delivery;
     }
 
-    public function changeStatus(Order $order, OrderStatus $status, OrderState $state = OrderState::STATE_WAIT): void
+    public function addStatus(Order $order, OrderStatus $status): void
     {
-        if (!$order->inStatus($status))
+        if ($order->inStatus($status))
             throw new \DomainException("Статус '$status->value' уже присвоен");
 
-        $order->addStatus($status, $state);
+        $order->statuses->add(new Status($status, Carbon::now()));
+    }
+
+    public function changeState(Order $order, OrderState $state = OrderState::STATE_SUCCESS): void
+    {
+        $order->changeState($state);
         OrderChangeStatus::dispatch($order);
     }
 

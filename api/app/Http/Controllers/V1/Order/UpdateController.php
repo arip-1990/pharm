@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\V1\Order;
 
-use App\Order\Entity\OrderGroup;
-use App\Order\Entity\OrderItem;
-use Illuminate\Http\Request;
-use App\Order\Entity\Status\{OrderStatus, OrderState};
+use App\Order\Entity\{OrderGroup, OrderItem};
+use App\Order\Entity\Status\OrderStatus;
 use App\Order\Entity\OrderRepository;
 use App\Order\UseCase\RefundService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
@@ -88,7 +87,8 @@ class UpdateController extends Controller
                         }
                     }
 
-                    $this->repository->changeStatus($order2, OrderStatus::from((string)$xml->order_transfer->status), OrderState::STATE_SUCCESS);
+                    $this->repository->addStatus($order2, OrderStatus::from((string)$xml->order_transfer->status));
+                    $this->repository->changeState($order2);
                     $order2->save();
                 }
                 else {
@@ -96,7 +96,7 @@ class UpdateController extends Controller
                 }
             }
 
-            $this->repository->changeStatus($order, $status);
+            $this->repository->addStatus($order, $status);
             if ($status == OrderStatus::STATUS_CANCELLED) {
                 $this->service->fullRefund($order);
             }
@@ -104,15 +104,17 @@ class UpdateController extends Controller
                 $this->service->partlyRefund($order, $xml->order->products->product);
             }
 
-            $order->changeStatusState($status, OrderState::STATE_SUCCESS);
+            $this->repository->changeState($order);
             $order->save();
 
             return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);
         }
         catch (\Exception | \DomainException $exception) {
-            $status = $exception instanceof \DomainException ? 404 : 500;
-
-            return new Response($this->orderError($exception->getMessage(), (int)$exception->getCode()), $status);
+            return new Response(
+                $this->orderError($exception->getMessage(), (int)$exception->getCode(), $order1cId ?? -1),
+                $exception instanceof \DomainException ? 404 : 500,
+                headers: ['Content-Type' => 'application/xml']
+            );
         }
     }
 }
