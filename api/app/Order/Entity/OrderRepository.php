@@ -69,9 +69,11 @@ class OrderRepository
         $order->statuses->add(new Status($status, Carbon::now()));
     }
 
-    public function changeState(Order $order, OrderState $state = OrderState::STATE_SUCCESS): void
+    public function changeState(Order $order, OrderStatus $status = null, OrderState $state = OrderState::STATE_SUCCESS): void
     {
-        $order->changeState($state);
+        if ($status) $order->changeStatusState($status, $state);
+        else $order->changeState($state);
+
         OrderChangeStatus::dispatch($order);
     }
 

@@ -9,26 +9,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class SendStatusListener implements ShouldQueue
 {
     private array $statuses = [
-        'A' => 'placed', // создан
-        'O' => 'processing', // ожидается подтверждение аптеки
-        'H' => 'ready_for_pickup', // готов к выдаче
-        'F' => 'done', // выполнен. выкуплен
-        'R' => 'canceled', // отменен
-        // 'H' => 'ready_to_dispatch', -> готов к отправке
-        // 'D' => 'dispatched', -> отправлен в доставку
-        // 'D' => 'delivered', -> доставлен
-        // 'C' => 'closed', -> завершен без выкупа
-    ];
-    private array $statusMessages = [
-        'A' => 'создан',
-        'O' => 'ожидается подтверждение аптеки',
-        'H' => 'готов к выдаче',
-        'F' => 'выполнен',
-        'R' => 'отменен',
-        // 'H' => 'ready_to_dispatch', -> готов к отправке
-        // 'D' => 'dispatched', -> отправлен в доставку
-        // 'D' => 'delivered', -> доставлен
-        // 'C' => 'closed', -> завершен без выкупа
+        'A' => 'Создан',                            // placed
+        'O' => 'Ожидается подтверждение аптеки',    // processing
+        'H' => 'Готов к выдаче',                    // ready_for_pickup
+        'F' => 'Выполнен',                          // done
+        'R' => 'Отменен',                           // canceled
+        // 'H' => 'Готов к отправке',               // ready_to_dispatch
+        // 'D' => 'Отправлен в доставку',           // dispatched
+        // 'D' => 'Доставлен',                      // delivered
+        // 'C' => 'Завершен без выкупа',            // closed
     ];
 
     public function handle(OrderChangeStatus $event): void
@@ -40,8 +29,8 @@ class SendStatusListener implements ShouldQueue
 
         $data = [
             'id' => (string)$order->id,
-            'code' => $this->statuses[$status->value->value],
-            'message' => $this->statusMessages[$status->value->value]
+            'code' => $status->value->value,
+            'message' => $this->statuses[$status->value->value]
         ];
 
         if ($order->user) $data['userId'] = $order->user->id;

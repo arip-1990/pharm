@@ -100,11 +100,11 @@ class UpdateController extends Controller
             if ($status == OrderStatus::STATUS_CANCELLED) {
                 $this->service->fullRefund($order);
             }
-            elseif (isset($xml->order->products->product) and ($status == OrderStatus::STATUS_ASSEMBLED or $status == OrderStatus::STATUS_RECEIVED)) {
-                $this->service->partlyRefund($order, $xml->order->products->product);
-            }
+//            elseif (isset($xml->order->products->product) and ($status == OrderStatus::STATUS_ASSEMBLED or $status == OrderStatus::STATUS_RECEIVED)) {
+//                $this->service->partlyRefund($order, $xml->order->products->product);
+//            }
 
-            $this->repository->changeState($order);
+            $this->repository->changeState($order, $status);
             $order->save();
 
             return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);
