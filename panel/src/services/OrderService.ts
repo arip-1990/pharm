@@ -45,7 +45,13 @@ export const orderApi = createApi({
           ...item,
           createdAt: moment(item.createdAt),
           updatedAt: moment(item.updatedAt),
-          statuses: item.statuses.map(status => ({...status, createdAt: moment(status.createdAt)}))
+          statuses: item.statuses.map(status => ({...status, createdAt: moment(status.createdAt)})),
+          transfer: item.transfer ? {
+            ...item.transfer,
+            createdAt: moment(item.transfer.createdAt),
+            updatedAt: moment(item.transfer.updatedAt),
+            statuses: item.transfer.statuses.map(status => ({...status, createdAt: moment(status.createdAt)}))
+          } : null
         }))
       }),
     }),
@@ -57,7 +63,13 @@ export const orderApi = createApi({
         ...response,
         createdAt: moment(response.createdAt),
         updatedAt: moment(response.updatedAt),
-        statuses: response.statuses.map(status => ({...status, createdAt: moment(status.createdAt)}))
+        statuses: response.statuses.map(status => ({...status, createdAt: moment(status.createdAt)})),
+        transfer: response.transfer ? {
+          ...response.transfer,
+          createdAt: moment(response.transfer.createdAt),
+          updatedAt: moment(response.transfer.updatedAt),
+          statuses: response.transfer.statuses.map(status => ({...status, createdAt: moment(status.createdAt)}))
+        } : null
       }),
     }),
     fetchOrderItems: builder.query<IItem[], number>({

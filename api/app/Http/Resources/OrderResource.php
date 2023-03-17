@@ -49,7 +49,8 @@ class OrderResource extends JsonResource
                 'product' => new ProductResource($item->product),
                 'price' => $item->price,
                 'quantity' => $item->quantity
-            ])
+            ]),
+            'transfer' => ($this->group and $this->delivery_id == 2) ? new OrderResource($this->group->orders()->firstWhere('id', '!=', $this->id)) : null
         ];
     }
 }

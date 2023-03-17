@@ -35,6 +35,11 @@ const Order: React.FC = () => {
               ? "ascend"
               : "descend") as SortOrder)
           : null,
+      render: ([id, isTransfer]: any, record: any) => (
+        <span>
+          {id}<br />{isTransfer ? 'Перемещение' : ''}
+        </span>
+      ),
     },
     {
       title: "Имя",
@@ -159,7 +164,7 @@ const Order: React.FC = () => {
             loading={ordersLoading}
             dataSource={orders?.data.map((item) => ({
               key: item.id,
-              id: item.id,
+              id: [item.id, !!item.transfer],
               userName: item.customer.name,
               userPhone: item.customer.phone,
               store: item.store.name,
@@ -183,7 +188,7 @@ const Order: React.FC = () => {
             }}
             onRow={(record) => ({
               onClick: () =>
-                navigate(`/order/${record.id}`, {
+                navigate(`/order/${record.id[0]}`, {
                   state: { menuItem: ["order"] },
                 }),
             })}

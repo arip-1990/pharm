@@ -259,6 +259,6 @@ class Order extends Model
 
     public function group(): BelongsTo
     {
-        return $this->belongsTo(OrderGroup::class);
+        return $this->belongsTo(OrderGroup::class, 'order_group_id');
     }
 }
