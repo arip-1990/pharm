@@ -17,8 +17,10 @@ class ProductStatisticResource extends JsonResource
                 'name' => $this->first_name . ($this->last_name ? ' ' . $this->last_name : '')
             ],
             'addCountPhotos' => $this->addPhotos->where('updated_at', '>=', Carbon::now()->startOfMonth())->count(),
+            'editCountValues' => $this->editValues->where('updated_at', '>=', Carbon::now()->startOfMonth())->count(),
             'editCountProducts' => $this->editProducts->where('updated_at', '>=', Carbon::now()->startOfMonth())->count(),
             'addTotalCountPhotos' => $this->addPhotos->count(),
+            'editTotalCountValuesValues' => $this->editValues->count(),
             'editTotalCountProducts' => $this->editProducts->count()
         ];
     }

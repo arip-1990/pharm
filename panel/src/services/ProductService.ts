@@ -3,13 +3,14 @@ import { axiosBaseQuery } from "./api";
 import moment from "moment";
 import { IPagination } from "../models/IPagination";
 import { IProduct } from "../models/IProduct";
-import { IUser } from "../models/IUser";
 
 interface IStatisticUser {
   user: { id: string; name: string };
   addCountPhotos: number;
+  editCountValues: number;
   editCountProducts: number;
   addTotalCountPhotos: number;
+  editTotalCountValues: number;
   editTotalCountProducts: number;
 }
 

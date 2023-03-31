@@ -38,6 +38,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Collection<VisitStatistic> $visits
  * @property Collection<Photo> $addPhotos
  * @property Collection<Product> $editProducts
+ * @property Collection<Value> $editValues
  * @property Collection<ModerationProduct> $moderationProducts
  * @property Limit $priceLimit
  */
@@ -104,6 +105,11 @@ class User extends Authenticatable
     public function editProducts(): HasMany
     {
         return $this->hasMany(Product::class, 'editor_id');
+    }
+
+    public function editValues(): HasMany
+    {
+        return $this->hasMany(Value::class, 'editor_id');
     }
 
     public function moderationProducts(): HasMany

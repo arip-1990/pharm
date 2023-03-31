@@ -13,7 +13,8 @@ class StatisticController extends Controller
     public function __invoke(Request $request): ResourceCollection
     {
         return ProductStatisticResource::collection(
-            User::whereHas('addPhotos')->orWhereHas('editProducts')->paginate($request->get('pageSize', 10))
+            User::whereHas('addPhotos')->orWhereHas('editProducts')->orWhereHas('editValues')
+                ->paginate($request->get('pageSize', 10))
         );
     }
 }

@@ -18,14 +18,13 @@ class UpdateAttributesController extends Controller
         foreach ($request->all() as $key => $value) {
             try {
                 $attribute = Attribute::query()->where('name', $key)->firstOrFail();
-                $values[] = new Value(['attribute_id' => $attribute->id, 'value' => $value]);
+                $values[] = new Value(['attribute_id' => $attribute->id, 'value' => $value, 'editor_id' => $request->user()->id]);
             }
             catch (ModelNotFoundException $e) {}
         }
 
         $product->values()->delete();
         $product->values()->saveMany($values);
-        $product->editor()->associate($request->user());
 
         return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
     }

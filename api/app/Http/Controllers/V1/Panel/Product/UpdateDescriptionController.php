@@ -11,8 +11,10 @@ class UpdateDescriptionController extends Controller
 {
     public function handle(Product $product, DescriptionRequest $request): JsonResponse
     {
-        $product->update(['description' => $request['description']]);
+        $product->description = $request['description'];
+
         $product->editor()->associate($request->user());
+        $product->save();
 
         return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
     }
