@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property ?Category $category
  * @property ?ProductStatistic $statistic
+ * @property ?User $editor
  *
  * @property Collection<Photo> $photos
  * @property Collection<Photo> $checkedPhotos
@@ -164,5 +165,10 @@ class Product extends Model
     public function statistic(): HasOne
     {
         return $this->hasOne(ProductStatistic::class, 'id');
+    }
+
+    public function editor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'editor_id');
     }
 }

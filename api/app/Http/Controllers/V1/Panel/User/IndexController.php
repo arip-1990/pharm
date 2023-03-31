@@ -11,6 +11,6 @@ class IndexController extends Controller
 {
     public function handle(): JsonResponse
     {
-        return new JsonResponse(UserResource::collection(User::all()));
+        return new JsonResponse(UserResource::collection(User::all()), options: JSON_UNESCAPED_UNICODE);
     }
 }

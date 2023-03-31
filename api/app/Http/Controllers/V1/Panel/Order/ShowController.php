@@ -12,13 +12,13 @@ class ShowController extends Controller
     public function handle(Order $order): JsonResponse
     {
         try {
-            return new JsonResponse(new OrderResource($order));
+            return new JsonResponse(new OrderResource($order), options: JSON_UNESCAPED_UNICODE);
         }
         catch (\Exception $exception) {
             return new JsonResponse([
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
-            ], 500);
+            ], 500, options: JSON_UNESCAPED_UNICODE);
         }
     }
 }

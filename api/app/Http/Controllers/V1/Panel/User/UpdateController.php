@@ -15,9 +15,9 @@ class UpdateController extends Controller
         $requestValidated = $request->validated();
         if ($user = User::find($requestValidated['userIdentifier'])) {
             $user->update($requestValidated);
-            return new JsonResponse(['user' => new UserResource($user)]);
+            return new JsonResponse(['user' => new UserResource($user)], options: JSON_UNESCAPED_UNICODE);
         }
 
-        return new JsonResponse('Not found');
+        return new JsonResponse('Not found', options: JSON_UNESCAPED_UNICODE);
     }
 }

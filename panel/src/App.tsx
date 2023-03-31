@@ -14,7 +14,8 @@ import ProductView from "./pages/product/View";
 import Offer from "./pages/offer";
 import OfferView from "./pages/offer/View";
 import Moderation from "./pages/product/moderation";
-import MobileOrder from './pages/mobile/Order';
+import MobileOrder from "./pages/mobile/Order";
+import Statistic from "./pages/product/Statistic";
 
 const Loader = () => <Spin size="large" indicator={<LoadingOutlined spin />} />;
 
@@ -49,10 +50,11 @@ export default () => {
               <Route index element={<Product />} />
               <Route path=":slug" element={<ProductView />} />
               <Route path="moderation" element={<Moderation />} />
+              <Route path="stats" element={<Statistic />} />
             </Route>
             <Route path="mobile">
-            <Route index element={<MobileOrder />} />
-            <Route path="order" element={<MobileOrder />} />
+              <Route index element={<MobileOrder />} />
+              <Route path="order" element={<MobileOrder />} />
             </Route>
           </Route>
         ) : (

@@ -14,6 +14,6 @@ class LogoutController extends Controller
         Auth::logout();
         $request->session()->regenerate();
 
-        return new JsonResponse();
+        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
     }
 }

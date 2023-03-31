@@ -16,6 +16,6 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return new JsonResponse();
+        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
     }
 }

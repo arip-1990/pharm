@@ -19,7 +19,7 @@ class SendDataController
             return new JsonResponse([
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
-            ], 500);
+            ], 500, options: JSON_UNESCAPED_UNICODE);
         }
     }
 }

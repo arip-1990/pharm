@@ -3,6 +3,7 @@
 namespace App\Order\Entity;
 
 use App\Casts\StatusCollectionCast;
+use App\Models\Status\Platform;
 use App\Models\Store;
 use App\Models\User;
 use App\Order\Entity\Status\{OrderState, OrderStatus, Status};
@@ -76,6 +77,11 @@ class Order extends Model
     public function setPlatform(string $platform): void
     {
         $this->platform = $platform;
+    }
+
+    public function isMobile(): bool
+    {
+        return in_array($this->platform, [Platform::ANDROID->value, Platform::IOS->value]);
     }
 
     public function setUserInfo(string $name, string $phone, string $email = null): void

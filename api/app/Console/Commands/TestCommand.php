@@ -3,22 +3,16 @@
 namespace App\Console\Commands;
 
 use App\Order\Entity\Order;
-use App\Order\Entity\OrderGroup;
-use App\Order\Entity\OrderItem;
-use App\Order\Entity\Status\OrderState;
-use App\Order\Entity\Status\OrderStatus;
 use App\Order\UseCase\GenerateDataService;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 
 ini_set('memory_limit', -1);
 
 class TestCommand extends Command
 {
-    protected $signature = 'test {orderId}';
+    protected $signature = 'test';
     protected $description = 'test';
 
     public function handle(): int

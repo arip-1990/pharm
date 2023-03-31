@@ -3,6 +3,7 @@
 namespace App\Order\UseCase;
 
 use App\Helper;
+use App\Models\Status\Platform;
 use App\Order\Entity\Delivery;
 use App\Order\Entity\Order;
 use App\Order\Entity\Payment;
@@ -64,6 +65,7 @@ class GenerateDataService
                 </deliveries>";
         }
 
+        $isMobile = $this->order->isMobile() ? 1 : 0;
         $xml = "<orders_request>
             <orders>
                 <order>
@@ -74,6 +76,7 @@ class GenerateDataService
                     <price>$price_all</price>
                     <city>RU-100000</city>
                     <comment>{$this->order->note}</comment>
+                    <is_mobile>{$isMobile}</is_mobile>
                     <customer>
                         <type>PRIVATE</type>
                         <name>{$this->order->name}</name>

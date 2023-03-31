@@ -19,9 +19,9 @@ class UpdatePhotoController extends Controller
             }
         }
         catch (\Exception $e) {
-            return new JsonResponse($e->getMessage());
+            return new JsonResponse($e->getMessage(), options: JSON_UNESCAPED_UNICODE);
         }
 
-        return new JsonResponse();
+        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
     }
 }

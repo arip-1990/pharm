@@ -52,6 +52,11 @@ const Sidebar: React.FC<PropsType> = ({ theme, collapsed, switchTheme }) => {
               Модерация
             </Link>
           </Menu.Item>
+          <Menu.Item key="productStats">
+            <Link to="/product/stats" state={{ menuItem: ["productStats"] }}>
+              Статистика
+            </Link>
+          </Menu.Item>
         </Menu.SubMenu>
         <Menu.SubMenu title="Мобилка" icon={<MobileOutlined />}>
           <Menu.Item key="mobile_order">

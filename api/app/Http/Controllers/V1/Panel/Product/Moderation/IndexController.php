@@ -27,6 +27,6 @@ class IndexController
             }
         }
 
-        return new JsonResponse(ProductResource::collection($products));
+        return new JsonResponse(ProductResource::collection($products), options: JSON_UNESCAPED_UNICODE);
     }
 }

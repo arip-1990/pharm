@@ -21,6 +21,6 @@ class UpdateController extends Controller
             'barcode' => $request['barcode'] ?? null
         ]);
 
-        return response()->json();
+        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
     }
 }
