@@ -1,4 +1,4 @@
-import {FC, useCallback, useEffect} from "react";
+import { FC, useCallback, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Layout from "../templates";
@@ -27,13 +27,18 @@ const Stock: FC = () => {
     else refetch();
   }, [city]);
 
-    const getDefaultGenerator = useCallback(() => [{ href: '/stock', text: "Акции" }], []);
+  const getDefaultGenerator = useCallback(
+    () => [{ href: "/stock", text: "Акции" }],
+    []
+  );
 
   return (
     <Layout title="Акции - Сеть аптек 120/80" description="Акции сайта.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
-      <h5 className="text-center">Период действия акции с 3 по 31 марта 2023г.</h5>
+      <h5 className="text-center">
+        Период действия акции с 1 по 30 марта 2023г.
+      </h5>
       <div className="row">
         {data?.products.length ? (
           <>
@@ -59,16 +64,16 @@ const Stock: FC = () => {
               </div>
             </div>
           </>
-          ) : (
-            <h3 className="text-center">Товары отсутствуют</h3>
-          )}
+        ) : (
+          <h3 className="text-center">Товары отсутствуют</h3>
+        )}
       </div>
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  (store) => async ({ params }) => {
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps((store) => async ({ params }) => {
     const page = Number(params?.page) || 1;
 
     store.dispatch(fetchStockProducts.initiate({ page }));
@@ -76,7 +81,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     await Promise.all(getRunningOperationPromises());
 
     return { props: {} };
-  }
-);
+  });
 
 export default Stock;
