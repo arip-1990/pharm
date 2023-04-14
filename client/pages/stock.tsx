@@ -37,7 +37,7 @@ const Stock: FC = () => {
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <h5 className="text-center">
-        Период действия акции с 1 по 30 марта 2023г.
+        Период действия акции с 1 по 30 апреля 2023г.
       </h5>
       <div className="row">
         {data?.products.length ? (
@@ -72,8 +72,8 @@ const Stock: FC = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps((store) => async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async ({ params }) => {
     const page = Number(params?.page) || 1;
 
     store.dispatch(fetchStockProducts.initiate({ page }));
@@ -81,6 +81,7 @@ export const getServerSideProps: GetServerSideProps =
     await Promise.all(getRunningOperationPromises());
 
     return { props: {} };
-  });
+  }
+);
 
 export default Stock;
