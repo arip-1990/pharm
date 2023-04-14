@@ -40,7 +40,4 @@ module.exports = {
   experimental: {
     outputStandalone: true,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };

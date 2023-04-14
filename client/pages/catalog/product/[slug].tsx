@@ -19,6 +19,7 @@ import { Carousel } from "../../../components/carousel";
 import Breadcrumbs from "../../../components/breadcrumbs";
 
 import defaultImage from "../../../assets/images/default.png";
+import Modal from "../../../components/modal";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -42,6 +43,7 @@ const isFavorite = (id: string) => {
 };
 
 const Product: FC = () => {
+  const [showCarousel, setShowCarousel] = useState<boolean>(false);
   const [city] = useCookie("city");
   const router = useRouter();
   const { slug } = router.query;
@@ -86,23 +88,17 @@ const Product: FC = () => {
             itemType="https://schema.org/Product"
           >
             <div className="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
-              {data?.product.photos.length ? (
-                <Carousel
-                  name={data?.product.name}
-                  photos={data?.product.photos}
-                />
-              ) : (
-                <img
-                  className="mw-100 m-auto"
-                  itemProp="image"
-                  src={
-                    data?.product.photos.length
-                      ? data?.product.photos[0].url
-                      : defaultImage.src
-                  }
-                  alt={data?.product.name}
-                />
-              )}
+              <img
+                className="mw-100 m-auto"
+                itemProp="image"
+                src={
+                  data?.product.photos.length
+                    ? data?.product.photos[0].url
+                    : defaultImage.src
+                }
+                alt={data?.product.name}
+                onClick={() => setShowCarousel(true)}
+              />
 
               {isFavorite(data?.product.id)}
             </div>
@@ -276,6 +272,10 @@ const Product: FC = () => {
           ))}
         </>
       ) : null}
+
+      <Modal show={showCarousel}>
+        <Carousel data={data?.product.photos} />
+      </Modal>
     </Layout>
   );
 };
