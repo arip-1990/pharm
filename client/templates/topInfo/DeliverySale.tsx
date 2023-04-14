@@ -15,13 +15,13 @@ const DeliverySale: FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  return (
+  return isMounted() ? (
     <div className={classNames(styles.deliverySale, { [styles.show]: show })}>
       <span className={styles.deliverySale_text}>
         Бесплатная доставка при заказе от 2000 рублей
       </span>
     </div>
-  );
+  ) : null;
 };
 
 export default DeliverySale;

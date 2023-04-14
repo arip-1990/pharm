@@ -1,10 +1,10 @@
-import Layout from "../../../templates";
-import { GetServerSideProps } from "next";
 import { FC, useCallback, useEffect, useState } from "react";
-import defaultImage from "../../../assets/images/default.png";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { useLocalStorage } from "react-use-storage";
+
+import Layout from "../../../templates";
 import Accordion from "../../../components/accordion";
-import Zoom from "../../../components/zoom";
 import Cart from "../../../components/cart";
 import {
   getProduct,
@@ -12,11 +12,13 @@ import {
   useGetProductQuery,
 } from "../../../lib/catalogService";
 import { wrapper } from "../../../store";
-import { useRouter } from "next/router";
 import { useCookie } from "../../../hooks/useCookie";
 import { getTreeCategories } from "../../../helpers";
 import { useFetchCategoriesQuery } from "../../../lib/categoryService";
+import { Carousel } from "../../../components/carousel";
 import Breadcrumbs from "../../../components/breadcrumbs";
+
+import defaultImage from "../../../assets/images/default.png";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -85,15 +87,19 @@ const Product: FC = () => {
           >
             <div className="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
               {data?.product.photos.length ? (
-                <Zoom
-                  src={data?.product.photos[0].url}
-                  alt={data?.product.name}
+                <Carousel
+                  name={data?.product.name}
+                  photos={data?.product.photos}
                 />
               ) : (
                 <img
                   className="mw-100 m-auto"
                   itemProp="image"
-                  src={defaultImage.src}
+                  src={
+                    data?.product.photos.length
+                      ? data?.product.photos[0].url
+                      : defaultImage.src
+                  }
                   alt={data?.product.name}
                 />
               )}
@@ -274,8 +280,8 @@ const Product: FC = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps((store) => async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async ({ params }) => {
     const { slug } = params;
 
     store.dispatch(getProduct.initiate(String(slug)));
@@ -283,6 +289,7 @@ export const getServerSideProps: GetServerSideProps =
     await Promise.all(getRunningOperationPromises());
 
     return { props: {} };
-  });
+  }
+);
 
 export default Product;

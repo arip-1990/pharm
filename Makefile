@@ -78,7 +78,7 @@ api-backup:
 	docker compose run --rm api-postgres-backup
 
 
-build: build-client build-panel build-parser build-bot build-api
+build: build-client build-panel build-bot build-api
 
 build-client:
 	docker --log-level=debug build --pull --file=client/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-client:${IMAGE_TAG} client
@@ -87,8 +87,8 @@ build-client:
 build-panel:
 	docker --log-level=debug build --pull --file=panel/docker/prod/nginx/Dockerfile --tag=${REGISTRY}/pharm-panel:${IMAGE_TAG} panel
 
-build-parser:
-	docker --log-level=debug build --pull --file=parser/docker/Dockerfile --tag=${REGISTRY}/pharm-parser:${IMAGE_TAG} parser
+# build-parser:
+# 	docker --log-level=debug build --pull --file=parser/docker/Dockerfile --tag=${REGISTRY}/pharm-parser:${IMAGE_TAG} parser
 
 build-bot:
 	docker --log-level=debug build --pull --file=bot/docker/Dockerfile --tag=${REGISTRY}/pharm-bot:${IMAGE_TAG} bot
@@ -99,7 +99,7 @@ build-api:
 	docker --log-level=debug build --pull --file=api/docker/prod/php-cli/Dockerfile --tag=${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG} api
 	docker --log-level=debug build --pull --file=api/docker/common/backup/Dockerfile --tag=${REGISTRY}/pharm-db-backup:${IMAGE_TAG} api/docker/common
 
-push: push-client push-panel push-parser push-bot push-api
+push: push-client push-panel push-bot push-api
 
 push-client:
 	docker push ${REGISTRY}/pharm-client:${IMAGE_TAG}
@@ -108,8 +108,8 @@ push-client:
 push-panel:
 	docker push ${REGISTRY}/pharm-panel:${IMAGE_TAG}
 
-push-parser:
-	docker push ${REGISTRY}/pharm-parser:${IMAGE_TAG}
+# push-parser:
+# 	docker push ${REGISTRY}/pharm-parser:${IMAGE_TAG}
 
 push-bot:
 	docker push ${REGISTRY}/pharm-bot:${IMAGE_TAG}
