@@ -6,7 +6,6 @@ import { ViewBase } from "./ViewBase";
 import { ViewPhotos } from "./ViewPhotos";
 import { ViewDescription } from "./ViewDescription";
 import { ViewAttributes } from "./ViewAttributes";
-import { useFetchOfferQuery } from "../../services/OfferService";
 
 const offerColumns = [
   { dataIndex: "name", title: "Название аптеки" },

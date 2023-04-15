@@ -2,6 +2,7 @@
 
 namespace App\Product\Entity;
 
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?Carbon $updated_at
  *
  * @property Attribute $attribute
+ * @property ?User $editor
  */
 class Value extends Model
 {
@@ -21,5 +23,10 @@ class Value extends Model
     public function attribute(): BelongsTo
     {
         return $this->belongsTo(Attribute::class);
+    }
+
+    public function editor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'editor_id');
     }
 }

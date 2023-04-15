@@ -1,36 +1,21 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode } from "react";
 import Head from "next/head";
 import { Container, Row } from "react-bootstrap";
 import { NotificationContainer } from "react-notifications";
 
 import Header from "./header";
 import Footer from "./footer";
-import Loyalty from "../components/loyalty";
-import Auth from "../components/auth";
 import TopInfo from "./topInfo";
 import Banner from "../components/banner";
-import { useAuth } from "../hooks/useAuth";
 
 type Props = {
   title: string;
   description?: string;
   children?: ReactNode;
   banner?: boolean;
-  type?: "main" | "loyalty";
 };
 
-const Layout: FC<Props> = ({
-  title,
-  description,
-  children,
-  banner,
-  type = "main",
-}) => {
-  const { isAuth } = useAuth();
-  const [showModal, setShowModal] = useState<boolean>(false);
-
-  const handleClick = () => setShowModal(true);
-
+const Layout: FC<Props> = ({ title, description, children, banner }) => {
   return (
     <>
       <Head>
@@ -53,11 +38,7 @@ const Layout: FC<Props> = ({
       {banner && (
         <Container>
           <Row style={{ justifyContent: "center" }}>
-            {type == "main" ? (
-              <Banner />
-            ) : (
-              <Loyalty.Banner disabled={isAuth} onClick={handleClick} />
-            )}
+            <Banner />
           </Row>
         </Container>
       )}
@@ -67,12 +48,6 @@ const Layout: FC<Props> = ({
       </Container>
 
       <Footer />
-
-      <Auth
-        show={showModal}
-        type="register"
-        onHide={() => setShowModal(false)}
-      />
     </>
   );
 };

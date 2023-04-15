@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UseCases;
+namespace App\Product\UseCase;
 
 use App\Http\Requests\Catalog\SearchRequest;
 use App\Product\Entity\Product;

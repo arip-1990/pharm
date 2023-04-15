@@ -62,7 +62,7 @@
                     </li>
                     <li style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
                         <b>Способы оплаты:</b>
-                        <span>{{ $order->payment->type === \App\Models\Payment::TYPE_CARD ? 'Банковской картой' : 'Наличными' }}</span>
+                        <span>{{ $order->payment->isType(\App\Order\Entity\Payment::TYPE_CARD) ? 'Банковской картой' : 'Наличными' }}</span>
                     </li>
                 </ul>
             </div>

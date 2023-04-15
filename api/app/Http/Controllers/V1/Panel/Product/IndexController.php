@@ -30,16 +30,6 @@ class IndexController extends Controller
                     break;
                 case 'missing':
                     $query->doesntHave('photos');
-                    break;
-                case 'checked':
-                    $query->whereHas('photos', function (Builder $builder) {
-                        $builder->where('status', Photo::STATUS_CHECKED);
-                    });
-                    break;
-                case 'unchecked':
-                    $query->whereHas('photos', function (Builder $builder) {
-                        $builder->where('status', Photo::STATUS_NOT_CHECKED);
-                    });
             }
         }
 

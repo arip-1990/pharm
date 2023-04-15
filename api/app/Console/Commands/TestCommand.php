@@ -2,10 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Order\Entity\Order;
-use App\Order\UseCase\GenerateDataService;
-use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 ini_set('memory_limit', -1);
@@ -40,23 +36,6 @@ class TestCommand extends Command
 //        } finally {
 //            $order->save();
 //        }
-
-        $this->info("Процесс завершена!");
         return self::SUCCESS;
-    }
-
-    private function orderSend(Order $order): string
-    {
-        $service = new GenerateDataService($order);
-        $config = config('data.1c');
-
-        $client = new Client([
-            'base_uri' => $config['base_url'],
-            'auth' => [$config['login'], $config['password']],
-            'verify' => false
-        ]);
-        $response = $client->post($config['urls'][5], ['body' => $service->generateSenData(Carbon::now())]);
-
-        return $response->getBody()->getContents();
     }
 }

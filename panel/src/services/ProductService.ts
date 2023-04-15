@@ -153,14 +153,6 @@ export const productApi = createApi({
       }),
       invalidatesTags: ["IProduct"],
     }),
-    updateStatusPhotosProduct: builder.mutation<void, number[]>({
-      query: (items) => ({
-        url: "/product/upload/status",
-        method: "patch",
-        data: { items },
-      }),
-      invalidatesTags: ["IProduct"],
-    }),
     updatePhotosProduct: builder.mutation<void, any[]>({
       query: (items) => ({
         url: "/product/upload",
@@ -206,7 +198,6 @@ export const {
   useUpdateAttributesProductMutation,
   useAddPhotoProductMutation,
   useUpdatePhotosProductMutation,
-  useUpdateStatusPhotosProductMutation,
   useDeletePhotosProductMutation,
   useFetchStatisticQuery,
 } = productApi;

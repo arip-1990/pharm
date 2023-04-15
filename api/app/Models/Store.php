@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Product\Entity\Product;
+use App\Product\Entity\{Offer, Product};
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;

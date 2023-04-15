@@ -3,8 +3,9 @@
 namespace App\Product\Entity;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
@@ -12,11 +13,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?string $description
  * @property float $percent
  * @property boolean $active
- * @property ?Carbon $created_at
- * @property ?Carbon $updated_at
- * @property ?Carbon $deleted_at
+ * @property ?Carbon $started_at
+ * @property ?Carbon $expired_at
+ *
+ * @property Collection<Product> $products
  */
 class Discount extends Model
 {
-    use SoftDeletes;
+    protected $casts = [
+        'started_at' => 'datetime',
+        'expired_at' => 'datetime'
+    ];
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class);
+    }
 }

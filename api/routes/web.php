@@ -111,3 +111,8 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// Settings site data
+Route::prefix('settings')->group(function () {
+    Route::get('/banners', V1\Setting\Banner\IndexController::class);
+});
+

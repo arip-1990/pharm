@@ -12,7 +12,7 @@ class LoginController extends Controller
     public function handle(LoginRequest $request): JsonResponse
     {
         if (!Auth::attempt($request->only(['email', 'password'])))
-            return new JsonResponse('Учетные данные не совпадают', 401);
+            return new JsonResponse('Учетные данные не совпадают', 401, options: JSON_UNESCAPED_UNICODE);
 
         $request->session()->regenerate();
 

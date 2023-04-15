@@ -3,6 +3,7 @@
 namespace App\Product\Entity;
 
 use App\Models\Store;
+use App\Models\User;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,14 +31,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $deleted_at
  *
  * @property ?Category $category
- * @property ?Discount $discount
  * @property ?ProductStatistic $statistic
+ * @property ?User $editor
  *
  * @property Collection<Photo> $photos
- * @property Collection<Photo> $checkedPhotos
  * @property Collection<Photo> $certificates
  * @property Collection<Offer> $offers
  * @property Collection<Value> $values
+ * @property Collection<Discount> $discounts
  */
 class Product extends Model
 {
@@ -118,19 +119,14 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function discount(): BelongsTo
+    public function discounts(): BelongsToMany
     {
-        return $this->belongsTo(Discount::class)->where('active', true);
+        return $this->belongsToMany(Discount::class)->where('active', true);
     }
 
     public function photos(): BelongsToMany
     {
         return $this->belongsToMany(Photo::class)->where('type', Photo::TYPE_PICTURE)->orderBy('sort');
-    }
-
-    public function checkedPhotos(): BelongsToMany
-    {
-        return $this->photos()->where('status', Photo::STATUS_CHECKED);
     }
 
     public function certificates(): BelongsToMany
@@ -165,5 +161,10 @@ class Product extends Model
     public function statistic(): HasOne
     {
         return $this->hasOne(ProductStatistic::class, 'id');
+    }
+
+    public function editor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'editor_id');
     }
 }

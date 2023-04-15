@@ -1,10 +1,26 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper";
+
+import { useFetchBannersQuery } from "../../lib/bannerService";
 
 import styles from "./Banner.module.scss";
 
 const Banner: FC = () => {
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const { data, isFetching } = useFetchBannersQuery();
+
+  useEffect(() => {
+    const changeMobileState = () => {
+      if (window.matchMedia("(min-width: 768px)").matches) setIsMobile(false);
+      else setIsMobile(true);
+    };
+
+    window.addEventListener("resize", changeMobileState);
+
+    return () => window.removeEventListener("resize", changeMobileState);
+  }, []);
+
   return (
     <Swiper
       style={{ padding: 0 }}
@@ -15,15 +31,19 @@ const Banner: FC = () => {
       pagination={true}
       modules={[Autoplay, Navigation, Pagination]}
     >
-      <SwiperSlide>
-        <div className={`${styles.banner} ${styles.banner_1}`} />
-      </SwiperSlide>
-      <SwiperSlide>
-        <div className={`${styles.banner} ${styles.banner_2}`} />
-      </SwiperSlide>
-      <SwiperSlide>
-        <div className={`${styles.banner} ${styles.banner_3}`} />
-      </SwiperSlide>
+      {data?.map((item) => (
+        <SwiperSlide key={item.id}>
+          <div
+            className={styles.banner}
+            style={{
+              backgroundImage:
+                isMobile && item.picture.mobile
+                  ? `url(${item.picture.mobile})`
+                  : `url(${item.picture.main})`,
+            }}
+          />
+        </SwiperSlide>
+      ))}
     </Swiper>
   );
 };

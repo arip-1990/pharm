@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float $rating
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
+ *
+ * @property Product $product
  */
 class ProductStatistic extends Model
 {

@@ -4,9 +4,9 @@ namespace App\Order\Listener;
 
 use Illuminate\Support\Facades\Redis;
 use App\Order\Entity\{Order, Payment};
-use App\Order\UseCase\GenerateDataService;
 use App\Order\Entity\Status\{OrderState, OrderStatus};
 use App\Order\Event\OrderSend;
+use App\Order\UseCase\GenerateDataService;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;

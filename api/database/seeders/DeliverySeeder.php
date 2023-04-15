@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Delivery;
+use App\Order\Entity\Delivery;
 use Illuminate\Database\Seeder;
 
 class DeliverySeeder extends Seeder

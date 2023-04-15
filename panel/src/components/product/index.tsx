@@ -88,14 +88,6 @@ const Product: React.FC = () => {
           text: "Отсутствует",
           value: "missing",
         },
-        {
-          text: "Проверенные",
-          value: "checked",
-        },
-        {
-          text: "Не проверенные",
-          value: "unchecked",
-        },
       ],
       filteredValue: filters.filters
         .filter((item) => item.field === "photo")

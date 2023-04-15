@@ -1,9 +1,8 @@
 import React from "react";
-import { Card, Space, Button, Dropdown, Menu, Typography } from "antd";
+import { Card, Space, Button } from "antd";
 import {
   useDeletePhotosProductMutation,
   useUpdatePhotosProductMutation,
-  useUpdateStatusPhotosProductMutation,
 } from "../../services/ProductService";
 import { Upload } from "../Upload";
 import { IPhoto } from "../../models/IPhoto";
@@ -22,10 +21,6 @@ const ViewPhotos: React.FC<PropsType> = ({ slug, photos, loading }) => {
     updatePhotos,
     { isLoading: updateLoading },
   ] = useUpdatePhotosProductMutation();
-  const [
-    updateStatusPhotos,
-    { isLoading: updateStatusLoading },
-  ] = useUpdateStatusPhotosProductMutation();
   const [
     deletePhotos,
     { isLoading: deleteLoading },
@@ -47,13 +42,7 @@ const ViewPhotos: React.FC<PropsType> = ({ slug, photos, loading }) => {
     setItems(items);
   };
 
-  const handleSelect = ({ key }: any) => {
-    if (key === "delete") {
-      deletePhotos(actionPhotoIds);
-    } else if (key === "checked") {
-      updateStatusPhotos(actionPhotoIds);
-    }
-  };
+  const handleDelete = () => deletePhotos(actionPhotoIds);
 
   return (
     <Card
@@ -61,25 +50,15 @@ const ViewPhotos: React.FC<PropsType> = ({ slug, photos, loading }) => {
       loading={loading}
       extra={
         <Space>
-          <Dropdown
+          <Button
+            type="primary"
             disabled={!actionPhotoIds.length}
-            placement="bottomLeft"
-            overlay={
-              <Menu onClick={handleSelect}>
-                <Menu.Item key="checked">
-                  <Typography.Text type="success">Проверен</Typography.Text>
-                </Menu.Item>
-                <Menu.Item key="delete">
-                  <Typography.Text type="danger">Удалить</Typography.Text>
-                </Menu.Item>
-              </Menu>
-            }
-            arrow
+            loading={deleteLoading}
+            danger
+            onClick={handleDelete}
           >
-            <Button loading={deleteLoading || updateStatusLoading}>
-              Действие
-            </Button>
-          </Dropdown>
+            Удалить
+          </Button>
           <Button
             type="primary"
             disabled={!changePhotos}

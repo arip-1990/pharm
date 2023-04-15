@@ -23,7 +23,6 @@ Route::middleware(['auth', 'panel'])->group(function () {
         Route::prefix('/upload')->group(function () {
             Route::patch('/', [V1\Panel\Product\UpdatePhotoController::class, 'handle']);
             Route::delete('/', [V1\Panel\Product\DeletePhotoController::class, 'handle']);
-            Route::patch('/status', [V1\Panel\Product\UpdateStatusPhotoController::class, 'handle']);
             Route::post('/{product}', [V1\Panel\Product\UploadController::class, 'handle']);
         });
 

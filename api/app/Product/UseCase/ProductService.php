@@ -2,8 +2,7 @@
 
 namespace App\Product\UseCase;
 
-use App\Models\Offer;
-use App\Product\Entity\{Attribute, Category, Product, Value};
+use App\Product\Entity\{Attribute, Category, Offer, Product, Value};
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 

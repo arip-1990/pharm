@@ -16,7 +16,6 @@ class PhotoResource extends JsonResource
             'url' => $this->getUrl(),
             'sort' => $this->sort,
             'type' => $this->type ? 'Сертификат' : 'Изображение',
-            'status' => $this->status,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at
         ];

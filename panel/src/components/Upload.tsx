@@ -5,7 +5,6 @@ import {
   Space,
   Popconfirm,
   notification,
-  Typography,
 } from "antd";
 import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -74,21 +73,6 @@ const Image: React.FC<ImagePropsType> = ({
         onClick={handleClick}
       />
       <BaseImage width={140} src={item.url} />
-      {item.status ? (
-        <Typography.Text
-          style={{ fontSize: "0.75rem", textAlign: "center" }}
-          type="success"
-        >
-          (Проверен)
-        </Typography.Text>
-      ) : (
-        <Typography.Text
-          style={{ fontSize: "0.75rem", textAlign: "center" }}
-          type="danger"
-        >
-          (Не проверен)
-        </Typography.Text>
-      )}
     </div>
   );
 };

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\V1\Order;
 
-use App\Order\Entity\{OrderGroup, OrderItem};
+use App\Order\Entity\{OrderGroup, OrderItem, OrderRepository};
 use App\Order\Entity\Status\OrderStatus;
-use App\Order\Entity\OrderRepository;
 use App\Order\UseCase\RefundService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
