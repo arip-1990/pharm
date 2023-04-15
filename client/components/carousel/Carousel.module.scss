@@ -1,0 +1,65 @@
+@import "../../styles/variables";
+
+.container {
+  justify-content: center;
+}
+
+.carousel {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  position: relative;
+  width: 800px;
+  height: 500px;
+  align-items: center;
+  background: transparent;
+  border: none;
+  box-sizing: border-box;
+
+  &_mainView,
+  &_leftView,
+  &_rightView {
+    background-color: $primary-light;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border-radius: 5px;
+    transition: all 1s;
+  }
+
+  &_mainView {
+    width: 450px;
+    height: 450px;
+    margin: 0 0.75rem;
+    z-index: 1;
+
+    &:hover {
+      transform: scale(1.5);
+    }
+  }
+
+  &_leftView,
+  &_rightView {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 400px;
+    opacity: 0.5;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &_leftView {
+    transform: skewy(5deg);
+    transform-origin: top right;
+  }
+
+  &_rightView {
+    transform: skewy(-5deg);
+    transform-origin: top left;
+  }
+}

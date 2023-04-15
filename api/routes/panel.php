@@ -33,6 +33,7 @@ Route::middleware(['auth', 'panel'])->group(function () {
         });
 
         Route::get('/', [V1\Panel\Product\IndexController::class, 'handle']);
+        Route::get('/statistic', V1\Panel\Product\StatisticController::class);
         Route::get('/{product}', [V1\Panel\Product\ShowController::class, 'handle']);
         Route::put('/attributes/{product}', [V1\Panel\Product\UpdateAttributesController::class, 'handle']);
         Route::put('/description/{product}', [V1\Panel\Product\UpdateDescriptionController::class, 'handle']);

@@ -9,6 +9,7 @@ import Loader from "../components/loader";
 import "swiper/css/bundle";
 import "react-notifications/lib/notifications.css";
 import "../styles/global.scss";
+
 import "moment/locale/ru";
 import { API_URL } from "../lib/api";
 

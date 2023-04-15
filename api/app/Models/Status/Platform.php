@@ -2,7 +2,7 @@
 
 namespace App\Models\Status;
 
-enum MobilePlatform: string
+enum Platform: string
 {
     case WEB = 'web';
     case IOS = 'ios';

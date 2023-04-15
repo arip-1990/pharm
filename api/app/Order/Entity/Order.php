@@ -3,6 +3,7 @@
 namespace App\Order\Entity;
 
 use App\Casts\StatusCollectionCast;
+use App\Models\Status\Platform;
 use App\Models\Store;
 use App\Models\User;
 use App\Order\Entity\Status\{OrderState, OrderStatus, Status};
@@ -37,6 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Store $store
  * @property ?Payment $payment
  * @property ?Delivery $delivery
+ * @property ?OrderGroup $group
  * @property OrderDelivery $orderDelivery
  *
  * @property Collection<Status> $statuses
@@ -67,9 +69,19 @@ class Order extends Model
         $this->cost = $totalPrice;
     }
 
+    public function recalculationCost(): void
+    {
+        $this->cost = $this->items->sum(fn(OrderItem $item) => $item->getCost());
+    }
+
     public function setPlatform(string $platform): void
     {
         $this->platform = $platform;
+    }
+
+    public function isMobile(): bool
+    {
+        return in_array($this->platform, [Platform::ANDROID->value, Platform::IOS->value]);
     }
 
     public function setUserInfo(string $name, string $phone, string $email = null): void
@@ -249,5 +261,10 @@ class Order extends Model
     public function delivery(): BelongsTo
     {
         return $this->belongsTo(Delivery::class);
+    }
+
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(OrderGroup::class, 'order_group_id');
     }
 }

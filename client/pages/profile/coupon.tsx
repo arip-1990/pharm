@@ -9,8 +9,7 @@ const Coupon: FC = () => {
 
   return (
     <Layout title="Купоны - Сеть аптек 120/80">
-      <BaseProfile>
-        <h4>Купоны</h4>
+      <BaseProfile title="Купоны">
         {data && <BaseCoupon data={data} />}
       </BaseProfile>
     </Layout>

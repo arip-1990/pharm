@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FC, MouseEvent, useEffect, useState } from "react";
+import { FC, MouseEvent, useEffect, useState, CSSProperties } from "react";
 import { useLocalStorage } from "react-use-storage";
 import classNames from "classnames";
 import { IProduct } from "../../models/IProduct";
@@ -43,7 +43,6 @@ const Card: FC<Props> = ({ product }) => {
         <Favorite product={product} />
 
         <Image
-          className="mt-2"
           itemProp="image"
           layout="fill"
           objectFit="contain"
@@ -64,7 +63,7 @@ const Card: FC<Props> = ({ product }) => {
       </div>
 
       <div className={styles.card_body}>
-        <h6>
+        <h6 className={styles.title}>
           <Link href={`/catalog/product/${product.slug}`}>
             <a itemProp="url">
               <span itemProp="name">{product.name}</span>

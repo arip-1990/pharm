@@ -4,7 +4,7 @@ import Profile from "../../../templates/profile";
 import Card from "../../../templates/profile/Card";
 import { useFetchCardsQuery } from "../../../lib/cardService";
 
-const Block: FC = () => {
+const Lock: FC = () => {
   const { data } = useFetchCardsQuery();
 
   return (
@@ -14,4 +14,4 @@ const Block: FC = () => {
   );
 };
 
-export default Block;
+export default Lock;

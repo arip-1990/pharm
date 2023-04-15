@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\V1\Order;
 
-use App\Order\Entity\Status\{OrderStatus, OrderState};
+use App\Order\Entity\{OrderGroup, OrderItem};
+use App\Order\Entity\Status\OrderStatus;
 use App\Order\Entity\OrderRepository;
 use App\Order\UseCase\RefundService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
@@ -40,39 +42,79 @@ class UpdateController extends Controller
             </orders_result>';
     }
 
-    public function handle(): Response
+    public function handle(Request $request)
     {
-        $xml = file_get_contents("php://input");
         try {
-            $xml = simplexml_load_string($xml);
+            $xml = simplexml_load_string($request->getContent());
             if(!$this->isValidOrderXML($xml)) throw new \Exception('Неверный XML', 1);
 
-            $order = $this->repository->getById(intval($xml->order->id) - config('data.orderStartNumber'));
+            $order1cId = (int)$xml->order->id;
+            $status = OrderStatus::from((string)$xml->order->status);
+            $order = $this->repository->getById($order1cId - config('data.orderStartNumber'));
 
-            switch ($status = OrderStatus::from((string)$xml->order->status)) {
-                case OrderStatus::STATUS_ASSEMBLED:
-                    $order->assembled();
-                    break;
-                case OrderStatus::STATUS_CANCELLED:
-                    $order->cancel();
-                    $this->service->fullRefund($order);
-                    break;
-                default:
-                    $order->addStatus($status);
+            if (isset($xml->order_transfer->id)) {
+                if ($group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
+                    $order = $group->orders->firstWhere('delivery_id', 2);
+                    $order2 = $group->orders->firstWhere('delivery_id', 3);
+
+                    foreach ($xml->order_transfer->products as $item) {
+                        $price = (float)$item->product->price;
+                        $quantity = (int)$item->product->quantity;
+                        $productId = (string)$item->product->code;
+                        $orderItem = $order->items->firstWhere('product_id', $productId);
+
+                        if (!$orderItem2 = $order2->items->firstWhere('product_id', $productId)) {
+                            $orderItem2 = OrderItem::create($productId, $price, $quantity);
+
+                            if ($orderItem) {
+                                if ($orderItem->quantity > $orderItem2->quantity)
+                                    $orderItem->update(['quantity' => $orderItem->quantity - $orderItem2->quantity]);
+                                else
+                                    $orderItem->delete();
+                            }
+
+                            $order2->items()->save($orderItem2);
+                        }
+                        elseif ($quantity != $orderItem2->quantity) {
+                            if ($orderItem) {
+                                if ($quantity > $orderItem2->quantity)
+                                    $orderItem->update(['quantity' => $orderItem->quantity - ($quantity - $orderItem2->quantity)]);
+                                else
+                                    $orderItem->update(['quantity' => $orderItem->quantity + ($orderItem2->quantity - $quantity)]);
+                            }
+
+                            $orderItem2->update(['quantity' => $quantity]);
+                        }
+                    }
+
+                    $this->repository->addStatus($order2, OrderStatus::from((string)$xml->order_transfer->status));
+                    $this->repository->changeState($order2);
+                    $order2->save();
+                }
+                else {
+                    $status = OrderStatus::from((string)$xml->order_transfer->status);
+                }
             }
 
-            if (isset($xml->order->products->product) and ($order->isAssembled() or $order->isReceived()))
-                $this->service->partlyRefund($order, $xml->order->products->product);
+            $this->repository->addStatus($order, $status);
+            if ($status == OrderStatus::STATUS_CANCELLED) {
+                $this->service->fullRefund($order);
+            }
+//            elseif (isset($xml->order->products->product) and ($status == OrderStatus::STATUS_ASSEMBLED or $status == OrderStatus::STATUS_RECEIVED)) {
+//                $this->service->partlyRefund($order, $xml->order->products->product);
+//            }
 
-            $order->changeStatusState($status, OrderState::STATE_SUCCESS);
+            $this->repository->changeState($order, $status);
             $order->save();
 
             return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);
         }
         catch (\Exception | \DomainException $exception) {
-            $status = $exception instanceof \DomainException ? 404 : 500;
-
-            return new Response($this->orderError($exception->getMessage(), $exception->getCode()), $status);
+            return new Response(
+                $this->orderError($exception->getMessage(), (int)$exception->getCode(), $order1cId ?? -1),
+                $exception instanceof \DomainException ? 404 : 500,
+                headers: ['Content-Type' => 'application/xml']
+            );
         }
     }
 }

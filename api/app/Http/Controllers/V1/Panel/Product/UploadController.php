@@ -27,13 +27,11 @@ class UploadController extends Controller
                 throw new \DomainException('Не удалось сохранить фото');
 
             $sort = $product->photos()->orderByDesc('sort')->first();
-            $fileName = explode('.', $fileName);
 
             $photo = new Photo([
                 'product_id' => $product->id,
                 'title' => explode('.', $image->getClientOriginalName())[0],
-                'name' => $fileName[0],
-                'extension' => $fileName[1],
+                'file' => $fileName,
                 'sort' => $sort ? $sort->sort + 1 : 0
             ]);
             $photo->creator()->associate($request->user());
@@ -42,9 +40,9 @@ class UploadController extends Controller
             $product->photos()->syncWithoutDetaching($photo);
         }
         catch (\Exception $e) {
-            return new JsonResponse(['message' => $e->getMessage()], 500);
+            return new JsonResponse(['message' => $e->getMessage()], 500, options: JSON_UNESCAPED_UNICODE);
         }
 
-        return new JsonResponse();
+        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
     }
 }

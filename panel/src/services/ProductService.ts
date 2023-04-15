@@ -4,6 +4,16 @@ import moment from "moment";
 import { IPagination } from "../models/IPagination";
 import { IProduct } from "../models/IProduct";
 
+interface IStatisticUser {
+  user: { id: string; name: string };
+  addCountPhotos: number;
+  editCountValues: number;
+  editCountProducts: number;
+  addTotalCountPhotos: number;
+  editTotalCountValues: number;
+  editTotalCountProducts: number;
+}
+
 export const productApi = createApi({
   reducerPath: "productApi",
   baseQuery: axiosBaseQuery(),
@@ -167,6 +177,22 @@ export const productApi = createApi({
       }),
       invalidatesTags: ["IProduct"],
     }),
+    fetchStatistic: builder.query<
+      IPagination<IStatisticUser>,
+      { pagination: { current: number; pageSize: number } }
+    >({
+      query: (args) => {
+        let params: any = {
+          page: args.pagination.current,
+          pageSize: args.pagination.pageSize,
+        };
+
+        return {
+          url: "/product/statistic",
+          params,
+        };
+      },
+    }),
   }),
 });
 
@@ -182,4 +208,5 @@ export const {
   useUpdatePhotosProductMutation,
   useUpdateStatusPhotosProductMutation,
   useDeletePhotosProductMutation,
+  useFetchStatisticQuery,
 } = productApi;

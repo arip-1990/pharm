@@ -1,7 +1,8 @@
-import {FC} from "react";
+import { FC } from "react";
 import Layout from "../templates";
 import BaseProfile from "../templates/profile";
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from "../hooks/useAuth";
+import { Table } from "../components/table";
 
 const Profile: FC = () => {
   const { user } = useAuth();
@@ -9,55 +10,36 @@ const Profile: FC = () => {
   return (
     <Layout title="Профиль - Сеть аптек 120/80">
       <BaseProfile title="Персональные данные">
-        <div className="row">
-          <div
-            className="col-12"
-            style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
-          >
-            <span style={{ fontWeight: 600 }}>Фамилия:</span> {user?.lastName}
-          </div>
-          <div
-            className="col-12"
-            style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
-          >
-            <span>Имя:</span> {user?.firstName}
-          </div>
-          <div
-            className="col-12"
-            style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
-          >
-            <span style={{ fontWeight: 600 }}>Отчество:</span>{" "}
-            {user?.middleName}
-          </div>
-          <div
-            className="col-12"
-            style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
-          >
-            <span style={{ fontWeight: 600 }}>Дата рождения:</span>{" "}
-            {user?.birthDate?.format("DD.MM.Y")}
-          </div>
-          <div
-            className="col-12"
-            style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
-          >
-            <span style={{ fontWeight: 600 }}>Мобильный телефон:</span>{" "}
-            {user?.phone}
-          </div>
-          <div
-            className="col-12"
-            style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
-          >
-            <span style={{ fontWeight: 600 }}>Дата регистрации:</span>{" "}
-            {user?.registrationDate?.format("DD.MM.Y")}
-          </div>
-          <div
-            className="col-12"
-            style={{ fontSize: "1.2rem", lineHeight: 1.75 }}
-          >
-            <span style={{ fontWeight: 600 }}>Магазины регистрации:</span>{" "}
-            {user?.orgUnitName}
-          </div>
-        </div>
+        <Table rounded striped>
+          <tr>
+            <td>Фамилия</td>
+            <td>{user?.lastName}</td>
+          </tr>
+          <tr>
+            <td>Имя</td>
+            <td>{user?.firstName}</td>
+          </tr>
+          <tr>
+            <td>Отчество</td>
+            <td>{user?.middleName}</td>
+          </tr>
+          <tr>
+            <td>Дата рождения</td>
+            <td>{user?.birthDate?.format("DD.MM.Y")}</td>
+          </tr>
+          <tr>
+            <td>Мобильный телефон</td>
+            <td>{user?.phone}</td>
+          </tr>
+          <tr>
+            <td>Дата регистрации</td>
+            <td>{user?.registrationDate?.format("DD.MM.Y")}</td>
+          </tr>
+          <tr>
+            <td>Аптека регистрации</td>
+            <td>{user?.orgUnitName}</td>
+          </tr>
+        </Table>
       </BaseProfile>
     </Layout>
   );

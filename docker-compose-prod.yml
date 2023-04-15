@@ -189,28 +189,25 @@ services:
         constraints: [ node.role == manager ]
       endpoint_mode: dnsrr
 
-  # db-backup:
-  #   image: ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
-  #   environment:
-  #     BACKUP_NAME: pharm-postgres
-  #     POSTGRES_HOST: api-db
-  #     POSTGRES_USERNAME: app
-  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
-  #     POSTGRES_DB: app
-  #     AWS_ACCESS_KEY_ID: storage_app
-  #     AWS_SECRET_ACCESS_KEY: storage_secret
-  #     AWS_DEFAULT_REGION: region
-  #     S3_ENDPOINT: http://backup-storage:9000
-  #     S3_BUCKET: backup
-  #   command: sh -c 'wait-for-it api-db:5432 -t 60 && backup'
-  #   deploy:
-  #     labels:
-  #       - swarm.cronjob.enable=true
-  #       - swarm.cronjob.schedule=0 * * * *
-  #       - swarm.cronjob.skip-running=true
-  #     replicas: 0
-  #     restart_policy:
-  #       condition: none
+  db-backup:
+    image: ${REGISTRY}/pharm-db-backup:${IMAGE_TAG}
+    environment:
+      BACKUP_NAME: pharm-db
+      POSTGRES_HOST: api-db
+      POSTGRES_USERNAME: app
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: app
+      NAS_HOST: ${NAS_HOST}
+      RSYNC_PASSWORD: ${NAS_PASSWORD}
+    command: sh -c 'wait-for-it api-db:5432 -t 60 && backup'
+    deploy:
+      labels:
+        - swarm.cronjob.enable=true
+        - swarm.cronjob.schedule=0 0 * * *
+        - swarm.cronjob.skip-running=true
+      replicas: 0
+      restart_policy:
+        condition: none
 
   api-scheduler:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}

@@ -129,6 +129,71 @@ const View: React.FC = () => {
       </Col>
 
       <Col span={24}>
+        <Card title="Товары на перемещение">
+          {order?.transfer && <>
+            <Col span={24}>
+              <Table
+                  size="small"
+                  loading={orderLoading}
+                  showHeader={false}
+                  pagination={false}
+                  columns={baseColumns}
+                  dataSource={[
+                      {
+                        key: "Статус",
+                        value: (
+                          <StatusStep
+                            full
+                            statuses={order.transfer.statuses}
+                            paymentType={order.transfer.paymentType}
+                            deliveryType={order.transfer.deliveryType}
+                          />
+                        ),
+                      },
+                      {
+                        key: "Сумма заказа",
+                        value: (
+                          <span>{(order.transfer.cost * 1).toLocaleString("ru")}&#8381;</span>
+                        ),
+                      },
+                      {
+                        key: "Оплачено",
+                        value: order.transfer.statuses.some(
+                          (item) => item.value === "P" && item.state === 2
+                        )
+                          ? "Да"
+                          : "Нет",
+                      },
+                      { key: "Заметка", value: order.transfer.note },
+                    ]
+                  }
+                />
+            </Col>
+
+            <Col span={24} style={{borderTop: '1px solid #cacaca', paddingTop: '1rem'}}>
+              <Table
+                  size="small"
+                  loading={orderLoading}
+                  pagination={false}
+                  columns={itemColumns}
+                  dataSource={order.transfer.items.map((item, i) => ({
+                    key: i + 1,
+                    name: (
+                      <Link to={`/product/${item.product.slug}`}>
+                        {item.product.name}
+                      </Link>
+                    ),
+                    quantity: item.quantity,
+                    price: (item.price * 1).toLocaleString("ru"),
+                    total: (item.quantity * item.price).toLocaleString("ru"),
+                  }))}
+                />
+            </Col>
+          </>}
+        </Card>
+      </Col>
+
+      <Col span={24}>
         <Card title="Всего заказанных товаров">
           <Table
             size="small"

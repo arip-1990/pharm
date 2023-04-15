@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Mobile;
 
-use App\Models\Status\MobilePlatform;
+use App\Models\Status\Platform;
 use App\Order\Entity\Status\MobileStatus;
 use App\Rules\CustomDate;
 use Illuminate\Foundation\Http\FormRequest;
@@ -18,7 +18,7 @@ class CheckoutRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'device.platform' => ['nullable', new Enum(MobilePlatform::class)],
+            'device.platform' => ['nullable', new Enum(Platform::class)],
             'installId' => 'nullable|uuid',
 
             'orders' => 'required|array',

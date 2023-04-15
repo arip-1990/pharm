@@ -15,7 +15,10 @@ const Navbar: FC = () => {
 
       <BaseNavbar.Collapse id="navbarCollapse">
         <Nav className="m-md-0 align-items-center">
-          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
+          <Nav.Item
+            className="text-md-center mx-2"
+            style={{ whiteSpace: "nowrap", overflowX: "hidden" }}
+          >
             <Link href="/catalog">
               <a
                 className={classNames("nav-link", {
@@ -27,7 +30,10 @@ const Navbar: FC = () => {
               </a>
             </Link>
           </Nav.Item>
-          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
+          <Nav.Item
+            className="text-md-center mx-2"
+            style={{ whiteSpace: "nowrap", overflowX: "hidden" }}
+          >
             <Link href="/store">
               <a
                 className={classNames("nav-link", {
@@ -39,7 +45,7 @@ const Navbar: FC = () => {
               </a>
             </Link>
           </Nav.Item>
-          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
+          {/* <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
             <Link href="/delivery-booking">
               <a
                 className={classNames("nav-link", {
@@ -50,12 +56,17 @@ const Navbar: FC = () => {
                 <i className="icon-truck" /> Доставка/бронирование
               </a>
             </Link>
-          </Nav.Item>
-          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
+          </Nav.Item> */}
+          <Nav.Item
+            className="text-md-center mx-2"
+            style={{ whiteSpace: "nowrap", overflowX: "hidden" }}
+          >
             <Link href="/loyalty">
               <a
                 className={classNames("nav-link", {
-                  active: router.pathname.startsWith("/loyalty") && !router.pathname.startsWith("/loyalty-rule"),
+                  active:
+                    router.pathname.startsWith("/loyalty") &&
+                    !router.pathname.startsWith("/loyalty-rule"),
                 })}
                 tabIndex={0}
               >
@@ -63,7 +74,10 @@ const Navbar: FC = () => {
               </a>
             </Link>
           </Nav.Item>
-          <Nav.Item className="text-md-center mx-2" style={{whiteSpace: 'nowrap', overflowX: 'hidden'}}>
+          <Nav.Item
+            className="text-md-center mx-2"
+            style={{ whiteSpace: "nowrap", overflowX: "hidden" }}
+          >
             <Link href="/stock">
               <a
                 className={classNames("nav-link", {

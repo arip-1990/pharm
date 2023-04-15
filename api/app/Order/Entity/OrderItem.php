@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class OrderItem extends Model
 {
     public $timestamps = false;
+    protected $fillable = ['price', 'quantity'];
 
     public static function create(string $productId, float $price, int $quantity): self
     {

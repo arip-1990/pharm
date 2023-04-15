@@ -5,17 +5,19 @@ module.exports = {
       issuer: { and: [/\.(js|ts)x?$/] },
       use: [
         {
-          loader: '@svgr/webpack',
+          loader: "@svgr/webpack",
           options: {
             prettier: false,
             svgo: true,
             svgoConfig: {
-              plugins: [{
-                name: 'preset-default',
-                params: {
-                  overrides: { removeViewBox: false },
+              plugins: [
+                {
+                  name: "preset-default",
+                  params: {
+                    overrides: { removeViewBox: false },
+                  },
                 },
-              }]
+              ],
             },
             titleProp: true,
           },
@@ -27,11 +29,15 @@ module.exports = {
   },
 
   images: {
-    domains: ['api.pharm.test', 'api.120на80.рф', 'api.xn--12080-6ve4g.xn--p1ai'],
+    domains: [
+      "api.pharm.test",
+      "api.120на80.рф",
+      "api.xn--12080-6ve4g.xn--p1ai",
+    ],
     // formats: ['image/webp', 'image/jpeg', 'image/png', 'image/gif'],
   },
-  
+
   experimental: {
     outputStandalone: true,
-  }
+  },
 };

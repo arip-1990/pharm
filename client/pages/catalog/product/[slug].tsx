@@ -1,10 +1,10 @@
-import Layout from "../../../templates";
-import { GetServerSideProps } from "next";
 import { FC, useCallback, useEffect, useState } from "react";
-import defaultImage from "../../../assets/images/default.png";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { useLocalStorage } from "react-use-storage";
+
+import Layout from "../../../templates";
 import Accordion from "../../../components/accordion";
-import Zoom from "../../../components/zoom";
 import Cart from "../../../components/cart";
 import {
   getProduct,
@@ -12,11 +12,13 @@ import {
   useGetProductQuery,
 } from "../../../lib/catalogService";
 import { wrapper } from "../../../store";
-import { useRouter } from "next/router";
 import { useCookie } from "../../../hooks/useCookie";
-import {getTreeCategories} from "../../../helpers";
-import {useFetchCategoriesQuery} from "../../../lib/categoryService";
+import { getTreeCategories } from "../../../helpers";
+import { useFetchCategoriesQuery } from "../../../lib/categoryService";
+import { Carousel } from "../../../components/carousel";
 import Breadcrumbs from "../../../components/breadcrumbs";
+
+import defaultImage from "../../../assets/images/default.png";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -40,29 +42,41 @@ const isFavorite = (id: string) => {
 };
 
 const Product: FC = () => {
+  const [showCarousel, setShowCarousel] = useState<boolean>(false);
   const [city] = useCookie("city");
   const router = useRouter();
   const { slug } = router.query;
   const { data, refetch } = useGetProductQuery(String(slug));
-  const {data: categories} = useFetchCategoriesQuery();
+  const { data: categories } = useFetchCategoriesQuery();
 
   const getDefaultGenerator = () => {
-    let crumbs = [{href: '/catalog', text: "Наш ассортимент"}];
+    let crumbs = [{ href: "/catalog", text: "Наш ассортимент" }];
 
     if (categories && data?.product.category) {
-      crumbs = [...crumbs, ...getTreeCategories(data.product.category, categories).map(item => ({
-        href: `/catalog/${item.slug}`,
-        text: item.name
-      }))];
+      crumbs = [
+        ...crumbs,
+        ...getTreeCategories(data.product.category, categories).map((item) => ({
+          href: `/catalog/${item.slug}`,
+          text: item.name,
+        })),
+      ];
     }
 
-    return [...crumbs, {href: `/catalog/product/${slug}`, text: data?.product.name}];
+    return [
+      ...crumbs,
+      { href: `/catalog/product/${slug}`, text: data?.product.name },
+    ];
   };
 
   useEffect(() => refetch(), [city]);
 
   return (
-    <Layout title={data ? `${data.product.name} - Сеть аптек 120/80` : 'Сеть аптек 120/80'} description={data?.product.description}>
+    <Layout
+      title={
+        data ? `${data.product.name} - Сеть аптек 120/80` : "Сеть аптек 120/80"
+      }
+      description={data?.product.description}
+    >
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Accordion>
@@ -73,16 +87,18 @@ const Product: FC = () => {
             itemType="https://schema.org/Product"
           >
             <div className="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
-              {data?.product.photos.length ? (
-                <Zoom src={data?.product.photos[0].url} alt="product.name" />
-              ) : (
-                <img
-                  className="mw-100 m-auto"
-                  itemProp="image"
-                  src={defaultImage.src}
-                  alt={data?.product.name}
-                />
-              )}
+              <img
+                style={{ cursor: "zoom-in" }}
+                className="mw-100 m-auto"
+                itemProp="image"
+                src={
+                  data?.product.photos.length
+                    ? data?.product.photos[0].url
+                    : defaultImage.src
+                }
+                alt={data?.product.name}
+                onClick={() => setShowCarousel(true)}
+              />
 
               {isFavorite(data?.product.id)}
             </div>
@@ -256,6 +272,12 @@ const Product: FC = () => {
           ))}
         </>
       ) : null}
+
+      <Carousel
+        show={showCarousel}
+        onHide={() => setShowCarousel(false)}
+        data={data?.product.photos}
+      />
     </Layout>
   );
 };

@@ -7,21 +7,16 @@ use App\Order\UseCase\GenerateDataService;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Redis;
 
 ini_set('memory_limit', -1);
 
 class TestCommand extends Command
 {
-    protected $signature = 'test {orderId}';
+    protected $signature = 'test';
     protected $description = 'test';
 
     public function handle(): int
     {
-        $queueClient = Redis::connection()->client();
-
-        $data = $queueClient->publish('bot', 'test');
-        print_r($data);
 //        $order = Order::find((int)$this->argument('orderId'));
 //        $order->addStatus(OrderStatus::STATUS_SEND);
 //        try {

@@ -35,4 +35,5 @@ export interface IOrder {
   };
   statuses: IStatus[];
   items: IItem[];
+  transfer: IOrder | null;
 }

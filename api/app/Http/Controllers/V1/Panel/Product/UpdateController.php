@@ -11,7 +11,7 @@ class UpdateController extends Controller
 {
     public function handle(Product $product, BaseRequest $request): JsonResponse
     {
-        $product->update([
+        $product->fill([
             'name' => $request['name'],
             'marked' => $request['marked'],
             'recipe' => $request['recipe'],
@@ -21,6 +21,9 @@ class UpdateController extends Controller
             'barcode' => $request['barcode'] ?? null
         ]);
 
-        return response()->json();
+        $product->editor()->associate($request->user());
+        $product->save();
+
+        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
     }
 }

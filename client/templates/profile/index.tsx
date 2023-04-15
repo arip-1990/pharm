@@ -2,16 +2,20 @@ import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, MouseEvent, ReactNode, useEffect } from "react";
+import { Table } from "../../components/table";
 import { useAuth } from "../../hooks/useAuth";
 
 import styles from "./Profile.module.scss";
 
-type Props = {
+import loyaltyCard from "../../assets/images/loyalty-card.png";
+import Image from "next/image";
+
+interface Props {
   title?: string;
   className?: string;
   children?: ReactNode;
   contentClassName?: string;
-};
+}
 
 const Profile: FC<Props> = ({
   title,
@@ -32,7 +36,7 @@ const Profile: FC<Props> = ({
     e.preventDefault();
     try {
       await logout();
-      // router.push("/");
+      router.replace("/");
     } catch (error) {
       console.log(error);
     }
@@ -40,89 +44,131 @@ const Profile: FC<Props> = ({
 
   return (
     <section className={classes.join(" ")}>
-      <div className="row">
-        <div className="col-3">
-          <div className={styles["profile_logo"]}>
-            <div className="icon-gift" />
-            <div>Бонусная программа</div>
-          </div>
-        </div>
-        <div
-          className="col-9"
-          style={{ display: "flex", flexDirection: "column" }}
-        >
-          <nav className={styles["profile_nav"]}>
-            <Link href="/">
-              <a>Главная</a>
-            </Link>
-            <Link href="/profile/cheque">
-              <a>Покупки</a>
-            </Link>
-            <Link href="/profile/coupon">
-              <a>Купоны</a>
-            </Link>
-            <Link href="/profile">
-              <a>Анкета</a>
-            </Link>
-            <a href="#" onClick={handleLogout}>
-              Выход
+      <aside className={styles.profile_sidebar}>
+        <nav className={styles["profile_sidebar-menu"]}>
+          <Link href="/">
+            <a>
+              <i className="icon-home" /> Главная
             </a>
-          </nav>
-          {title && <h4 className="mb-0 mt-auto">{title}</h4>}
+          </Link>
+          <Link href="/profile/cheque">
+            <a>
+              <i className="icon-cart" /> Покупки
+            </a>
+          </Link>
+          <Link href="/profile/coupon">
+            <a>
+              <i className="icon-stack" /> Купоны
+            </a>
+          </Link>
+          <Link href="/profile">
+            <a>
+              <i className="icon-file-text" /> Анкета
+            </a>
+          </Link>
+          <a href="#" onClick={handleLogout}>
+            <i className="icon-cross" /> Выход
+          </a>
+        </nav>
+
+        <div className={styles["profile_sidebar-card"]}>
+          <Image src={loyaltyCard} />
         </div>
+
+        <ul
+          className={classNames(
+            styles["profile-sub-menu"],
+            styles["profile-sub-menu__desktop"]
+          )}
+        >
+          <li className={styles["profile-sub-menu_item"]}>
+            <Link href="/profile/card/lock">
+              <a>
+                <i className="icon-lock" /> Заблокировать карту
+              </a>
+            </Link>
+          </li>
+          <li className={styles["profile-sub-menu_item"]}>
+            <Link href="/profile/change-password">
+              <a>
+                <i className="icon-loop" /> Сменить пароль
+              </a>
+            </Link>
+          </li>
+          <li className={styles["profile-sub-menu_item"]}>
+            <Link href="/profile/card">
+              <a>
+                <i className="icon-card" /> Список карт
+              </a>
+            </Link>
+          </li>
+        </ul>
+      </aside>
+
+      <span className={styles.profile_logo}>Бонусная программа</span>
+
+      <div className={styles["profile_card-info"]}>
+        <Table shadow rounded striped>
+          <tr>
+            <td>№ карты</td>
+            <td>{user?.card.number}</td>
+          </tr>
+          <tr>
+            <td>Количество покупок</td>
+            <td>{user?.quantity}</td>
+          </tr>
+          <tr>
+            <td>Получено баллов</td>
+            <td>{user?.card.chargedBonus}</td>
+          </tr>
+          <tr>
+            <td>Потрачено баллов</td>
+            <td>{user?.card.writeoffBonus}</td>
+          </tr>
+          <tr>
+            <td>Общий баланс</td>
+            <td>{user?.balance}</td>
+          </tr>
+          <tr>
+            <td>Активный баланс</td>
+            <td>{user?.activeBalance}</td>
+          </tr>
+        </Table>
       </div>
 
-      <div className="row">
-        <aside className={styles["profile-sidebar"] + " col-3"}>
-          <div className={styles["profile-sidebar_info"]}>
-            <ul>
-              <li style={{ fontSize: "1.2rem" }}>
-                <span>№ карты:</span> {user?.card.number}
-              </li>
-              <li style={{ fontSize: "1.2rem" }}>
-                <span>Количество покупок:</span> {user?.quantity}
-              </li>
-              <li style={{ fontSize: "1.2rem" }}>
-                <span>Получено баллов:</span> {user?.card.chargedBonus}
-              </li>
-              <li style={{ fontSize: "1.2rem" }}>
-                <span>Потрачено баллов:</span> {user?.card.writeoffBonus}
-              </li>
-              <li style={{ fontSize: "1.2rem" }}>
-                <span>Общий баланс:</span> {user?.balance}
-              </li>
-              <li style={{ fontSize: "1.2rem" }}>
-                <span>Активный баланс:</span> {user?.activeBalance}
-              </li>
-            </ul>
-          </div>
-          <ul>
-            <li style={{ fontSize: "1.1rem" }}>
-              <Link href="/profile/card/block">
-                <a>Заблокировать карту</a>
-              </Link>
-            </li>
-            <li style={{ fontSize: "1.1rem" }}>
-              <Link href="/profile/change-password">
-                <a>Сменить пароль</a>
-              </Link>
-            </li>
-            <li style={{ fontSize: "1.1rem" }}>
-              <Link href="/profile/card">
-                <a>Список карт</a>
-              </Link>
-            </li>
-          </ul>
-        </aside>
+      <article className={classNames(styles.profile_content, contentClassName)}>
+        {title && <h5>{title}</h5>}
+        {children}
+      </article>
 
-        <div className="col-9">
-          <article
-            className={classNames(styles["profile-content"], contentClassName)}
-          >
-            {children}
-          </article>
-        </div>
-      </div>
+      <ul
+        className={classNames(
+          styles["profile-sub-menu"],
+          styles["profile-sub-menu__mobile"]
+        )}
+      >
+        <li className={styles["profile-sub-menu_item"]}>
+          <Link href="/profile/card/lock">
+            <a>
+              <i className="icon-lock" /> Заблокировать карту
+            </a>
+          </Link>
+        </li>
+        <li className={styles["profile-sub-menu_item"]}>
+          <Link href="/profile/change-password">
+            <a>
+              <i className="icon-loop" /> Сменить пароль
+            </a>
+          </Link>
+        </li>
+        <li className={styles["profile-sub-menu_item"]}>
+          <Link href="/profile/card">
+            <a>
+              <i className="icon-card" /> Список карт
+            </a>
+          </Link>
+        </li>
+      </ul>
     </section>
   );
 };

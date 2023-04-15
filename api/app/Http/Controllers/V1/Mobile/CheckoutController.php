@@ -16,8 +16,7 @@ class CheckoutController
             $orders = $this->service->checkoutMobile($request);
 
             return new JsonResponse([
-                // 'message' => 'Обратите внимание, заказ оформится для товаров в наличии в выбранной  вами аптеке, для уточнения деталей заказа с вами свяжется оператор',
-                'message' => '',
+                'message' => 'Ваш заказ зарегистрирован и отправлен в аптеку для подтверждения.',
                 'orders' => $orders
             ]);
         }
