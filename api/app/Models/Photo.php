@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Storage;
  * @property string $file
  * @property int $type
  * @property int $sort
- * @property int $status
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
@@ -32,10 +31,7 @@ class Photo extends Model
     const TYPE_PICTURE = 0;
     const TYPE_CERTIFICATE = 1;
 
-    const STATUS_NOT_CHECKED = 0;
-    const STATUS_CHECKED = 1;
-
-    protected $fillable = ['title', 'file', 'type', 'status', 'sort'];
+    protected $fillable = ['title', 'file', 'type', 'sort'];
 
     public function getSize(): array
     {

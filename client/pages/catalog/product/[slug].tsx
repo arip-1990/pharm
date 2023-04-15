@@ -19,7 +19,6 @@ import { Carousel } from "../../../components/carousel";
 import Breadcrumbs from "../../../components/breadcrumbs";
 
 import defaultImage from "../../../assets/images/default.png";
-import Modal from "../../../components/modal";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -89,6 +88,7 @@ const Product: FC = () => {
           >
             <div className="col-8 col-sm-7 col-md-5 col-lg-3 position-relative">
               <img
+                style={{ cursor: "zoom-in" }}
                 className="mw-100 m-auto"
                 itemProp="image"
                 src={
@@ -273,9 +273,11 @@ const Product: FC = () => {
         </>
       ) : null}
 
-      <Modal show={showCarousel}>
-        <Carousel data={data?.product.photos} />
-      </Modal>
+      <Carousel
+        show={showCarousel}
+        onHide={() => setShowCarousel(false)}
+        data={data?.product.photos}
+      />
     </Layout>
   );
 };
