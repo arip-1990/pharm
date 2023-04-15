@@ -7,18 +7,6 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-
-  // &_1 {
-  //   background-image: url(../../assets/images/banner/background-mobile.png);
-  // }
-
-  // &_2 {
-  //   background-image: url(../../assets/images/banner/application-mobile.png);
-  // }
-
-  // &_3 {
-  //   background-image: url(../../assets/images/banner/akrihin_akvadetrim.jpg);
-  // }
 }
 
 @media (min-width: 576px) {
@@ -30,14 +18,6 @@
 @media (min-width: 768px) {
   .banner {
     height: 150px;
-
-    // &_1 {
-    //   background-image: url(../../assets/images/banner/background.png);
-    // }
-
-    // &_2 {
-    //   background-image: url(../../assets/images/banner/application.png);
-    // }
   }
 }
 

@@ -19,7 +19,7 @@
   &_mainView,
   &_leftView,
   &_rightView {
-    background-color: $primary-light;
+    background-color: $white;
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -31,10 +31,10 @@
     width: 450px;
     height: 450px;
     margin: 0 0.75rem;
-    z-index: 1;
+    z-index: 9;
 
     &:hover {
-      transform: scale(1.5);
+      transform: scale(1.3);
     }
   }
 
@@ -46,7 +46,6 @@
     width: 150px;
     height: 400px;
     opacity: 0.5;
-    cursor: pointer;
 
     &:hover {
       opacity: 1;
@@ -61,5 +60,48 @@
   &_rightView {
     transform: skewy(-5deg);
     transform-origin: top left;
+  }
+
+  &_navLeft,
+  &_navRight {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 27px;
+    height: 44px;
+    color: #007aff;
+    opacity: 0.5;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+      transition: all 1s;
+    }
+
+    &::after {
+      font-family: swiper-icons;
+      font-size: 44px;
+      text-transform: none;
+      letter-spacing: 0;
+      font-variant: normal;
+      line-height: 1;
+    }
+  }
+
+  &_navLeft {
+    left: 20px;
+
+    &::after {
+      content: "prev";
+    }
+  }
+
+  &_navRight {
+    right: 20px;
+
+    &::after {
+      content: "next";
+    }
   }
 }

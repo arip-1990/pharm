@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
+
 import styles from "./Loyalty.module.scss";
 
 interface Props {

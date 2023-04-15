@@ -44,8 +44,8 @@ const Carousel: FC<Props> = ({ show, onHide, data }) => {
         <div
           className={styles.carousel_leftView}
           style={{ backgroundImage: `url(${data[image.prev].url})` }}
-          onClick={scrollLeft}
         />
+        <div className={styles.carousel_navLeft} onClick={scrollLeft} />
         <div
           className={styles.carousel_mainView}
           style={{ backgroundImage: `url(${data[image.main].url})` }}
@@ -53,8 +53,8 @@ const Carousel: FC<Props> = ({ show, onHide, data }) => {
         <div
           className={styles.carousel_rightView}
           style={{ backgroundImage: `url(${data[image.next].url})` }}
-          onClick={scrollRight}
         />
+        <div className={styles.carousel_navRight} onClick={scrollRight} />
       </Modal>
     );
   }
