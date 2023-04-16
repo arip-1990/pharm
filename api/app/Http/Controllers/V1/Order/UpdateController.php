@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\V1\Order;
 
-use App\Order\Entity\{OrderGroup, OrderItem, OrderRepository};
+use App\Order\Entity\{Delivery, Order, OrderGroup, OrderItem, OrderRepository};
 use App\Order\Entity\Status\OrderStatus;
 use App\Order\UseCase\RefundService;
 use Illuminate\Http\Request;
@@ -52,47 +52,50 @@ class UpdateController extends Controller
             $order = $this->repository->getById($order1cId - config('data.orderStartNumber'));
 
             if (isset($xml->order_transfer->id)) {
-                if ($group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
-                    $order = $group->orders->firstWhere('delivery_id', 2);
-                    $order2 = $group->orders->firstWhere('delivery_id', 3);
-
-                    foreach ($xml->order_transfer->products as $item) {
-                        $price = (float)$item->product->price;
-                        $quantity = (int)$item->product->quantity;
-                        $productId = (string)$item->product->code;
-                        $orderItem = $order->items->firstWhere('product_id', $productId);
-
-                        if (!$orderItem2 = $order2->items->firstWhere('product_id', $productId)) {
-                            $orderItem2 = OrderItem::create($productId, $price, $quantity);
-
-                            if ($orderItem) {
-                                if ($orderItem->quantity > $orderItem2->quantity)
-                                    $orderItem->update(['quantity' => $orderItem->quantity - $orderItem2->quantity]);
-                                else
-                                    $orderItem->delete();
-                            }
-
-                            $order2->items()->save($orderItem2);
-                        }
-                        elseif ($quantity != $orderItem2->quantity) {
-                            if ($orderItem) {
-                                if ($quantity > $orderItem2->quantity)
-                                    $orderItem->update(['quantity' => $orderItem->quantity - ($quantity - $orderItem2->quantity)]);
-                                else
-                                    $orderItem->update(['quantity' => $orderItem->quantity + ($orderItem2->quantity - $quantity)]);
-                            }
-
-                            $orderItem2->update(['quantity' => $quantity]);
-                        }
-                    }
-
-                    $this->repository->addStatus($order2, OrderStatus::from((string)$xml->order_transfer->status));
-                    $this->repository->changeState($order2);
-                    $order2->save();
+                if (!$group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
+                    $group = OrderGroup::create(['order_1c_id' => $order1cId]);
+                    $order->delivery_id = 2;
+                    $order2 = Order::create($order->store, $order->payment, Delivery::find(3));
+                    $group->orders()->saveMany([$order, $order2]);
                 }
                 else {
-                    $status = OrderStatus::from((string)$xml->order_transfer->status);
+                    $order = $group->orders->firstWhere('delivery_id', 2);
+                    $order2 = $group->orders->firstWhere('delivery_id', 3);
                 }
+
+                foreach ($xml->order_transfer->products as $item) {
+                    $price = (float)$item->product->price;
+                    $quantity = (int)$item->product->quantity;
+                    $productId = (string)$item->product->code;
+                    $orderItem = $order->items->firstWhere('product_id', $productId);
+
+                    if (!$orderItem2 = $order2->items->firstWhere('product_id', $productId)) {
+                        $orderItem2 = OrderItem::create($productId, $price, $quantity);
+
+                        if ($orderItem) {
+                            if ($orderItem->quantity > $orderItem2->quantity)
+                                $orderItem->update(['quantity' => $orderItem->quantity - $orderItem2->quantity]);
+                            else
+                                $orderItem->delete();
+                        }
+
+                        $order2->items()->save($orderItem2);
+                    }
+                    elseif ($quantity != $orderItem2->quantity) {
+                        if ($orderItem) {
+                            if ($quantity > $orderItem2->quantity)
+                                $orderItem->update(['quantity' => $orderItem->quantity - ($quantity - $orderItem2->quantity)]);
+                            else
+                                $orderItem->update(['quantity' => $orderItem->quantity + ($orderItem2->quantity - $quantity)]);
+                        }
+
+                        $orderItem2->update(['quantity' => $quantity]);
+                    }
+                }
+
+                $this->repository->addStatus($order2, OrderStatus::from((string)$xml->order_transfer->status));
+                $this->repository->changeState($order2);
+                $order2->save();
             }
 
             $this->repository->addStatus($order, $status);

@@ -2,6 +2,7 @@
 
 namespace App\Order\Listener;
 
+use App\Exceptions\OrderException;
 use App\Order\Entity\Payment;
 use App\Order\Entity\Status\{OrderState, OrderStatus};
 use App\Order\Event\OrderPayFullRefund;
@@ -19,10 +20,10 @@ class OrderPayFullRefundListener implements ShouldQueue
                     $order->changeStatusState(OrderStatus::STATUS_REFUND, OrderState::STATE_SUCCESS);
                 }
                 elseif (!isset($response['errorCode'])) {
-                    throw new \DomainException('Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id);
+                    throw new OrderException('Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id);
                 }
                 else {
-                    throw new \DomainException('Ошибка! ' . $response['errorMessage'] . ', sber_id: ' . $order->sber_id);
+                    throw new OrderException('Ошибка! ' . $response['errorMessage'] . ', sber_id: ' . $order->sber_id);
                 }
             }
         }

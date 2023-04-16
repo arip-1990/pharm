@@ -2,6 +2,7 @@
 
 namespace App\Order\Listener;
 
+use App\Exceptions\OrderException;
 use App\Order\Event\OrderChangeStatus;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -37,7 +38,7 @@ class SendStatusListener implements ShouldQueue
         elseif ($order->phone) $data['userId'] = $order->phone;
 
         $data = $this->sendStatus($data);
-        if (!$data['success']) throw new \DomainException('Не удалось синхронизировать статус!');
+        if (!$data['success']) throw new OrderException('Не удалось синхронизировать статус!');
     }
 
     private function sendStatus(array $data): array

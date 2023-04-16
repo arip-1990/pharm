@@ -11,6 +11,6 @@ class IndexController extends Controller
 {
     public function __invoke(): JsonResponse
     {
-        return new JsonResponse(BannerResource::collection(Banner::all()), options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse(BannerResource::collection(Banner::orderBy('sort')->get()), options: JSON_UNESCAPED_UNICODE);
     }
 }

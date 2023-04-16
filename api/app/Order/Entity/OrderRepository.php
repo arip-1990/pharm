@@ -2,6 +2,7 @@
 
 namespace App\Order\Entity;
 
+use App\Exceptions\OrderException;
 use App\Models\{Location, Store, User};
 use App\Order\Entity\Status\{OrderStatus, OrderState, Status};
 use App\Order\Event\OrderChangeStatus;
@@ -13,7 +14,7 @@ class OrderRepository
     public function getById(int $id): Order
     {
         if (!$order = Order::find($id))
-            throw new \DomainException("Не найден заказ с номером $id!", 2);
+            throw new OrderException("Не найден заказ с номером $id!", 2);
 
         return $order;
     }
@@ -60,7 +61,7 @@ class OrderRepository
     public function addStatus(Order $order, OrderStatus $status): void
     {
         if ($order->inStatus($status))
-            throw new \DomainException("Статус '$status->value' уже присвоен");
+            throw new OrderException("Статус '$status->value' уже присвоен");
 
         $order->statuses->add(new Status($status, Carbon::now()));
     }

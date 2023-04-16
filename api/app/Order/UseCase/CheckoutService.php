@@ -2,6 +2,7 @@
 
 namespace App\Order\UseCase;
 
+use App\Exceptions\OrderException;
 use App\Helper;
 use App\Http\Requests;
 use App\Product\Entity\Offer;
@@ -65,7 +66,7 @@ class CheckoutService
         $platform = $request->input('device.platform', 'android');
         foreach ($request->validated('orders') as $item) {
             if (!$city = City::where('name', Helper::trimPrefixCity($item['city'] ?? $item['addressData']['settlement']))->first())
-                throw new \DomainException('Город неизвестен');
+                throw new OrderException('Город неизвестен');
 
             $phone = str_replace('+', '', $item['phone']);
             $order = Order::create(
@@ -151,11 +152,11 @@ class CheckoutService
     public function getStores(Request $request): array
     {
         if (!$city = $request->cookie('city', City::find(1)?->name))
-            throw new \DomainException('Не указан город!');
+            throw new OrderException('Не указан город!');
 
         $carts = $request->collect();
         if (!$carts->count())
-            throw new \DomainException('Нет товаров в корзине!');
+            throw new OrderException('Нет товаров в корзине!');
 
         $stores = [];
         Offer::whereIn('product_id', $carts->keys())->whereCity($city)

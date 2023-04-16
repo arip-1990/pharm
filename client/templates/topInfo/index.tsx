@@ -36,7 +36,7 @@ const TopInfo: FC = () => {
           <span className="d-inline-block">
             {isAuth ? (
               <Link href="/profile">
-                <a>{user?.firstName + (user?.lastName ? user.lastName.charAt(0) : '')}</a>
+                <a>{user?.firstName + (user?.lastName ? ( ' ' + user.lastName.charAt(0)) : '')}</a>
               </Link>
             ) : (
               <a href="#" onClick={handleSignIn}>

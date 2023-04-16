@@ -3,6 +3,7 @@
 namespace App\Order\Entity;
 
 use App\Casts\StatusCollectionCast;
+use App\Exceptions\OrderException;
 use App\Models\Status\Platform;
 use App\Models\Store;
 use App\Models\User;
@@ -94,7 +95,7 @@ class Order extends Model
     public function pay(string $sberId): void
     {
         if ($this->isPay())
-            throw new \DomainException('Заказ уже оплачен.');
+            throw new OrderException('Заказ уже оплачен.');
 
         $this->sber_id = $sberId;
         $this->addStatus(OrderStatus::STATUS_PAID);
@@ -103,7 +104,7 @@ class Order extends Model
     public function sent(): void
     {
         if ($this->isSent())
-            throw new \DomainException('Заказ уже отправлен.');
+            throw new OrderException('Заказ уже отправлен.');
 
         $this->addStatus(OrderStatus::STATUS_SEND);
         OrderSend::dispatch($this);
@@ -112,7 +113,7 @@ class Order extends Model
     public function cancel(string $reason = null, OrderStatus $status = OrderStatus::STATUS_CANCELLED): void
     {
         if ($this->isCancelled())
-            throw new \DomainException('Заказ уже отменен.');
+            throw new OrderException('Заказ уже отменен.');
 
         $this->cancel_reason = $reason;
         $this->addStatus($status);
@@ -121,7 +122,7 @@ class Order extends Model
     public function assembled(): void
     {
         if ($this->isAssembled())
-            throw new \DomainException('Заказ уже собран.');
+            throw new OrderException('Заказ уже собран.');
 
         $this->addStatus(OrderStatus::STATUS_ASSEMBLED);
     }
@@ -129,7 +130,7 @@ class Order extends Model
     public function refund(): void
     {
         if ($this->isRefund())
-            throw new \DomainException('Заказ уже возмещен.');
+            throw new OrderException('Заказ уже возмещен.');
 
         $this->addStatus(OrderStatus::STATUS_REFUND);
         OrderPayFullRefund::dispatch($this);
@@ -141,14 +142,14 @@ class Order extends Model
     }
 
     //TODO remove archives
-    public function getDifferenceOfRefund(): int
-    {
-        $cost = 0;
-        foreach ($this->archives as $archive)
-            $cost += $archive->quantity * $archive->price;
-
-        return $cost - $this->cost;
-    }
+//    public function getDifferenceOfRefund(): int
+//    {
+//        $cost = 0;
+//        foreach ($this->archives as $archive)
+//            $cost += $archive->quantity * $archive->price;
+//
+//        return $cost - $this->cost;
+//    }
 
     public function isAvailableItem(OrderItem $item): bool
     {

@@ -2,6 +2,7 @@
 
 namespace App\Order\UseCase;
 
+use App\Exceptions\OrderException;
 use App\Order\Entity\OrderRepository;
 use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
@@ -28,7 +29,7 @@ class AcquiringService
         $data = json_decode($response->getBody(), true);
 
         if ($response->getStatusCode() !== 200 or isset($data['errorCode']))
-            throw new \DomainException('Не удалось создать форму оплаты. ' . $data['errorMessage']);
+            throw new OrderException('Не удалось создать форму оплаты. ' . $data['errorMessage']);
 
         $order->pay($data['orderId']);
         $order->save();

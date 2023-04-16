@@ -2,6 +2,7 @@
 
 namespace App\Order\Listener;
 
+use App\Exceptions\OrderException;
 use Illuminate\Support\Facades\Redis;
 use App\Order\Entity\{Order, Payment};
 use App\Order\Entity\Status\{OrderState, OrderStatus};
@@ -26,7 +27,7 @@ class OrderSendListener implements ShouldQueue
             $response = simplexml_load_string($this->getSendInfo($order));
 
             if(isset($response->errors->error->code))
-                throw new \DomainException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");
+                throw new OrderException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");
 
             if(isset($response->success->order_id))
                 $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_SUCCESS);
@@ -38,7 +39,7 @@ class OrderSendListener implements ShouldQueue
                 'file' => self::class . ' (' . $e->getLine() . ')',
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));
-            throw new \DomainException($e->getMessage());
+            throw new OrderException($e->getMessage());
         } finally {
             $order->save();
         }
