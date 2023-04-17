@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC, MouseEvent, ReactNode, useEffect } from "react";
 import { Table } from "../../components/table";
@@ -8,7 +9,6 @@ import { useAuth } from "../../hooks/useAuth";
 import styles from "./Profile.module.scss";
 
 import loyaltyCard from "../../assets/images/loyalty-card.png";
-import Image from "next/image";
 
 interface Props {
   title?: string;

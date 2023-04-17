@@ -53,15 +53,12 @@ const Search: FC = () => {
   const [city] = useCookie("city");
   const router = useRouter();
   const { page, q } = router.query;
-  const {
-    data: products,
-    isFetching,
-    error,
-    refetch,
-  } = useSearchProductsQuery({
-    q: q ? String(q) : "",
-    page: Number(page) || 1,
-  });
+  const { data: products, isFetching, error, refetch } = useSearchProductsQuery(
+    {
+      q: q ? String(q) : "",
+      page: Number(page) || 1,
+    }
+  );
   const { data: categories } = useFetchCategoriesQuery();
 
   const errorData = error as Error;
@@ -84,10 +81,10 @@ const Search: FC = () => {
   const generateData = () => {
     if (isFetching)
       return (
-        <h4 style={{ textAlign: "center" }}>Идет поиск товара "{q ?? ""}"</h4>
+        <h5 style={{ textAlign: "center" }}>Идет поиск товара "{q ?? ""}"</h5>
       );
     if (errorData)
-      return <h4 style={{ textAlign: "center" }}>{errorData.data.message}</h4>;
+      return <h5 style={{ textAlign: "center" }}>{errorData.data.message}</h5>;
 
     return products?.data.length ? (
       <>
@@ -114,9 +111,9 @@ const Search: FC = () => {
         </div>
       </>
     ) : (
-      <h4 style={{ textAlign: "center" }}>
+      <h5 style={{ textAlign: "center" }}>
         По запросу "{q ?? ""}" ничего не найдено!
-      </h4>
+      </h5>
     );
   };
 
@@ -143,8 +140,8 @@ const Search: FC = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps =
-  wrapper.getServerSideProps((store) => async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
+  (store) => async ({ params }) => {
     const page = Number(params?.page) || 1;
     const q = params?.q ? String(params?.q) : "";
 
@@ -154,6 +151,7 @@ export const getServerSideProps: GetServerSideProps =
     await Promise.all(getRunningOperationPromises());
 
     return { props: {} };
-  });
+  }
+);
 
 export default Search;

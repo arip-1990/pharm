@@ -27,25 +27,29 @@ const Cart: FC = () => {
     setTotalAmount(tmp);
   }, [carts]);
 
-  const handleCheckout = useCallback((e: MouseEvent) => {
-    e.preventDefault();
-    if (isAuth) router.push("/cart/store");
-    else {
-      setOpenModal(true);
-      notification("error", "Авторизуйтесь для оформления заказа");
-    }
-  }, [isAuth]);
+  const handleCheckout = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      if (isAuth) router.push("/cart/store");
+      else {
+        setOpenModal(true);
+        notification("error", "Авторизуйтесь для оформления заказа");
+      }
+    },
+    [isAuth]
+  );
 
-  const getDefaultGenerator = useCallback(() => [
-    { href: '/cart', text: "Корзина" }
-  ], []);
+  const getDefaultGenerator = useCallback(
+    () => [{ href: "/cart", text: "Корзина" }],
+    []
+  );
 
   return (
     <Layout title="Корзина - Сеть аптек 120/80">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
-        <h3>Состав заказа</h3>
+        <h5>Состав заказа</h5>
 
         <div className="cart">
           <div className="row cart_header d-md-flex">

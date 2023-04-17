@@ -13,7 +13,7 @@ const CheckoutSuccess: FC = () => {
 
   return (
     <Layout title="Заказ оформлен - Сеть аптек 120/80">
-      <h1 className="text-center">Спасибо, заказ №{id} оформлен!</h1>
+      <h5 className="text-center">Спасибо, заказ №{id} оформлен!</h5>
 
       <div>
         <p>

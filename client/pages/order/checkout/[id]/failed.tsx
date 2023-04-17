@@ -13,12 +13,10 @@ const CheckoutFailed: FC = () => {
 
   return (
     <Layout title="Ошибка оплаты - Сеть аптек 120/80">
-      <h1 className="text-center"></h1>
+      <h5 className="text-center">Заказ №{id}, не прошел оплату</h5>
 
       <div>
-        <p>
-          Произошла ошибка при оплате картой!
-        </p>
+        <p>Произошла ошибка при оплате картой!</p>
       </div>
     </Layout>
   );

@@ -13,7 +13,7 @@ class Helper
         if ($long) {
             $week = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
             foreach ($schedule as $key => $value) {
-                $str .= $week[$key] . ' ';
+                $str .= $week[$key] . ': ';
 
                 if($value['open'] == $value['close'])
                     $str .= 'Круглосуточно';

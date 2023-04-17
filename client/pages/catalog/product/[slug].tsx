@@ -106,9 +106,9 @@ const Product: FC = () => {
             <div className="col-12 col-lg-9 d-flex flex-column">
               <div className="row">
                 <div className="col-12 col-lg-8 col-xxl-9">
-                  <h4 className="text-center mb-3" itemProp="name">
+                  <h5 className="text-center mb-3" itemProp="name">
                     {data?.product.name}
-                  </h4>
+                  </h5>
                 </div>
               </div>
 

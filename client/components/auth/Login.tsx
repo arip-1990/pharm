@@ -213,7 +213,7 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
 
   return (
     <div>
-      <h2 className="text-center mb-4">{getTitle()}</h2>
+      <h5 className="text-center mb-4">{getTitle()}</h5>
       <form onSubmit={formik.handleSubmit}>
         {generateForm()}
 

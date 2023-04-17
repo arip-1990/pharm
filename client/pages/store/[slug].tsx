@@ -1,6 +1,6 @@
 import Layout from "../../templates";
 import { GetServerSideProps } from "next";
-import {FC, useCallback} from "react";
+import { FC, useCallback } from "react";
 import Page from "../../components/page";
 import Image from "next/image";
 import payments from "../../assets/images/payments.png";
@@ -19,13 +19,18 @@ const Store: FC = () => {
   const { slug } = router.query;
   const { data } = useGetStoreQuery(String(slug));
 
-  const getDefaultGenerator = useCallback(() => [
-    { href: '/store', text: "Точки самовывоза" },
-    { href: `/store/${String(slug)}`, text: data?.name }
-  ], [data]);
+  const getDefaultGenerator = useCallback(
+    () => [
+      { href: "/store", text: "Точки самовывоза" },
+      { href: `/store/${String(slug)}`, text: data?.name },
+    ],
+    [data]
+  );
 
   return (
-    <Layout title={data ? `${data?.name} - Сеть аптек 120/80` : 'Сеть аптек 120/80'}>
+    <Layout
+      title={data ? `${data?.name} - Сеть аптек 120/80` : "Сеть аптек 120/80"}
+    >
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page className="row">
@@ -43,32 +48,30 @@ const Store: FC = () => {
         </div>
 
         <div className="col-12 col-md-6">
-          <h4 className="text-center">
-            <b>{data?.location.city},</b> {data?.location.address}
-          </h4>
+          <h5 className="text-center">{data?.location.address}</h5>
 
           {data?.route ? (
             <>
-              <h5>
+              <h6>
                 <b>Как добраться:</b>
-              </h5>
+              </h6>
               <span dangerouslySetInnerHTML={{ __html: data?.route }} />
             </>
           ) : null}
 
-          <h5>
+          <h6>
             <b>Режим работы:</b>
-          </h5>
+          </h6>
           <span dangerouslySetInnerHTML={{ __html: data?.schedule }} />
 
-          <h5>
+          <h6>
             <b>Доставка:</b>
-          </h5>
+          </h6>
           <span>{data?.delivery ? "Есть" : "Нет"}</span>
 
-          <h5>
+          <h6>
             <b>Способ оплаты:</b>
-          </h5>
+          </h6>
           <span>
             картой{" "}
             <Image
@@ -79,9 +82,9 @@ const Store: FC = () => {
             , наличными
           </span>
 
-          <h5>
+          <h6>
             <b>Контакты:</b>
-          </h5>
+          </h6>
           <span>{data?.phone}</span>
         </div>
       </Page>

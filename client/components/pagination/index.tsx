@@ -50,7 +50,7 @@ const Pagination: FC<Props> = (props) => {
   let lastPage = paginationRange[paginationRange.length - 1];
 
   const onNext = () => {
-    if (currentPage < lastPage) handlePage(currentPage + 1);
+    if (currentPage < +lastPage) handlePage(currentPage + 1);
   };
 
   const onPrevious = () => {
