@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\V1\Setting\Banner;
+namespace App\Http\Controllers\V2\Setting\Banner;
 
 use App\Http\Resources\Setting\BannerResource;
 use App\Setting\Entity\Banner;

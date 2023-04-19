@@ -32,10 +32,15 @@ class Banner extends Model
 
     protected $fillable = ['title', 'description', 'picture', 'type', 'sort'];
 
+    public static function getPath(string $fileName = ''): string
+    {
+        if ($fileName) $fileName = "/{$fileName}";
+        return 'images/original/banners' . $fileName;
+    }
+
     public function getUrl(bool $mobile = false): ?string
     {
-        $file = "images/original/banners/";
-        $file .= $mobile ? "mobile_{$this->picture}" : $this->picture;
+        $file = self::getPath($mobile ? "mobile_{$this->picture}" : $this->picture);
         if (Storage::exists($file)) return Storage::url($file);
         return null;
     }

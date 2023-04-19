@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\V1;
+use App\Http\Controllers\{V1, V2};
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -49,6 +49,13 @@ Route::middleware(['auth', 'panel'])->group(function () {
     Route::prefix('offer')->group(function () {
         Route::get('/', [V1\Panel\Offer\IndexController::class, 'handle']);
         Route::get('/{product}', [V1\Panel\Offer\ShowController::class, 'handle']);
+    });
+
+    Route::prefix('banners')->group(function () {
+        Route::get('/', V2\Setting\Banner\IndexController::class);
+        Route::post('/', V2\Setting\Banner\AddController::class);
+        Route::patch('/', V2\Setting\Banner\UpdateSortController::class);
+        Route::delete('/', V2\Setting\Banner\DeleteController::class);
     });
 
     Route::get('/category', [V1\Panel\Category\IndexController::class, 'handle']);

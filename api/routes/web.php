@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\V1;
+use App\Http\Controllers\{V1, V2};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -113,6 +113,6 @@ Route::middleware('auth')->group(function () {
 
 // Settings site data
 Route::prefix('settings')->group(function () {
-    Route::get('/banners', V1\Setting\Banner\IndexController::class);
+    Route::get('/banners', V2\Setting\Banner\IndexController::class);
 });
 
