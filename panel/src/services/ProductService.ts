@@ -1,17 +1,13 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { axiosBaseQuery } from "./api";
 import moment from "moment";
+import { axiosBaseQuery } from "./api";
 import { IPagination } from "../models/IPagination";
 import { IProduct } from "../models/IProduct";
 
 interface IStatisticUser {
   user: { id: string; name: string };
-  addCountPhotos: number;
-  editCountValues: number;
-  editCountProducts: number;
-  addTotalCountPhotos: number;
-  editTotalCountValues: number;
-  editTotalCountProducts: number;
+  addTotalPhotos: number;
+  editTotalProducts: number;
 }
 
 export const productApi = createApi({

@@ -12,7 +12,7 @@ class IndexController extends Controller
 {
     public function handle(Request $request): ResourceCollection
     {
-        $query = VisitStatistic::query()->select('visit_statistics.*');
+        $query = VisitStatistic::select('visit_statistics.*');
         if ($request->get('orderField')) {
             if ($request->get('orderField') === 'user') {
                 $query->join('users', 'users.id', '=', 'visit_statistics.user_id')

@@ -55,7 +55,7 @@ client-ready:
 
 
 api-clear:
-	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf storage/framework/cache/data/* storage/framework/sessions/* storage/framework/testing/* storage/framework/views/* storage/logs/*'
+	docker compose run --rm api-php-cli php artisan optimize:clear
 
 api-init: api-permissions api-composer-install api-wait-db api-migrations
 

@@ -150,12 +150,12 @@ class Product extends Model
 
     public function getCountByCity(string $city): int
     {
-        return $this->hasMany(Offer::class)->where('quantity', '>', 0)->whereCity($city)->count();
+        return $this->offers()->whereCity($city)->count();
     }
 
     public function offers(): HasMany
     {
-        return $this->hasMany(Offer::class)->where('quantity', '>', 0)->orderBy('price');
+        return $this->hasMany(Offer::class)->where('quantity', '>', 0);
     }
 
     public function statistic(): HasOne

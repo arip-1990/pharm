@@ -4,7 +4,7 @@ services:
     image: traefik:2.8
     command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80
     ports:
-      - "80:80"
+      - 80:80
     networks:
       - traefik-public
     volumes:
@@ -41,7 +41,7 @@ services:
       - ./client:/app
     command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && yarn dev"
     links:
-      - "api:api.pharm.test"
+      - api:api.pharm.test
 
   client-node-cli:
     build:
@@ -118,6 +118,7 @@ services:
       MAIL_FROM_ADDRESS: info@localhost
       MAIL_FROM_NAME: Сеть аптек 120/80
       FILESYSTEM_DISK: public
+      ELASTICSEARCH_HOST: elastic
     volumes:
       - ./api:/app
       - uploads:/app/storage/app/public
@@ -142,6 +143,7 @@ services:
       MAIL_FROM_ADDRESS: info@localhost
       MAIL_FROM_NAME: Сеть аптек 120/80
       FILESYSTEM_DISK: public
+      ELASTICSEARCH_HOST: elastic
     volumes:
       - ./api:/app
 
@@ -154,7 +156,7 @@ services:
     volumes:
       - api-db:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - 5432:5432
 
   mailer:
     image: mailhog/mailhog
@@ -188,23 +190,19 @@ services:
     volumes:
       - ./bot:/app
 
-  # elasticsearch:
-  #   image: elasticsearch:8.3.2
-  #   environment:
-  #     - node.name=elasticsearch
-  #     - cluster.name=es-docker-cluster
-  #     - cluster.initial_master_nodes=elasticsearch
-  #     - bootstrap.memory_lock=true
-  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #     - xpack.security.enabled=false
-  #   ulimits:
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
-  #   volumes:
-  #     - esdata:/usr/share/elasticsearch/data
-  #   ports:
-  #     - 9200:9200
+  elastic:
+    image: elasticsearch:8.7.0
+    environment:
+      node.name: elasticsearch
+      discovery.type: single-node
+      xpack.ml.enabled: false
+      xpack.security.enabled: false
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
 
   redis:
     image: redis:6.2-alpine
@@ -212,12 +210,28 @@ services:
       - traefik-public
       - default
     ports:
-      - "6379:6379"
+      - 6379:6379
+  
+  logstash:
+    image: logstash:8.7.0
+    environment:
+      node.name: logstash
+      input.tcp.port: 50000
+      input.beats.port: 5044
+      output.elasticsearch.hosts: elastic
+      LS_JAVA_OPTS: -Xms512m -Xmx512m
+    ports:
+      - 5044:5044
+      - 50000:50000/tcp
+      - 50000:50000/udp
+      - 9600:9600
+    depends_on:
+      - elastic
 
 volumes:
   api-db:
   uploads:
-  esdata:
+  es-data:
 
 
 networks:

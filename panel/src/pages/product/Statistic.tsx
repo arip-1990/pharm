@@ -16,24 +16,8 @@ const Statistic: React.FC = () => {
       dataIndex: "user",
     },
     {
-      title: "Добавлено фото (текущий месяц)",
-      dataIndex: "addPhotos",
-    },
-    {
-      title: "Изменено аттрибутов (текущий месяц)",
-      dataIndex: "editValues",
-    },
-    {
-      title: "Изменено товаров (текущий месяц)",
-      dataIndex: "editProducts",
-    },
-    {
       title: "Добавлено всего фото",
       dataIndex: "addAllPhotos",
-    },
-    {
-      title: "Изменено всего аттрибутов",
-      dataIndex: "editAllValues",
     },
     {
       title: "Изменено всего товаров",
@@ -72,12 +56,8 @@ const Statistic: React.FC = () => {
             loading={isFetching}
             data={atatistic?.data.map((item) => ({
               user: item.user.name,
-              addPhotos: item.addCountPhotos,
-              editValues: item.editCountValues,
-              editProducts: item.editCountProducts,
-              addAllPhotos: item.addTotalCountPhotos,
-              editAllValues: item.editTotalCountValues,
-              editAllProducts: item.editTotalCountProducts,
+              addAllPhotos: item.addTotalPhotos,
+              editAllProducts: item.editTotalProducts,
             }))}
             onChange={handleChange}
             pagination={{

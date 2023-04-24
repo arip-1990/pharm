@@ -57,6 +57,7 @@ const Search: FC = () => {
     {
       q: q ? String(q) : "",
       page: Number(page) || 1,
+      pageSize: 15,
     }
   );
   const { data: categories } = useFetchCategoriesQuery();
@@ -143,9 +144,10 @@ const Search: FC = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async ({ params }) => {
     const page = Number(params?.page) || 1;
+    const pageSize = Number(params?.pageSize) || 15;
     const q = params?.q ? String(params?.q) : "";
 
-    store.dispatch(searchProducts.initiate({ q, page }));
+    store.dispatch(searchProducts.initiate({ q, page, pageSize }));
     store.dispatch(fetchCategories.initiate());
 
     await Promise.all(getRunningOperationPromises());
