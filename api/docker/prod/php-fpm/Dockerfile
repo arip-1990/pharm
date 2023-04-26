@@ -19,7 +19,9 @@ RUN composer install --no-dev --no-scripts --prefer-dist --no-progress --optimiz
 
 FROM php:8.1-fpm-alpine
 
-RUN apk add --no-cache postgresql-dev && docker-php-ext-install pdo_pgsql opcache sockets
+RUN apk add --no-cache libzip-dev postgresql-dev libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev \
+    && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install gd pdo_pgsql zip opcache sockets
 
 RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 
