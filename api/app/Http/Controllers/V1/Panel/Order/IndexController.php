@@ -43,10 +43,11 @@ class IndexController extends Controller
             }
             else $query->orderByDesc('id');
 
+            $page = $request->get('page', 1);
             $pageSize = $request->get('pageSize', 10);
             $total = $query->count();
             $missed = [];
-            $orders = $query->take($pageSize)->get()->filter(function (Order $item) use (&$missed) {
+            $orders = $query->offset(($page - 1) * $pageSize)->take($pageSize)->get()->filter(function (Order $item) use (&$missed) {
                 if ($item->order_group_id and $item->delivery_id == 3 and !in_array($item->order_group_id, $missed)) {
                     $missed[] = $item->order_group_id;
                     return false;
@@ -61,7 +62,7 @@ class IndexController extends Controller
             return new JsonResponse([
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
-            ], 500, options: JSON_UNESCAPED_UNICODE);
+            ], 500);
         }
     }
 }

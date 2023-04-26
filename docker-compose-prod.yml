@@ -145,7 +145,7 @@ services:
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
       IPINFO_TOKEN: ${IPINFO_TOKEN}
-      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_HOST: elastic
     volumes:
       - uploads:/app/storage/app/public
     deploy:
@@ -222,7 +222,7 @@ services:
       FILESYSTEM_DRIVER: public
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
-      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_HOST: elastic
     command: sh -c 'php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public
@@ -291,18 +291,19 @@ services:
         parallelism: 1
         delay: 10s
 
-  elasticsearch:
+  elastic:
     image: elasticsearch:8.7.0
     environment:
       node.name: elasticsearch
       discovery.type: single-node
-      xpack.ml.enabled: false
-      xpack.security.enabled: false
+      xpack.ml.enabled: 'false'
+      xpack.security.enabled: 'false'
       ES_JAVA_OPTS: -Xms512m -Xmx512m
     volumes:
       - es-data:/usr/share/elasticsearch/data
     deploy:
-      mode: global
+      placement:
+        constraints: [ node.role == manager ]
       endpoint_mode: dnsrr
       resources:
         limits:

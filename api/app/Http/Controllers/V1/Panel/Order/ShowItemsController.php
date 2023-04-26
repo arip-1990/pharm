@@ -13,13 +13,13 @@ class ShowItemsController extends Controller
     {
         try {
             $items = $order->user?->orders->map(fn(Order $order) => [...$order->items])->collapse() ?? [];
-            return new JsonResponse(OrderItemResource::collection($items), options: JSON_UNESCAPED_UNICODE);
+            return new JsonResponse(OrderItemResource::collection($items));
         }
         catch (\Exception $exception) {
             return new JsonResponse([
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
-            ], 500, options: JSON_UNESCAPED_UNICODE);
+            ], 500);
         }
     }
 }

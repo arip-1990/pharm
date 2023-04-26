@@ -7,7 +7,7 @@ export interface IStatus {
 }
 
 export interface IItem {
-  product: { id: string, name: string, slug: string };
+  product: { id: string; name: string; slug: string } | null;
   price: number;
   quantity: number;
 }

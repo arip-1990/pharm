@@ -39,10 +39,7 @@ class IndexController extends Controller
 
         if ($request->get('searchColumn')) {
             if ($request->get('searchColumn') === 'name') {
-                $query->where(function (Builder $builder) use ($request) {
-                    $builder->where($request->get('searchColumn'), 'like', '%' . $request->get('searchText') . '%')
-                        ->orWhereRaw('to_tsvector(name) @@ plainto_tsquery(?)', [$request->get('searchText')]);
-                });
+                $query->where('to_tsvector(name) @@ plainto_tsquery(?)', [$request->get('searchText')]);
             }
             else {
                 $query->where($request->get('searchColumn'), 'like', '%' . $request->get('searchText') . '%');

@@ -20,10 +20,10 @@ class SendCommand extends Command
         $queueClient = Redis::connection('bot')->client();
 
         try {
-            $orders = Order::where('created_at', '>=', Carbon::now()->subMinutes(5))->get();
+            $orders = Order::where('created_at', '>=', Carbon::now()->subDay())->get();
             /** @var Order $order */
             foreach ($orders as $order) {
-                if ($order->isSent() or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
+                if (!$order->isStatusWait(OrderStatus::STATUS_SEND) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
                     continue;
 
                 /** @var Order $order2 */
@@ -54,7 +54,8 @@ class SendCommand extends Command
                     }
 
                     $tmpOrder->cost += $order2->cost;
-                } else {
+                }
+                else {
                     $tmpOrder = clone $order2;
                     $tmpOrderItems = clone $order2->items;
 

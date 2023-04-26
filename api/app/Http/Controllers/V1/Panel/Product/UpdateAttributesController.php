@@ -24,6 +24,6 @@ class UpdateAttributesController extends Controller
         $product->values()->delete();
         $product->values()->saveMany($values);
 
-        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse();
     }
 }

@@ -11,11 +11,11 @@ class OrderItemResource extends JsonResource
     {
         /** @var OrderItem $this */
         return [
-            'product' => [
+            'product' => $this->product ? [
                 'id' => $this->product->id,
                 'name' => $this->product->name,
                 'slug' => $this->product->slug
-            ],
+            ] : null,
             'price' => $this->price,
             'quantity' => $this->quantity
         ];

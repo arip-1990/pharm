@@ -40,9 +40,12 @@ class UploadController extends Controller
             $product->photos()->syncWithoutDetaching($photo);
         }
         catch (\Exception $e) {
-            return new JsonResponse(['message' => $e->getMessage()], 500, options: JSON_UNESCAPED_UNICODE);
+            return new JsonResponse([
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
         }
 
-        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse();
     }
 }

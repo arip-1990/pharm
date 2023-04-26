@@ -1,10 +1,8 @@
 FROM php:8.1-cli-alpine
 
-RUN apk add --no-cache bash
-
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip sockets
+RUN apk add --no-cache bash libzip-dev postgresql-dev libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev \
+    && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install gd pdo_pgsql zip
 
 RUN mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini
 

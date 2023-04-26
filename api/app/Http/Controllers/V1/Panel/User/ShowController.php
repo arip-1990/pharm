@@ -11,6 +11,6 @@ class ShowController extends Controller
 {
     public function handle(User $user): JsonResponse
     {
-        return new JsonResponse(new UserResource($user), options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse(new UserResource($user));
     }
 }

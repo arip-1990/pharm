@@ -24,6 +24,6 @@ class UpdateController extends Controller
         $product->editor()->associate($request->user());
         $product->save();
 
-        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse();
     }
 }

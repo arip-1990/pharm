@@ -1,8 +1,8 @@
 FROM php:8.1-cli-alpine AS builder
 
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache sockets
+RUN apk add --no-cache libzip-dev postgresql-dev libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev \
+    && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install gd pdo_pgsql zip
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
@@ -19,11 +19,7 @@ RUN composer install --no-dev --no-scripts --prefer-dist --no-progress --optimiz
 
 FROM php:8.1-fpm-alpine
 
-RUN apk add --no-cache fcgi
-
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/install-php-extensions && install-php-extensions gd pdo_pgsql zip opcache sockets
+RUN apk add --no-cache postgresql-dev && docker-php-ext-install pdo_pgsql opcache sockets
 
 RUN mv $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 

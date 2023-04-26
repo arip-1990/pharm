@@ -44,7 +44,7 @@
     height: 22px;
     background: transparent;
     padding: 2px;
-    border: 1px solid rgba(0, 0, 0, 0.75 );
+    border: 1px solid rgba(0, 0, 0, 0.75);
     border-radius: 50%;
     cursor: pointer;
     z-index: 99;
@@ -70,12 +70,13 @@
 .progressbar {
   counter-reset: step;
 
-  &.sber li {
+  &.sber li,
+  &.delivery li {
     width: 16%;
   }
 
-  &.delivery li {
-    width: 12%;
+  &.sber.delivery li {
+    width: 14%;
   }
 
   li {
@@ -105,17 +106,17 @@
     }
 
     &.active:before {
-      content: '\2713';
+      content: "\2713";
     }
 
     &.error:before {
-      content: '\2717';
+      content: "\2717";
     }
 
     &:after {
       width: 100%;
       height: 2px;
-      content: '';
+      content: "";
       position: absolute;
       background-color: #7d7d7d;
       top: 13px;

@@ -3,29 +3,30 @@
 namespace App\Http\Controllers\V1\Panel\Product\Moderation;
 
 use App\Http\Resources\ProductResource;
+use Illuminate\Http\Request;
 use App\Product\Entity\{ModerationProduct, Product};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class IndexController
 {
-    public function handle(): JsonResponse
+    public function handle(Request $request): JsonResponse
     {
-        if (Auth::user()->moderationProducts()->count()) {
-            $products = Auth::user()->moderationProducts->map(fn (ModerationProduct $item) => $item->product);
+        if ($request->user()->moderationProducts()->count()) {
+            $products = $request->user()->moderationProducts->map(fn (ModerationProduct $item) => $item->product);
         }
         else {
-            $products = Product::query()->where('status', Product::STATUS_MODERATION)
+            $products = Product::where('status', Product::STATUS_MODERATION)
                 ->doesntHave('moderation')->take(100)->get();
             foreach ($products as $product) {
-                ModerationProduct::query()->create([
+                ModerationProduct::create([
                     'type' => 'photo',
-                    'user_id' => Auth::id(),
+                    'user_id' => $request->user()->id,
                     'product_id' => $product->id
                 ]);
             }
         }
 
-        return new JsonResponse(ProductResource::collection($products), options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse(ProductResource::collection($products));
     }
 }

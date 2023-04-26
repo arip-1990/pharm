@@ -11,6 +11,6 @@ class IndexController extends Controller
 {
     public function handle(): JsonResponse
     {
-        return new JsonResponse(AttributeResource::collection(Attribute::orderBy('type')->get()), options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse(AttributeResource::collection(Attribute::orderBy('type')->get()));
     }
 }

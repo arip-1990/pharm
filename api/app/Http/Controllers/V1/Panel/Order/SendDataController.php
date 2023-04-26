@@ -13,13 +13,13 @@ class SendDataController
     {
         try {
             $service = new GenerateDataService($order);
-            return new JsonResponse($service->generateSenData(Carbon::now()), options: JSON_UNESCAPED_UNICODE);
+            return new JsonResponse($service->generateSenData(Carbon::now()));
         }
         catch (\Exception $exception) {
             return new JsonResponse([
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
-            ], 500, options: JSON_UNESCAPED_UNICODE);
+            ], 500);
         }
     }
 }

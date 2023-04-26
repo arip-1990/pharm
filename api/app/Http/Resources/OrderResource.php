@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Helper;
-use App\Order\Entity\{Order, OrderItem};
+use App\Order\Entity\Order;
 use App\Order\Entity\Status\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -45,11 +45,7 @@ class OrderResource extends JsonResource
                 'createdAt' => $status->created_at->format('d.m.Y')
             ]),
             'platform' => $this->platform,
-            'items' => $this->items->map(fn(OrderItem $item) => [
-                'product' => new ProductResource($item->product),
-                'price' => $item->price,
-                'quantity' => $item->quantity
-            ]),
+            'items' => OrderItemResource::collection($this->items),
             'transfer' => ($this->group and $this->delivery_id == 2) ? new OrderResource($this->group->orders()->firstWhere('id', '!=', $this->id)) : null
         ];
     }

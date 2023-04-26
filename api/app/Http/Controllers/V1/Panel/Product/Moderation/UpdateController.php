@@ -15,6 +15,6 @@ class UpdateController
 
         $product->moderation()->delete();
 
-        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse();
     }
 }

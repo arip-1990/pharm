@@ -7,7 +7,6 @@ use App\Services\IpInfo\IpInfo;
 use Closure;
 use hisorange\BrowserDetect\Parser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
 class Statistic
@@ -20,7 +19,7 @@ class Statistic
                 throw new \Exception();
 
             $ipInfo = new IpInfo();
-            if ($visitId = Session::get('visitId')) {
+            if ($visitId = $request->session()->get('visitId')) {
                 $visit = VisitStatistic::find($visitId);
                 if (!$visit->city) {
                     $details = $ipInfo->getDetails($ip);
@@ -45,7 +44,7 @@ class Statistic
                 if ($user = $request->user()) $visit->user()->associate($user);
 
                 $visit->save();
-                Session::put('visitId', $visit->id);
+                $request->session()->put('visitId', $visit->id);
             }
         } catch (\Exception $e) {}
 

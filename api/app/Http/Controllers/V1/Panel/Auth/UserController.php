@@ -10,6 +10,6 @@ class UserController extends Controller
 {
     public function handle(Request $request): JsonResponse
     {
-        return new JsonResponse($request->user(), options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse($request->user());
     }
 }
