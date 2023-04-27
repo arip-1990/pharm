@@ -66,19 +66,11 @@ const Cart: FC = () => {
                 className="row align-items-center product"
               >
                 <div className="col-10 col-sm-3 col-md-2 offset-1 offset-md-0 text-center">
-                  {cart.product.photos.length ? (
-                    <img
-                      alt={cart.product.name}
-                      style={{ width: "100%" }}
-                      src={cart.product.photos[0].url}
-                    />
-                  ) : (
-                    <img
-                      alt={cart.product.name}
-                      style={{ width: "100%" }}
-                      src={defaultImage.src}
-                    />
-                  )}
+                  <img
+                    alt={cart.product.name}
+                    style={{ width: "100%" }}
+                    src={cart.product.photos[0].url || defaultImage.src}
+                  />
                 </div>
                 <div className="col-10 col-sm-7 col-md-5 product_title">
                   <p>
