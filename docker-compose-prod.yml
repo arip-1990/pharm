@@ -263,6 +263,35 @@ services:
         delay: 10s
         max_attempts: 5
         window: 120s
+  
+  api-subscriber:
+    image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: https://api.120на80.рф
+      DB_CONNECTION: pgsql
+      DB_HOST: api-db
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: ${DB_PASSWORD}
+      FILESYSTEM_DRIVER: public
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      MAIL_HOST: smtp.mail.ru
+      MAIL_PORT: 465
+      MAIL_USERNAME: info@120-na-80.ru
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM_ADDRESS: info@120-na-80.ru
+      MAIL_FROM_NAME: Сеть аптек 120/80
+    command: sh -c 'wait-for-it redis:6379 -t 60 && php artisan redis:subscribe'
+    volumes:
+      - uploads:/app/storage/app/public
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+        window: 120s
 
   # parser:
   #   image: ${REGISTRY}/pharm-parser:${IMAGE_TAG}

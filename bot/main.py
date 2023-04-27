@@ -54,7 +54,7 @@ def update_data(message) -> None:
             send_message = 'Обновляем остатки...'
 
         import_data['chat'] = message.chat.id
-        r.publish('update', json.dumps({'type': import_data['command']}))
+        r.publish('api:import', json.dumps({'type': import_data['command']}))
         bot.send_message(message.chat.id, send_message)
 
 
@@ -69,35 +69,38 @@ def handle_api_error(data: dict) -> None:
 def handle_import(data: dict) -> None:
     global import_data
 
-    if data['success']:
-        bot.send_message(admin, data['message'])
-
-        if import_data['chat'] and import_data['chat'] != admin:
-            bot.send_message(import_data['chat'], data['message'])
-    else:
-        handle_api_error(data)
+    senders = [admin, import_data['chat']] if (import_data['chat'] and import_data['chat'] != admin) else [admin]
+    if not data['success']:
+        for sender in senders:
+            bot.send_message(sender, "Не удалось обновить данные!")
+    
+    for sender in senders:
+        bot.send_message(sender, data['message'])
 
     import_data = {'chat': None, 'command': None}
 
 
 def listen_messages() -> None:
     p = r.pubsub()
-    p.subscribe('bot')
+    p.psubscribe('bot:*')
 
     for message in p.listen():
         if message and isinstance(message, dict):
             try:
-                if message.get('type') == 'subscribe':
-                    type = message.get('channel').split(':')[1]
+                if message.get('type') == 'pmessage':
+                    channel = message.get('channel').decode('utf8').split(':')[-1]
+                    data = message.get('data').decode('utf8')
 
-                    if type == 'info':
-                        handle_api_info(message.get('data'))
-                    elif type == 'error':
-                        handle_api_error(json.loads(message.get('data')))
+                    if channel == 'import':
+                        handle_import(json.loads(data))
+                    elif channel == 'info':
+                        handle_api_info(data)
+                    elif channel == 'error':
+                        handle_api_error(json.loads(data))
                     else:
-                        bot.send_message(admin, message.get('data'))
-            except ValueError:
-                bot.send_message(admin, message.get('data'))
+                        bot.send_message(admin, data)
+            except Exception as e:
+                bot.send_message(admin, e)
 
 
 def main():

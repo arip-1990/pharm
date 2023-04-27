@@ -1,5 +1,5 @@
 init: init-ci panel-ready client-ready
-init-ci: docker-down-clear panel-clear client-clear api-clear \
+init-ci: docker-down-clear panel-clear client-clear api-clear api-clear-storage \
 	docker-pull docker-build docker-up \
 	panel-init client-init api-init
 up: docker-up
@@ -56,6 +56,9 @@ client-ready:
 
 api-clear:
 	docker compose run --rm api-php-cli php artisan optimize:clear
+
+api-clear-storage:
+	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf storage/logs/*'
 
 api-init: api-permissions api-composer-install api-wait-db api-migrations
 

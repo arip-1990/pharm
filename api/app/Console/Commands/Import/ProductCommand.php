@@ -14,7 +14,7 @@ class ProductCommand extends Command
 
     public function handle(): int
     {
-        $queueClient = Redis::connection('bot')->client();
+        $redis = Redis::connection('bot')->client();
 
         try {
             $data = $this->getData();
@@ -60,17 +60,20 @@ class ProductCommand extends Command
             }
         }
         catch (\Exception $e) {
-            $queueClient->publish('bot:error', json_encode([
-                'file' => self::class . ' (' . $e->getLine() . ')',
+            $redis->publish('bot:import', json_encode([
+                'success' => false,
+                'type' => 'product',
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));
-            $this->info($e->getMessage());
 
             return self::FAILURE;
         }
 
-        $queueClient->publish('bot:info', 'Товары успешно обновлены');
-        $this->info('Загрузка успешно завершена! ' . $this->startTime->diff(Carbon::now())->format('%iм %sс'));
+        $redis->publish('bot:import', json_encode([
+            'success' => true,
+            'type' => 'product',
+            'message' => 'Товары успешно обновлены: ' . $this->startTime->diff(Carbon::now())->format('%iм %sс')
+        ], JSON_UNESCAPED_UNICODE));
 
         return self::SUCCESS;
     }

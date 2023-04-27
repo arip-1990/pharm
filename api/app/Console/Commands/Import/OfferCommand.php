@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Import;
 
 use App\Models\Store;
+use Carbon\Carbon;
 use App\Product\Entity\{Offer, Product};
 use Illuminate\Support\Facades\Redis;
 
@@ -15,10 +16,11 @@ class OfferCommand extends Command
 
     public function handle(): int
     {
-        $queueClient = Redis::connection('bot')->client();
+        $redis = Redis::connection('bot')->client();
+        $type = $this->argument('type');
 
         try {
-            switch ($this->argument('type')) {
+            switch ($type) {
                 case 'change':
                     $this->change();
                     break;
@@ -27,20 +29,22 @@ class OfferCommand extends Command
                     break;
                 default:
                     $this->all();
-                    $queueClient->publish('bot:info', 'Остатки успешно обновлены');
+                    $redis->publish('bot:import', json_encode([
+                        'success' => true,
+                        'type' => 'offer:' . $type,
+                        'message' => 'Остатки успешно обновлены: ' . $this->startTime->diff(Carbon::now())->format('%iм %sс')
+                    ], JSON_UNESCAPED_UNICODE));
             }
         }
         catch (\Exception $e) {
-            $queueClient->publish('bot:error', json_encode([
-                'file' => self::class . ' (' . $e->getLine() . ')',
+            $redis->publish('bot:import', json_encode([
+                'success' => false,
+                'type' => 'offer:' . $type,
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));
-            $this->info($e->getMessage());
 
             return self::FAILURE;
         }
-
-        $this->info('Загрузка успешно завершена! ' . $this->startTime->diff()->format('%iм %sс'));
 
         return self::SUCCESS;
     }
