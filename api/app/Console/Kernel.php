@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('elastic:index-product')->dailyAt('1:00');
 
         $schedule->command('import:offer change')->everyFiveMinutes()->unlessBetween('0:00', '1:00');
-        $schedule->command('import:offer stock')->everyFiveMinutes()->unlessBetween('0:00', '1:00');
+//        $schedule->command('import:offer stock')->everyFiveMinutes()->unlessBetween('0:00', '1:00');
 
         $schedule->command('order:send')->everyMinute();
 

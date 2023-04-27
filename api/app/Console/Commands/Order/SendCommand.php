@@ -23,7 +23,7 @@ class SendCommand extends Command
             $orders = Order::where('created_at', '>=', Carbon::now()->subDay())->get();
             /** @var Order $order */
             foreach ($orders as $order) {
-                if (!$order->isStatusWait(OrderStatus::STATUS_SEND) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
+                if ($order->isSent() or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
                     continue;
 
                 /** @var Order $order2 */
@@ -90,7 +90,8 @@ class SendCommand extends Command
                         $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_SUCCESS);
                         $order2->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_SUCCESS);
                     }
-                } catch (\Exception $e) {
+                }
+                catch (\Exception $e) {
                     $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
                     $order2->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
 
@@ -98,7 +99,8 @@ class SendCommand extends Command
                         'file' => self::class . ' (' . $e->getLine() . ')',
                         'message' => $e->getMessage()
                     ], JSON_UNESCAPED_UNICODE));
-                } finally {
+                }
+                finally {
                     $order->save();
                     $order2->save();
                 }
@@ -111,8 +113,6 @@ class SendCommand extends Command
 
             return self::FAILURE;
         }
-
-        $this->info('Процесс завершен!');
 
         return self::SUCCESS;
     }
