@@ -43,7 +43,7 @@ const Cart: FC<Props> = ({ product, style }) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    changeCart(Number(e.target.value));
+    changeCart(Number(e.currentTarget.value));
   };
 
   const handleClickChange = (e: MouseEvent<HTMLButtonElement>) => {

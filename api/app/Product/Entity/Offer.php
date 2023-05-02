@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property float $price
+ * @property double $price
  * @property int $quantity
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
@@ -23,7 +23,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Offer extends Model
 {
-    public function edit(float $price, int $quantity): void
+    protected $casts = [
+        'price' => 'double',
+    ];
+
+    public function edit(double $price, int $quantity): void
     {
         $this->price = $price;
         $this->quantity = $quantity;

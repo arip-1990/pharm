@@ -27,10 +27,9 @@ class Handler extends ExceptionHandler
     public function sendBot(\Throwable $e): void
     {
         try {
-            $queueClient = Redis::connection('bot')->client();
-
+            $redis = Redis::connection('bot')->client();
             if (LogLevel::ERROR == Arr::first($this->levels, fn ($level, $type) => $e instanceof $type, LogLevel::ERROR)) {
-                $queueClient->publish('bot:error', json_encode([
+                $redis->publish('bot:error', json_encode([
                     'file' => $e->getFile() . ' (' . $e->getLine() . ')',
                     'message' => $e->getMessage()
                 ], JSON_UNESCAPED_UNICODE));
