@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1\Store;
 
 use App\Http\Resources\StoreResource;
-use App\Models\Store;
+use App\Store\Entity\Store;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

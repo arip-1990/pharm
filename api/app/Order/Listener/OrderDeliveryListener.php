@@ -3,8 +3,6 @@
 namespace App\Order\Listener;
 
 use App\Order\Event\OrderDelivery;
-use App\Order\Entity\Delivery;
-use App\Order\Entity\Status\{OrderState, OrderStatus};
 use App\Order\UseCase\GenerateDataService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Store\Entity;
 
 use App\Product\Entity\{Offer, Product};
 use Carbon\Carbon;
@@ -53,7 +53,7 @@ class Store extends Model
         if ($this->active)
             throw new \DomainException('Store is already active.');
 
-        $this->status = true;
+        $this->active = true;
     }
 
     public function inactivate(): void
@@ -61,13 +61,12 @@ class Store extends Model
         if (!$this->active)
             throw new \DomainException('Store is already inactive.');
 
-        $this->status = false;
+        $this->active = false;
     }
 
     public function getPrice(Product $product): float
     {
-        $offer = $this->offers()->where('product_id', $product->id)->first();
-        return $offer->price;
+        return $this->offers()->where('product_id', $product->id)->first()?->price ?? 0;
     }
 
     public function scopeActive(Builder $query): Builder

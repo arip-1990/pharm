@@ -2,7 +2,7 @@
 
 namespace App\Product\Entity;
 
-use App\Models\Store;
+use App\Store\Entity\Store;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
- * @property double $price
+ * @property float $price
  * @property int $quantity
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
@@ -27,7 +27,7 @@ class Offer extends Model
         'price' => 'double',
     ];
 
-    public function edit(double $price, int $quantity): void
+    public function edit(float $price, int $quantity): void
     {
         $this->price = $price;
         $this->quantity = $quantity;

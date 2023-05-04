@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\V1\Offer;
 
 use App\Http\Resources\OfferResource;
-use App\Models\City;
 use App\Product\Entity\Product;
+use App\Store\Entity\City;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

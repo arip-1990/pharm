@@ -6,10 +6,9 @@ use App\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mobile\DeliveryRequest;
 use App\Http\Resources\Mobile\DeliveryResource;
-use App\Models\City;
-use App\Models\Store;
 use App\Order\Entity\Delivery;
 use App\Order\UseCase\CalculateService;
+use App\Store\Entity\{City, Store};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 

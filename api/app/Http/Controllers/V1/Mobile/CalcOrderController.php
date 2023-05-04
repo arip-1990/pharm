@@ -5,8 +5,8 @@ namespace App\Http\Controllers\V1\Mobile;
 use App\Helper;
 use App\Http\Requests\Mobile\CalcOrderRequest;
 use App\Http\Resources\Mobile\CalcOrderResource;
-use App\Models\{City, Store};
 use App\Order\UseCase\CalculateService;
+use App\Store\Entity\{City, Store};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 

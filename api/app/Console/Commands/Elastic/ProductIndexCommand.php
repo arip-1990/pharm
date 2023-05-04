@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Elastic;
 
-use App\Models\Store;
 use App\Product\Entity\Product;
+use App\Store\Entity\Store;
 use Illuminate\Console\Command;
 
 use Elasticsearch\Client;

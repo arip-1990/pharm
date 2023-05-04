@@ -2,7 +2,6 @@
 
 namespace App\Product\UseCase;
 
-use App\Http\Requests\Catalog\SearchRequest;
 use App\Product\Entity\Product;
 use Elasticsearch\Client;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -13,22 +12,45 @@ class SearchService
 {
     public function __construct(private readonly Client $client) {}
 
-    public function search(SearchRequest $request, string $city): Paginator
+    public function search(string $text, int $from = 0, int $limit = 10): array
     {
-        $page = $request->get('page', 1);
-        $pageSize = $request->get('pageSize', 5);
-
         $response = $this->client->search([
             'index' => config('data.elastic.product.index'),
             'body' => [
                 '_source' => ['id', 'name', 'slug'],
-                'from' => ($page - 1) * $pageSize,
-                'size' => $pageSize,
+                'from' => $from * $limit,
+                'size' => $limit,
+                'query' => [
+                    'simple_query_string' => [
+                        'query' => $text,
+                        'fields' => ['name^3', 'values'],
+                    ]
+                ],
+                'highlight' => ['fields' => ['name' => new \stdClass()]],
+            ],
+        ]);
+
+        $data = array_map(fn(array $item) => [
+            ...$item['_source'],
+            'highlight' => $item['highlight']['name'][0] ?? null,
+        ], $response['hits']['hits']);
+
+        return array_column($data, 'id');
+    }
+
+    public function searchByCity(string $text, string $city, int $from = 0, int $limit = 10): Paginator
+    {
+        $response = $this->client->search([
+            'index' => config('data.elastic.product.index'),
+            'body' => [
+                '_source' => ['id', 'name', 'slug'],
+                'from' => $from * $limit,
+                'size' => $limit,
                 'query' => [
                     'bool' => [
                         'must' => [
                             'simple_query_string' => [
-                                'query' => $request->get('q'),
+                                'query' => $text,
                                 'fields' => ['name^3', 'values'],
                             ]
                         ],
@@ -45,12 +67,12 @@ class SearchService
         ], $response['hits']['hits']);
 
         if (!count($data))
-            return new LengthAwarePaginator([], 0, $pageSize, $page);
+            return new LengthAwarePaginator([], 0, $limit, $from + 1);
 
         $ids = array_column($data, 'id');
         $items = Product::whereIn('id', $ids)
             ->orderBy(new Expression("position(id::text in '" . implode(',', $ids) . "')"))->get();
 
-        return new LengthAwarePaginator($items, $response['hits']['total']['value'], $pageSize, $page);
+        return new LengthAwarePaginator($items, $response['hits']['total']['value'], $limit, $from + 1);
     }
 }

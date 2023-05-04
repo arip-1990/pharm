@@ -2,7 +2,7 @@
 
 namespace App\Order\Entity;
 
-use App\Models\Location;
+use App\Store\Entity\Location;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

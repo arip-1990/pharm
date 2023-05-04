@@ -3,7 +3,8 @@
 namespace App\Order\Entity;
 
 use App\Exceptions\OrderException;
-use App\Models\{Location, Store, User};
+use App\Models\User;
+use App\Store\Entity\{Location, Store};
 use App\Order\Entity\Status\{OrderStatus, OrderState, Status};
 use App\Order\Event\OrderChangeStatus;
 use Carbon\Carbon;

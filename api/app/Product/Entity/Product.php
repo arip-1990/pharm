@@ -2,8 +2,8 @@
 
 namespace App\Product\Entity;
 
-use App\Models\Store;
 use App\Models\User;
+use App\Store\Entity\Store;
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Builder;
@@ -68,9 +68,8 @@ class Product extends Model
 
     public function getPrice(Store $store = null): float
     {
-        if (!$store) return $this->offers()->first()->price ?? 0;
-        $offer = $this->offers()->where('store_id', $store->id)->first();
-        return $offer->price ?? 0;
+        if (!$store) return $this->offers()->first()?->price ?? 0;
+        return $this->offers()->where('store_id', $store->id)->first()?->price ?? 0;
     }
 
     public function activate(): void

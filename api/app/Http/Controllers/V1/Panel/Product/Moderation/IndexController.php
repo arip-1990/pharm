@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\V1\Panel\Product\Moderation;
 
 use App\Http\Resources\ProductResource;
-use Illuminate\Http\Request;
 use App\Product\Entity\{ModerationProduct, Product};
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class IndexController
 {

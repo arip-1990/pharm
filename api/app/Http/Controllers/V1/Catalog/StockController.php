@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\V1\Catalog;
 
 use App\Http\Resources\{CategoryResource, ProductResource};
-use App\Models\City;
 use App\Product\Entity\{Category, Product};
+use App\Store\Entity\City;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

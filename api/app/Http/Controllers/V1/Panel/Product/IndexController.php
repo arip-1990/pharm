@@ -3,17 +3,28 @@
 namespace App\Http\Controllers\V1\Panel\Product;
 
 use App\Http\Resources\ProductResource;
-use App\Product\Entity\{Photo, Product};
-use Illuminate\Database\Eloquent\Builder;
+use App\Product\Entity\Product;
+use App\Product\UseCase\SearchService;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controller;
 
 class IndexController extends Controller
 {
-    public function handle(Request $request): ResourceCollection
+    public function handle(Request $request, SearchService $searchService): ResourceCollection
     {
         $query = Product::select('products.*');
+
+        if ($request->get('searchColumn')) {
+            if ($request->get('searchColumn') === 'name') {
+                $ids = $searchService->search($request->get('searchText'), $request->get('page', 1) - 1, $request->get('pageSize', 10));
+                $query->whereIn('id', $ids)->orderBy(new Expression("position(id::text in '" . implode(',', $ids) . "')"));
+            }
+            else {
+                $query->where($request->get('searchColumn'), '~*', $request->get('searchText'));
+            }
+        }
 
         if ($status = $request->get('offer')) {
             $status === 'on' ? $query->has('offers') : $query->doesntHave('offers');
@@ -35,15 +46,6 @@ class IndexController extends Controller
 
         if ($category = $request->get('category')) {
             $category === 'on' ? $query->whereNotNull('category_id') : $query->whereNull('category_id');
-        }
-
-        if ($request->get('searchColumn')) {
-            if ($request->get('searchColumn') === 'name') {
-                $query->where('to_tsvector(name) @@ plainto_tsquery(?)', [$request->get('searchText')]);
-            }
-            else {
-                $query->where($request->get('searchColumn'), 'like', '%' . $request->get('searchText') . '%');
-            }
         }
 
         if ($request->get('orderField')) {

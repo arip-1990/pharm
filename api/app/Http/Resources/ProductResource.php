@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\City;
+use App\Store\Entity\City;
 use App\Product\Entity\{Product, Value};
 use Illuminate\Http\Resources\Json\JsonResource;
 

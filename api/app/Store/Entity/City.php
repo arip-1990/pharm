@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Store\Entity;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;

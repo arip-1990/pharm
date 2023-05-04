@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\V1\Catalog;
 
-use App\Models\City;
+use App\Store\Entity\City;
 use App\Product\Entity\{Offer, Product};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

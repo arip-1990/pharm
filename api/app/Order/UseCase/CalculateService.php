@@ -2,7 +2,7 @@
 
 namespace App\Order\UseCase;
 
-use App\Models\{City, Location, Store};
+use App\Store\Entity\{City, Location, Store};
 use Illuminate\Database\Eloquent\Builder;
 
 class CalculateService

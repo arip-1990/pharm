@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Helper;
-use App\Models\Store;
+use App\Store\Entity\Store;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 

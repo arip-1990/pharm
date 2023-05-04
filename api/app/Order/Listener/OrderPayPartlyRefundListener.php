@@ -9,7 +9,7 @@ class OrderPayPartlyRefundListener implements ShouldQueue
 {
     public function handle(OrderPayPartlyRefund $event): void
     {
-//        $order = $event->order;
+        $order = $event->order;
 //        try {
 //            if (!$order->isPay() or $order->isPartlyRefund())
 //                throw new \DomainException('Заказ не оплачен или возмещен.');

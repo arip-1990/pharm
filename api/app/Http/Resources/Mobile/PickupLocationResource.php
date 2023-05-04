@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Mobile;
 
-use App\Models\Store;
+use App\Store\Entity\Store;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PickupLocationResource extends JsonResource
