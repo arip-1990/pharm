@@ -115,4 +115,3 @@ Route::middleware('auth')->group(function () {
 Route::prefix('settings')->group(function () {
     Route::get('/banners', V2\Setting\Banner\IndexController::class);
 });
-

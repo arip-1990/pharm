@@ -35,7 +35,7 @@ const NewAttribute: React.FC<PropsAttributeType> = ({
     <Modal
       title="Добавить аттрибут"
       okText="Добавить"
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       onOk={handleOk}
     >

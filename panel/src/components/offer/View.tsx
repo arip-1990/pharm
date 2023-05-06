@@ -41,7 +41,7 @@ const View: React.FC = () => {
                 {
                   key: "Наименование",
                   value: (
-                    <Link to={`/product/${offer.slug}`}>{offer.name}</Link>
+                    <Link to={`/products/${offer.slug}`}>{offer.name}</Link>
                   ),
                 },
               ]

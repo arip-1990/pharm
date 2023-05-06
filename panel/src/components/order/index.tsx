@@ -20,8 +20,9 @@ const Order: React.FC = () => {
     filters: [],
   });
   const { data: users } = useFetchUsersQuery();
-  const { data: orders, isFetching: ordersLoading } =
-    useFetchOrdersQuery(filters);
+  const { data: orders, isFetching: ordersLoading } = useFetchOrdersQuery(
+    filters
+  );
   const navigate = useNavigate();
 
   const columns = [
@@ -37,7 +38,9 @@ const Order: React.FC = () => {
           : null,
       render: ([id, isTransfer]: any, record: any) => (
         <span>
-          {id}<br />{isTransfer ? 'Перемещение' : ''}
+          {id}
+          <br />
+          {isTransfer ? "Перемещение" : ""}
         </span>
       ),
     },
@@ -188,8 +191,8 @@ const Order: React.FC = () => {
             }}
             onRow={(record) => ({
               onClick: () =>
-                navigate(`/order/${record.id[0]}`, {
-                  state: { menuItem: ["order"] },
+                navigate(`/orders/${record.id[0]}`, {
+                  state: { menuItem: "orders" },
                 }),
             })}
           />

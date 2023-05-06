@@ -7,6 +7,7 @@ import {orderApi} from "../services/OrderService";
 import {productApi} from "../services/ProductService";
 import {offerApi} from "../services/OfferService";
 import {attributeApi} from "../services/AttributeService";
+import {bannerApi} from "../services/BannerService";
 
 const rootReducer = combineReducers({
   [categoryApi.reducerPath]: categoryApi.reducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   [statisticApi.reducerPath]: statisticApi.reducer,
   [offerApi.reducerPath]: offerApi.reducer,
   [attributeApi.reducerPath]: attributeApi.reducer,
+  [bannerApi.reducerPath]: bannerApi.reducer,
 });
 
 export const store = configureStore({
@@ -28,7 +30,8 @@ export const store = configureStore({
       .concat(productApi.middleware)
       .concat(statisticApi.middleware)
       .concat(offerApi.middleware)
-      .concat(attributeApi.middleware),
+      .concat(attributeApi.middleware)
+      .concat(bannerApi.middleware),
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

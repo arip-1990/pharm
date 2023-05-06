@@ -27,8 +27,9 @@ const Order: React.FC = () => {
     order: { field: null, direction: "asc" },
     pagination: { current: 1, pageSize: 50 },
   });
-  const { data: offers, isFetching: fetchLoading } =
-    useFetchOffersQuery(filters);
+  const { data: offers, isFetching: fetchLoading } = useFetchOffersQuery(
+    filters
+  );
   const navigate = useNavigate();
 
   const getColumnSearchProps = (dataIndex: string) => ({
@@ -194,8 +195,8 @@ const Order: React.FC = () => {
             }}
             onRow={(record) => ({
               onClick: () =>
-                navigate(`/offer/${record.key}`, {
-                  state: { menuItem: ["offer"] },
+                navigate(`/offers/${record.key}`, {
+                  state: { menuItem: "offers" },
                 }),
             })}
           />

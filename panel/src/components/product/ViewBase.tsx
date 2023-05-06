@@ -24,8 +24,7 @@ interface PropsType {
 const ViewBase: React.FC<PropsType> = ({ product, loading }) => {
   const [edit, setEdit] = React.useState<boolean>(false);
   const { data: categories } = categoryApi.useFetchCategoriesQuery();
-  const [updateProduct, { isLoading: updateLoading }] =
-    useUpdateProductMutation();
+  const [updateProduct] = useUpdateProductMutation();
   const [form] = Form.useForm();
 
   const getCategoryTree: any = (categories: ICategory[]) =>

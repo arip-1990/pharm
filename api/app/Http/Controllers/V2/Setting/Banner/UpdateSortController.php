@@ -5,9 +5,9 @@ namespace App\Http\Controllers\V2\Setting\Banner;
 use App\Http\Requests\Setting\Banner\UpdateSortRequest;
 use App\Setting\Entity\Banner;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
-class UpdateSortController extends Controller
+class UpdateSortController
 {
     public function __invoke(UpdateSortRequest $request): JsonResponse
     {
@@ -22,9 +22,13 @@ class UpdateSortController extends Controller
             }
         }
         catch (\Exception $e) {
-            return new JsonResponse($e->getMessage(), options: JSON_UNESCAPED_UNICODE);
+            return new JsonResponse([
+                'code' => Response::HTTP_INTERNAL_SERVER_ERROR,
+                'error' => 'server error',
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return new JsonResponse(options: JSON_UNESCAPED_UNICODE);
+        return new JsonResponse(status: Response::HTTP_NO_CONTENT);
     }
 }

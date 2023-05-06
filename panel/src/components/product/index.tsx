@@ -164,7 +164,7 @@ const Product: React.FC = () => {
           : null,
       ...getColumnSearchProps("name"),
       render: (item: string, record: any) => (
-        <Link to={`/product/${record.key}`} state={{ menuItem: ["product"] }}>
+        <Link to={`/products/${record.key}`} state={{ menuItem: "products" }}>
           {item}
         </Link>
       ),

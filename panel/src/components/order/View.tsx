@@ -116,7 +116,7 @@ const View: React.FC = () => {
             dataSource={order?.items.map((item, i) => ({
               key: i + 1,
               name: item.product ? (
-                <Link to={`/product/${item.product.slug}`}>
+                <Link to={`/products/${item.product.slug}`}>
                   {item.product.name}
                 </Link>
               ) : (
@@ -187,7 +187,7 @@ const View: React.FC = () => {
                   dataSource={order.transfer.items.map((item, i) => ({
                     key: i + 1,
                     name: item.product ? (
-                      <Link to={`/product/${item.product.slug}`}>
+                      <Link to={`/products/${item.product.slug}`}>
                         {item.product.name}
                       </Link>
                     ) : (
@@ -214,7 +214,7 @@ const View: React.FC = () => {
             dataSource={items?.map((item, i) => ({
               key: i + 1,
               name: item.product ? (
-                <Link to={`/product/${item.product.slug}`}>
+                <Link to={`/products/${item.product.slug}`}>
                   {item.product.name}
                 </Link>
               ) : (

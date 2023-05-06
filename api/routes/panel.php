@@ -55,7 +55,7 @@ Route::middleware(['auth', 'panel'])->group(function () {
         Route::get('/', V2\Setting\Banner\IndexController::class);
         Route::post('/', V2\Setting\Banner\AddController::class);
         Route::patch('/', V2\Setting\Banner\UpdateSortController::class);
-        Route::delete('/', V2\Setting\Banner\DeleteController::class);
+        Route::delete('/{banner}', V2\Setting\Banner\DeleteController::class);
     });
 
     Route::get('/category', [V1\Panel\Category\IndexController::class, 'handle']);

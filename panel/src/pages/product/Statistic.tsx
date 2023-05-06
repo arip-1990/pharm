@@ -8,7 +8,7 @@ const Statistic: React.FC = () => {
   const [filters, setFilters] = useSessionStorage<{
     pagination: { current: number; pageSize: number };
   }>("productStatsFilters", { pagination: { current: 1, pageSize: 50 } });
-  const { data: atatistic, isFetching } = useFetchStatisticQuery(filters);
+  const { data, isFetching } = useFetchStatisticQuery(filters);
 
   const columns: any = [
     {
@@ -45,7 +45,7 @@ const Statistic: React.FC = () => {
           title={
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span>
-                Всего {atatistic?.meta.total.toLocaleString("ru") || 0} записи
+                Всего {data?.meta.total.toLocaleString("ru") || 0} записи
               </span>
             </div>
           }
@@ -54,17 +54,17 @@ const Statistic: React.FC = () => {
             size="small"
             columns={columns}
             loading={isFetching}
-            data={atatistic?.data.map((item) => ({
+            data={data?.data.map((item) => ({
+              key: item.user.id,
               user: item.user.name,
               addAllPhotos: item.addTotalPhotos,
               editAllProducts: item.editTotalProducts,
             }))}
             onChange={handleChange}
             pagination={{
-              current:
-                atatistic?.meta.current_page || filters.pagination.current,
-              total: atatistic?.meta.total || 0,
-              pageSize: atatistic?.meta.per_page || filters.pagination.pageSize,
+              current: data?.meta.current_page || filters.pagination.current,
+              total: data?.meta.total || 0,
+              pageSize: data?.meta.per_page || filters.pagination.pageSize,
               showQuickJumper: true,
             }}
           />

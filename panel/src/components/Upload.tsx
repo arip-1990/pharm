@@ -6,7 +6,7 @@ import {
   Popconfirm,
   notification,
 } from "antd";
-import { PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   useAddPhotoProductMutation,
@@ -66,7 +66,7 @@ const Image: React.FC<ImagePropsType> = ({
         okText="Да"
         cancelText="Нет"
       >
-        <CloseCircleOutlined />
+        <DeleteOutlined />
       </Popconfirm>
       <span
         className={classNames("anticon-select", { active })}
@@ -133,7 +133,7 @@ const Upload: React.FC<UploadPropsType> = ({
     <Space>
       {photos.length < 5 ? (
         <BaseUpload
-          accept="image/*"
+          accept=".avif, .webp, .jpg, .jpeg"
           customRequest={uploadImage}
           listType="picture-card"
           fileList={[]}

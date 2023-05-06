@@ -31,7 +31,7 @@
   justify-content: center;
 
   &:hover .anticon-select,
-  &:hover .anticon-close-circle {
+  &:hover .anticon-delete {
     display: inline-block;
   }
 
@@ -54,16 +54,24 @@
       background: #1890ff;
     }
   }
+}
 
-  .anticon-close-circle {
-    display: none;
-    position: absolute;
-    right: -8px;
-    top: -8px;
-    font-size: 1.5rem;
-    color: #dc4234;
-    z-index: 99;
+.banner {
+  position: relative;
+
+  &:hover .anticon-delete {
+    display: inline-block;
   }
+}
+
+.anticon-delete {
+  display: none;
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  font-size: 1.5rem;
+  color: #dc4234;
+  z-index: 9;
 }
 
 /* Progress Bar */

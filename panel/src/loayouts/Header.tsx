@@ -1,12 +1,15 @@
-import React from "react";
+import { FC, createElement, useEffect, useState } from "react";
 import { Layout, Menu } from "antd";
+import { SiderTheme } from "antd/lib/layout/Sider";
+import type { MenuProps } from "antd";
+import { SelectInfo } from "rc-menu/lib/interface";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   LogoutOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { SiderTheme } from "antd/lib/layout/Sider";
+
 import { useAuth } from "../hooks/useAuth";
 
 interface PropsType {
@@ -15,18 +18,40 @@ interface PropsType {
   onCollapsed: () => void;
 }
 
-const Header: React.FC<PropsType> = ({ theme, collapsed, onCollapsed }) => {
+const Header: FC<PropsType> = ({ theme, collapsed, onCollapsed }) => {
   const { user, logout } = useAuth();
-  const [currentMenu, setCurrentMenu] = React.useState<string>("");
+  const [menuItems, setMenuItems] = useState<MenuProps["items"]>([]);
+  const [currentMenu, setCurrentMenu] = useState<string>("");
 
-  const handleClickMenu = (e: any) => {
-    setCurrentMenu(e.key);
-    if (e.key === "logout") logout();
+  useEffect(() => {
+    if (user) {
+      setMenuItems([
+        {
+          key: "profile",
+          label:
+            user.first_name +
+            (user.last_name ? user.last_name.charAt(0) + "." : ""),
+          icon: <UserOutlined />,
+          children: [
+            {
+              key: "logout",
+              label: "Выход",
+              icon: <LogoutOutlined />,
+            },
+          ],
+        },
+      ]);
+    }
+  }, [user]);
+
+  const handleSelectMenu = (data: SelectInfo) => {
+    setCurrentMenu(data.key);
+    if (data.key === "logout") logout();
   };
 
   return (
     <Layout.Header>
-      {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+      {createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
         className: "trigger",
         onClick: onCollapsed,
       })}
@@ -39,22 +64,11 @@ const Header: React.FC<PropsType> = ({ theme, collapsed, onCollapsed }) => {
           justifyContent: "end",
           lineHeight: "64px",
         }}
-        onClick={handleClickMenu}
+        onSelect={handleSelectMenu}
         selectedKeys={[currentMenu]}
         mode="horizontal"
-      >
-        <Menu.SubMenu
-          key="profile"
-          icon={<UserOutlined />}
-          title={
-            user?.first_name + (user?.last_name ? ` ${user.last_name[0]}` : "")
-          }
-        >
-          <Menu.Item key="logout">
-            <LogoutOutlined /> Выход
-          </Menu.Item>
-        </Menu.SubMenu>
-      </Menu>
+        items={menuItems}
+      />
     </Layout.Header>
   );
 };

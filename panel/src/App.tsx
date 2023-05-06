@@ -1,4 +1,4 @@
-import React from "react";
+import { FC, Suspense, useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -16,37 +16,38 @@ import OfferView from "./pages/offer/View";
 import Moderation from "./pages/product/moderation";
 import MobileOrder from "./pages/mobile/Order";
 import Statistic from "./pages/product/Statistic";
+import Banner from "./pages/settings/Banner";
 
 const Loader = () => <Spin size="large" indicator={<LoadingOutlined spin />} />;
 
-export default () => {
+const App: FC = () => {
   const { isAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuth)
       navigate(location.pathname.includes("login") ? "/" : location.pathname, {
         state: location.state,
       });
     else if (isAuth === false) navigate("/login");
-  }, [isAuth]);
+  }, [isAuth, location.pathname, location.state, navigate]);
 
   return (
-    <React.Suspense fallback={<Loader />}>
+    <Suspense fallback={<Loader />}>
       <Routes>
         {isAuth ? (
           <Route path="/" element={<Layout />}>
             <Route index element={<Main />} />
-            <Route path="order">
+            <Route path="orders">
               <Route index element={<Order />} />
               <Route path=":id" element={<OrderView />} />
             </Route>
-            <Route path="offer">
+            <Route path="offers">
               <Route index element={<Offer />} />
               <Route path=":slug" element={<OfferView />} />
             </Route>
-            <Route path="product">
+            <Route path="products">
               <Route index element={<Product />} />
               <Route path=":slug" element={<ProductView />} />
               <Route path="moderation" element={<Moderation />} />
@@ -54,13 +55,19 @@ export default () => {
             </Route>
             <Route path="mobile">
               <Route index element={<MobileOrder />} />
-              <Route path="order" element={<MobileOrder />} />
+              <Route path="orders" element={<MobileOrder />} />
+            </Route>
+            <Route path="settings">
+              <Route index element={<Banner />} />
+              <Route path="banner" element={<Banner />} />
             </Route>
           </Route>
         ) : (
           <Route path="/login" element={<Login />} />
         )}
       </Routes>
-    </React.Suspense>
+    </Suspense>
   );
 };
+
+export default App;

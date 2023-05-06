@@ -15,13 +15,14 @@ import "antd/dist/antd.css";
 import "./sass/index.scss";
 
 moment.locale("ru");
+moment.defaultFormat = "YYYY-MM-DDTHH:mm:ss.SSZZ";
 
 const sanctumConfig = {
   apiUrl: API_URL,
   csrfCookieRoute: "sanctum/csrf-cookie",
   signInRoute: "v1/panel/auth/login",
   signOutRoute: "v1/panel/auth/logout",
-  userObjectRoute: "v1/panel/auth/user"
+  userObjectRoute: "v1/panel/auth/user",
 };
 
 ReactDOM.render(

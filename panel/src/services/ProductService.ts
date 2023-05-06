@@ -52,12 +52,12 @@ export const productApi = createApi({
         ...response,
         data: response.data.map((item) => ({
           ...item,
-          createdAt: moment(item.createdAt),
-          updatedAt: moment(item.updatedAt),
+          createdAt: moment(item.createdAt, moment.defaultFormat),
+          updatedAt: moment(item.updatedAt, moment.defaultFormat),
           photos: item.photos.map((photo) => ({
             ...photo,
-            createdAt: moment(photo.createdAt),
-            updatedAt: moment(photo.updatedAt),
+            createdAt: moment(photo.createdAt, moment.defaultFormat),
+            updatedAt: moment(photo.updatedAt, moment.defaultFormat),
           })),
         })),
       }),
@@ -68,12 +68,12 @@ export const productApi = createApi({
       }),
       transformResponse: (response: IProduct) => ({
         ...response,
-        createdAt: moment(response.createdAt),
-        updatedAt: moment(response.updatedAt),
+        createdAt: moment(response.createdAt, moment.defaultFormat),
+        updatedAt: moment(response.updatedAt, moment.defaultFormat),
         photos: response.photos.map((photo) => ({
           ...photo,
-          createdAt: moment(photo.createdAt),
-          updatedAt: moment(photo.updatedAt),
+          createdAt: moment(photo.createdAt, moment.defaultFormat),
+          updatedAt: moment(photo.updatedAt, moment.defaultFormat),
         })),
       }),
       providesTags: ["IProduct"],
@@ -85,12 +85,12 @@ export const productApi = createApi({
       transformResponse: (response: IProduct[]) =>
         response.map((item) => ({
           ...item,
-          createdAt: moment(item.createdAt),
-          updatedAt: moment(item.updatedAt),
+          createdAt: moment(item.createdAt, moment.defaultFormat),
+          updatedAt: moment(item.updatedAt, moment.defaultFormat),
           photos: item.photos.map((photo) => ({
             ...photo,
-            createdAt: moment(photo.createdAt),
-            updatedAt: moment(photo.updatedAt),
+            createdAt: moment(photo.createdAt, moment.defaultFormat),
+            updatedAt: moment(photo.updatedAt, moment.defaultFormat),
           })),
         })),
       providesTags: ["IProduct"],
