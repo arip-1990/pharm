@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 ini_set('memory_limit', -1);
 
@@ -13,6 +14,8 @@ class TestCommand extends Command
 
     public function handle(): int
     {
+        dump(Storage::path('.'));
+        dd(Storage::directories('.'));
 //        $order = Order::find((int)$this->argument('orderId'));
 //        $order->addStatus(OrderStatus::STATUS_SEND);
 //        try {

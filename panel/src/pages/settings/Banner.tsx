@@ -10,9 +10,8 @@ import {
   Input,
   Upload,
 } from "antd";
-import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 import { Banner as BaseBanner } from "../../components/banner";
@@ -42,14 +41,6 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
   margin: `0 ${grid}px 0 0`,
   ...draggableStyle,
 });
-
-const getBase64 = (data: RcFile): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(data);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
 
 const DraggableBanner: FC<{
   index: number;
@@ -87,17 +78,58 @@ const Banner: FC = () => {
   const [deleteBanner] = useDeleteBannerMutation();
   const [form] = Form.useForm();
 
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) return e;
-    return e?.fileList;
+  const handleBeforeUpload = (file: UploadFile) => {
+    if (fileList.length < 2) {
+      file.uid =
+        fileList.findIndex((item) => item.uid === "main") < 0
+          ? "main"
+          : "mobile";
+
+      setFileList((old) => [...old, file]);
+    }
+
+    return false;
   };
 
-  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
-    console.log(newFileList);
-    setFileList(newFileList);
+  const handleRemove = (file: UploadFile) => {
+    setFileList((oldList) => oldList.filter((item) => item.uid !== file.uid));
   };
 
-  const handleUploadFile = async (file: RcFile) => await getBase64(file);
+  const customRender = (_: any, file: UploadFile, __: any, { remove }: any) => (
+    <div className="ant-upload-list-item ant-upload-list-item-undefined ant-upload-list-item-list-type-picture">
+      <div className="ant-upload-list-item-info">
+        <span className="ant-upload-span">
+          <a
+            className="ant-upload-list-item-thumbnail"
+            href={file.thumbUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              alt={file.name}
+              className="ant-upload-list-item-image"
+              src={file.thumbUrl}
+            />
+          </a>
+          <span className="ant-upload-list-item-name" title={file.name}>
+            {file.name}
+            <span style={{ color: "#52c41a" }}>
+              {file.uid === "main"
+                ? " (Обычная версия)"
+                : " (Мобильная версия)"}
+            </span>
+          </span>
+          <span className="ant-upload-list-item-card-actions picture">
+            <Button
+              type="text"
+              icon={<DeleteOutlined style={{ color: "#ff4d4f" }} />}
+              onClick={remove}
+            />
+          </span>
+        </span>
+      </div>
+    </div>
+  );
 
   const onDragEnd = (result: any) => {
     if (!result.destination || !data) return;
@@ -107,14 +139,27 @@ const Banner: FC = () => {
     );
   };
 
-  const handleAddBanner = async () => {
-    const values = await form.validateFields();
-    form.resetFields();
+  const handleAddBanner = (values: {
+    title: string;
+    description: string;
+    files: UploadFile[];
+  }) => {
     console.log(values);
+    const data = new FormData();
+    data.append("title", values.title);
+    data.append("description", values.description);
+    values.files.forEach((item) => {
+      item.originFileObj &&
+        data.append(`files[${item.uid}]`, item.originFileObj);
+    });
+
+    addBanner(data);
     setOpenModal(false);
   };
 
   const handleCancel = () => {
+    form.resetFields();
+    setFileList([]);
     setOpenModal(false);
   };
 
@@ -171,10 +216,10 @@ const Banner: FC = () => {
         open={openModal}
         okText="Добавить"
         cancelText="Отменить"
-        onOk={handleAddBanner}
+        onOk={() => form.submit()}
         onCancel={handleCancel}
       >
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" onFinish={handleAddBanner}>
           <Form.Item name="title" required>
             <Input placeholder="Введите название баннера" />
           </Form.Item>
@@ -184,28 +229,29 @@ const Banner: FC = () => {
               placeholder="Описание для баннера (не обязательно)"
             />
           </Form.Item>
-        </Form>
-        <Form.Item
-          name="files"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-          required
-        >
-          <Upload
-            accept=".avif, .webp, .jpg, .jpeg"
-            multiple
-            maxCount={2}
-            listType="picture-card"
-            fileList={fileList}
-            action={handleUploadFile}
-            onChange={handleChange}
+          <Form.Item
+            name="files"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
           >
-            <div>
-              <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Загрузить</div>
-            </div>
-          </Upload>
-        </Form.Item>
+            <Upload.Dragger
+              accept=".webp, .jpg, .jpeg"
+              listType="picture"
+              beforeUpload={handleBeforeUpload}
+              onRemove={handleRemove}
+              itemRender={customRender}
+              disabled={fileList.length > 1}
+            >
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">Нажмите или перетащите файл</p>
+              <p className="ant-upload-hint">
+                Поддерживаемые форматы файла (webp, jpeg)
+              </p>
+            </Upload.Dragger>
+          </Form.Item>
+        </Form>
       </Modal>
     </Row>
   );

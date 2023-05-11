@@ -16,13 +16,15 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
-// Route::get('test', function (Elasticsearch\Client $client) {
-////     \Illuminate\Support\Facades\DB::listen(function (\Illuminate\Database\Events\QueryExecuted $query) {
-////         dump($query->sql);
-////         dump($query->bindings);
-////         dump($query->time);
-////     });
-// });
+Route::get('test', function (Elasticsearch\Client $client) {
+//     \Illuminate\Support\Facades\DB::listen(function (\Illuminate\Database\Events\QueryExecuted $query) {
+//         dump($query->sql);
+//         dump($query->bindings);
+//         dump($query->time);
+//     });
+
+    dd(Storage::directories('.'));
+});
 
 Route::get('/get-apk-link', fn() => new JsonResponse(Storage::url('files/120на80.apk')));
 

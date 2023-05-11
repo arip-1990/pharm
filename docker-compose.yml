@@ -146,6 +146,7 @@ services:
       ELASTICSEARCH_HOST: elastic
     volumes:
       - ./api:/app
+      - uploads:/app/storage/app/public
 
   api-db:
     image: postgres:14.1-alpine
@@ -212,21 +213,21 @@ services:
     ports:
       - 6379:6379
   
-  logstash:
-    image: logstash:8.7.0
-    environment:
-      node.name: logstash
-      input.tcp.port: 50000
-      input.beats.port: 5044
-      output.elasticsearch.hosts: elastic
-      LS_JAVA_OPTS: -Xms512m -Xmx512m
-    ports:
-      - 5044:5044
-      - 50000:50000/tcp
-      - 50000:50000/udp
-      - 9600:9600
-    depends_on:
-      - elastic
+  # logstash:
+  #   image: logstash:8.7.0
+  #   environment:
+  #     node.name: logstash
+  #     input.tcp.port: 50000
+  #     input.beats.port: 5044
+  #     output.elasticsearch.hosts: elastic
+  #     LS_JAVA_OPTS: -Xms512m -Xmx512m
+  #   ports:
+  #     - 5044:5044
+  #     - 50000:50000/tcp
+  #     - 50000:50000/udp
+  #     - 9600:9600
+  #   depends_on:
+  #     - elastic
 
 volumes:
   api-db:
