@@ -16,9 +16,8 @@ class OfferCommand extends Command
 
     public function handle(): int
     {
-        $redis = Redis::connection('bot')->client();
         $type = $this->argument('type');
-
+        $this->startTime = Carbon::now();
         try {
             switch ($type) {
                 case 'change':
@@ -29,21 +28,22 @@ class OfferCommand extends Command
                     break;
                 default:
                     $this->all();
-                    $redis->publish('bot:import', json_encode([
+                    $this->redis->publish('bot:import', json_encode([
                         'success' => true,
                         'type' => 'offer:' . $type,
                         'message' => 'Остатки успешно обновлены: ' . $this->startTime->diff(Carbon::now())->format('%iм %sс')
                     ], JSON_UNESCAPED_UNICODE));
             }
-        }
-        catch (\Exception $e) {
-            $redis->publish('bot:import', json_encode([
+        } catch (\Exception $e) {
+            $this->redis->publish('bot:import', json_encode([
                 'success' => false,
                 'type' => 'offer:' . $type,
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));
 
             return self::FAILURE;
+        } finally {
+            $this->startTime = null;
         }
 
         return self::SUCCESS;
@@ -56,11 +56,12 @@ class OfferCommand extends Command
         $delFields = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
-            if (!$product = Product::find((string)$item->code) or str_starts_with($product->name, '*')) continue;
+            if (!$product = Product::find((string) $item->code) or str_starts_with($product->name, '*'))
+                continue;
 
-            $price = (float)$item->price;
-            $quantity = (int)$item->quantity;
-            $storeId = (string)$item->store_uuid;
+            $price = (float) $item->price;
+            $quantity = (int) $item->quantity;
+            $storeId = (string) $item->store_uuid;
             $delFields[] = [$storeId, $product->id];
             $fields[] = [
                 'store_id' => $storeId,
@@ -91,11 +92,13 @@ class OfferCommand extends Command
         $fields = [];
         $i = 0;
         foreach ($data->stocks->stock as $item) {
-            if (!$product = Product::find((string)$item->code) or str_starts_with($product->name, '*')) continue;
-            if (!$store = Store::find((string)$item->store_uuid)) continue;
+            if (!$product = Product::find((string) $item->code) or str_starts_with($product->name, '*'))
+                continue;
+            if (!$store = Store::find((string) $item->store_uuid))
+                continue;
 
-            $price = (float)$item->price;
-            $quantity = (int)$item->quantity;
+            $price = (float) $item->price;
+            $quantity = (int) $item->quantity;
             $fields[] = [
                 'store_id' => $store->id,
                 'product_id' => $product->id,
@@ -123,11 +126,12 @@ class OfferCommand extends Command
         $fields = [];
         $i = 0;
         foreach ($data->offers->offer as $item) {
-            if (!$product = Product::find((string)$item->uuid) or str_starts_with($product->name, '*')) continue;
-            $price = (float)$item->price;
-            $quantity = (int)$item->quantity;
+            if (!$product = Product::find((string) $item->uuid) or str_starts_with($product->name, '*'))
+                continue;
+            $price = (float) $item->price;
+            $quantity = (int) $item->quantity;
             $fields[] = [
-                'store_id' => (string)$item->store_uuid,
+                'store_id' => (string) $item->store_uuid,
                 'product_id' => $product->id,
                 'price' => max($price, 0),
                 'quantity' => max($quantity, 0)
@@ -140,6 +144,7 @@ class OfferCommand extends Command
                 $i = 0;
             }
         }
-        if ($i) Offer::upsert($fields, ['store_id', 'product_id']);
+        if ($i)
+            Offer::upsert($fields, ['store_id', 'product_id']);
     }
 }

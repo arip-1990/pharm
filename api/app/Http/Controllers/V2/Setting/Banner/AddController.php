@@ -21,7 +21,7 @@ class AddController
             while (Storage::exists(Banner::getPath($fileName)));
 
             if (!$files['main']->storeAs(Banner::getPath(), $fileName))
-                throw new \DomainException('Не удалось сохранить фото', Response::HTTP_INSUFFICIENT_STORAGE);
+                throw new \DomainException('Не удалось сохранить фото: ' . Banner::getPath($fileName), Response::HTTP_INSUFFICIENT_STORAGE);
             
             if (isset($files['mobile'])) $files['mobile']->storeAs(Banner::getPath(), "mobile_{$fileName}");
 

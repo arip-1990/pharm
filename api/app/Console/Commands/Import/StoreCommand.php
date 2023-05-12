@@ -14,8 +14,7 @@ class StoreCommand extends Command
 
     public function handle(): int
     {
-        $redis = Redis::connection('bot')->client();
-
+        $this->startTime = Carbon::now();
         try {
             $data = $this->getData(2);
             $fields = [];
@@ -27,43 +26,47 @@ class StoreCommand extends Command
                 $street = trim(str_replace(['пр.', 'пр ', 'ул.', 'ул '], '', $address[1]));
                 $house = trim(str_replace(['д.', 'д '], '', $address[2]));
                 $location = Location::firstOrCreate(['city_id' => $city->id, 'street' => $street, 'house' => $house]);
-                if ($coordinates = $item->coordinates) $location->update(['coordinate' => [(float)$coordinates->lat, (float)$coordinates->lon]]);
+                if ($coordinates = $item->coordinates)
+                    $location->update(['coordinate' => [(float) $coordinates->lat, (float) $coordinates->lon]]);
 
-                $schedules =  [];
+                $schedules = [];
                 foreach ($item->schedules->schedule as $schedule) {
                     $schedules[] = [
-                        'open'    => (string)$schedule->open_time,
-                        'close'   => (string)$schedule->close_time
+                        'open' => (string) $schedule->open_time,
+                        'close' => (string) $schedule->close_time
                     ];
                 }
 
                 $fields[] = [
-                    'id' => (string)$item->uuid,
-                    'name' => (string)$item->title,
-                    'slug' => SlugService::createSlug(Store::class, 'slug', (string)$item->title),
-                    'phone' => trim((string)$item->phone, '+') ?: null,
+                    'id' => (string) $item->uuid,
+                    'name' => (string) $item->title,
+                    'slug' => SlugService::createSlug(Store::class, 'slug', (string) $item->title),
+                    'phone' => trim((string) $item->phone, '+') ?: null,
                     'schedule' => json_encode($schedules, JSON_UNESCAPED_UNICODE),
                     'location_id' => $location->id
                 ];
             }
 
             Store::upsert($fields, 'id', ['name', 'slug', 'phone', 'schedule']);
-        }
-        catch (\Exception $e) {
-            $redis->publish('bot:import', json_encode([
+
+            $this->redis->publish('bot:import', json_encode([
+                'success' => true,
+                'type' => 'store',
+                'message' => 'Аптеки успешно обновлены: ' . $this->startTime->diff(Carbon::now())->format('%iм %sс')
+            ], JSON_UNESCAPED_UNICODE));
+        } catch (\Exception $e) {
+            $this->redis->publish('bot:import', json_encode([
                 'success' => false,
                 'type' => 'store',
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));
 
             return self::FAILURE;
+        } finally {
+            $this->startTime = null;
         }
 
-        $redis->publish('bot:import', json_encode([
-            'success' => true,
-            'type' => 'store',
-            'message' => 'Аптеки успешно обновлены: ' . $this->startTime->diff(Carbon::now())->format('%iм %sс')
-        ], JSON_UNESCAPED_UNICODE));
+
 
         return self::SUCCESS;
     }

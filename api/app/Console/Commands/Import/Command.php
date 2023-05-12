@@ -5,24 +5,26 @@ namespace App\Console\Commands\Import;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command as BaseCommand;
+use Illuminate\Support\Facades\Redis;
 
 class Command extends BaseCommand
 {
     protected $name = 'import';
     protected array $config;
-    protected Carbon $startTime;
     protected Client $client;
+    protected Redis $redis;
+    protected ?Carbon $startTime = null;
 
     public function __construct()
     {
         $this->config = config('data.1c');
-        $this->startTime = Carbon::now();
         $this->client = new Client([
             'base_uri' => $this->config['base_url'],
             'auth' => [$this->config['login'], $this->config['password']],
             'http_errors' => false,
             'verify' => false
         ]);
+        $this->redis = Redis::connection('bot')->client();
 
         parent::__construct();
     }
