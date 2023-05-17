@@ -70,9 +70,9 @@ class SearchService
             return new LengthAwarePaginator([], 0, $limit, $from + 1);
 
         $ids = array_column($data, 'id');
-        $items = Product::whereIn('id', $ids)
-            ->orderBy(new Expression("position(id::text in '" . implode(',', $ids) . "')"))->get();
+        return Product::whereIn('id', $ids)->orderBy(new Expression("position(id::text in '" . implode(',', $ids) . "')"))
+            ->paginate($limit, page: $from + 1);
 
-        return new LengthAwarePaginator($items, $response['hits']['total']['value'], $limit, $from + 1);
+//        return new LengthAwarePaginator($items, $response['hits']['total']['value'], $limit, $from + 1);
     }
 }

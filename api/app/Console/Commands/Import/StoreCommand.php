@@ -5,7 +5,6 @@ namespace App\Console\Commands\Import;
 use App\Store\Entity\{City, Location, Store};
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Services\SlugService;
-use Illuminate\Support\Facades\Redis;
 
 class StoreCommand extends Command
 {

@@ -31,7 +31,7 @@ const Banner: FC = () => {
       pagination={true}
       modules={[Autoplay, Navigation, Pagination]}
     >
-      {data?.map((item) => (
+      {data?.filter(item => item.type !== 2).map((item) => (
         <SwiperSlide key={item.id}>
           <div
             className={styles.banner}

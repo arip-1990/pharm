@@ -6,13 +6,14 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command as BaseCommand;
 use Illuminate\Support\Facades\Redis;
+use Predis\Client as RedisClient;
 
 class Command extends BaseCommand
 {
     protected $name = 'import';
     protected array $config;
     protected Client $client;
-    protected Redis $redis;
+    protected RedisClient $redis;
     protected ?Carbon $startTime = null;
 
     public function __construct()

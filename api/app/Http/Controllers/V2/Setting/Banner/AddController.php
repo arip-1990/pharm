@@ -22,14 +22,15 @@ class AddController
 
             if (!$files['main']->storeAs(Banner::getPath(), $fileName))
                 throw new \DomainException('Не удалось сохранить фото: ' . Banner::getPath($fileName), Response::HTTP_INSUFFICIENT_STORAGE);
-            
-            if (isset($files['mobile'])) $files['mobile']->storeAs(Banner::getPath(), "mobile_{$fileName}");
+
+            if (isset($files['mobile']))
+                $files['mobile']->storeAs(Banner::getPath(), "mobile_{$fileName}");
 
             $banner = new Banner([
                 'title' => $request->get('title'),
                 'description' => $request->get('description'),
                 'picture' => $fileName,
-                'type' => Banner::TYPE_MAIN,
+                'type' => $request->get('type', Banner::TYPE_WEB),
                 'sort' => Banner::query()->count()
             ]);
 

@@ -17,8 +17,8 @@ class RedisSubscribe extends Command
         Redis::psubscribe(['api:*'], function (string $message, string $channel) use ($client) {
             try {
                 $channel = explode(':', $channel)[1];
+                $data = json_decode($message, true);
                 if ($channel === 'import') {
-                    $data = json_decode($message, true);
                     switch ($data['type']) {
                         case 'category':
                             Artisan::call('import:category');
@@ -35,6 +35,9 @@ class RedisSubscribe extends Command
                         default:
                             throw new \InvalidArgumentException('Неверная комманда!');
                     }
+                }
+                elseif ($channel === 'send') {
+                    Artisan::call('order:send');
                 }
             }
             catch (\Exception $e) {

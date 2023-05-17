@@ -82,6 +82,17 @@
     color: #dc4234;
     z-index: 9;
   }
+
+  .ant-image-img {
+    max-height: 320px;
+  }
+}
+
+.ant-space-item {
+  small {
+    user-select: text;
+    cursor: text;
+  }
 }
 
 /* Progress Bar */

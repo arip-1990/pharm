@@ -17,7 +17,6 @@ class EmptyProductCommand extends \Illuminate\Console\Command
     public function handle(): int
     {
         $startTime = Carbon::now();
-
         try {
             $reader = IOFactory::createReader('Xlsx');
             $reader->setReadDataOnly(true);

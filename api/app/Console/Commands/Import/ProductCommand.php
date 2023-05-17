@@ -5,7 +5,6 @@ namespace App\Console\Commands\Import;
 use App\Product\Entity\{Product, Value};
 use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Services\SlugService;
-use Illuminate\Support\Facades\Redis;
 
 class ProductCommand extends Command
 {

@@ -3,6 +3,6 @@ export interface IBanner {
   title: string;
   description: string;
   picture: { main: string, mobile: string };
-  type: 'main' | 'all';
+  type: number;
   sort: number;
 }

@@ -9,6 +9,7 @@ import {
   Form,
   Input,
   Upload,
+  Checkbox
 } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -48,23 +49,33 @@ const DraggableBanner: FC<{
   onDelete: (id: number) => void;
 }> = ({ index, banner, onDelete }) => {
   return (
-    <Draggable draggableId={banner.id.toString()} index={index}>
-      {(provided: any, snapshot: any) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          style={getItemStyle(
-            snapshot.isDragging,
-            provided.draggableProps.style
-          )}
-        >
-          <BaseBanner key={banner.id} banner={banner} onDelete={onDelete} />
-        </div>
-      )}
-    </Draggable>
+    <>
+      <Draggable draggableId={banner.id.toString()} index={index}>
+        {(provided: any, snapshot: any) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            style={getItemStyle(
+              snapshot.isDragging,
+              provided.draggableProps.style
+            )}
+          >
+            <BaseBanner key={banner.id} banner={banner} onDelete={onDelete} />
+          </div>
+        )}
+      </Draggable>
+      {banner.type === 2 ? <small title="Ссылка для мобилки">{banner.picture.main}</small> : null}
+    </>
   );
 };
+
+interface FormDataType {
+  title: string;
+  type?: boolean;
+  description?: string;
+  files: UploadFile[];
+}
 
 const Banner: FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -76,7 +87,7 @@ const Banner: FC = () => {
     { isLoading: isUpdating },
   ] = useUpdateSortBannersMutation();
   const [deleteBanner] = useDeleteBannerMutation();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormDataType>();
 
   const handleBeforeUpload = (file: UploadFile) => {
     if (fileList.length < 2) {
@@ -139,15 +150,13 @@ const Banner: FC = () => {
     );
   };
 
-  const handleAddBanner = (values: {
-    title: string;
-    description: string;
-    files: UploadFile[];
-  }) => {
-    console.log(values);
+  const handleAddBanner = async () => {
+    const values = await form.validateFields();
     const data = new FormData();
+
     data.append("title", values.title);
-    data.append("description", values.description);
+    values.type && data.append("type", '2');
+    values.description && data.append("description", values.description);
     values.files.forEach((item) => {
       item.originFileObj &&
         data.append(`files[${item.uid}]`, item.originFileObj);
@@ -216,10 +225,10 @@ const Banner: FC = () => {
         open={openModal}
         okText="Добавить"
         cancelText="Отменить"
-        onOk={() => form.submit()}
+        onOk={handleAddBanner}
         onCancel={handleCancel}
       >
-        <Form form={form} layout="vertical" onFinish={handleAddBanner}>
+        <Form form={form} layout="vertical">
           <Form.Item name="title" required>
             <Input placeholder="Введите название баннера" />
           </Form.Item>
@@ -228,6 +237,9 @@ const Banner: FC = () => {
               rows={3}
               placeholder="Описание для баннера (не обязательно)"
             />
+          </Form.Item>
+          <Form.Item name="type" valuePropName="checked">
+            <Checkbox>Для мобильного</Checkbox>
           </Form.Item>
           <Form.Item
             name="files"

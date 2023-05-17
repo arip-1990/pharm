@@ -4,7 +4,6 @@ namespace App\Console\Commands\Import;
 
 use App\Product\Entity\Category;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Redis;
 
 class CategoryCommand extends Command
 {

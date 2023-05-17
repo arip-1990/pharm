@@ -8,6 +8,6 @@ export interface IBanner {
   title: string;
   description: string | null;
   picture: IBannerPicture;
-  type: "main" | "all";
+  type: number;
   sort: number;
 }

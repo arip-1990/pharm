@@ -5,7 +5,6 @@ namespace App\Console\Commands\Import;
 use App\Store\Entity\Store;
 use Carbon\Carbon;
 use App\Product\Entity\{Offer, Product};
-use Illuminate\Support\Facades\Redis;
 
 class OfferCommand extends Command
 {

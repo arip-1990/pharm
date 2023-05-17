@@ -27,8 +27,9 @@ class Banner extends Model
 {
     use SoftDeletes;
 
-    const TYPE_MAIN = 0;
-    const TYPE_ALL = 1;
+    const TYPE_WEB = 0;
+    const TYPE_WEB_ALL = 1;
+    const TYPE_MOBILE = 2;
 
     protected $fillable = ['title', 'description', 'picture', 'type', 'sort'];
 

@@ -18,7 +18,7 @@ class BannerResource extends JsonResource
                 'main' => $this->getUrl(),
                 'mobile' => $this->getUrl(true)
             ],
-            'type' => $this->type === Banner::TYPE_MAIN ? 'main' : 'all',
+            'type' => $this->type,
             'sort' => $this->sort
         ];
     }

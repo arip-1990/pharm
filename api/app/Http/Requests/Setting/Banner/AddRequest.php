@@ -15,6 +15,7 @@ class AddRequest extends FormRequest
     {
         return [
             'title' => 'required|string',
+            'type' => 'string|nullable',
             'description' => 'string|nullable',
             'files' => 'required|array',
             'files.main' => 'required|mimes:webp,jpg,jpeg',

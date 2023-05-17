@@ -41,26 +41,34 @@ class UpdateController extends Controller
             </orders_result>';
     }
 
-    public function handle(Request $request)
+    public function handle(Request $request): Response
     {
         try {
             $xml = simplexml_load_string($request->getContent());
-            if(!$this->isValidOrderXML($xml)) throw new \Exception('Неверный XML', 1);
+            if(!$this->isValidOrderXML($xml))
+                throw new \Exception('Неверный XML', 1);
 
             $order1cId = (int)$xml->order->id;
             $status = OrderStatus::from((string)$xml->order->status);
             $order = $this->repository->getById($order1cId - config('data.orderStartNumber'));
 
             if (isset($xml->order_transfer->id)) {
+                /** @var OrderGroup $group */
                 if (!$group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
                     $group = OrderGroup::create(['order_1c_id' => $order1cId]);
                     $order->delivery_id = 2;
                     $order2 = Order::create($order->store, $order->payment, Delivery::find(3));
+
                     $group->orders()->saveMany([$order, $order2]);
                 }
                 else {
                     $order = $group->orders->firstWhere('delivery_id', 2);
-                    $order2 = $group->orders->firstWhere('delivery_id', 3);
+                    if (!$order2 = $group->orders->firstWhere('id', '!=', $order->id)) {
+                        $order2 = Order::create($order->store, $order->payment, Delivery::find(3));
+                        $group->orders()->save($order2);
+                    }
+
+                    $order2->delivery_id = 3;
                 }
 
                 foreach ($xml->order_transfer->products as $item) {
@@ -99,7 +107,7 @@ class UpdateController extends Controller
             }
 
             $this->repository->addStatus($order, $status);
-            if ($status == OrderStatus::STATUS_CANCELLED) {
+            if ($status === OrderStatus::STATUS_CANCELLED) {
                 $this->service->fullRefund($order);
             }
 //            elseif (isset($xml->order->products->product) and ($status == OrderStatus::STATUS_ASSEMBLED or $status == OrderStatus::STATUS_RECEIVED)) {

@@ -16,15 +16,15 @@ class OrderPayFullRefundListener implements ShouldQueue
         try {
             if ($order->payment->isType(Payment::TYPE_CARD) and $order->isPay() and !$order->isRefund()) {
                 $response = $this->getOrderInfo($order->sber_id);
-                if($response['errorCode'] == 0) {
-                    $order->changeStatusState(OrderStatus::STATUS_REFUND, OrderState::STATE_SUCCESS);
-                }
-                elseif (!isset($response['errorCode'])) {
-                    throw new OrderException('Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id);
-                }
-                else {
+
+                if ($response['errorCode'] != 0) {
+                    if (!isset($response['errorCode']))
+                        throw new OrderException('Не удалось получить ответ от сервера. sber_id: ' . $order->sber_id);
+
                     throw new OrderException('Ошибка! ' . $response['errorMessage'] . ', sber_id: ' . $order->sber_id);
                 }
+
+                $order->changeStatusState(OrderStatus::STATUS_REFUND, OrderState::STATE_SUCCESS);
             }
         }
         catch (\Exception $exception) {
@@ -32,8 +32,6 @@ class OrderPayFullRefundListener implements ShouldQueue
             $order->save();
             return;
         }
-
-        $order->delete();
     }
 
     private function getOrderInfo(string $order_id): array
