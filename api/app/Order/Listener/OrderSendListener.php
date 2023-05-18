@@ -39,6 +39,7 @@ class OrderSendListener implements ShouldQueue
                 'file' => self::class . ' (' . $e->getLine() . ')',
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));
+
             throw new OrderException($e->getMessage());
         } finally {
             $order->save();
