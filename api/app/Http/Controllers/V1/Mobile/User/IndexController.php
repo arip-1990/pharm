@@ -28,8 +28,8 @@ class IndexController
                     'cardNumber' => $item['Number'],
                     'bonuses' => $item['Balance'],
                     'status' => $item['CardType'],
-                    'cardColor' => '#000',
-                    'cardTextColor' => '#111'
+                    'textColor' => '#fdfdfd',
+                    'backgroundImage' => '#3ab0a3'
                 ];
             }
 
@@ -51,8 +51,6 @@ class IndexController
                     'pendingBonusesTitle' => 'Будет накоплено',
                     'expressBonuses' => 0,
                     'exressBonusesTitle' => 'Экспресс-бонусы',
-                    'cardColor' => '#000',
-                    'cardTextColor' => '#111',
                     'loyaltyProgram' => $cards,
                 ]
             ]);
