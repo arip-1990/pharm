@@ -36,9 +36,9 @@ const Stock: FC = () => {
     <Layout title="Акции - Сеть аптек 120/80" description="Акции сайта.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
-      <h5 className="text-center">
+      {/* <h5 className="text-center">
         Период действия акции с 1 по 30 апреля 2023г.
-      </h5>
+      </h5> */}
       <div className="row">
         {data?.products.length ? (
           <>

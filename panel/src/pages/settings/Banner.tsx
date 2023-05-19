@@ -14,6 +14,7 @@ import {
 import type { UploadFile } from "antd/es/upload/interface";
 import { PlusOutlined, InboxOutlined, DeleteOutlined } from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import punycode from 'punycode/';
 
 import { Banner as BaseBanner } from "../../components/banner";
 import {
@@ -65,7 +66,7 @@ const DraggableBanner: FC<{
           </div>
         )}
       </Draggable>
-      {banner.type === 2 ? <small title="Ссылка для мобилки">{banner.picture.main}</small> : null}
+      {banner.type === 2 ? <small title="Ссылка для мобилки">{banner.picture.main.replace('120на80.рф', punycode.toASCII('120на80.рф'))}</small> : null}
     </>
   );
 };

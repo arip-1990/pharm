@@ -23,6 +23,7 @@ class ProductResource extends JsonResource
             'status' => $this->status,
             'marked' => $this->marked,
             'recipe' => $this->recipe,
+            'showMain' => $this->statistic?->show ?? false,
             'attributes' => $this->values->map(fn(Value $value) => [
                 'id' => $value->attribute->id,
                 'name' => $value->attribute->name,

@@ -13,16 +13,20 @@ class UpdateController extends Controller
     {
         $product->fill([
             'name' => $request['name'],
-            'marked' => $request['marked'],
-            'recipe' => $request['recipe'],
-            'sale' => $request['sale'],
+            'marked' => $request['marked'] ?? false,
+            'recipe' => $request['recipe'] ?? false,
             'status' => $request['status'],
             'category_id' => $request['category'] ?? null,
-            'barcode' => $request['barcode'] ?? null
+            'barcodes' => $request['barcodes']
         ]);
 
         $product->editor()->associate($request->user());
         $product->save();
+
+        if (isset($request['showMain'])) {
+            if ($product->statistic) $product->statistic()->update(['show' => $request['showMain']]);
+            else $product->statistic()->create(['show' => $request['showMain']]);
+        }
 
         return new JsonResponse();
     }

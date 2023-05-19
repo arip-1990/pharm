@@ -26,6 +26,7 @@ export interface IProduct {
   recipe: boolean;
   sale: boolean;
   status: boolean;
+  showMain: boolean;
   offers: IOffer[];
   totalOffers: number;
   attributes: IAttribute[];

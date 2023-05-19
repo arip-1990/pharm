@@ -15,9 +15,12 @@ class BaseRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'status' => 'required|boolean',
-            'category' => 'integer',
-            'barcode' => 'string|nullable'
+            'status' => 'required|integer',
+            'barcodes' => 'array|nullable',
+            'category' => 'integer|nullable',
+            'marked' => 'boolean|nullable',
+            'recipe' => 'boolean|nullable',
+            'showMain' => 'boolean|nullable',
         ];
     }
 }

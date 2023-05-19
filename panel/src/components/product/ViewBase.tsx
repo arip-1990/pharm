@@ -21,11 +21,21 @@ interface PropsType {
   loading: boolean;
 }
 
+interface FormPropsType {
+  name: string;
+  status: number;
+  barcodes?: string;
+  category?: number;
+  marked?: boolean;
+  recipe?: boolean;
+  showMain?: boolean;
+}
+
 const ViewBase: React.FC<PropsType> = ({ product, loading }) => {
   const [edit, setEdit] = React.useState<boolean>(false);
   const { data: categories } = categoryApi.useFetchCategoriesQuery();
   const [updateProduct] = useUpdateProductMutation();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormPropsType>();
 
   const getCategoryTree: any = (categories: ICategory[]) =>
     categories?.map((item) => ({
@@ -44,7 +54,7 @@ const ViewBase: React.FC<PropsType> = ({ product, loading }) => {
             return edit ? (
               <Form.Item
                 style={{ margin: 0 }}
-                name="barcode"
+                name="barcodes"
                 initialValue={item}
               >
                 <Input />
@@ -140,6 +150,21 @@ const ViewBase: React.FC<PropsType> = ({ product, loading }) => {
             ) : (
               item?.name
             );
+            case "Показ на главной странице":
+              return edit ? (
+                <Form.Item
+                  style={{ margin: 0 }}
+                  name="showMain"
+                  initialValue={item}
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+              ) : item ? (
+                <Tag color="green">Да</Tag>
+              ) : (
+                <Tag color="red">Нет</Tag>
+              );
           default:
             return item;
         }
@@ -149,7 +174,7 @@ const ViewBase: React.FC<PropsType> = ({ product, loading }) => {
 
   const handleSave = async () => {
     let data = await form.validateFields();
-    if (product) updateProduct({ slug: product.slug, data });
+    if (product) updateProduct({ slug: product.slug, data: {...data, barcodes: data.barcodes?.split(',')} });
     setEdit(false);
   };
 
@@ -183,13 +208,14 @@ const ViewBase: React.FC<PropsType> = ({ product, loading }) => {
           columns={generalColumns}
           data={[
             { key: "Код", value: product?.code },
-            { key: "Штрих-код", value: product?.barcodes },
+            { key: "Штрих-код", value: product?.barcodes?.join(', ') },
             { key: "Название", value: product?.name },
             { key: "Категория", value: product?.category },
             { key: "Рецептурный", value: product?.recipe },
             { key: "Маркирован", value: product?.marked },
             { key: "Распродажа", value: product?.sale },
             { key: "Статус", value: product?.status },
+            { key: "Показ на главной странице", value: product?.showMain },
           ]}
         />
       </Form>
