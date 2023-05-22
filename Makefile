@@ -63,7 +63,7 @@ api-clear-storage:
 api-init: api-permissions api-composer-install api-wait-db api-migrations
 
 api-permissions:
-	docker run --rm -v ${PWD}/api:/app -w /app alpine chmod 775 -R storage bootstrap/cache
+	docker run --rm -v ${PWD}/api:/app -w /app alpine chmod 777 -R storage bootstrap/cache
 	docker run --rm -v ${PWD}/api:/app -w /app alpine chown 1000:1000 -R storage bootstrap/cache
 
 api-composer-install:

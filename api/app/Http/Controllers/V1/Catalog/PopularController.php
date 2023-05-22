@@ -16,12 +16,12 @@ class PopularController extends Controller
         $categoryIds = Category::whereIn('id', [536, 556])->get()
             ->map(fn(Category $category) => $category->descendants()->pluck('id'))->collapse()->push(536, 556);
 
-        $popularIds = ProductStatistic::select('id')->orderByDesc('show')
-            ->orderByDesc('orders')->orderByDesc('views')->get()->pluck('id');
+        $data = Product::active($request->cookie('city', City::query()->find(1)?->name))->select('products.*')
+            ->whereNotIn('products.category_id', $categoryIds)
+            ->join('product_statistics', 'product_statistics.id', '=', 'products.id')
+            ->orderByDesc('product_statistics.show')->orderByRaw('(product_statistics.orders + product_statistics.views) desc')
+            ->take(16)->get();
 
-        $products = Product::active($request->cookie('city', City::query()->find(1)?->name))
-            ->whereNotIn('category_id', $categoryIds)->whereIn('id', $popularIds)->take(16)->get();
-
-        return new JsonResponse(ProductResource::collection($products));
+        return new JsonResponse(ProductResource::collection($data));
     }
 }
