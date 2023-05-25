@@ -1,17 +1,17 @@
-import Layout from "../templates";
-import Card from "../components/card";
 import React, { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+
 import { wrapper } from "../store";
 import {
   fetchPopularProducts,
+  getRunningQueriesThunk,
   useFetchPopularProductsQuery,
-  getRunningOperationPromises,
 } from "../lib/catalogService";
-import { useRouter } from "next/router";
 import Auth from "../components/auth";
 import { useCookie } from "../hooks/useCookie";
-import Button from '../components/apk-button';
+import Layout from "../templates";
+import Card from "../components/card";
 
 type AuthType = "login" | "register";
 
@@ -32,12 +32,12 @@ const Home: FC = () => {
     }
   }, []);
 
-  useEffect(() => refetch(), [city]);
+  useEffect(() => {
+    refetch();
+  }, [city]);
 
   return (
     <Layout banner title="Сеть аптек 120/80">
-      <Button />
-
       <div
         className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3 g-xl-4"
         itemScope
@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
   (store) => async () => {
     store.dispatch(fetchPopularProducts.initiate());
 
-    await Promise.all(getRunningOperationPromises());
+    await Promise.all(store.dispatch(getRunningQueriesThunk()));
 
     return { props: {} };
   }

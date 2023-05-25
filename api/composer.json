@@ -5,10 +5,9 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
-        "ext-curl": "*",
-        "ext-openssl": "*",
+        "php": "^8.2",
         "ext-pdo": "*",
+        "ext-curl": "*",
         "ext-simplexml": "*",
         "cviebrock/eloquent-sluggable": "^9.0",
         "cviebrock/laravel-elasticsearch": "^9.0",

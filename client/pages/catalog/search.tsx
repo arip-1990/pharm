@@ -1,17 +1,18 @@
-import Layout from "../../templates";
-import Card from "../../components/card";
 import { FC, useCallback, useEffect } from "react";
 import { GetServerSideProps } from "next";
-import { ICategory } from "../../models/ICategory";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
+import Layout from "../../templates";
+import Card from "../../components/card";
+import { ICategory } from "../../models/ICategory";
 import Pagination from "../../components/pagination";
 import { wrapper } from "../../store";
 import {
-  getRunningOperationPromises,
+  getRunningQueriesThunk,
   searchProducts,
   useSearchProductsQuery,
 } from "../../lib/catalogService";
-import { useRouter } from "next/router";
 import {
   fetchCategories,
   useFetchCategoriesQuery,
@@ -87,7 +88,7 @@ const Search: FC = () => {
     if (errorData)
       return <h5 style={{ textAlign: "center" }}>{errorData.data.message}</h5>;
 
-    return products?.data.length ? (
+    return products?.data?.length ? (
       <>
         <div
           className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 g-lg-4"
@@ -150,7 +151,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     store.dispatch(searchProducts.initiate({ q, page, pageSize }));
     store.dispatch(fetchCategories.initiate());
 
-    await Promise.all(getRunningOperationPromises());
+    await Promise.all(store.dispatch(getRunningQueriesThunk()));
 
     return { props: {} };
   }

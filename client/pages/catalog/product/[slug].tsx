@@ -8,7 +8,7 @@ import Accordion from "../../../components/accordion";
 import Cart from "../../../components/cart";
 import {
   getProduct,
-  getRunningOperationPromises,
+  getRunningQueriesThunk,
   useGetProductQuery,
 } from "../../../lib/catalogService";
 import { wrapper } from "../../../store";
@@ -68,7 +68,9 @@ const Product: FC = () => {
     ];
   };
 
-  useEffect(() => refetch(), [city]);
+  useEffect(() => {
+    refetch();
+  }, [city]);
 
   return (
     <Layout
@@ -288,7 +290,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
     store.dispatch(getProduct.initiate(String(slug)));
 
-    await Promise.all(getRunningOperationPromises());
+    await Promise.all(store.dispatch(getRunningQueriesThunk()));
 
     return { props: {} };
   }

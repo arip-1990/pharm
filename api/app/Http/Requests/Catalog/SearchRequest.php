@@ -15,6 +15,7 @@ class SearchRequest extends FormRequest
     {
         return [
             'text' => 'nullable|string',
+            'full' => 'nullable|boolean',
         ];
     }
 }

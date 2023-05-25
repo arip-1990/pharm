@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine:3.18
 
 RUN apk add --no-cache python3 py3-pip bash coreutils postgresql-client rsync \
     && pip3 install --upgrade awscli

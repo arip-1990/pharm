@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import Layout from "../../../templates";
 import Profile from "../../../templates/profile";
 import Card from "../../../templates/profile/Card";

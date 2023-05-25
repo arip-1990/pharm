@@ -1,13 +1,13 @@
+import { FC, useCallback } from "react";
 import Layout from "../templates";
 import Page from "../components/page";
 import BaseAdvantage from "../components/advantage";
+import Breadcrumbs from "../components/breadcrumbs";
 
 import advantage_1 from "../assets/images/advantage/1.jpg";
 import advantage_2 from "../assets/images/advantage/2.jpg";
 import advantage_3 from "../assets/images/advantage/3.jpg";
 import advantage_4 from "../assets/images/advantage/4.jpg";
-import { FC, useCallback } from "react";
-import Breadcrumbs from "../components/breadcrumbs";
 
 const Advantage: FC = () => {
   const getDefaultGenerator = useCallback(() => [

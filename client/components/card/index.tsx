@@ -1,16 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FC, MouseEvent, useEffect, useState, CSSProperties } from "react";
+import { FC, MouseEvent, useEffect, useState } from "react";
 import { useLocalStorage } from "react-use-storage";
 import classNames from "classnames";
+
 import { IProduct } from "../../models/IProduct";
 import defaultImage from "../../assets/images/default.png";
 import { ICart } from "../../models/ICart";
 import Recipe from "./Recipe";
 import Favorite from "./Favorite";
+import Price from "./Price";
 
 import styles from "./Card.module.scss";
-import Price from "./Price";
 
 type Props = {
   product: IProduct;

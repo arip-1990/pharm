@@ -84,7 +84,7 @@ class ProductIndexCommand extends Command
                             $join->on('locations.city_id', '=', 'cities.id')->whereNull('parent_id');
                         })
                         ->groupBy('cities.name')->pluck('name')->toArray(),
-                    'values' => $item->values()->whereIn('attribute_id', [1, 3, 5])->pluck('value')->toArray()
+                    'values' => $item->values()->whereIn('attribute_id', [1, 2, 3, 5])->pluck('value')->toArray()
                 ];
             }
         });

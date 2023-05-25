@@ -1,7 +1,10 @@
+import { FC, useCallback } from "react";
 import Image from "next/image";
 import { Row } from "react-bootstrap";
 import Layout from "../templates";
 import Page from "../components/page";
+import Breadcrumbs from "../components/breadcrumbs";
+
 import distance_trading from "../assets/images/licenses/distance_trading.jpg";
 import license_1 from "../assets/images/licenses/license_1.jpg";
 import license_2 from "../assets/images/licenses/license_2.jpg";
@@ -9,8 +12,6 @@ import license_3 from "../assets/images/licenses/license_3.jpg";
 import license_4 from "../assets/images/licenses/license_4.jpg";
 import license_5 from "../assets/images/licenses/license_5.jpg";
 import license_6 from "../assets/images/licenses/license_6.jpg";
-import { FC, useCallback } from "react";
-import Breadcrumbs from "../components/breadcrumbs";
 
 const About: FC = () => {
   const getDefaultGenerator = useCallback(() => [

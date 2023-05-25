@@ -1,12 +1,13 @@
 import axios from "axios";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
+import { useIMask } from "react-imask";
+import classNames from "classnames";
+
 import { useNotification } from "../../hooks/useNotification";
 import api from "../../lib/api";
-import { useIMask } from "react-imask";
 
 import styles from "./Auth.module.scss";
-import classNames from "classnames";
 
 type RegisterType = "register" | "verifyPhone";
 

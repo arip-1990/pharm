@@ -1,23 +1,27 @@
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Container, Row, Col } from "react-bootstrap";
+import { useRouter } from "next/router";
+import { useFormik } from "formik";
+import { Container, Row, Col, Dropdown } from "react-bootstrap";
+import { useLocalStorage } from "react-use-storage";
+
 import Navbar from "./Navbar";
 import Logo from "../../assets/images/logo.svg";
 import heart from "../../assets/images/heart.png";
 import cart from "../../assets/images/cart.png";
-import { FC, useEffect, useState } from "react";
 import { ICart } from "../../models/ICart";
-import { useLocalStorage } from "react-use-storage";
 import { IProduct } from "../../models/IProduct";
-import { useFormik } from "formik";
-import { useRouter } from "next/router";
+import { useSearchNameProductsQuery } from "../../lib/catalogService";
 
 const Header: FC = () => {
   const router = useRouter();
   const [carts] = useLocalStorage<ICart[]>("cart", []);
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
+  const [searchText, setSearchText] = useState<string>();
   const [totalCart, setTotalCart] = useState<number>(0);
   const [totalFavorite, setTotalFavorite] = useState<number>(0);
+  const { data, isFetching } = useSearchNameProductsQuery(searchText, { skip: !searchText || searchText.length < 3 });
 
   useEffect(() => {
     let total = 0;
@@ -32,6 +36,11 @@ const Header: FC = () => {
       if (q.length >= 3) router.push(`/catalog/search?q=${q}`);
     },
   });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.currentTarget.value);
+    formik.handleChange(e);
+  }
 
   return (
     <Container as="header" className="my-3">
@@ -52,14 +61,25 @@ const Header: FC = () => {
             className="mt-3 mt-lg-0"
           >
             <form className="search" onSubmit={formik.handleSubmit}>
-              <input
-                type="search"
-                name="q"
-                className="form-control"
-                placeholder="Введите название препарата"
-                onChange={formik.handleChange}
-                value={formik.values.q}
-              />
+              <Dropdown>
+                <input
+                  type="search"
+                  name="q"
+                  className="form-control"
+                  placeholder="Введите название препарата"
+                  onChange={handleChange}
+                  value={formik.values.q}
+                />
+                <Dropdown.Menu show={!!searchText && !isFetching && !!data?.length}>
+                  {data?.map(item => (
+                    <Dropdown.Item
+                      key={item.id}
+                      href={`/catalog/product/${item.slug}`}
+                      dangerouslySetInnerHTML={{ __html: item.highlight.replace('<em>', '<em class="text-warning">') }}
+                    />
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
               <button type="submit" className="btn btn-primary btn-search">
                 Найти
               </button>

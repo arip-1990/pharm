@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import Layout from "../../templates";
 import BaseProfile from "../../templates/profile";
 import BaseCheque from "../../templates/profile/Cheque";

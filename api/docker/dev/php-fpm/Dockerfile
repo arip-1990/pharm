@@ -1,6 +1,6 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.2-fpm-alpine
 
-RUN apk add --no-cache fcgi postgresql-dev \
+RUN apk add --no-cache fcgi linux-headers postgresql-dev \
     && docker-php-ext-install pdo_pgsql sockets
 
 RUN mv $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini

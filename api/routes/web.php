@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
-//Route::get('test', function (Elasticsearch\Client $client) {
+//Route::get('test', function (\App\Product\UseCase\SearchService $service) {
 //     \Illuminate\Support\Facades\DB::listen(function (\Illuminate\Database\Events\QueryExecuted $query) {
 //         dump($query->sql);
 //         dump($query->bindings);

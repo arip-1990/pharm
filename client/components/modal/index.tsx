@@ -1,5 +1,6 @@
 import { FC, ReactNode } from "react";
 import { Modal as BaseModal } from "react-bootstrap";
+
 import styles from "./Modal.module.scss";
 
 interface Props {

@@ -1,10 +1,10 @@
 import axios from 'axios';
-import type { AxiosRequestConfig, AxiosError } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 import { BaseQueryFn } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 
 export declare type Error = {
     status: number,
-    data: {code: number, message: string}
+    data: { code: number, message: string }
 };
 
 type Args = {
@@ -21,17 +21,18 @@ export const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_COOKIE_DOMAIN || '.xn--1208
 
 const instance = axios.create({
     baseURL: `${API_URL}/v1`,
-    headers: {'X-Requested-With': 'XMLHttpRequest'},
+    headers: { 'X-Requested-With': 'XMLHttpRequest' },
     withCredentials: true
 });
 
 export const apiBaseQuery = (): BaseQueryFn<Args, unknown, Error> => async ({ url, method, headers, data, params, onProgress }) => {
     try {
-        const result = await instance({ url, method, headers, data, params, onUploadProgress: onProgress});
+        const result = await instance({ url, method, headers, data, params, onUploadProgress: onProgress });
         return { data: result.data }
     } catch (error) {
-        let err = error as AxiosError;
-        return {error: {status: err.response?.status || Number(err.code), data: err.response?.data || err.message}};
+        if (axios.isAxiosError(error))
+            return error.response;
+        else error;
     }
 }
 

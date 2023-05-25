@@ -1,7 +1,8 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import classNames from "classnames";
-import Accordion from "../accordion";
 import { FormikErrors } from "formik";
+
+import Accordion from "../accordion";
 
 interface Props {
   recipe: boolean;

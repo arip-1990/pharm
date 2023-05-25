@@ -1,6 +1,7 @@
 import axios from "axios";
 import { FormikErrors, FormikHelpers, useFormik } from "formik";
 import { FC } from "react";
+
 import Layout from "../../templates";
 import BaseProfile from "../../templates/profile";
 import api from "../../lib/api";
@@ -72,7 +73,7 @@ const ChangePassword: FC = () => {
           <div className="mb-3">
             <input
               className="form-control"
-              style={{fontSize: '0.75rem'}}
+              style={{ fontSize: '0.75rem' }}
               type="password"
               name="oldPassword"
               placeholder="*Старый пароль"
@@ -85,7 +86,7 @@ const ChangePassword: FC = () => {
           <div className="mb-3">
             <input
               className="form-control"
-              style={{fontSize: '0.75rem'}}
+              style={{ fontSize: '0.75rem' }}
               type="password"
               name="password"
               placeholder="*Новый пароль"
@@ -98,7 +99,7 @@ const ChangePassword: FC = () => {
           <div className="mb-3">
             <input
               className="form-control"
-              style={{fontSize: '0.75rem'}}
+              style={{ fontSize: '0.75rem' }}
               type="password"
               name="password_confirmation"
               placeholder="*Повторить новый пароль"
@@ -108,7 +109,7 @@ const ChangePassword: FC = () => {
             />
             <ErrorField name="password_confirmation" errors={formik.errors} />
           </div>
-          <div style={{textAlign: 'center'}}>
+          <div style={{ textAlign: 'center' }}>
             <span className="col-5 text-end">
               <button
                 type="submit"

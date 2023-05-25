@@ -7,6 +7,7 @@ import {
   SyntheticEvent,
   useContext,
 } from "react";
+
 import {
   AccordionContext,
   AccordionEventKey,
@@ -65,7 +66,7 @@ const Header = forwardRef<HTMLElement, Props>(
           styles["accordion-item_header"],
           className,
           !isAccordionItemSelected(activeEventKey, eventKey) &&
-            styles.collapsed,
+          styles.collapsed,
           {
             [styles["accordion-item_header__left-icon"]]: icon === "left",
             [styles["accordion-item_header__icon-plus"]]: iconType === "plus",

@@ -1,6 +1,7 @@
 import { ChangeEvent, FC, MouseEvent, useEffect, useState } from "react";
-import { ICart } from "../../models/ICart";
 import { useLocalStorage } from "react-use-storage";
+
+import { ICart } from "../../models/ICart";
 import { IProduct } from "../../models/IProduct";
 
 type Props = {

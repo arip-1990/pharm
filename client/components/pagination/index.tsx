@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC } from "react";
+
 import { DOTS, usePagination } from "../../hooks/usePaginate";
 
 type Props = {
@@ -83,7 +84,7 @@ const Pagination: FC<Props> = (props) => {
             <li
               key={"dots" + i}
               className="page-item"
-              // onClick={() => handlePage(currentPage + 5)}
+            // onClick={() => handlePage(currentPage + 5)}
             >
               <a role="button" className="page-link" tabIndex={0}>
                 &#8230;

@@ -1,12 +1,13 @@
-import Layout from "../../templates";
-import { GetServerSideProps } from "next";
 import { FC, useCallback } from "react";
-import Page from "../../components/page";
+import { GetServerSideProps } from "next";
 import Image from "next/image";
+
+import Layout from "../../templates";
+import Page from "../../components/page";
 import payments from "../../assets/images/payments.png";
 import { wrapper } from "../../store";
 import {
-  getRunningOperationPromises,
+  getRunningQueriesThunk,
   getStore,
   useGetStoreQuery,
 } from "../../lib/storeService";
@@ -98,7 +99,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
     store.dispatch(getStore.initiate(String(slug)));
 
-    await Promise.all(getRunningOperationPromises());
+    await Promise.all(store.dispatch(getRunningQueriesThunk()));
 
     return { props: {} };
   }

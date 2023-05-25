@@ -18,7 +18,13 @@ class IndexController extends Controller
 
         if ($request->get('searchColumn')) {
             if ($request->get('searchColumn') === 'name') {
-                $ids = $searchService->search($request->get('searchText'), $request->get('page', 1) - 1, $request->get('pageSize', 10));
+                $data = $searchService->search(
+                    $request->get('searchText'),
+                    $request->get('page', 1) - 1,
+                    $request->get('pageSize', 10)
+                );
+                $ids = array_column($data, 'id');
+
                 $query->whereIn('id', $ids)->orderBy(new Expression("position(id::text in '" . implode(',', $ids) . "')"));
             }
             else {

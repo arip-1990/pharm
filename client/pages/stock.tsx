@@ -1,13 +1,14 @@
 import { FC, useCallback, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+
 import Layout from "../templates";
 import Card from "../components/card";
 import Pagination from "../components/pagination";
 import { wrapper } from "../store";
 import {
   fetchStockProducts,
-  getRunningOperationPromises,
+  getRunningQueriesThunk,
   useFetchStockProductsQuery,
 } from "../lib/catalogService";
 import { useCookie } from "../hooks/useCookie";
@@ -78,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
     store.dispatch(fetchStockProducts.initiate({ page }));
 
-    await Promise.all(getRunningOperationPromises());
+    await Promise.all(store.dispatch(getRunningQueriesThunk()));
 
     return { props: {} };
   }

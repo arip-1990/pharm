@@ -1,6 +1,8 @@
 import { forwardRef, HTMLAttributes, useMemo } from "react";
-import styles from "./Accordion.module.scss";
+
 import { AccordionItemContext, AccordionItemContextValue } from "./Context";
+
+import styles from "./Accordion.module.scss";
 
 interface Props extends HTMLAttributes<HTMLElement> {
   as?: any;

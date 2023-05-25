@@ -1,19 +1,20 @@
 import Layout from "../templates";
 import Card from "../components/card";
-import {FC, useCallback, useEffect} from "react";
+import { FC, useCallback, useEffect } from "react";
 import { GetServerSideProps } from "next";
-import { ICategory } from "../models/ICategory";
+import { useRouter } from "next/router";
 import Link from "next/link";
+
 import Pagination from "../components/pagination";
 import { wrapper } from "../store";
 import {
   fetchProducts,
-  getRunningOperationPromises,
+  getRunningQueriesThunk,
   useFetchProductsQuery,
 } from "../lib/catalogService";
-import { useRouter } from "next/router";
 import { useCookie } from "../hooks/useCookie";
 import Breadcrumbs from "../components/breadcrumbs";
+import { ICategory } from "../models/ICategory";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -58,7 +59,7 @@ const Catalog: FC = () => {
     else refetch();
   }, [city]);
 
-    const getDefaultGenerator = useCallback(() => [{ href: '/catalog', text: "Наш ассортимент" }], []);
+  const getDefaultGenerator = useCallback(() => [{ href: '/catalog', text: "Наш ассортимент" }], []);
 
   return (
     <Layout title="Наш ассортимент - Сеть аптек 120/80" description="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой.">
@@ -117,7 +118,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
     store.dispatch(fetchProducts.initiate({ page }));
 
-    await Promise.all(getRunningOperationPromises());
+    await Promise.all(store.dispatch(getRunningQueriesThunk()));
 
     return { props: {} };
   }

@@ -37,9 +37,17 @@ export const catalogApi = createApi({
     >({
       query: (params) => ({
         url: "/catalog/search",
-        params,
+        params: { ...params, full: true },
       }),
     }),
+    searchNameProducts: builder.query<{ id: string, name: string, slug: string, highlight: string }[], string>(
+      {
+        query: (text) => ({
+          url: "/catalog/search",
+          params: { q: text },
+        }),
+      }
+    ),
     getProduct: builder.query<{ product: IProduct; offers: IOffer[] }, string>({
       query: (slug) => ({ url: "/catalog/product/" + slug }),
     }),
@@ -52,8 +60,9 @@ export const {
   useFetchProductsQuery,
   useFetchStockProductsQuery,
   useSearchProductsQuery,
+  useSearchNameProductsQuery,
   useGetProductQuery,
-  util: { getRunningOperationPromises },
+  util: { getRunningQueriesThunk },
 } = catalogApi;
 
 // export endpoints for use in SSR
@@ -62,5 +71,6 @@ export const {
   fetchProducts,
   fetchStockProducts,
   searchProducts,
+  searchNameProducts,
   getProduct,
 } = catalogApi.endpoints;

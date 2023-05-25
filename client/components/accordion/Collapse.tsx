@@ -1,6 +1,8 @@
 import { useContext, forwardRef, Children, HTMLAttributes } from "react";
-import { AccordionContext, isAccordionItemSelected } from "./Context";
 import classNames from "classnames";
+
+import { AccordionContext, isAccordionItemSelected } from "./Context";
+
 import styles from "./Accordion.module.scss";
 
 export interface Props extends HTMLAttributes<HTMLElement> {

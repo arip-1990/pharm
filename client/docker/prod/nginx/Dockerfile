@@ -1,4 +1,4 @@
-FROM node:17-alpine as builder
+FROM node:20-alpine as builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY ./ ./
 
 RUN yarn build
 
-FROM nginx:1.21-alpine
+FROM nginx:1.25-alpine
 
 RUN apk add --no-cache curl
 
@@ -24,3 +24,5 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/next.config.js ./
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+HEALTHCHECK --interval=5s --timeout=3s --start-period=1s CMD curl --fail http://127.0.0.1/health || exit 1

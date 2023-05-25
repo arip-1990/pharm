@@ -1,6 +1,7 @@
+import { FC, useCallback, useState } from "react";
+
 import Layout from "../templates";
 import Page from "../components/page";
-import { FC, useCallback, useState } from "react";
 import Breadcrumbs from "../components/breadcrumbs";
 import Auth from "../components/auth";
 import BaseLoyalty from "../components/loyalty";

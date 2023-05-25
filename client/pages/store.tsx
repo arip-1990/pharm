@@ -1,17 +1,18 @@
 import { GetServerSideProps } from "next";
 import { FC, useCallback, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
 import Layout from "../templates";
 import Page from "../components/page";
 import Pagination from "../components/pagination";
-import Link from "next/link";
 import Breadcrumbs from "../components/breadcrumbs";
 import { wrapper } from "../store";
 import {
   fetchStores,
-  getRunningOperationPromises,
+  getRunningQueriesThunk,
   useFetchStoresQuery,
 } from "../lib/storeService";
-import { useRouter } from "next/router";
 import Map from "../components/Map";
 import { useCookie } from "../hooks/useCookie";
 
@@ -84,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
     store.dispatch(fetchStores.initiate(page));
 
-    await Promise.all(getRunningOperationPromises());
+    await Promise.all(store.dispatch(getRunningQueriesThunk()));
 
     return { props: {} };
   }

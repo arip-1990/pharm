@@ -1,4 +1,4 @@
-FROM php:8.1-cli-alpine AS builder
+FROM php:8.2-cli-alpine AS builder
 
 RUN apk add --no-cache libzip-dev postgresql-dev libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev \
     && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
@@ -17,9 +17,9 @@ RUN composer install --no-dev --no-scripts --prefer-dist --no-progress --optimiz
 
 ### FPM ###
 
-FROM php:8.1-fpm-alpine
+FROM php:8.2-fpm-alpine
 
-RUN apk add --no-cache fcgi libzip-dev postgresql-dev libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev \
+RUN apk add --no-cache fcgi linux-headers libzip-dev postgresql-dev libpng-dev libwebp-dev libjpeg-turbo-dev freetype-dev \
     && docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install gd pdo_pgsql zip opcache sockets
 

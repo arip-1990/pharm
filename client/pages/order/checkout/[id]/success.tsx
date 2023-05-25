@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
 import { useLocalStorage } from "react-use-storage";
+
 import Layout from "../../../../templates";
 import { ICard } from "../../../../models/ICard";
 

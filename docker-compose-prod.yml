@@ -11,7 +11,7 @@ services:
         constraints: [ node.role == manager ]
 
   traefik:
-    image: traefik:2.8
+    image: traefik:2.10
     command: --providers.docker=true --providers.docker.watch=true --providers.docker.swarmMode=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80 --entryPoints.https.address=:443 --certificatesResolvers.letsEncrypt.acme.httpChallenge=true --certificatesResolvers.letsEncrypt.acme.httpChallenge.entryPoint=http --certificatesResolvers.letsEncrypt.acme.email=dev@arip.info --certificatesResolvers.letsEncrypt.acme.storage=/certs/acme.json
     ports:
       - target: 80
@@ -321,7 +321,7 @@ services:
         delay: 10s
 
   elastic:
-    image: elasticsearch:8.7.0
+    image: elasticsearch:8.7.1
     environment:
       node.name: elasticsearch
       discovery.type: single-node
@@ -339,7 +339,7 @@ services:
           memory: 4G
 
   redis:
-    image: redis:6.2-alpine
+    image: redis:7.0-alpine
     deploy:
       placement:
         constraints: [ node.role == manager ]

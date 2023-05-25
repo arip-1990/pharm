@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   traefik:
-    image: traefik:2.8
+    image: traefik:2.10
     command: --providers.docker=true --providers.docker.exposedByDefault=false --entryPoints.http.address=:80
     ports:
       - 80:80
@@ -192,7 +192,7 @@ services:
       - ./bot:/app
 
   elastic:
-    image: elasticsearch:8.7.0
+    image: elasticsearch:8.7.1
     environment:
       node.name: elasticsearch
       discovery.type: single-node
@@ -206,28 +206,12 @@ services:
       - 9300:9300
 
   redis:
-    image: redis:6.2-alpine
+    image: redis:7.0-alpine
     networks:
       - traefik-public
       - default
     ports:
       - 6379:6379
-  
-  # logstash:
-  #   image: logstash:8.7.0
-  #   environment:
-  #     node.name: logstash
-  #     input.tcp.port: 50000
-  #     input.beats.port: 5044
-  #     output.elasticsearch.hosts: elastic
-  #     LS_JAVA_OPTS: -Xms512m -Xmx512m
-  #   ports:
-  #     - 5044:5044
-  #     - 50000:50000/tcp
-  #     - 50000:50000/udp
-  #     - 9600:9600
-  #   depends_on:
-  #     - elastic
 
 volumes:
   api-db:

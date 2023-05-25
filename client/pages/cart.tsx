@@ -1,12 +1,13 @@
 import { FC, useCallback, useEffect, useState, MouseEvent } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { useLocalStorage } from "react-use-storage";
+
 import Layout from "../templates";
 import defaultImage from "../assets/images/default.png";
-import Link from "next/link";
 import BaseCart from "../components/cart";
-import { useLocalStorage } from "react-use-storage";
 import { ICart } from "../models/ICart";
 import Auth from "../components/auth";
-import { useRouter } from "next/router";
 import { useNotification } from "../hooks/useNotification";
 import { useMounted } from "../hooks/useMounted";
 import Breadcrumbs from "../components/breadcrumbs";

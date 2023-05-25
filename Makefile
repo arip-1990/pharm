@@ -6,6 +6,10 @@ up: docker-up
 down: docker-down
 restart: down up
 
+rebuild: panel-clear client-clear api-clear docker-down \
+	docker-pull docker-build docker-up \
+	panel-init client-init api-init panel-ready client-ready
+
 update-deps: api-composer-update panel-yarn-upgrade client-yarn-upgrade restart
 
 docker-up:
@@ -54,8 +58,7 @@ client-ready:
 	docker run --rm -v ${PWD}/client:/app -w /app alpine touch .ready
 
 
-api-clear:
-	docker compose run --rm api-php-cli php artisan optimize:clear
+api-clear: api-optimize api-clear-storage
 
 api-clear-storage:
 	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf storage/logs/*'
@@ -80,6 +83,9 @@ api-migrations:
 
 api-backup:
 	docker compose run --rm api-postgres-backup
+
+api-optimize:
+	docker compose run --rm api-php-cli php artisan optimize:clear
 
 
 build: build-client build-panel build-bot build-api

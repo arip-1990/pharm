@@ -1,2 +1,5 @@
 redis
-pyTelegramBotAPI
+ujson
+uvloop
+aiogram
+aiohttp[speedups]

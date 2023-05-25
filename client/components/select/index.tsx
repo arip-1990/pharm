@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { FC, MouseEvent, useState } from "react";
+
 import styles from "./Modal.module.scss";
 
 type Props = {

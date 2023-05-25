@@ -1,7 +1,11 @@
+import { FC, useCallback } from "react";
 import Image from "next/image";
 import { Row } from "react-bootstrap";
+
 import Layout from "../templates";
 import Page from "../components/page";
+import Breadcrumbs from "../components/breadcrumbs";
+
 import Box from "../assets/images/content/box.svg";
 import Delivery from "../assets/images/content/delivery.svg";
 import delivery_0 from "../assets/images/delivery/i-delivery-0.png";
@@ -9,8 +13,6 @@ import delivery_1 from "../assets/images/delivery/i-delivery-1.png";
 import delivery_2 from "../assets/images/delivery/i-delivery-2.png";
 import delivery_3 from "../assets/images/delivery/i-delivery-3.png";
 import delivery_4 from "../assets/images/delivery/i-delivery-4.png";
-import { FC, useCallback } from "react";
-import Breadcrumbs from "../components/breadcrumbs";
 
 const DeliveryBooking: FC = () => {
   const getDefaultGenerator = useCallback(
