@@ -27,7 +27,7 @@ class IndexController
                 $cards[] = [
                     'cardNumber' => $item['Number'],
                     'bonuses' => $item['Balance'],
-                    'status' => $item['CardType'],
+                    'status' => 'Карта постоянного клиента', // $item['CardType'],
                     'textColor' => '#fdfdfd',
                     'backgroundImage' => '#3ab0a3'
                 ];
@@ -46,7 +46,7 @@ class IndexController
                     'bonuses' => $card['Balance'],
                     'units' => 'Бонусов', // $this->bonusTypeLabel($card['BonusType']),
                     'cardPercent' => $card['Discount'],
-                    'status' => $card['CardType'],
+                    'status' => 'Карта постоянного клиента', // $card['CardType'],
                     'pendingBonuses' => 0,
                     'pendingBonusesTitle' => 'Будет накоплено',
                     'expressBonuses' => 0,
