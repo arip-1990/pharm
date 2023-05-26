@@ -27,9 +27,9 @@ class IndexController
                 $cards[] = [
                     'cardNumber' => $item['Number'],
                     'bonuses' => $item['Balance'],
-                    'status' => 'Карта постоянного клиента', // $item['CardType'],
+                    'status' => 'Карта постоянного покупателя', // $item['CardType'],
                     'textColor' => '#fdfdfd',
-                    'backgroundImage' => '#3ab0a3'
+                    'backgroundColor' => '#3ab0a3'
                 ];
             }
 
@@ -42,11 +42,12 @@ class IndexController
                     'emailConfirmed' => true,
                     'gender' => $user->getGenderLabel(),
                     'age' => $user->birth_date?->age,
+                    'birthday' => $user->birth_date?->format('Y-m-d'),
                     'cardNumber' => $card['Number'],
                     'bonuses' => $card['Balance'],
                     'units' => 'Бонусов', // $this->bonusTypeLabel($card['BonusType']),
                     'cardPercent' => $card['Discount'],
-                    'status' => 'Карта постоянного клиента', // $card['CardType'],
+                    'status' => 'Карта постоянного покупателя', // $card['CardType'],
                     'pendingBonuses' => 0,
                     'pendingBonusesTitle' => 'Будет накоплено',
                     'expressBonuses' => 0,

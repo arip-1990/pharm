@@ -19,7 +19,7 @@ const sanctumConfig = {
   signInRoute: "v1/auth/login",
   signOutRoute: "v1/auth/logout",
   userObjectRoute: "v1/user",
-  usernameKey: 'login'
+  usernameKey: "login",
 };
 
 const App = ({ Component, pageProps }) => (

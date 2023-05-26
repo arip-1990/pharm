@@ -25,14 +25,9 @@ class SearchController extends Controller
             ], 500);
         }
 
-        $data = $this->searchService->search(
-            $text,
-            $request->get('page', 1) - 1,
-            $request->get('pageSize', 10),
-            $request->cookie('city', City::find(1)?->name)
-        );
-
         if ($request->get('full')) {
+            $data = $this->searchService->search($text, city: $request->cookie('city', City::find(1)?->name));
+
             $ids = array_column($data, 'id');
             $data = Product::whereIn('id', $ids)->orderBy(new Expression("position(id::text in '" . implode(',', $ids) . "')"))
                 ->paginate($request->get('pageSize', 10));
@@ -41,6 +36,8 @@ class SearchController extends Controller
         }
 
         $tmp = [];
+        $data = $this->searchService->search($text, limit: 5, city: $request->cookie('city', City::find(1)?->name));
+        
         return new JsonResponse(array_values(array_filter($data, function ($item) use (&$tmp) {
             if (!in_array($item['id'], $tmp)) {
                 $tmp[] = $item['id'];

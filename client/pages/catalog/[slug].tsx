@@ -61,7 +61,7 @@ const Catalog: FC = () => {
   const { slug, page } = router.query;
   const [category, setCategory] = useState<ICategory>();
   const { data: categories } = useFetchCategoriesQuery();
-  const { data, refetch } = useFetchProductsQuery({
+  const { data, refetch, isFetching } = useFetchProductsQuery({
     category: String(slug),
     page: Number(page),
   });
@@ -72,12 +72,15 @@ const Catalog: FC = () => {
 
   const getDefaultGenerator = () => {
     if (category) {
-      return [{ href: '/catalog', text: "Наш ассортимент" }, ...getTreeCategories(category, categories).map(item => ({
-        href: `/catalog/${item.slug}`,
-        text: item.name
-      }))]
+      return [
+        { href: "/catalog", text: "Наш ассортимент" },
+        ...getTreeCategories(category, categories).map((item) => ({
+          href: `/catalog/${item.slug}`,
+          text: item.name,
+        })),
+      ];
     }
-    return [{ href: '/catalog', text: "Наш ассортимент" }];
+    return [{ href: "/catalog", text: "Наш ассортимент" }];
   };
 
   useEffect(() => {
@@ -87,7 +90,12 @@ const Catalog: FC = () => {
   }, [city]);
 
   return (
-    <Layout title={category ? `${category.name} - Сеть аптек 120/80` : 'Сеть аптек 120/80'}>
+    <Layout
+      title={
+        category ? `${category.name} - Сеть аптек 120/80` : "Сеть аптек 120/80"
+      }
+      loading={isFetching}
+    >
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">

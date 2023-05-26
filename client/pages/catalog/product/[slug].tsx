@@ -72,6 +72,9 @@ const Product: FC = () => {
     refetch();
   }, [city]);
 
+  const handleShowCarousel = () =>
+    data.product.photos.length && setShowCarousel(true);
+
   return (
     <Layout
       title={
@@ -99,7 +102,7 @@ const Product: FC = () => {
                     : defaultImage.src
                 }
                 alt={data?.product.name}
-                onClick={() => setShowCarousel(true)}
+                onClick={handleShowCarousel}
               />
 
               {isFavorite(data?.product.id)}
@@ -278,7 +281,7 @@ const Product: FC = () => {
       <Carousel
         show={showCarousel}
         onHide={() => setShowCarousel(false)}
-        data={data?.product.photos}
+        data={data?.product.photos.filter((item) => item.url)}
       />
     </Layout>
   );

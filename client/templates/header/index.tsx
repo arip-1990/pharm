@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -13,15 +13,19 @@ import cart from "../../assets/images/cart.png";
 import { ICart } from "../../models/ICart";
 import { IProduct } from "../../models/IProduct";
 import { useSearchNameProductsQuery } from "../../lib/catalogService";
+import { useDebounce } from "../../hooks/useDebounce";
 
 const Header: FC = () => {
   const router = useRouter();
   const [carts] = useLocalStorage<ICart[]>("cart", []);
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
-  const [searchText, setSearchText] = useState<string>();
+  const [searchText, setSearchText] = useState<string>("");
   const [totalCart, setTotalCart] = useState<number>(0);
   const [totalFavorite, setTotalFavorite] = useState<number>(0);
-  const { data, isFetching } = useSearchNameProductsQuery(searchText, { skip: !searchText || searchText.length < 3 });
+  const { data } = useSearchNameProductsQuery(searchText, {
+    skip: searchText.length < 3,
+  });
+  const debounce = useDebounce(500);
 
   useEffect(() => {
     let total = 0;
@@ -37,10 +41,10 @@ const Header: FC = () => {
     },
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.currentTarget.value);
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     formik.handleChange(e);
-  }
+    debounce(() => setSearchText(e.target.value));
+  }, []);
 
   return (
     <Container as="header" className="my-3">
@@ -70,12 +74,18 @@ const Header: FC = () => {
                   onChange={handleChange}
                   value={formik.values.q}
                 />
-                <Dropdown.Menu show={!!searchText && !isFetching && !!data?.length}>
-                  {data?.map(item => (
+                <Dropdown.Menu show={!!data?.length}>
+                  {data?.map((item) => (
                     <Dropdown.Item
                       key={item.id}
                       href={`/catalog/product/${item.slug}`}
-                      dangerouslySetInnerHTML={{ __html: item.highlight.replace('<em>', '<em class="text-warning">') }}
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          item.highlight?.replace(
+                            "<em>",
+                            '<em class="text-warning">'
+                          ) || item.name,
+                      }}
                     />
                   ))}
                 </Dropdown.Menu>

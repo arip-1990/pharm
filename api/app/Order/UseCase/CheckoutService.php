@@ -31,11 +31,10 @@ class CheckoutService
         $user = $request->user();
         $order->user()->associate($user);
         $order->setUserInfo($user->first_name, $user->phone, $user->email);
+        $order->save();
 
         DB::transaction(function () use ($order, $data) {
-            $order->save();
             $order->items()->saveMany($this->checkout($data['items']));
-
             if ($order->delivery->isType(Delivery::TYPE_DELIVERY)) {
                 $delivery = OrderDelivery::create(
                     $data['entrance'] ?? null,
@@ -51,12 +50,13 @@ class CheckoutService
                 $delivery->location()->associate($location);
                 $order->orderDelivery()->save($delivery);
             }
+
+            $order->changeState(OrderState::STATE_SUCCESS);
+            if ($order->payment->isType(Payment::TYPE_CASH))
+                $order->sent();
+
+            $order->save();
         });
-
-        $order->changeState(OrderState::STATE_SUCCESS);
-        if ($order->payment->isType(Payment::TYPE_CASH)) $order->sent();
-
-        $order->save();
 
         return $order;
     }
@@ -80,23 +80,21 @@ class CheckoutService
 
             try {
                 // User::find($data['externalUserId'])
-                if ($user = User::where('phone', $phone)->first()) $order->user()->associate($user);
+                if ($user = User::where('phone', $phone)->first())
+                    $order->user()->associate($user);
+
                 $order->setUserInfo($item['name'], $phone, $item['email'] ?? null);
+                $orderItems = $this->checkout($item['items']);
 
-                DB::transaction(function () use ($item, $order) {
-                    $orderItems = $this->checkout($item['items']);
-
-                    $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
-                    $order->save();
-                    $order->items()->saveMany($orderItems);
-                });
-
+                $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
+                $order->save();
+                $order->items()->saveMany($orderItems);
                 $order->changeState(OrderState::STATE_SUCCESS);
+
                 if (!$city->isBookingAvailable() and $order->payment->isType(Payment::TYPE_CASH))
                     $order->sent();
 
-                $data[] = [
-                    'id' => (string)$order->id,
+                $tmp = [
                     'uuid' => $item['uuid'],
                     'success' => true,
                     'price' => $order->cost,
@@ -121,11 +119,10 @@ class CheckoutService
                     })
                 ];
             }
-            catch (\DomainException $e) {
+            catch (\Exception $e) {
                 $order->changeState(OrderState::STATE_ERROR);
 
-                $data[] = [
-                    'id' => null,
+                $tmp = [
                     'uuid' => $item['uuid'],
                     'success' => false,
                     'errorCode' => $e->getCode(),
@@ -136,6 +133,9 @@ class CheckoutService
             }
 
             $order->save();
+            $tmp['id'] = (string)$order->id;
+
+            $data[] = $tmp;
         }
 
         return $data;

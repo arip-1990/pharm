@@ -18,7 +18,13 @@ type Props = {
   loading?: boolean;
 };
 
-const Layout: FC<Props> = ({ title, description, children, banner, loading }) => {
+const Layout: FC<Props> = ({
+  title,
+  description,
+  children,
+  banner,
+  loading,
+}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(loading || false);
 
@@ -47,6 +53,7 @@ const Layout: FC<Props> = ({ title, description, children, banner, loading }) =>
 
   return (
     <>
+      {(isLoading || loading) && <Loader />}
       <Head>
         <title>{title}</title>
         <meta name="title" content={title} />

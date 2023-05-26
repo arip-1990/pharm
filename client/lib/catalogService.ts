@@ -37,17 +37,18 @@ export const catalogApi = createApi({
     >({
       query: (params) => ({
         url: "/catalog/search",
-        params: { ...params, full: true },
+        params: { ...params, full: 1 },
       }),
     }),
-    searchNameProducts: builder.query<{ id: string, name: string, slug: string, highlight: string }[], string>(
-      {
-        query: (text) => ({
-          url: "/catalog/search",
-          params: { q: text },
-        }),
-      }
-    ),
+    searchNameProducts: builder.query<
+      { id: string; name: string; slug: string; highlight: string }[],
+      string
+    >({
+      query: (text) => ({
+        url: "/catalog/search",
+        params: { q: text },
+      }),
+    }),
     getProduct: builder.query<{ product: IProduct; offers: IOffer[] }, string>({
       query: (slug) => ({ url: "/catalog/product/" + slug }),
     }),
