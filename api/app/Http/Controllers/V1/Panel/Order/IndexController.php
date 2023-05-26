@@ -41,7 +41,7 @@ class IndexController extends Controller
                         $query->orderBy($field, $request->get('orderDirection'));
                 }
             }
-            else $query->orderByDesc('id');
+            else $query->orderByDesc('created_at');
 
             $page = $request->get('page', 1);
             $pageSize = $request->get('pageSize', 10);

@@ -32,6 +32,8 @@ const Carousel: FC<Props> = ({ show, onHide, data }) => {
     }));
   }, [data]);
 
+  if (data.length < 1) return null;
+
   if (data.length > 1) {
     return (
       <Modal
@@ -68,7 +70,7 @@ const Carousel: FC<Props> = ({ show, onHide, data }) => {
     >
       <div
         className={styles.carousel_mainView}
-        style={{ backgroundImage: `url(${data[image.main].url})` }}
+        style={{ backgroundImage: `url(${data[image.main]?.url})` }}
       />
     </Modal>
   );

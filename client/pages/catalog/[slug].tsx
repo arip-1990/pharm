@@ -1,6 +1,6 @@
 import Layout from "../../templates";
 import Card from "../../components/card";
-import {FC, useEffect, useState} from "react";
+import { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { ICategory } from "../../models/ICategory";
 import Image from "next/image";
@@ -15,8 +15,8 @@ import {
 } from "../../lib/catalogService";
 import { useCookie } from "../../hooks/useCookie";
 import Breadcrumbs from "../../components/breadcrumbs";
-import {getCategoryBySlug, getTreeCategories} from "../../helpers";
-import {useFetchCategoriesQuery} from "../../lib/categoryService";
+import { getCategoryBySlug, getTreeCategories } from "../../helpers";
+import { useFetchCategoriesQuery } from "../../lib/categoryService";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -59,8 +59,8 @@ const Catalog: FC = () => {
   const router = useRouter();
   const { slug, page } = router.query;
   const [category, setCategory] = useState<ICategory>();
-  const {data: categories} = useFetchCategoriesQuery();
-  const { data, refetch } = useFetchProductsQuery({
+  const { data: categories } = useFetchCategoriesQuery();
+  const { data, refetch, isFetching } = useFetchProductsQuery({
     category: String(slug),
     page: Number(page),
   });
@@ -71,12 +71,15 @@ const Catalog: FC = () => {
 
   const getDefaultGenerator = () => {
     if (category) {
-      return [{href: '/catalog', text: "Наш ассортимент"}, ...getTreeCategories(category, categories).map(item => ({
-        href: `/catalog/${item.slug}`,
-        text: item.name
-      }))]
+      return [
+        { href: "/catalog", text: "Наш ассортимент" },
+        ...getTreeCategories(category, categories).map((item) => ({
+          href: `/catalog/${item.slug}`,
+          text: item.name,
+        })),
+      ];
     }
-    return [{href: '/catalog', text: "Наш ассортимент"}];
+    return [{ href: "/catalog", text: "Наш ассортимент" }];
   };
 
   useEffect(() => {
@@ -86,8 +89,13 @@ const Catalog: FC = () => {
   }, [city]);
 
   return (
-    <Layout title={category ? `${category.name} - Сеть аптек 120/80` : 'Сеть аптек 120/80'}>
-        <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
+    <Layout
+      title={
+        category ? `${category.name} - Сеть аптек 120/80` : "Сеть аптек 120/80"
+      }
+      loading={isFetching}
+    >
+      <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
         <nav className="col-md-3">
