@@ -22,7 +22,7 @@ const Header: FC = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [totalCart, setTotalCart] = useState<number>(0);
   const [totalFavorite, setTotalFavorite] = useState<number>(0);
-  const { data } = useSearchNameProductsQuery(searchText, {
+  const { data, isFetching } = useSearchNameProductsQuery(searchText, {
     skip: searchText.length < 3,
   });
   const debounce = useDebounce(500);
@@ -53,9 +53,7 @@ const Header: FC = () => {
         <Row className="container align-items-center p-0 mx-auto">
           <Col xs={6} sm={6} md={4} lg={3} className="me-auto me-lg-0">
             <Link href="/">
-              <a>
-                <Logo className="logo" />
-              </a>
+              <a><Logo className="logo" /></a>
             </Link>
           </Col>
           <Col
@@ -74,7 +72,7 @@ const Header: FC = () => {
                   onChange={handleChange}
                   value={formik.values.q}
                 />
-                <Dropdown.Menu show={!!data?.length}>
+                <Dropdown.Menu show={!isFetching && !!data?.length}>
                   {data?.map((item) => (
                     <Dropdown.Item
                       key={item.id}

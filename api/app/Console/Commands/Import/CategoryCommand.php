@@ -14,15 +14,12 @@ class CategoryCommand extends Command
     {
         $this->startTime = Carbon::now();
         try {
-            $data = $this->getData();
-            foreach ($data->categories->category as $item) {
+            foreach ($this->getData()?->categories->category as $item) {
                 $attr = $item->attributes();
-
-                $category = Category::updateOrCreate(['id' => (int) $attr->id, 'name' => (string) $item]);
-                if ((int) $attr->parentId) {
-                    $category->parent_id = (int) $attr->parentId;
-                    $category->save();
-                }
+                Category::updateOrCreate(
+                    ['id' => (int) $attr->id],
+                    ['name' => (string) $item, 'parent_id' => (int)$attr->parentId ? (int)$attr->parentId : null]
+                );
             }
 
             $this->redis->publish('bot:import', json_encode([

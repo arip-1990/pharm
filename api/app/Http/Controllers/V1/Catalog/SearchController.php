@@ -37,7 +37,7 @@ class SearchController extends Controller
 
         $tmp = [];
         $data = $this->searchService->search($text, limit: 5, city: $request->cookie('city', City::find(1)?->name));
-        
+
         return new JsonResponse(array_values(array_filter($data, function ($item) use (&$tmp) {
             if (!in_array($item['id'], $tmp)) {
                 $tmp[] = $item['id'];

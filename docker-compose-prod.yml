@@ -263,7 +263,7 @@ services:
         delay: 10s
         max_attempts: 5
         window: 120s
-  
+
   api-subscriber:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:
@@ -312,6 +312,7 @@ services:
     environment:
       APP_NAME: Сеть аптек 120/80
       REDIS_HOST: redis
+      API_TOKEN: 5264546096:AAHH7gzUFdZim4deJs0o78RwZ8x8q6vC6Io
     command: sh -c 'wait-for-it redis:6379 -t 60 && python main.py'
     deploy:
       mode: replicated

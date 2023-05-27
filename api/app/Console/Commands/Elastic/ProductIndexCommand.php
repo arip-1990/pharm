@@ -4,10 +4,12 @@ namespace App\Console\Commands\Elastic;
 
 use App\Product\Entity\Product;
 use App\Store\Entity\Store;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 use Elasticsearch\Client;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Redis;
 
 class ProductIndexCommand extends Command
 {
@@ -22,6 +24,8 @@ class ProductIndexCommand extends Command
     public function handle(): int
     {
         $config = config('data.elastic.product');
+        $startTime = Carbon::now();
+        $redis = Redis::connection('bot')->client();
         if (!$this->client->indices()->exists(['index' => $config['index']])) {
             try {
                 $this->client->indices()->create([
@@ -46,49 +50,47 @@ class ProductIndexCommand extends Command
         }
 
         try {
-            $this->client->bulk([
-                'index' => $config['index'],
-                'body'  => $this->generateData($config['index']),
-            ]);
+            Product::has('offers')->chunk(1000, function (Collection $items) use (&$data, $config) {
+                /** @var Product $item */
+                foreach ($items as $item) {
+                    $this->client->index([
+                        'id' => $item->id,
+                        'index' => $config['index'],
+                        'body' => [
+                            'id' => $item->id,
+                            'slug' => $item->slug,
+                            'name' => $item->name,
+                            'cities' => Store::active()->select('cities.name')
+                                ->whereIn('stores.id', $item->offers()->pluck('store_id'))
+                                ->join('locations', 'stores.location_id', '=', 'locations.id')
+                                ->join('cities', function ($join) {
+                                    $join->on('locations.city_id', '=', 'cities.id')->whereNull('parent_id');
+                                })
+                                ->groupBy('cities.name')->pluck('name')->toArray(),
+                            'values' => $item->values()->whereIn('attribute_id', [1, 2, 3, 5])->pluck('value')->toArray()
+                        ]
+                    ]);
+                }
+            });
+
+            $redis->publish('bot:import', json_encode([
+                'success' => true,
+                'type' => 'category',
+                'message' => 'Индексы товаров успешно обновлены: ' . $startTime->diff(Carbon::now())->format('%iм %sс')
+            ], JSON_UNESCAPED_UNICODE));
         }
-        catch (\Exception $exception) {
-            $this->output->writeln(
-                sprintf(
-                    '<error>Error updating mapping for index %s, error message: %s.</error>',
-                    $config['index'],
-                    $exception->getMessage()
-                )
-            );
+        catch (\Exception $e) {
+            $this->redis->publish('bot:import', json_encode([
+                'success' => false,
+                'type' => 'category',
+                'message' => $e->getMessage()
+            ], JSON_UNESCAPED_UNICODE));
 
             return self::FAILURE;
         }
 
+        $this->info('Индексы товаров успешно обновлены: ' . $startTime->diff(Carbon::now())->format('%iм %sс'));
+
         return self::SUCCESS;
-    }
-
-    private function generateData(string $index): array
-    {
-        $data = [];
-        Product::has('offers')->chunk(1000, function (Collection $items) use (&$data, $index) {
-            /** @var Product $item */
-            foreach ($items as $item) {
-                $data[] = [
-                    'index' => ['_index' => $index],
-                    'id' => $item->id,
-                    'slug' => $item->slug,
-                    'name' => $item->name,
-                    'cities' => Store::active()->select('cities.name')
-                        ->whereIn('stores.id', $item->offers()->pluck('store_id'))
-                        ->join('locations', 'stores.location_id', '=', 'locations.id')
-                        ->join('cities', function ($join) {
-                            $join->on('locations.city_id', '=', 'cities.id')->whereNull('parent_id');
-                        })
-                        ->groupBy('cities.name')->pluck('name')->toArray(),
-                    'values' => $item->values()->whereIn('attribute_id', [1, 2, 3, 5])->pluck('value')->toArray()
-                ];
-            }
-        });
-
-        return $data;
     }
 }
