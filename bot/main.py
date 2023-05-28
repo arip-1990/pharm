@@ -1,17 +1,14 @@
 import os
 import ujson
-import redis
 import logging
-from threading import Thread
+import asyncio
+from redis.asyncio import Redis
 from aiogram import Bot, Dispatcher, executor, types
 
 
 logging.basicConfig(level=logging.INFO)
-print(os.getenv('API_TOKEN', '6159397113:AAHCvG9cvmj4OdBfcnQrrblKiD2fVbhWvQI'))
-r = redis.Redis(host=os.getenv('REDIS_HOST', 'localhost'))
+redis = Redis(host=os.getenv('REDIS_HOST', 'localhost'))
 bot = Bot(token=os.getenv('API_TOKEN', '6159397113:AAHCvG9cvmj4OdBfcnQrrblKiD2fVbhWvQI'))
-
-
 dp = Dispatcher(bot)
 
 
@@ -31,7 +28,7 @@ async def help(message: types.Message) -> None:
 
 
 @dp.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer'])
-def update_data(message: types.Message) -> None:
+async def update_data(message: types.Message) -> None:
     global import_data
     send_message = ''
 
@@ -48,7 +45,7 @@ def update_data(message: types.Message) -> None:
             import_data = {'chat': None, 'command': None}
             send_message = 'Попробуйте повторить запрос пожалуйста))'
 
-        message.reply(send_message)
+        await message.reply(send_message)
     else:
         import_data['command'] = message.text.split(' ')[0].split('_')[1].strip()
         if import_data['command'] == 'category':
@@ -61,8 +58,8 @@ def update_data(message: types.Message) -> None:
             send_message = 'Обновляем остатки...'
 
         import_data['chat'] = message.chat.id
-        r.publish('api:import', ujson.dumps({'type': import_data['command']}))
-        message.answer(send_message)
+        await redis.publish('api:import', ujson.dumps({'type': import_data['command']}))
+        await message.answer(send_message)
 
 
 async def handle_api_info(message: str) -> None:
@@ -87,14 +84,16 @@ async def handle_import(data: dict) -> None:
     import_data = {'chat': None, 'command': None}
 
 
-async def listen_messages() -> None:
-    p = r.pubsub()
-    p.psubscribe('bot:*')
+async def listen_messages():
+    print('starting listener for redis')
 
-    for message in p.listen():
-        if message and isinstance(message, dict):
-            try:
-                if message.get('type') == 'pmessage':
+    async with redis.pubsub() as pubsub:
+        await pubsub.psubscribe('bot:*')
+
+        try:
+            while True:
+                message = await pubsub.get_message()
+                if message is not None and message.get('type') == 'pmessage':
                     channel = message.get('channel').decode('utf8').split(':')[-1]
                     data = message.get('data').decode('utf8')
 
@@ -106,9 +105,12 @@ async def listen_messages() -> None:
                         await handle_api_error(ujson.loads(data))
                     else:
                         await bot.send_message(admin, data)
-            except Exception as e:
-                await bot.send_message(admin, e)
+        except Exception as e:
+            print(e)
+            await bot.send_message(admin, e)
+
 
 if __name__ == '__main__':
-    Thread(target=listen_messages).start()
+    asyncio.get_event_loop().create_task(listen_messages())
+
     executor.start_polling(dp, skip_updates=True)
