@@ -62,7 +62,7 @@ class OrderRepository
     public function addStatus(Order $order, OrderStatus $status): void
     {
         if ($order->inStatus($status))
-            throw new OrderException("Статус '$status->value' уже присвоен");
+            throw new OrderException("Статус '{$status->value}' уже присвоен");
 
         $order->statuses->add(new Status($status, Carbon::now()));
     }

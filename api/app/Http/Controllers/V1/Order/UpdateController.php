@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\V1\Order;
 
-use App\Order\Entity\{Delivery, Order, OrderGroup, OrderItem, OrderRepository};
+use App\Exceptions\OrderException;
+use App\Order\Entity\{Delivery, Order, OrderGroup, OrderItem, OrderRepository, Status\OrderState};
 use App\Order\Entity\Status\OrderStatus;
 use App\Order\UseCase\RefundService;
 use Illuminate\Http\Request;
@@ -53,18 +54,18 @@ class UpdateController extends Controller
             $order = $this->repository->getById($order1cId - config('data.orderStartNumber'));
 
             if (isset($xml->order_transfer->id)) {
-                /** @var OrderGroup $group */
                 if (!$group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
                     $group = OrderGroup::create(['order_1c_id' => $order1cId]);
                     $order->delivery_id = 2;
-                    $order2 = Order::create($order->store, $order->payment, Delivery::find(3));
+
+                    $order2 = $this->createNewOrder($order);
 
                     $group->orders()->saveMany([$order, $order2]);
                 }
                 else {
                     $order = $group->orders->firstWhere('delivery_id', 2);
                     if (!$order2 = $group->orders->firstWhere('id', '!=', $order->id)) {
-                        $order2 = Order::create($order->store, $order->payment, Delivery::find(3));
+                        $order2 = $this->createNewOrder($order);
                         $group->orders()->save($order2);
                     }
 
@@ -101,21 +102,33 @@ class UpdateController extends Controller
                     }
                 }
 
+                $order->refresh();
+                $order2->refresh();
+
                 $this->repository->addStatus($order2, OrderStatus::from((string)$xml->order_transfer->status));
                 $this->repository->changeState($order2);
+
                 $order2->recalculationCost();
                 $order2->save();
             }
 
-            $this->repository->addStatus($order, $status);
-            if ($status === OrderStatus::STATUS_CANCELLED) {
-                $this->service->fullRefund($order);
+            try {
+                $this->repository->addStatus($order, $status);
+
+                if ($status === OrderStatus::STATUS_CANCELLED)
+                    $this->service->fullRefund($order);
             }
+            catch (OrderException $e) {
+                if ($status !== OrderStatus::STATUS_CANCELLED)
+                    throw new OrderException($e->getMessage());
+            }
+
 //            elseif (isset($xml->order->products->product) and ($status == OrderStatus::STATUS_ASSEMBLED or $status == OrderStatus::STATUS_RECEIVED)) {
 //                $this->service->partlyRefund($order, $xml->order->products->product);
 //            }
 
             $this->repository->changeState($order, $status);
+
             $order->recalculationCost();
             $order->save();
 
@@ -128,5 +141,16 @@ class UpdateController extends Controller
                 headers: ['Content-Type' => 'application/xml']
             );
         }
+    }
+
+    private function createNewOrder(Order $order, int $deliveryId = 3): Order
+    {
+        $newOrder = Order::create($order->store, $order->payment, Delivery::find($deliveryId));
+        $newOrder->changeState(OrderState::STATE_SUCCESS);
+        $newOrder->setPlatform($order->platform);
+        $newOrder->setUserInfo($order->name, $order->phone, $order->email);
+        $newOrder->user()->associate($order->user);
+
+        return $newOrder;
     }
 }

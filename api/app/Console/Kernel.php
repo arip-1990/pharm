@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('import:category')->daily();
         $schedule->command('import:store')->dailyAt('0:10');
         $schedule->command('import:product')->dailyAt('0:15');
-        $schedule->command('import:offer')->dailyAt('0:30');
+        $schedule->command('import:offer')->dailyAt('0:25');
 
         $schedule->command('search:reindex')->dailyAt('0:50');
 

@@ -61,6 +61,7 @@ class Order extends Model
         $item->payment_id = $payment->id;
         $item->delivery_id = $delivery->id;
         $item->note = $note;
+        $item->cost = 0;
         $item->addStatus(OrderStatus::STATUS_ACCEPTED);
         return $item;
     }
