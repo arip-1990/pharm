@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('import:product')->dailyAt('0:15');
         $schedule->command('import:offer')->dailyAt('0:30');
 
-        $schedule->command('elastic:index-product')->dailyAt('1:00');
+        $schedule->command('search:reindex')->dailyAt('0:50');
 
         $schedule->command('import:offer change')->everyFiveMinutes()->unlessBetween('0:00', '1:00');
 //        $schedule->command('import:offer stock')->everyFiveMinutes()->unlessBetween('0:00', '1:00');
