@@ -103,6 +103,7 @@ class UpdateController extends Controller
 
                 $this->repository->addStatus($order2, OrderStatus::from((string)$xml->order_transfer->status));
                 $this->repository->changeState($order2);
+                $order2->recalculationCost();
                 $order2->save();
             }
 
@@ -115,6 +116,7 @@ class UpdateController extends Controller
 //            }
 
             $this->repository->changeState($order, $status);
+            $order->recalculationCost();
             $order->save();
 
             return new Response($this->orderSuccess($order->id), headers: ['Content-Type' => 'application/xml']);

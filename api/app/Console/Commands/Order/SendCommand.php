@@ -12,15 +12,16 @@ use Illuminate\Support\Facades\Redis;
 
 class SendCommand extends Command
 {
-    protected $signature = 'order:send';
-    protected $description = 'test';
+    protected $signature = 'order:send {date=5m}';
+    protected $description = 'Sending orders {optional date: example 5m, 2d}';
 
     public function handle(): int
     {
+        preg_match('/(\d+)([m|d])/i', $this->argument('date'), $matches);
         $queueClient = Redis::connection('bot')->client();
-
         try {
-            $orders = Order::where('created_at', '>=', Carbon::now()->subDay())->get();
+            $subDate = strtolower($matches[2]) === 'd' ? Carbon::now()->subDays((int)$matches[1]) : Carbon::now()->subMinutes((int)$matches[1]);
+            $orders = Order::where('created_at', '>=', $subDate)->get();
             /** @var Order $order */
             foreach ($orders as $order) {
                 if ($order->isSent() or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))

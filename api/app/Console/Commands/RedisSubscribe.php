@@ -16,28 +16,36 @@ class RedisSubscribe extends Command
         $client = Redis::connection('bot')->client();
         Redis::psubscribe(['api:*'], function (string $message, string $channel) use ($client) {
             try {
-                $channel = explode(':', $channel)[1];
                 $data = json_decode($message, true);
-                if ($channel === 'import') {
-                    switch ($data['type']) {
-                        case 'category':
-                            Artisan::call('import:category');
-                            break;
-                        case 'product':
-                            Artisan::call('import:product');
-                            break;
-                        case 'store':
-                            Artisan::call('import:store');
-                            break;
-                        case 'offer':
-                            Artisan::call('import:offer');
-                            break;
-                        default:
-                            throw new \InvalidArgumentException('Неверная комманда!');
-                    }
-                }
-                elseif ($channel === 'send') {
-                    Artisan::call('order:send');
+                switch (explode(':', $channel)[1]) {
+                    case 'import':
+                        switch ($data['type']) {
+                            case 'category':
+                                Artisan::call('import:category');
+                                break;
+                            case 'product':
+                                Artisan::call('import:product');
+                                break;
+                            case 'store':
+                                Artisan::call('import:store');
+                                break;
+                            case 'offer':
+                                Artisan::call('import:offer');
+                                break;
+                            default:
+                                throw new \InvalidArgumentException('Неверная комманда!');
+                        }
+                        break;
+                    case 'search':
+                        if ($data['type'] === 'init') Artisan::call('search:init');
+                        elseif ($data['type'] === 'reindex') Artisan::call('search:reindex');
+                        else throw new \InvalidArgumentException('Неверная комманда!');
+                        break;
+                    case 'send':
+                        Artisan::call('order:send' . ($data['date'] ?? ''));
+                        break;
+                    default:
+                        throw new \InvalidArgumentException('Неверная комманда!');
                 }
             }
             catch (\Exception $e) {

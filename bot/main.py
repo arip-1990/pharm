@@ -13,7 +13,9 @@ dp = Dispatcher(bot)
 
 
 import_data = {'chat': None, 'command': None}
+search_data = {'chat': None, 'command': None}
 admin = 1195813156
+channel_notification = -1001619975317
 
 
 @dp.message_handler(commands=['start', 'help'])
@@ -60,20 +62,48 @@ async def update_data(message: types.Message) -> None:
         import_data['chat'] = message.chat.id
         await redis.publish('api:import', ujson.dumps({'type': import_data['command']}))
         await message.answer(send_message)
+        await bot.send_message(channel_notification, send_message)
 
+
+@dp.message_handler(commands=['search_init', 'search_reindex'])
+async def search_service(message: types.Message) -> None:
+    global search_data
+    send_message = ''
+
+    if search_data['command']:
+        if search_data['command'] == 'init':
+            send_message = 'Инициализация индекса товаров не завершено'
+        elif search_data['command'] == 'reindex':
+            send_message = 'Обновление индекса товаров не завершено'
+        else:
+            search_data = {'chat': None, 'command': None}
+            send_message = 'Попробуйте повторить запрос пожалуйста))'
+
+        await message.reply(send_message)
+    else:
+        search_data['command'] = message.text.split(' ')[0].split('_')[1].strip()
+        if search_data['command'] == 'init':
+            send_message = 'Инициализация индекса товаров..'
+        elif search_data['command'] == 'reindex':
+            send_message = 'Обновляем индексы товаров...'
+
+        search_data['chat'] = message.chat.id
+        await redis.publish('api:search', ujson.dumps({'type': search_data['command']}))
+        await message.answer(send_message)
+        await bot.send_message(channel_notification, send_message)
 
 async def handle_api_info(message: str) -> None:
-    await bot.send_message(admin, message)
+    await bot.send_message(channel_notification, message)
 
 
 async def handle_api_error(data: dict) -> None:
-    await bot.send_message(admin, f"File: {data['file']}\nMessage: {data['message']}")
+    await bot.send_message(channel_notification, f"File: {data['file']}\nMessage: {data['message']}")
 
 
 async def handle_import(data: dict) -> None:
     global import_data
 
-    senders = [admin, import_data['chat']] if (import_data['chat'] and import_data['chat'] != admin) else [admin]
+    senders = [channel_notification, import_data['chat']] if import_data['chat'] else [channel_notification]
     if not data['success']:
         for sender in senders:
             await bot.send_message(sender, "Не удалось обновить данные!")
@@ -82,6 +112,20 @@ async def handle_import(data: dict) -> None:
         await bot.send_message(sender, data['message'])
 
     import_data = {'chat': None, 'command': None}
+
+
+async def handle_search(data: dict) -> None:
+    global search_data
+
+    senders = [channel_notification, search_data['chat']] if search_data['chat'] else [channel_notification]
+    if not data['success']:
+        for sender in senders:
+            await bot.send_message(sender, "Не удалось обновить данные!")
+
+    for sender in senders:
+        await bot.send_message(sender, data['message'])
+
+    search_data = {'chat': None, 'command': None}
 
 
 async def listen_messages():
@@ -99,15 +143,17 @@ async def listen_messages():
 
                     if channel == 'import':
                         await handle_import(ujson.loads(data))
+                    elif channel == 'search':
+                        await handle_search(ujson.loads(data))
                     elif channel == 'info':
                         await handle_api_info(data)
                     elif channel == 'error':
                         await handle_api_error(ujson.loads(data))
                     else:
-                        await bot.send_message(admin, data)
+                        await bot.send_message(channel_notification, data)
         except Exception as e:
             print(e)
-            await bot.send_message(admin, e)
+            await bot.send_message(channel_notification, e)
 
 
 if __name__ == '__main__':

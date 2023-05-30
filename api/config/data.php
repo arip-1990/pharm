@@ -116,37 +116,4 @@ return [
             '45e32433-f171-11e9-969d-005056011715', // ул. Дж.Алиева, 30
         ]
     ],
-    'elastic' => [
-        'product' => [
-            'index' => 'products',
-            'settings' => [
-                'analysis' => [
-                    'filter' => [
-                        'ru_stop' => [
-                            'type' => 'stop',
-                            'stopwords' => '_russian_',
-                        ],
-                        'ru_stemmer' => [
-                            'type' => 'stemmer',
-                            'language' => 'russian',
-                        ],
-                    ],
-                    'analyzer' => [
-                        'default' => [
-                            'char_filter' => ['html_strip'],
-                            'tokenizer' => 'standard',
-                            'filter' => ['lowercase', 'ru_stop', 'ru_stemmer'],
-                        ],
-                    ],
-                ]
-            ],
-            'properties' => [
-                'id' => ['type' => 'keyword', 'index' => false],
-                'slug' => ['type' => 'keyword', 'index' => false],
-                'name' => ['type' => 'text'],
-                'cities' => ['type' => 'keyword', 'normalizer' => 'lowercase'],
-                'values' => ['type' => 'text'],
-            ]
-        ],
-    ]
 ];
