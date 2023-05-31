@@ -101,7 +101,7 @@ async def handle_api_send_data(data: dict) -> None:
     for sender in senders:
         await bot.send_message(sender, data['message'])
 
-    send_data: SendData = {'user': None, 'command': None, 'message': None}
+    send_data = {'user': None, 'command': None, 'message': None}
 
 
 async def listen_messages():
