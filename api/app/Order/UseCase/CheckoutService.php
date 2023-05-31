@@ -69,7 +69,6 @@ class CheckoutService
             if (!$city = City::where('name', Helper::trimPrefixCity($item['city'] ?? $item['addressData']['settlement']))->first())
                 throw new OrderException('Город неизвестен');
 
-            $phone = str_replace('+', '', $item['phone']);
             $order = Order::create(
                 Store::find($item['pickupLocationId']),
                 Payment::find((int)explode('/', $item['payment'])[1]),
@@ -79,6 +78,8 @@ class CheckoutService
             $order->setPlatform($platform);
 
             try {
+                $phone = str_replace('+', '', $item['phone']);
+
                 // User::find($data['externalUserId'])
                 if ($user = User::where('phone', $phone)->first())
                     $order->user()->associate($user);
@@ -88,6 +89,7 @@ class CheckoutService
 
                 $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
                 $order->save();
+
                 $order->items()->saveMany($orderItems);
                 $order->changeState(OrderState::STATE_SUCCESS);
 

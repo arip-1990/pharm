@@ -6,9 +6,9 @@ use App\Http\Requests\Mobile\CheckoutRequest;
 use App\Order\UseCase\CheckoutService;
 use Illuminate\Http\JsonResponse;
 
-class CheckoutController
+readonly class CheckoutController
 {
-    public function __construct(private readonly CheckoutService $service) {}
+    public function __construct(private CheckoutService $service) {}
 
     public function handle(CheckoutRequest $request): JsonResponse
     {
