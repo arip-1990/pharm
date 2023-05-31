@@ -187,6 +187,7 @@ services:
       dockerfile: docker/Dockerfile
     environment:
       APP_NAME: Сеть аптек 120/80
+      APP_ENV: local
       REDIS_HOST: redis
     volumes:
       - ./bot:/app

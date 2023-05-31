@@ -223,7 +223,7 @@ services:
       QUEUE_CONNECTION: redis
       REDIS_HOST: redis
       ELASTICSEARCH_HOST: elastic
-    command: sh -c 'wait-for-it elastic:9200 -t 60 && php artisan search:init && php artisan schedule:run'
+    command: sh -c 'wait-for-it elastic:9200 -t 60 && php artisan schedule:run'
     volumes:
       - uploads:/app/storage/app/public
     deploy:

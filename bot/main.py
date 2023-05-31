@@ -2,6 +2,7 @@ import os
 import ujson
 import logging
 import asyncio
+from typing import TypedDict
 from redis.asyncio import Redis
 from aiogram import Bot, Dispatcher, executor, types
 
@@ -12,8 +13,13 @@ bot = Bot(token=os.getenv('API_TOKEN', '6159397113:AAHCvG9cvmj4OdBfcnQrrblKiD2fV
 dp = Dispatcher(bot)
 
 
-import_data = {'chat': None, 'command': None}
-search_data = {'chat': None, 'command': None}
+class SendData(TypedDict):
+    user: types.User | None
+    command: str | None
+    message: str | None
+
+
+send_data: SendData = {'user': None, 'command': None, 'message': None}
 admin = 1195813156
 channel_notification = -1001619975317
 
@@ -29,111 +35,79 @@ async def help(message: types.Message) -> None:
     await message.answer(message.from_user.id)
 
 
-@dp.message_handler(commands=['update_category', 'update_product', 'update_store', 'update_offer'])
-async def update_data(message: types.Message) -> None:
-    global import_data
-    send_message = ''
+@dp.message_handler(commands=['import_category', 'import_product', 'import_store', 'import_offer', 'search_init', 'search_reindex'])
+async def send_api_data(message: types.Message) -> None:
+    global send_data
 
-    if import_data['command']:
-        if import_data['command'] == 'category':
-            send_message = 'Обновление категории не завершено'
-        elif import_data['command'] == 'product':
-            send_message = 'Обновление товаров не завершено'
-        elif import_data['command'] == 'store':
-            send_message = 'Обновление аптек не завершено'
-        elif import_data['command'] == 'offer':
-            send_message = 'Обновление остатков не завершено'
+    if send_data['command']:
+        if send_data['user']:
+            user_name = send_data['user'].first_name + (f" {send_data['user'].last_name}" if send_data['user'].last_name else '')
+            await message.reply(f"Процесс не завершен: {send_data['message']}\nЗапущен пользователем: {user_name}")
         else:
-            import_data = {'chat': None, 'command': None}
-            send_message = 'Попробуйте повторить запрос пожалуйста))'
-
-        await message.reply(send_message)
+            await message.reply(f"Процесс не завершен: {send_data['message']}")
     else:
-        import_data['command'] = message.text.split(' ')[0].split('_')[1].strip()
-        if import_data['command'] == 'category':
-            send_message = 'Обновляем категории...'
-        elif import_data['command'] == 'product':
-            send_message = 'Обновляем товары...'
-        elif import_data['command'] == 'store':
-            send_message = 'Обновляем аптеки...'
-        elif import_data['command'] == 'offer':
-            send_message = 'Обновляем остатки...'
+        [type_api, send_data['command']] = message.text.split(' ')[0].strip('/').split('_')
 
-        import_data['chat'] = message.chat.id
-        await redis.publish('api:import', ujson.dumps({'type': import_data['command']}))
-        await message.answer(send_message)
-        await bot.send_message(channel_notification, send_message)
+        if send_data['command'] == 'category':
+            send_data['message'] = 'Обновление категории'
+        elif send_data['command'] == 'product':
+            send_data['message'] = 'Обновление товаров'
+        elif send_data['command'] == 'store':
+            send_data['message'] = 'Обновление аптек'
+        elif send_data['command'] == 'offer':
+            send_data['message'] = 'Обновление остатков'
+        elif send_data['command'] == 'init':
+            send_data['message'] = 'Инициализация индекса товаров'
+        elif send_data['command'] == 'reindex':
+            send_data['message'] = 'Обновление индекса товаров'
 
+        send_data['user'] = message.from_user
 
-@dp.message_handler(commands=['search_init', 'search_reindex'])
-async def search_service(message: types.Message) -> None:
-    global search_data
-    send_message = ''
+        await redis.publish(f'api:{type_api}', ujson.dumps({'type': send_data['command']}))
+        await message.answer(f"Запущен процесс: {send_data['message']}")
 
-    if search_data['command']:
-        if search_data['command'] == 'init':
-            send_message = 'Инициализация индекса товаров не завершено'
-        elif search_data['command'] == 'reindex':
-            send_message = 'Обновление индекса товаров не завершено'
-        else:
-            search_data = {'chat': None, 'command': None}
-            send_message = 'Попробуйте повторить запрос пожалуйста))'
+        user_name = message.from_user.first_name + (f' {message.from_user.last_name}' if message.from_user.last_name else '')
 
-        await message.reply(send_message)
-    else:
-        search_data['command'] = message.text.split(' ')[0].split('_')[1].strip()
-        if search_data['command'] == 'init':
-            send_message = 'Инициализация индекса товаров..'
-        elif search_data['command'] == 'reindex':
-            send_message = 'Обновляем индексы товаров...'
+        if os.getenv('APP_ENV', 'prod') == 'prod':
+            await bot.send_message(channel_notification, f"{user_name}: {send_data['message']}")
 
-        search_data['chat'] = message.chat.id
-        await redis.publish('api:search', ujson.dumps({'type': search_data['command']}))
-        await message.answer(send_message)
-        await bot.send_message(channel_notification, send_message)
 
 async def handle_api_info(message: str) -> None:
-    await bot.send_message(channel_notification, message)
+    if os.getenv('APP_ENV', 'prod') == 'prod':
+        await bot.send_message(channel_notification, message)
+    else:
+        await bot.send_message(admin, message)
 
 
 async def handle_api_error(data: dict) -> None:
-    await bot.send_message(channel_notification, f"File: {data['file']}\nMessage: {data['message']}")
+    if os.getenv('APP_ENV', 'prod') == 'prod':
+        await bot.send_message(channel_notification, f"File: {data['file']}\nMessage: {data['message']}")
+    else:
+        await bot.send_message(admin, f"File: {data['file']}\nMessage: {data['message']}")
 
 
-async def handle_import(data: dict) -> None:
-    global import_data
+async def handle_api_send_data(data: dict) -> None:
+    global send_data
 
-    senders = [channel_notification, import_data['chat']] if import_data['chat'] else [channel_notification]
+    if os.getenv('APP_ENV', 'prod') == 'prod':
+        senders = [channel_notification, send_data['user'].id] if send_data['user'] else [channel_notification]
+    else:
+        senders = [admin]
+
     if not data['success']:
         for sender in senders:
-            await bot.send_message(sender, "Не удалось обновить данные!")
+            await bot.send_message(sender, 'Не удалось выполнить ваш запрос!')
 
     for sender in senders:
         await bot.send_message(sender, data['message'])
 
-    import_data = {'chat': None, 'command': None}
-
-
-async def handle_search(data: dict) -> None:
-    global search_data
-
-    senders = [channel_notification, search_data['chat']] if search_data['chat'] else [channel_notification]
-    if not data['success']:
-        for sender in senders:
-            await bot.send_message(sender, "Не удалось обновить данные!")
-
-    for sender in senders:
-        await bot.send_message(sender, data['message'])
-
-    search_data = {'chat': None, 'command': None}
+    send_data: SendData = {'user': None, 'command': None, 'message': None}
 
 
 async def listen_messages():
     print('starting listener for redis')
-
     async with redis.pubsub() as pubsub:
         await pubsub.psubscribe('bot:*')
-
         try:
             while True:
                 message = await pubsub.get_message()
@@ -141,19 +115,23 @@ async def listen_messages():
                     channel = message.get('channel').decode('utf8').split(':')[-1]
                     data = message.get('data').decode('utf8')
 
-                    if channel == 'import':
-                        await handle_import(ujson.loads(data))
-                    elif channel == 'search':
-                        await handle_search(ujson.loads(data))
+                    if channel in ['import', 'search']:
+                        await handle_api_send_data(ujson.loads(data))
                     elif channel == 'info':
                         await handle_api_info(data)
                     elif channel == 'error':
                         await handle_api_error(ujson.loads(data))
                     else:
-                        await bot.send_message(channel_notification, data)
+                        if os.getenv('APP_ENV', 'prod') == 'prod':
+                            await bot.send_message(channel_notification, data)
+                        else:
+                            await bot.send_message(admin, data)
         except Exception as e:
             print(e)
-            await bot.send_message(channel_notification, e)
+            if os.getenv('APP_ENV', 'prod') == 'prod':
+                await bot.send_message(channel_notification, e)
+            else:
+                await bot.send_message(admin, e)
 
 
 if __name__ == '__main__':

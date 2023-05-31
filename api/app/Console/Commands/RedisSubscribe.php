@@ -19,27 +19,16 @@ class RedisSubscribe extends Command
                 $data = json_decode($message, true);
                 switch (explode(':', $channel)[1]) {
                     case 'import':
-                        switch ($data['type']) {
-                            case 'category':
-                                Artisan::call('import:category');
-                                break;
-                            case 'product':
-                                Artisan::call('import:product');
-                                break;
-                            case 'store':
-                                Artisan::call('import:store');
-                                break;
-                            case 'offer':
-                                Artisan::call('import:offer');
-                                break;
-                            default:
-                                throw new \InvalidArgumentException('Неверная комманда!');
-                        }
+                        if (in_array($data['type'], ['category', 'product', 'store', 'offer']))
+                            Artisan::call("import:{$data['type']}");
+                        else
+                            throw new \InvalidArgumentException('Неверная комманда для обновления данных!');
                         break;
                     case 'search':
-                        if ($data['type'] === 'init') Artisan::call('search:init');
-                        elseif ($data['type'] === 'reindex') Artisan::call('search:reindex');
-                        else throw new \InvalidArgumentException('Неверная комманда!');
+                        if (in_array($data['type'], ['init', 'reindex']))
+                            Artisan::call("search:{$data['type']}");
+                        else
+                            throw new \InvalidArgumentException('Неверная комманда для индексирования поиска!');
                         break;
                     case 'send':
                         Artisan::call('order:send' . ($data['date'] ?? ''));

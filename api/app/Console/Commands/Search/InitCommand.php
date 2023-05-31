@@ -50,10 +50,9 @@ class InitCommand extends Command
     private function initProducts(): void
     {
         try {
-            $this->client->indices()->delete([
-                'index' => 'products'
-            ]);
-        } catch (Missing404Exception $e) {}
+            $this->client->indices()->delete(['index' => 'products']);
+        }
+        catch (Missing404Exception $e) {}
 
         $this->client->indices()->create([
             'index' => 'products',
