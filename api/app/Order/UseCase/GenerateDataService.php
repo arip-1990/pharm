@@ -6,9 +6,9 @@ use App\Helper;
 use App\Order\Entity\{Delivery, Order, Payment};
 use Carbon\Carbon;
 
-class GenerateDataService
+readonly class GenerateDataService
 {
-    public function __construct(private readonly Order $order) {}
+    public function __construct(private Order $order) {}
 
     public function generateSenData(Carbon $date): string
     {

@@ -63,13 +63,14 @@ class UpdateController extends Controller
                     $group->orders()->saveMany([$order, $order2]);
                 }
                 else {
-                    $order = $group->orders->firstWhere('delivery_id', 2);
+                    $order = $group->orders->firstWhere('delivery_id', 2) ?? $group->orders->first();
                     if (!$order2 = $group->orders->firstWhere('id', '!=', $order->id)) {
                         $order2 = $this->createNewOrder($order);
                         $group->orders()->save($order2);
                     }
 
-                    $order2->delivery_id = 3;
+                    $order->update(['delivery_id' => 2]);
+                    $order2->update(['delivery_id' => 3]);
                 }
 
                 foreach ($xml->order_transfer->products as $item) {
@@ -146,10 +147,10 @@ class UpdateController extends Controller
     private function createNewOrder(Order $order, int $deliveryId = 3): Order
     {
         $newOrder = Order::create($order->store, $order->payment, Delivery::find($deliveryId));
-        $newOrder->changeState(OrderState::STATE_SUCCESS);
         $newOrder->setPlatform($order->platform);
         $newOrder->setUserInfo($order->name, $order->phone, $order->email);
         $newOrder->user()->associate($order->user);
+        $newOrder->changeState(OrderState::STATE_SUCCESS);
 
         return $newOrder;
     }

@@ -24,13 +24,13 @@ class SendCommand extends Command
             $orders = Order::where('created_at', '>=', $subDate)->get();
             /** @var Order $order */
             foreach ($orders as $order) {
-                if ($order->isSent() or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
+                if ($order->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
                     continue;
 
                 /** @var Order $order2 */
                 if (!$order2 = $orders->first(fn(Order $item) => (
-                    $item->id != $order->id and $item->phone == $order->phone and $item->store_id == $order->store_id
-                    and $item->delivery_id != $order->delivery_id and $item->created_at->diffInMinutes($order->created_at) < 1
+                    $item->id !== $order->id and $item->phone === $order->phone and $item->store_id === $order->store_id
+                    and $item->delivery_id !== $order->delivery_id and $item->created_at->diffInMinutes($order->created_at) < 1
                 ))) {
                     if (Carbon::now()->diffInMinutes($order->created_at) >= 1) {
                         $order->sent();
@@ -39,41 +39,10 @@ class SendCommand extends Command
                     continue;
                 }
 
-                if ($order2->isSent() or ($order2->payment->isType(Payment::TYPE_CARD) and !$order2->isPay()))
+                if ($order2->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order2->payment->isType(Payment::TYPE_CARD) and !$order2->isPay()))
                     continue;
 
-                if ($order->delivery_id === 2) {
-                    $tmpOrder = clone $order;
-                    $tmpOrderItems = clone $order->items;
-
-                    foreach ($order2->items as $item) {
-                        if ($tmpItem = $tmpOrderItems->first(fn(OrderItem $item2) => $item2->product_id === $item->product_id)) {
-                            $tmpItem->quantity += $item->quantity;
-                        }
-                        else {
-                            $tmpOrderItems->add($item);
-                        }
-                    }
-
-                    $tmpOrder->cost += $order2->cost;
-                }
-                else {
-                    $tmpOrder = clone $order2;
-                    $tmpOrderItems = clone $order2->items;
-
-                    foreach ($order->items as $item) {
-                        if ($tmpItem = $tmpOrderItems->first(fn(OrderItem $item2) => $item2->product_id === $item->product_id)) {
-                            $tmpItem->quantity += $item->quantity;
-                        }
-                        else {
-                            $tmpOrderItems->add($item);
-                        }
-                    }
-
-                    $tmpOrder->cost += $order->cost;
-                }
-
-                $tmpOrder->items = $tmpOrderItems;
+                $tmpOrder = ($order->delivery_id === 2) ? $this->unionOrders($order, $order2) : $this->unionOrders($order2, $order);
 
                 $order->addStatus(OrderStatus::STATUS_SEND);
                 $order2->addStatus(OrderStatus::STATUS_SEND);
@@ -82,6 +51,7 @@ class SendCommand extends Command
 
                 $group = OrderGroup::create(['order_1c_id' => $orderNumber]);
                 $group->orders()->saveMany([$order, $order2]);
+
                 try {
                     $response = simplexml_load_string($this->orderSend($tmpOrder));
 
@@ -117,6 +87,25 @@ class SendCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    private function unionOrders(Order $pickupOrder, Order $bookingOrder): Order
+    {
+        $newOrder = clone $pickupOrder;
+        $newOrderItems = clone $pickupOrder->items;
+        foreach ($bookingOrder->items as $item) {
+            if ($newItem = $newOrderItems->first(fn(OrderItem $item2) => $item2->product_id === $item->product_id)) {
+                $newItem->quantity += $item->quantity;
+            }
+            else {
+                $newOrderItems->add($item);
+            }
+        }
+
+        $newOrder->items = $newOrderItems;
+        $newOrder->cost += $bookingOrder->cost;
+
+        return $newOrder;
     }
 
     private function orderSend(Order $order): string
