@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { ConfigProvider } from "antd";
@@ -11,7 +11,7 @@ import { API_URL } from "./services/api";
 import { store } from "./store";
 import App from "./App";
 
-import "antd/dist/antd.css";
+import "antd/dist/reset.css";
 import "./sass/index.scss";
 
 moment.locale("ru");
@@ -25,7 +25,9 @@ const sanctumConfig = {
   userObjectRoute: "v1/panel/auth/user",
 };
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root") as HTMLElement);
+
+root.render(
   <Provider store={store}>
     <BrowserRouter>
       <Sanctum config={sanctumConfig}>
@@ -34,6 +36,5 @@ ReactDOM.render(
         </ConfigProvider>
       </Sanctum>
     </BrowserRouter>
-  </Provider>,
-  document.getElementById("root")
+  </Provider>
 );

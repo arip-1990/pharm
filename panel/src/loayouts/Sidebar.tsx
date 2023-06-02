@@ -19,6 +19,7 @@ const Sidebar: React.FC<PropsType> = ({ theme, collapsed, switchTheme }) => {
       trigger={null}
       collapsible
       collapsed={collapsed}
+      style={{ position: "sticky" }}
     >
       <div className="brand">
         <span className="logo" />

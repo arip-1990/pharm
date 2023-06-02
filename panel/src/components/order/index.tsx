@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Col, Row, Table, TablePaginationConfig } from "antd";
 import { useFetchOrdersQuery } from "../../services/OrderService";
@@ -36,7 +36,7 @@ const Order: React.FC = () => {
               ? "ascend"
               : "descend") as SortOrder)
           : null,
-      render: ([id, isTransfer]: any, record: any) => (
+      render: ([id, isTransfer]: any) => (
         <span>
           {id}
           <br />
@@ -108,40 +108,39 @@ const Order: React.FC = () => {
     },
   ];
 
-  const handleChange = (
-    pag: TablePaginationConfig,
-    filter: any,
-    sorter: any
-  ) => {
-    const tmp: any = [];
-    if (filter) {
-      for (const [key, value] of Object.entries<string[] | null>(filter)) {
-        if (value?.length) tmp.push({ field: key, value: value.pop() });
+  const handleChange = useCallback(
+    (pag: TablePaginationConfig, filter: any, sorter: any) => {
+      const tmp: any = [];
+      if (filter) {
+        for (const [key, value] of Object.entries<string[] | null>(filter)) {
+          if (value?.length) tmp.push({ field: key, value: value.pop() });
+        }
       }
-    }
 
-    setFilters({
-      filters: tmp.length ? tmp : filters.filters,
-      order: {
-        field: sorter.column ? sorter.field : null,
-        direction: sorter.column
-          ? sorter.order.substring(0, sorter.order.length - 3)
-          : filters.order.direction,
-      },
-      pagination: {
-        current: pag.current || filters.pagination.current,
-        pageSize: pag.pageSize || filters.pagination.pageSize,
-      },
-    } as StorageType);
-  };
+      setFilters({
+        filters: tmp.length ? tmp : filters.filters,
+        order: {
+          field: sorter.column ? sorter.field : null,
+          direction: sorter.column
+            ? sorter.order.substring(0, sorter.order.length - 3)
+            : filters.order.direction,
+        },
+        pagination: {
+          current: pag.current || filters.pagination.current,
+          pageSize: pag.pageSize || filters.pagination.pageSize,
+        },
+      } as StorageType);
+    },
+    [filters]
+  );
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setFilters({
       ...filters,
       order: { field: null, direction: "asc" },
       filters: [],
     });
-  };
+  }, [filters]);
 
   return (
     <Row gutter={[16, 16]}>

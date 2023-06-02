@@ -15,10 +15,6 @@ class MyDocument extends Document {
             content="ru.apteka120.android"
           />
           <meta
-            name="smartbanner:icon-apple"
-            content="https://play-lh.googleusercontent.com/DDqqkbF38Uhzr_ooOgoCLWS8K4sgoPXb2S5qkyylq8tL0P3MhDkkmYgPW4hSxpSFwoWe=w240-h480"
-          />
-          <meta
             name="smartbanner:icon-google"
             content="https://play-lh.googleusercontent.com/DDqqkbF38Uhzr_ooOgoCLWS8K4sgoPXb2S5qkyylq8tL0P3MhDkkmYgPW4hSxpSFwoWe=w240-h480"
           />
