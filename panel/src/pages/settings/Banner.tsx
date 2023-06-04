@@ -113,8 +113,6 @@ const testDatas = [
 const Banner: FC = () => {
 
 
-
-
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { data, isFetching } = useFetchBannersQuery();
