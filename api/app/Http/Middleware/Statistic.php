@@ -3,27 +3,29 @@
 namespace App\Http\Middleware;
 
 use App\Models\VisitStatistic;
-use App\Services\IpInfo\IpInfo;
-use Closure;
+use App\Services\DaData\DaDataClient;
 use hisorange\BrowserDetect\Parser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class Statistic
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, \Closure $next): Response
     {
         try {
             $ip = $this->getIP($request);
-            if (Parser::isBot() or $ip === '78.142.233.153' or $ip === '89.151.178.52')
-                throw new \Exception();
+            $detect = (new Parser(new Cache(), $request))->detect();
 
-            $ipInfo = new IpInfo();
+            if ($detect->isBot() or $ip === '78.142.233.153' or $ip === '89.151.178.52')
+                throw new \DomainException();
+
+            $daData = new DaDataClient(config('dadata.DADATA_TOKEN'), config('dadata.DADATA_SECRET'));
             if ($visitId = $request->session()->get('visitId')) {
                 $visit = VisitStatistic::find($visitId);
                 if (!$visit->city) {
-                    $details = $ipInfo->getDetails($ip);
-                    $visit->city = "{$details->postal}, {$details->city}";
+                    $details = $daData->ipLocate($ip);
+                    $visit->city = "{$details['data']['postal_code']}, {$details['data']['city']}";
                 }
 
                 if (!$visit->user and $user = $request->user())
@@ -32,12 +34,12 @@ class Statistic
                 $visit->save();
             }
             else {
-                $details = $ipInfo->getDetails($ip);
+                $details = $daData->ipLocate($ip);
                 $visit = new VisitStatistic([
                     'ip' => $ip,
-                    'os' => Parser::platformName(),
-                    'browser' => Parser::browserName(),
-                    'city' => "{$details->postal}, {$details->city}",
+                    'os' => $detect->platformName(),
+                    'browser' => $detect->browserName(),
+                    'city' => "{$details['data']['postal_code']}, {$details['data']['city']}",
                     'referrer' => $request->header('referer')
                 ]);
 

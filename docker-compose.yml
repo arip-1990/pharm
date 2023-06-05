@@ -119,6 +119,8 @@ services:
       MAIL_FROM_NAME: Сеть аптек 120/80
       FILESYSTEM_DISK: public
       ELASTICSEARCH_HOST: elastic
+      DADATA_TOKEN: ${DADATA_TOKEN}
+      DADATA_SECRET: ${DADATA_SECRET}
     volumes:
       - ./api:/app
       - uploads:/app/storage/app/public

@@ -144,8 +144,9 @@ services:
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
-      IPINFO_TOKEN: ${IPINFO_TOKEN}
       ELASTICSEARCH_HOST: elastic
+      DADATA_TOKEN: ${DADATA_TOKEN}
+      DADATA_SECRET: ${DADATA_SECRET}
     volumes:
       - uploads:/app/storage/app/public
     deploy:
