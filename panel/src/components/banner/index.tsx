@@ -1,28 +1,35 @@
 import { FC, useState } from "react";
 import { Image, Popconfirm } from "antd";
-import { DeleteTwoTone } from "@ant-design/icons";
+import { DeleteTwoTone, FolderOutlined } from "@ant-design/icons";
 import { IBanner } from "../../models/IBanner";
+import banner from "../../pages/settings/Banner";
 
 interface Props {
   banner: IBanner;
   onDelete: (id: number) => void;
 }
 
+
 const Banner: FC<Props> = ({ banner, onDelete }) => {
   const [visible, setVisible] = useState<boolean>(false);
-
+  console.log(banner)
   const handleDelete = () => {
     onDelete(banner.id);
   };
 
+
+  // console.log(banner.picture.main)
+
   return (
     <div key={banner.id} className="banner">
+
       <Image
         preview={{ visible: false }}
         alt={banner.title || ""}
         src={banner.picture.main}
         onClick={() => setVisible(true)}
       />
+
       <div style={{ display: "none" }}>
         <Image.PreviewGroup
           preview={{ visible, onVisibleChange: (vis) => setVisible(vis) }}
@@ -31,6 +38,7 @@ const Banner: FC<Props> = ({ banner, onDelete }) => {
           {banner.picture.mobile && <Image src={banner.picture.mobile} />}
         </Image.PreviewGroup>
       </div>
+
       <Popconfirm
         title="Вы уверены, что хотите удалить?"
         onConfirm={handleDelete}
@@ -44,3 +52,8 @@ const Banner: FC<Props> = ({ banner, onDelete }) => {
 };
 
 export { Banner };
+
+
+
+
+

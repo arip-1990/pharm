@@ -49,6 +49,7 @@ const Product: FC = () => {
   const { data, refetch } = useGetProductQuery(String(slug));
   const { data: categories } = useFetchCategoriesQuery();
 
+
   const getDefaultGenerator = () => {
     let crumbs = [{ href: "/catalog", text: "Наш ассортимент" }];
 

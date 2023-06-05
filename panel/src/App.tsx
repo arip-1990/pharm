@@ -58,7 +58,7 @@ const App: FC = () => {
               <Route path="orders" element={<MobileOrder />} />
             </Route>
             <Route path="settings">
-              <Route index element={<Banner />} />
+              {/*<Route index element={<Banner />} />*/}
               <Route path="banner" element={<Banner />} />
             </Route>
           </Route>

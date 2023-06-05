@@ -5,4 +5,5 @@ export interface IBanner {
   picture: { main: string, mobile: string };
   type: number;
   sort: number;
+  path:string // new
 }
