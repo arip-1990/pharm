@@ -7,9 +7,9 @@ use App\UseCases\CardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class IndexController
+readonly class IndexController
 {
-    public function __construct(private readonly CardService $cardService) {}
+    public function __construct(private CardService $cardService) {}
 
     public function handle(Request $request): JsonResponse
     {
@@ -19,19 +19,20 @@ class IndexController
 
             $items = $this->cardService->getAllByUser($user->id);
 
-            $card = [];
-            $cards = [];
-            foreach ($items as $item) {
-                if ($item['StatusCode'] === 2)
-                    $card = $item;
-                $cards[] = [
-                    'cardNumber' => $item['Number'],
-                    'bonuses' => $item['Balance'],
-                    'status' => 'Карта постоянного покупателя', // $item['CardType'],
-                    'textColor' => '#fdfdfd',
-                    'backgroundColor' => '#3ab0a3'
-                ];
-            }
+            $cards = array_filter($items, fn($item) => $item['StatusCode'] === 2);
+            $card = array_pop($cards);
+//            $cards = [];
+//            foreach ($items as $item) {
+//                if ($item['StatusCode'] === 2)
+//                    $card = $item;
+//                $cards[] = [
+//                    'cardNumber' => $item['Number'],
+//                    'bonuses' => $item['Balance'],
+//                    'status' => 'Карта постоянного покупателя', // $item['CardType'],
+//                    'textColor' => '#fdfdfd',
+//                    'backgroundColor' => '#3ab0a3'
+//                ];
+//            }
 
             return new JsonResponse([
                 'user' => [
@@ -43,16 +44,18 @@ class IndexController
                     'gender' => $user->getGenderLabel(),
                     'age' => $user->birth_date?->age,
                     'birthday' => $user->birth_date?->format('Y-m-d'),
-                    'cardNumber' => $card['Number'],
-                    'bonuses' => $card['Balance'],
+                    'cardNumber' => $card['Number'] ?? null,
+                    'bonuses' => $card['Balance'] ?? 0,
                     'units' => 'Бонусов', // $this->bonusTypeLabel($card['BonusType']),
-                    'cardPercent' => $card['Discount'],
                     'status' => 'Карта постоянного покупателя', // $card['CardType'],
-                    'pendingBonuses' => 0,
-                    'pendingBonusesTitle' => 'Будет накоплено',
-                    'expressBonuses' => 0,
-                    'exressBonusesTitle' => 'Экспресс-бонусы',
-                    'loyaltyProgram' => $cards,
+                    'cardColor' => '#3ab0a3',
+                    'cardTextColor' => '#fdfdfd',
+//                    'cardPercent' => $card['Discount'],
+//                    'pendingBonuses' => 0,
+//                    'pendingBonusesTitle' => 'Будет накоплено',
+//                    'expressBonuses' => 0,
+//                    'exressBonusesTitle' => 'Экспресс-бонусы',
+//                    'loyaltyProgram' => $cards,
                 ]
             ]);
         }

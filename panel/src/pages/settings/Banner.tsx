@@ -1,4 +1,4 @@
-import {FC, useState, MouseEvent, useEffect} from "react";
+import { FC, useState, MouseEvent, useEffect } from "react";
 import {
   Button,
   Card,
@@ -9,25 +9,19 @@ import {
   Form,
   Input,
   Upload,
-  Checkbox
+  Checkbox,
 } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
-import {PlusOutlined, InboxOutlined, DeleteOutlined, FolderOutlined} from "@ant-design/icons";
+import {
+  PlusOutlined,
+  InboxOutlined,
+  DeleteOutlined,
+  FolderOutlined,
+} from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import punycode from 'punycode/';
+import punycode from "punycode/";
 
 import { Banner as BaseBanner } from "../../components/banner";
-
-
-interface Gadjik{
-  id: number,
-  folder:boolean,
-  types:number,
-  icon:object
-
-}
-
-
 
 import {
   useAddBannerMutation,
@@ -36,9 +30,6 @@ import {
   useUpdateSortBannersMutation,
 } from "../../services/BannerService";
 import { IBanner } from "../../models/IBanner";
-import {inflate} from "zlib";
-import {convertFromHTML} from "draft-js";
-import {configureStore} from "@reduxjs/toolkit";
 
 const reorder = (list: IBanner[], startIndex: number, endIndex: number) => {
   const result = Array.from(list);
@@ -64,7 +55,6 @@ const DraggableBanner: FC<{
   banner: IBanner;
   onDelete: (id: number) => void;
 }> = ({ index, banner, onDelete }) => {
-
   return (
     <>
       <Draggable draggableId={banner.id.toString()} index={index}>
@@ -78,9 +68,7 @@ const DraggableBanner: FC<{
               provided.draggableProps.style
             )}
           >
-
             <BaseBanner key={banner.id} banner={banner} onDelete={onDelete} />
-
           </div>
         )}
       </Draggable>
@@ -96,23 +84,8 @@ interface FormDataType {
   files: UploadFile[];
 }
 
-
-
-const testDatas:IBanner[] = [
-  {id: 1, title: 'Единая справочная сети', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/ZH5JBfCnKtitRKal.png', mobile: 'http://api.pharm.test/storage/images/original/banners/mobile_ZH5JBfCnKtitRKal.png'}, type:0, sort:1,  path:'/pk'},
-  {id: 2, title: 'Мобильное приложение', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/ZH5JBfCnKtitRKal.png', mobile: 'http://api.pharm.test/storage/images/original/banners/mobile_ZH5JBfCnKtitRKal.png'}, type:0, sort:1, path: '/pk'},
-  {id: 3, title: 'Мобилка', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/ZH5JBfCnKtitRKal.png', mobile: ''},  type:2, sort:1, path: '/mb'},
-  {id: 4, title: 'TEST', description: null, picture:{main: '', mobile: ''}, type:2, sort:1, path: '/mb/one'},
-  {id: 5, title: 'Мобилка', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/ZH5JBfCnKtitRKal.png', mobile: ''}, type:2,  sort:1, path: '/mb/two'},
-  {id: 6, title: 'Моб', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/nAHxSzG6AUDPdgyp.png', mobile: ''}, type:2,  sort:1, path: '/mb/three'},
-  {id: 7, title: 'Мка', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/ZH5JBfCnKtitRKal.png', mobile: ''}, type:2,  sort:1, path: '/mb/three'},
-
-
-]
-
 const Banner: FC = () => {
-
-
+  const [current, setCurrent] = useState<string>("/");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { data, isFetching } = useFetchBannersQuery();
@@ -191,7 +164,7 @@ const Banner: FC = () => {
     const data = new FormData();
 
     data.append("title", values.title);
-    values.type && data.append("type", '2');
+    values.type && data.append("type", "2");
     values.description && data.append("description", values.description);
     values.files.forEach((item) => {
       item.originFileObj &&
@@ -208,56 +181,48 @@ const Banner: FC = () => {
     setOpenModal(false);
   };
 
-  const handelContextMenu = (event: MouseEvent) => {
-    event.preventDefault();
-  }
-
-
-  // Folder Gadjimurad
-  const [current , setCurrent] = useState('/')
-  const [ind, setInd] = useState(0)
-
-
-
-  function curr(value:string, index:number) {
-    setCurrent(current + value)
-    setInd(index - 1)
-  }
-  function back() {
-    let l = current.split('/').filter(elem => elem != '')
-    setCurrent(current.replace(`/${l[l.length - 1]}`, ''))
-  }
-
   // Navigation
-  function newTests(value:string, index:number) {
-    let str = current.split('/').filter(elem => elem != '')
-    let result = str.splice(0, index)
+  // function newTests(value: string, index: number) {
+  //   let str = current.split("/").filter((elem) => elem != "");
+  //   let result = str.splice(0, index);
 
-    setCurrent(`/${result.join('/')}`)
-  }
+  //   setCurrent(`/${result.join("/")}`);
+  // }
   //the end Navigation
 
-  const b = testDatas.filter(item => item.path.startsWith(current))
-  const test = b.map((e) => e.path.replace(`${current}`, ''))
+  // const b = testDatas.filter((item) => item.path.startsWith(current));
+  // const test = b.map((e) => e.path.replace(`${current}`, ""));
 
-
-  // удаление дубликатов
-  let p = test.filter(event => event.split('/').filter(event => event != '').length === 1)
-  let newSetPath = new Set(p)
-  let path = Array.from(newSetPath)
+  // // удаление дубликатов
+  // let p = test.filter(
+  //   (event) => event.split("/").filter((event) => event != "").length === 1
+  // );
+  // let newSetPath = new Set(p);
+  // let path = Array.from(newSetPath);
   // .. конец удаления дубликатов
 
-
-  let folder = path.map((event, index) =>
-      <div style={{margin:'0px 10px 0px 10px'}}>
-        <FolderOutlined style={{fontSize:'5rem', color:'rgba(0,0,0,0.65)', cursor:"pointer"}} onDoubleClick={() => curr(event, index)} />
-        <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-          <p>{event.replace('/', '')}</p>
-        </div>
-      </div>)
-      //End Folder Gadjimurad
-
-
+  // let folder = path.map((event, index) => (
+  //   <div style={{ margin: "0px 10px 0px 10px" }}>
+  //     <FolderOutlined
+  //       style={{
+  //         fontSize: "5rem",
+  //         color: "rgba(0,0,0,0.65)",
+  //         cursor: "pointer",
+  //       }}
+  //       onDoubleClick={() => setCurrent(current + value)}
+  //     />
+  //     <div
+  //       style={{
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //       }}
+  //     >
+  //       <p>{event.replace("/", "")}</p>
+  //     </div>
+  //   </div>
+  // ));
+  //End Folder Gadjimurad
 
   return (
     <Row gutter={[16, 16]}>
@@ -269,14 +234,17 @@ const Banner: FC = () => {
           loading={isFetching || isUpdating}
           title={
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-
-              {/*Кнопка Назад*/}
-              {/*{current != '/' && current != ''  ? <Button onClick={() => back()}>Назад</Button>: ''}*/}
-
-              <div style={{display:"flex", cursor:"pointer"}}>
-                {current.split('/').filter(event => event != '').map((event, index) =>
-                  <pre onClick={() => newTests(`/${event}`, index)}> {event} / </pre>)}
-              </div>
+              {/* <div style={{ display: "flex", cursor: "pointer" }}>
+                {current
+                  .split("/")
+                  .filter((item) => item != "")
+                  .map((item, index) => (
+                    <pre onClick={() => newTests(`/${item}`, index)}>
+                      {" "}
+                      {item} /{" "}
+                    </pre>
+                  ))}
+              </div> */}
 
               {/*End button*/}
 
@@ -291,7 +259,7 @@ const Banner: FC = () => {
             </div>
           }
         >
-          <div onContextMenu={handelContextMenu}>
+          <div>
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="droppable">
                 {(provided: any, snapshot: any) => (
@@ -301,19 +269,34 @@ const Banner: FC = () => {
                     {...provided.droppableProps}
                   >
                     <Space align="center" direction="vertical" size={32}>
-                      <div style={{display:"flex"}}>
-                        {folder}
-                      </div>
-                      {testDatas.filter(p => current === p.path).map((banner, index) =>
-                        current.startsWith('/mb') ? banner.type == 2 ? <DraggableBanner key={banner.id}
-                                         index={index}
-                                         banner={banner}
-                                         onDelete={deleteBanner} /> : '' : banner.type == 0 ? <DraggableBanner key={banner.id}
-                                                                                                               index={index}
-                                                                                                               banner={banner}
-                                                                                                               onDelete={deleteBanner} /> : ''
-                      )}
-
+                      {/* <div style={{ display: "flex" }}>{folder}</div> */}
+                      {data
+                        ?.filter((banner) => {
+                          return true; /* current === banner.path */
+                        })
+                        .map((banner, index) =>
+                          current.startsWith("/mb") ? (
+                            banner.type == 2 ? (
+                              <DraggableBanner
+                                key={banner.id}
+                                index={index}
+                                banner={banner}
+                                onDelete={deleteBanner}
+                              />
+                            ) : (
+                              ""
+                            )
+                          ) : banner.type == 0 ? (
+                            <DraggableBanner
+                              key={banner.id}
+                              index={index}
+                              banner={banner}
+                              onDelete={deleteBanner}
+                            />
+                          ) : (
+                            ""
+                          )
+                        )}
                     </Space>
                     {provided.placeholder}
                   </div>
