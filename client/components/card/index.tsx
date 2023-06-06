@@ -17,6 +17,7 @@ type Props = {
 };
 
 const Card: FC<Props> = ({ product }) => {
+
   const [carts, setCarts] = useLocalStorage<ICart[]>("cart", []);
   const [inCart, setInCart] = useState<boolean>(false);
 

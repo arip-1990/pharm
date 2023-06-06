@@ -98,7 +98,7 @@ interface FormDataType {
 
 
 
-const testDatas = [
+const testDatas:IBanner[] = [
   {id: 1, title: 'Единая справочная сети', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/ZH5JBfCnKtitRKal.png', mobile: 'http://api.pharm.test/storage/images/original/banners/mobile_ZH5JBfCnKtitRKal.png'}, type:0, sort:1,  path:'/pk'},
   {id: 2, title: 'Мобильное приложение', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/ZH5JBfCnKtitRKal.png', mobile: 'http://api.pharm.test/storage/images/original/banners/mobile_ZH5JBfCnKtitRKal.png'}, type:0, sort:1, path: '/pk'},
   {id: 3, title: 'Мобилка', description: null, picture:{main: 'http://api.pharm.test/storage/images/original/banners/ZH5JBfCnKtitRKal.png', mobile: ''},  type:2, sort:1, path: '/mb'},
@@ -215,11 +215,14 @@ const Banner: FC = () => {
 
   // Folder Gadjimurad
   const [current , setCurrent] = useState('/')
+  const [ind, setInd] = useState(0)
 
-  function curr(value:string) {
+
+
+  function curr(value:string, index:number) {
     setCurrent(current + value)
+    setInd(index - 1)
   }
-
   function back() {
     let l = current.split('/').filter(elem => elem != '')
     setCurrent(current.replace(`/${l[l.length - 1]}`, ''))
@@ -229,6 +232,7 @@ const Banner: FC = () => {
   function newTests(value:string, index:number) {
     let str = current.split('/').filter(elem => elem != '')
     let result = str.splice(0, index)
+
     setCurrent(`/${result.join('/')}`)
   }
   //the end Navigation
@@ -243,15 +247,17 @@ const Banner: FC = () => {
   let path = Array.from(newSetPath)
   // .. конец удаления дубликатов
 
+
   let folder = path.map((event, index) =>
       <div style={{margin:'0px 10px 0px 10px'}}>
-        <FolderOutlined style={{fontSize:'5rem', color:'rgba(0,0,0,0.65)', cursor:"pointer"}} onDoubleClick={() => curr(event)} />
+        <FolderOutlined style={{fontSize:'5rem', color:'rgba(0,0,0,0.65)', cursor:"pointer"}} onDoubleClick={() => curr(event, index)} />
         <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
           <p>{event.replace('/', '')}</p>
         </div>
       </div>)
-
       //End Folder Gadjimurad
+
+
 
   return (
     <Row gutter={[16, 16]}>
@@ -269,7 +275,7 @@ const Banner: FC = () => {
 
               <div style={{display:"flex", cursor:"pointer"}}>
                 {current.split('/').filter(event => event != '').map((event, index) =>
-                  <pre onClick={() => newTests(`/${event}`, index)}>{event} / </pre>)}
+                  <pre onClick={() => newTests(`/${event}`, index)}> {event} / </pre>)}
               </div>
 
               {/*End button*/}

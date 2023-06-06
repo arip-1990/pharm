@@ -17,11 +17,17 @@ const Favorite: FC<Props> = ({ product }) => {
     setIsFavorite(favorites.some((item) => item.id === product.id));
   }, [favorites]);
 
-  const handleFavorite = useCallback(() => {
+  // const handleFavorite = useCallback(() => {
+  //   if (isFavorite)
+  //     setFavorites(favorites.filter((item) => item.id !== product.id));
+  //   else setFavorites([...favorites, product]);
+  // }, [isFavorite]);
+
+  const handleFavorite = () => {
     if (isFavorite)
       setFavorites(favorites.filter((item) => item.id !== product.id));
     else setFavorites([...favorites, product]);
-  }, [isFavorite]);
+  }
 
   return (
     <i
@@ -32,3 +38,8 @@ const Favorite: FC<Props> = ({ product }) => {
 };
 
 export default Favorite;
+
+
+
+
+
