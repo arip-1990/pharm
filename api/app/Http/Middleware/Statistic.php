@@ -15,7 +15,7 @@ class Statistic
     {
         try {
             $ip = $this->getIP($request);
-            $detect = (new Parser(new Cache(), $request))->detect();
+            $detect = (new Parser(null, $request))->detect();
 
             if ($detect->isBot() or $ip === '78.142.233.153' or $ip === '89.151.178.52')
                 throw new \DomainException();
@@ -48,9 +48,11 @@ class Statistic
                 $visit->save();
                 $request->session()->put('visitId', $visit->id);
             }
-        } catch (\Exception $e) {}
-
-        return $next($request);
+        }
+        catch (\Exception $e) {}
+        finally {
+            return $next($request);
+        }
     }
 
     public function getIp(Request $request): string
