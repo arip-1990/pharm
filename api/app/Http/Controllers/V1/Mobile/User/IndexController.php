@@ -21,18 +21,6 @@ readonly class IndexController
 
             $cards = array_filter($items, fn($item) => $item['StatusCode'] === 2);
             $card = array_pop($cards);
-//            $cards = [];
-//            foreach ($items as $item) {
-//                if ($item['StatusCode'] === 2)
-//                    $card = $item;
-//                $cards[] = [
-//                    'cardNumber' => $item['Number'],
-//                    'bonuses' => $item['Balance'],
-//                    'status' => 'Карта постоянного покупателя', // $item['CardType'],
-//                    'textColor' => '#fdfdfd',
-//                    'backgroundColor' => '#3ab0a3'
-//                ];
-//            }
 
             return new JsonResponse([
                 'user' => [
@@ -50,12 +38,6 @@ readonly class IndexController
                     'status' => 'Карта постоянного покупателя', // $card['CardType'],
                     'cardColor' => '#3ab0a3',
                     'cardTextColor' => '#fdfdfd',
-//                    'cardPercent' => $card['Discount'],
-//                    'pendingBonuses' => 0,
-//                    'pendingBonusesTitle' => 'Будет накоплено',
-//                    'expressBonuses' => 0,
-//                    'exressBonusesTitle' => 'Экспресс-бонусы',
-//                    'loyaltyProgram' => $cards,
                 ]
             ]);
         }

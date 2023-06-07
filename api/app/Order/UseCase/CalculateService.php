@@ -43,7 +43,8 @@ class CalculateService
 
             if (!$offer = $offers->firstWhere('product_id', $productId) or $item['quantity'] > $offer->quantity) {
                 if ($isBooking) $deliveries = ['3'];
-                else $error = $offer ? "Доступно всего {$offer->quantity} количество" : "Товара нет в наличии";
+                elseif ($offer) $error['error'] = "Доступно всего {$offer->quantity} количество";
+                else $error['unavailableDeliveryMessage'] = "Товара нет в наличии";
             }
 
             $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], $deliveries, $error);
@@ -53,7 +54,7 @@ class CalculateService
         return $data;
     }
 
-    private function generateItem(string $id, string $name, float $price, int $quantity, array $deliveries = null, string $error = null): array
+    private function generateItem(string $id, string $name, float $price, int $quantity, array $deliveries = null, array $error = null): array
     {
         $data = [
             'id' => $id,
@@ -65,7 +66,7 @@ class CalculateService
         ];
 
         if ($deliveries) $data['deliveryGroups'] = $deliveries;
-        if ($error) $data['error'] = $error;
+        if ($error) $data = [...$data, ...$error];
 
         return $data;
     }
