@@ -314,7 +314,7 @@ services:
     environment:
       APP_NAME: Сеть аптек 120/80
       REDIS_HOST: redis
-      API_TOKEN: 5264546096:AAHH7gzUFdZim4deJs0o78RwZ8x8q6vC6Io
+      API_TOKEN: ${BOT_TOKEN}
     command: sh -c 'wait-for-it redis:6379 -t 60 && python main.py'
     deploy:
       mode: replicated
