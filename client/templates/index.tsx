@@ -1,7 +1,7 @@
 import { FC, ReactNode, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { Container, Row } from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 import { NotificationContainer } from "react-notifications";
 
 import Header from "./header";
@@ -9,6 +9,20 @@ import Footer from "./footer";
 import TopInfo from "./topInfo";
 import Banner from "../components/banner";
 import Loader from "../components/loader";
+
+// import smal from './smal.jpg'
+import smal1 from './small1.jpg'
+import smal2 from './small2.jpg'
+
+import new1 from './new2.jpg'
+import new2 from './new1.jpg'
+
+import big from './big.jpg'
+
+import t11 from './t11.png'
+
+
+import Image from "next/image";
 
 type Props = {
   title: string;
@@ -75,9 +89,16 @@ const Layout: FC<Props> = ({
       <NotificationContainer />
 
       {banner && (
-        <Container>
-          <Row style={{ justifyContent: "center" }}>
-            <Banner />
+        <Container className='p-0'>
+          <Row className='flex-row justify-center'>
+            <div className="col-9" style={{display:"flex", justifyContent:"center"}}>
+              {/*<Image width={965} height={421} style={{borderRadius:'10px'}} src={big} />*/}
+              <Banner />
+            </div>
+            <div className="col-3" style={{paddingLeft:'0px', display:"flex", flexDirection:"column", justifyContent:'space-between'}}>
+                <a style={{display:"flex", justifyContent:"center"}}><Image height={194} width={300}   style={{borderRadius:'10px'}} src={new1}/></a>
+                <a style={{display:"flex", justifyContent:"center"}} href={'https://makhachkala.hh.ru/employer/4291968 '}><Image height={194} width={300}   style={{borderRadius:'10px'}} src={new2}/></a>
+            </div>
           </Row>
         </Container>
       )}
