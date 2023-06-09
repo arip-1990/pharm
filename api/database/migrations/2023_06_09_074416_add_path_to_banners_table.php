@@ -10,14 +10,15 @@ return new class extends Migration
     {
         Schema::table('banners', function (Blueprint $table) {
             $table->string('path')->after('picture')->default('/');
-            $table->string('type', 32)->after('path')->default('main');
+            $table->string('link')->after('path')->nullable();
+            $table->string('type', 32)->after('link')->default('main');
         });
     }
 
     public function down(): void
     {
         Schema::table('banners', function (Blueprint $table) {
-            $table->dropColumn(['type', 'path']);
+            $table->dropColumn(['type', 'link', 'path']);
         });
     }
 };

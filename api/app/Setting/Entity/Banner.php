@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
  * @property ?string $description
  * @property string $picture
  * @property string $path
+ * @property ?string $link
  * @property BannerType $type
  * @property int $sort
  * @property ?Carbon $created_at
@@ -28,7 +29,7 @@ class Banner extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['title', 'description', 'picture', 'path', 'type', 'sort'];
+    protected $fillable = ['title', 'description', 'picture', 'path', 'link', 'type', 'sort'];
     protected $casts = [
         'type' => BannerType::class
     ];

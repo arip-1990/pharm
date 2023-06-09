@@ -20,6 +20,7 @@ class AddRequest extends FormRequest
             'type' => ['nullable', new Enum(BannerType::class)],
             'description' => 'string|nullable',
             'path' => 'string|nullable',
+            'link' => 'string|nullable',
             'files' => 'required|array',
             'files.main' => 'required|mimes:webp,jpg,jpeg',
             'files.mobile' => 'nullable|mimes:webp,jpg,jpeg',

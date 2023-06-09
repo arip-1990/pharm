@@ -33,6 +33,7 @@ class StoreController
                 'description' => $request->get('description'),
                 'picture' => $fileName,
                 'path' => $path,
+                'link' => $request->get('link'),
                 'type' => $request->get('type', BannerType::MAIN),
                 'sort' => Banner::query()->count()
             ]);
