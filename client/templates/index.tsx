@@ -23,6 +23,8 @@ import t11 from './t11.png'
 
 
 import Image from "next/image";
+import classes from './sliderStyle.module.css'
+
 
 type Props = {
   title: string;
@@ -90,16 +92,19 @@ const Layout: FC<Props> = ({
 
       {banner && (
         <Container className='p-0'>
-          <Row className='flex-row justify-center'>
-            <div className="col-9" style={{display:"flex", justifyContent:"center"}}>
+          <div className={classes.container}>
+            <div className={classes.col9}>
               {/*<Image width={965} height={421} style={{borderRadius:'10px'}} src={big} />*/}
-              <Banner />
+              <div className={classes.content}>
+                <Banner />
+              </div>
             </div>
-            <div className="col-3" style={{paddingLeft:'0px', display:"flex", flexDirection:"column", justifyContent:'space-between'}}>
-                <a style={{display:"flex", justifyContent:"center"}}><Image height={194} width={300}   style={{borderRadius:'10px'}} src={new1}/></a>
-                <a style={{display:"flex", justifyContent:"center"}} href={'https://makhachkala.hh.ru/employer/4291968 '}><Image height={194} width={300}   style={{borderRadius:'10px'}} src={new2}/></a>
+
+            <div className={classes.col3}>
+                <a className={classes.link}> <div className={classes.img} /> </a>
+                <a className={classes.link} href={'https://makhachkala.hh.ru/employer/4291968 '}><div className={classes.img} /></a>
             </div>
-          </Row>
+          </div>
         </Container>
       )}
 

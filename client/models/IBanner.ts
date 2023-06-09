@@ -1,13 +1,14 @@
 export interface IBannerPicture {
-  main: string | null;
-  mobile: string | null;
+  main: string;
+  mobile?: string; // null
 }
 
 export interface IBanner {
   id: number;
   title: string;
-  description: string | null;
+  description?: string;
   picture: IBannerPicture;
-  type: number;
+  type: 'main' | 'extra' | 'all' | 'mobile';
+  path: string;
   sort: number;
 }

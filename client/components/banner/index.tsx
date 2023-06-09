@@ -24,7 +24,7 @@ const Banner: FC = () => {
 
   return (
     <Swiper
-      style={{ padding: 0 }}
+      style={{ padding: 0, height:'100%'}}
       autoplay={{ delay: 10000, disableOnInteraction: false }}
       autoHeight={true}
       spaceBetween={16}
@@ -34,7 +34,7 @@ const Banner: FC = () => {
     >
 
       {data?.filter(item => item.type !== 2).map((item) => (
-          <SwiperSlide key={item.id} style={{height:'421px', width:'965px'}}>
+          <SwiperSlide key={item.id} >
           <div
             className={styles.banner}
             style={{
@@ -49,5 +49,6 @@ const Banner: FC = () => {
     </Swiper>
   );
 };
+
 
 export default Banner;

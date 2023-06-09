@@ -1,0 +1,330 @@
+.container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+
+
+.col9{
+    width: 75%;
+    display: flex;
+    justify-content: center;
+}
+
+
+
+
+
+/* col-3 */
+.col3{
+    width: 25%;
+    padding-left: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.link{
+    display: flex;
+    justify-content:center;
+
+}
+
+.img{
+    /*border: solid;*/
+    display: flex;
+    position: relative;
+    /*border-radius: 10px;*/
+    width: 300px;
+    height: 194px;
+    background-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url("./new2.jpg");
+}
+
+
+/*end col-3*/
+
+
+
+
+.content{
+    width: 965px;
+    height: 421px;
+    /*border:solid;*/
+}
+
+/*@media (max-width: 768px) {*/
+/*    .content {*/
+/*        height: auto; !* Изменение высоты на авто для маленьких экранов *!*/
+/*    }*/
+/*}*/
+
+
+
+
+
+
+
+
+@media (min-width: 320px) and (max-width: 374px){
+    .content{
+        width: 316px;
+        height: 161px;
+    }
+    .col9{
+        width: 100%;
+    }
+
+    .col3{
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 14px;
+    }
+    .link{
+        width: 161px;
+        height: 100px;
+    }
+    .img{
+        width: 161px;
+        height: 100px;
+    }
+
+}
+
+
+
+@media (min-width: 375px) and (max-width: 424px){
+    .content{
+        width: 357px;
+        height: 155px;
+    }
+    .col9{
+        width: 100%;
+    }
+
+    .col3{
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-evenly;
+        margin-top: 14px;
+    }
+    .link{
+        width: 161px;
+        height: 111px;
+    }
+    .img{
+        width: 161px;
+        height: 111px;
+    }
+
+}
+
+
+
+
+@media (min-width: 425px) and (max-width: 767px){
+    .content{
+        width: 407px;
+        height: 177px;
+    }
+
+    .col9{
+        width: 100%;
+    }
+
+    .col3{
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-evenly;
+        margin-top: 8px;
+    }
+
+    .link{
+        width: 193px;
+        height: 133px;
+    }
+    .img{
+        width: 193px;
+        height: 133px;
+    }
+
+}
+
+
+@media (min-width: 768px) and (max-width: 1023px){
+    .content{
+        width: 723px;
+        height: 297px;
+    }
+
+    .col9{
+        width: 100%;
+    }
+
+    .col3{
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 22px;
+    }
+
+    .link{
+        width: 345px;
+        height: 244px;
+    }
+    .img{
+        width: 345px;
+        height: 237px;
+    }
+
+}
+
+
+@media (min-width: 1024px) and (max-width: 1439px){
+    .content{
+        width: 958px;
+        height: 391px;
+    }
+
+    .col9{
+        width: 100%;
+    }
+
+    .col3{
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 22px;
+    }
+
+    .link{
+        width: 468px;
+        height: 250px;
+    }
+    .img{
+        width: 468px;
+        height: 250px;
+    }
+
+}
+
+
+/*@media (max-width: 500px) {*/
+/*    .content{*/
+/*        width: 372px;*/
+/*        height: 161px;*/
+/*    }*/
+/*    .col9{*/
+/*        width: 100%;*/
+/*    }*/
+
+/*    .col3{*/
+/*        flex-direction: row;*/
+/*        width: 100%;*/
+/*        justify-content: space-around;*/
+/*        margin-top: 14px;*/
+/*    }*/
+/*    .link{*/
+/*        width: 178px;*/
+/*        height: 99px;*/
+/*    }*/
+/*    .img{*/
+/*        width: 178px;*/
+/*        height: 99px;*/
+/*    }*/
+
+/*}*/
+
+
+
+/*!* iphone SE *!*/
+/*@media (max-width: 375px) {*/
+/*    .content{*/
+/*        width: 357px;*/
+/*        height: 155px;*/
+/*    }*/
+/*    .col9{*/
+/*        width: 100%;*/
+/*    }*/
+
+/*    .col3{*/
+/*        flex-direction: row;*/
+/*        width: 100%;*/
+/*        justify-content: space-between;*/
+/*        margin-top: 14px;*/
+/*    }*/
+/*    .link{*/
+/*        width: 178px;*/
+/*        height: 99px;*/
+/*    }*/
+/*    .img{*/
+/*        width: 178px;*/
+/*        height: 99px;*/
+/*    }*/
+
+/*}*/
+
+
+/*@media (max-width: 390px) {*/
+/*    .content{*/
+/*        width: 372px;*/
+/*        height: 161px;*/
+/*    }*/
+/*    .col9{*/
+/*        width: 100%;*/
+/*    }*/
+
+/*    .col3{*/
+/*        flex-direction: row;*/
+/*        width: 100%;*/
+/*        justify-content: space-around;*/
+/*        margin-top: 14px;*/
+/*    }*/
+/*    .link{*/
+/*        width: 178px;*/
+/*        height: 99px;*/
+/*    }*/
+/*    .img{*/
+/*        width: 178px;*/
+/*        height: 99px;*/
+/*    }*/
+
+
+/*}*/
+
+
+
+/*!*iphone XR*!*/
+
+/*@media (max-width: 414px ) {*/
+/*    .content{*/
+/*        width: 396px;*/
+/*        height: 172px;*/
+/*    }*/
+/*    .col9{*/
+/*        width: 100%;*/
+/*    }*/
+
+/*    .col3{*/
+/*        flex-direction: row;*/
+/*        width: 100%;*/
+/*        justify-content: space-around;*/
+/*        margin-top: 14px;*/
+/*    }*/
+/*    .link{*/
+/*        width: 190px;*/
+/*        height: 106px;*/
+/*    }*/
+/*    .img{*/
+/*        width: 190px;*/
+/*        height: 106px;*/
+/*    }*/
+
+
+/*}*/
