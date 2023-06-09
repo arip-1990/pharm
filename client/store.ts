@@ -12,37 +12,40 @@ import { chequeApi } from "./lib/chequeService";
 import { bonusApi } from "./lib/bonusService";
 import { couponApi } from "./lib/couponService";
 import { bannerApi } from "./lib/bannerService";
+import { productApi } from "./lib/productService";
 
 const makeStore = () =>
-    configureStore({
-        reducer: {
-            [cityApi.reducerPath]: cityApi.reducer,
-            [orderApi.reducerPath]: orderApi.reducer,
-            [categoryApi.reducerPath]: categoryApi.reducer,
-            [catalogApi.reducerPath]: catalogApi.reducer,
-            [storeApi.reducerPath]: storeApi.reducer,
-            [offerApi.reducerPath]: offerApi.reducer,
-            [cardApi.reducerPath]: cardApi.reducer,
-            [chequeApi.reducerPath]: chequeApi.reducer,
-            [bonusApi.reducerPath]: bonusApi.reducer,
-            [couponApi.reducerPath]: couponApi.reducer,
-            [bannerApi.reducerPath]: bannerApi.reducer,
-        },
-        middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware({ serializableCheck: false })
-                .concat(cityApi.middleware)
-                .concat(orderApi.middleware)
-                .concat(categoryApi.middleware)
-                .concat(catalogApi.middleware)
-                .concat(storeApi.middleware)
-                .concat(offerApi.middleware)
-                .concat(cardApi.middleware)
-                .concat(chequeApi.middleware)
-                .concat(bonusApi.middleware)
-                .concat(couponApi.middleware)
-                .concat(bannerApi.middleware),
-        devTools: true,
-    });
+  configureStore({
+    reducer: {
+      [cityApi.reducerPath]: cityApi.reducer,
+      [orderApi.reducerPath]: orderApi.reducer,
+      [categoryApi.reducerPath]: categoryApi.reducer,
+      [catalogApi.reducerPath]: catalogApi.reducer,
+      [storeApi.reducerPath]: storeApi.reducer,
+      [offerApi.reducerPath]: offerApi.reducer,
+      [cardApi.reducerPath]: cardApi.reducer,
+      [chequeApi.reducerPath]: chequeApi.reducer,
+      [bonusApi.reducerPath]: bonusApi.reducer,
+      [couponApi.reducerPath]: couponApi.reducer,
+      [bannerApi.reducerPath]: bannerApi.reducer,
+      [productApi.reducerPath]: productApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false })
+        .concat(cityApi.middleware)
+        .concat(orderApi.middleware)
+        .concat(categoryApi.middleware)
+        .concat(catalogApi.middleware)
+        .concat(storeApi.middleware)
+        .concat(offerApi.middleware)
+        .concat(cardApi.middleware)
+        .concat(chequeApi.middleware)
+        .concat(bonusApi.middleware)
+        .concat(couponApi.middleware)
+        .concat(bannerApi.middleware)
+        .concat(productApi.middleware),
+    devTools: true,
+  });
 
 export type AppStore = ReturnType<typeof makeStore>;
 export type AppState = ReturnType<AppStore["getState"]>;

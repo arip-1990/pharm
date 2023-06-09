@@ -115,3 +115,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('settings')->group(function () {
     Route::get('/banners', V2\Setting\Banner\IndexController::class);
 });
+
+Route::prefix('products')->group(function () {
+    Route::get('/discounts', V2\Product\StockController::class);
+});
