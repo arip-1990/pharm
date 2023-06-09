@@ -1,14 +1,15 @@
 import { FC, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper";
-
 import { useFetchBannersQuery } from "../../lib/bannerService";
-
 import styles from "./Banner.module.scss";
+
 
 const Banner: FC = () => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const { data, isFetching } = useFetchBannersQuery();
+
+  console.log(data)
 
   useEffect(() => {
     const changeMobileState = () => {
@@ -23,7 +24,7 @@ const Banner: FC = () => {
 
   return (
     <Swiper
-      style={{ padding: 0 }}
+      style={{ padding: 0, height:'100%'}}
       autoplay={{ delay: 10000, disableOnInteraction: false }}
       autoHeight={true}
       spaceBetween={16}
@@ -31,8 +32,9 @@ const Banner: FC = () => {
       pagination={true}
       modules={[Autoplay, Navigation, Pagination]}
     >
+
       {data?.filter(item => item.type !== 2).map((item) => (
-        <SwiperSlide key={item.id}>
+          <SwiperSlide key={item.id} >
           <div
             className={styles.banner}
             style={{
@@ -42,10 +44,11 @@ const Banner: FC = () => {
                   : `url(${item.picture.main})`,
             }}
           />
-        </SwiperSlide>
+          </SwiperSlide>
       ))}
     </Swiper>
   );
 };
+
 
 export default Banner;

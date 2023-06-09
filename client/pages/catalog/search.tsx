@@ -83,7 +83,12 @@ const Search: FC = () => {
   const generateData = () => {
     if (isFetching)
       return (
-        <h5 style={{ textAlign: "center" }}>Идет поиск товара "{q ?? ""}"</h5>
+          <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+              <div className="spinner-border m-5 text-secondary"  role="status">
+                  <span className="visually-hidden">Загрузка...</span>
+              </div>
+          </div>
+        // <h5 style={{ textAlign: "center" }}>Идет поиск товара "{q ?? ""}"</h5>
       );
     if (errorData)
       return <h5 style={{ textAlign: "center" }}>{errorData.data.message}</h5>;
