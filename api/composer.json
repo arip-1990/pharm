@@ -9,27 +9,26 @@
         "ext-pdo": "*",
         "ext-curl": "*",
         "ext-simplexml": "*",
-        "cviebrock/eloquent-sluggable": "^9.0",
-        "cviebrock/laravel-elasticsearch": "^9.0",
-        "fruitcake/laravel-cors": "^3.0",
-        "guzzlehttp/guzzle": "^7.2",
+        "cviebrock/eloquent-sluggable": "^10.0",
+        "cviebrock/laravel-elasticsearch": "^10.0",
+        "guzzlehttp/guzzle": "^7.7",
         "hisorange/browser-detect": "^4.5",
         "kalnoy/nestedset": "^6.0",
-        "laravel/framework": "^9.2",
-        "laravel/sanctum": "^3.0",
-        "laravel/tinker": "^2.7",
-        "phpoffice/phpspreadsheet": "^1.24",
+        "laravel/framework": "^10.0",
+        "laravel/sanctum": "^3.2",
+        "laravel/tinker": "^2.8",
+        "phpoffice/phpspreadsheet": "^1.28",
         "predis/predis": "^2.0",
-        "psr/simple-cache": "^2.0"
+        "psr/simple-cache": "^3.0"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.9.1",
-        "laravel/pint": "^1.2",
-        "laravel/sail": "^1.0.1",
-        "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.5.10",
-        "spatie/laravel-ignition": "^1.0"
+        "fakerphp/faker": "^1.22",
+        "laravel/pint": "^1.10",
+        "laravel/sail": "^1.22",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^7.0",
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ignition": "^2.1"
     },
     "autoload": {
         "psr-4": {
@@ -68,6 +67,6 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }
