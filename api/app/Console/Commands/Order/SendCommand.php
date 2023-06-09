@@ -18,7 +18,7 @@ class SendCommand extends Command
     public function handle(): int
     {
         preg_match('/(\d+)([m|d])/i', $this->argument('date'), $matches);
-        $queueClient = Redis::connection('bot')->client();
+        $redisClient = Redis::connection('bot')->client();
         try {
             $subDate = strtolower($matches[2]) === 'd' ? Carbon::now()->subDays((int)$matches[1]) : Carbon::now()->subMinutes((int)$matches[1]);
             $orders = Order::where('created_at', '>=', $subDate)->get();
@@ -67,7 +67,7 @@ class SendCommand extends Command
                     $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
                     $order2->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
 
-                    $queueClient->publish('bot:error', json_encode([
+                    $redisClient->publish('bot:error', json_encode([
                         'file' => self::class . ' (' . $e->getLine() . ')',
                         'message' => $e->getMessage()
                     ], JSON_UNESCAPED_UNICODE));
@@ -78,7 +78,7 @@ class SendCommand extends Command
                 }
             }
         } catch (\Exception $e) {
-            $queueClient->publish('bot:error', json_encode([
+            $redisClient->publish('bot:error', json_encode([
                 'file' => self::class . ' (' . $e->getLine() . ')',
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));

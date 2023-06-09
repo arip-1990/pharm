@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Storage;
  * @property string $title
  * @property ?string $description
  * @property string $picture
- * @property int $type
+ * @property string $path
+ * @property BannerType $type
  * @property int $sort
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
@@ -27,21 +28,20 @@ class Banner extends Model
 {
     use SoftDeletes;
 
-    const TYPE_WEB = 0;
-    const TYPE_WEB_ALL = 1;
-    const TYPE_MOBILE = 2;
+    protected $fillable = ['title', 'description', 'picture', 'path', 'type', 'sort'];
+    protected $casts = [
+        'type' => BannerType::class
+    ];
 
-    protected $fillable = ['title', 'description', 'picture', 'type', 'sort'];
-
-    public static function getPath(string $fileName = ''): string
+    public static function getPath(string $path = '/', string $fileName = ''): string
     {
         if ($fileName) $fileName = "/{$fileName}";
-        return 'images/original/banners' . $fileName;
+        return "banners{$path}" . $fileName;
     }
 
     public function getUrl(bool $mobile = false): ?string
     {
-        $file = self::getPath($mobile ? "mobile_{$this->picture}" : $this->picture);
+        $file = self::getPath($this->path, $mobile ? "mobile_{$this->picture}" : $this->picture);
         if (Storage::exists($file)) return Storage::url($file);
         return null;
     }

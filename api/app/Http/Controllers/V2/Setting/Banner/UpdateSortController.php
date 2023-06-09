@@ -15,7 +15,6 @@ class UpdateSortController
             foreach ($request->get('items') as $item) {
                 if ($banner = Banner::find($item['id'])) {
                     $banner->sort = $item['sort'];
-                    $banner->creator()->associate($request->user());
 
                     $banner->save();
                 }

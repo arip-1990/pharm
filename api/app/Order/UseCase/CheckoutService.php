@@ -7,6 +7,7 @@ use App\Helper;
 use App\Http\Requests;
 use App\Models\User;
 use App\Product\Entity\Offer;
+use Illuminate\Support\Facades\Redis;
 use App\Http\Resources\{ProductResource, StoreResource};
 use App\Order\Entity\{Delivery, Order, OrderDelivery, OrderItem, Payment};
 use App\Order\Entity\Status\OrderState;
@@ -32,6 +33,8 @@ class CheckoutService
         $order->user()->associate($user);
         $order->setUserInfo($user->first_name, $user->phone, $user->email);
         $order->save();
+
+        $this->checkOrderId($order->id);
 
         DB::transaction(function () use ($order, $data) {
             $order->items()->saveMany($this->checkout($data['items']));
@@ -89,6 +92,8 @@ class CheckoutService
 
                 $order->setCost($orderItems->sum(fn (OrderItem $item) => $item->getCost()));
                 $order->save();
+
+                $this->checkOrderId($order->id);
 
                 $order->items()->saveMany($orderItems);
                 $order->changeState(OrderState::STATE_SUCCESS);
@@ -193,5 +198,13 @@ class CheckoutService
         });
 
         return $stores;
+    }
+
+    private function checkOrderId(int $orderId): void
+    {
+        if ($orderId > 2840 /* 4430 */) {
+            $redisClient = Redis::connection('bot')->client();
+            $redisClient->publish('bot:info', "Необходимо обновить id заказов! Id текущего заказа: {$orderId}");
+        }
     }
 }

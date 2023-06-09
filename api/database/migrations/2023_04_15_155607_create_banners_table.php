@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('picture', 32)->unique();
-            $table->unsignedSmallInteger('type')->default(0);
             $table->unsignedSmallInteger('sort')->default(0);
             $table->timestamps();
             $table->softDeletes();

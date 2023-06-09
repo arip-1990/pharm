@@ -51,14 +51,14 @@ Route::middleware(['auth', 'panel'])->group(function () {
         Route::get('/{product}', [V1\Panel\Offer\ShowController::class, 'handle']);
     });
 
-    Route::prefix('banners')->group(function () {
-        Route::get('/', V2\Setting\Banner\IndexController::class);
-        Route::post('/', V2\Setting\Banner\AddController::class);
-        Route::patch('/', V2\Setting\Banner\UpdateSortController::class);
-        Route::delete('/{banner}', V2\Setting\Banner\DeleteController::class);
-    });
-
     Route::get('/category', [V1\Panel\Category\IndexController::class, 'handle']);
     Route::get('/statistic', [V1\Panel\Statistic\IndexController::class, 'handle']);
     Route::get('/attribute', [V1\Panel\Attribute\IndexController::class, 'handle']);
+
+    Route::prefix('banners')->group(function () {
+        Route::get('/', V2\Setting\Banner\IndexController::class);
+        Route::post('/', V2\Setting\Banner\StoreController::class);
+        Route::patch('/', V2\Setting\Banner\UpdateSortController::class);
+        Route::delete('/{banner}', V2\Setting\Banner\DeleteController::class);
+    });
 });
