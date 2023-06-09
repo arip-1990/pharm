@@ -3,10 +3,15 @@ type Key = {
 }
 
 type Pagination<T> = {
+    title?: string;
     data: T[];
-    meta: {
+    pagination?: {
+        current: number;
+        pageSize: number;
+        total: number;
+    };
+    meta?: {
         current_page: number;
-        last_page: number;
         per_page: number;
         total: number;
     }

@@ -9,16 +9,18 @@ class CalculateService
 {
     public function handle(array $items, City $city, Store $store = null, bool $isMobile = false): array
     {
-        if ($store) return $this->calc($items, $store, $city->isBookingAvailable());
+        $productIds = array_column($items, 'privateId') ?: array_column($items, 'id');
+
+        if ($store) return $this->calc($items, $store, $productIds, $city->isBookingAvailable());
 
         if ($isMobile) $storeIds = config('data.mobileStores')[$city->id];
         else $storeIds = Store::whereIn('location_id', Location::whereCity($city)->pluck('id'))->pluck('id');
 
         $store = Store::select('stores.*')->join('offers', 'stores.id', '=', 'offers.store_id')
-            ->whereIn('stores.id', $storeIds)->whereIn('offers.product_id', array_column($items, 'privateId'))
+            ->whereIn('stores.id', $storeIds)->whereIn('offers.product_id', $productIds)
             ->groupBy('stores.id')->orderByRaw('count(stores.id) desc')->first();
 
-        return $this->calc($items, $store, $city->isBookingAvailable());
+        return $this->calc($items, $store, $productIds, $city->isBookingAvailable());
     }
 
     public function isPickupAvailable(array $items, Store $store): bool
@@ -31,11 +33,10 @@ class CalculateService
         })->count() >= count($items);
     }
 
-    private function calc(array $items, Store $store, bool $isBooking = false): array
+    private function calc(array $items, Store $store, array $productIds, bool $isBooking = false): array
     {
         $data = ['items' => [], 'totalPrice' => 0];
-        $offers = $store->offers()->where('quantity', '>', 0)
-            ->whereIn('product_id', array_column($items, 'privateId') ?: array_column($items, 'id'))->get();
+        $offers = $store->offers()->where('quantity', '>', 0)->whereIn('product_id', $productIds)->get();
         foreach ($items as $item) {
             $productId = $item['privateId'] ?? $item['id'];
             $error = null;
@@ -44,7 +45,7 @@ class CalculateService
             if (!$offer = $offers->firstWhere('product_id', $productId) or $item['quantity'] > $offer->quantity) {
                 if ($isBooking) $deliveries = ['3'];
                 elseif ($offer) $error['error'] = "Доступно всего {$offer->quantity} количество";
-                else $error['unavailableDeliveryMessage'] = "Товара нет в наличии";
+                else $error['unavailableDeliveryMessage'] = "Товара в данной аптеке нет в наличии";
             }
 
             $data['items'][] = $this->generateItem($productId, $item['name'], $item['price'], $item['quantity'], $deliveries, $error);
