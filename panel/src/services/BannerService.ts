@@ -4,12 +4,13 @@ import { IBanner } from "../models/IBanner";
 
 export const bannerApi = createApi({
   reducerPath: "banner",
-  baseQuery: axiosBaseQuery('v2'),
+  baseQuery: axiosBaseQuery("v2"),
   tagTypes: ["IBanner"],
   endpoints: (builder) => ({
     fetchBanners: builder.query<IBanner[], void>({
       query: () => ({
         url: "/banners",
+        params: { type: "all" },
       }),
       providesTags: ["IBanner"],
     }),

@@ -1,4 +1,4 @@
-import { FC, useState, MouseEvent, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -9,9 +9,11 @@ import {
   Form,
   Input,
   Upload,
-  Checkbox,
+  Select,
   Breadcrumb,
+  Dropdown,
 } from "antd";
+import type { MenuProps } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 import {
   PlusOutlined,
@@ -73,22 +75,33 @@ const DraggableBanner: FC<{
           </div>
         )}
       </Draggable>
-      {/*{banner.type === 2 ? <small title="Ссылка для мобилки">{banner.picture.main.replace('120на80.рф', punycode.toASCII('120на80.рф'))}</small> : null}*/}
+      {banner.type === "mobile" ? (
+        <small title="Ссылка для мобилки">
+          {banner.picture.main?.replace(
+            "120на80.рф",
+            punycode.toASCII("120на80.рф")
+          )}
+        </small>
+      ) : null}
     </>
   );
 };
 
 interface FormDataType {
   title: string;
-  type?: boolean;
+  type?: "main" | "extra" | "all" | "mobile";
   description?: string;
   files: UploadFile[];
+  folder?: string;
+  link?: string;
 }
 
 const Banner: FC = () => {
-  const [current, setCurrent] = useState<string>("/");
+  const [currentPath, setCurrentPath] = useState<string>("/");
+  const [newPath, setNewPath] = useState<string>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [modalType, setModalType] = useState<"folder" | "banner">("folder");
   const { data, isFetching } = useFetchBannersQuery();
 
   const [addBanner] = useAddBannerMutation();
@@ -98,6 +111,42 @@ const Banner: FC = () => {
   ] = useUpdateSortBannersMutation();
   const [deleteBanner] = useDeleteBannerMutation();
   const [form] = Form.useForm<FormDataType>();
+
+  const extraItems: MenuProps["items"] = [
+    {
+      label: (
+        <a
+          href="#"
+          onClick={() => {
+            setModalType("folder");
+            setOpenModal(true);
+          }}
+        >
+          Создать папку
+        </a>
+      ),
+      key: "addFolder",
+    },
+  ];
+
+  useEffect(() => {
+    if (currentPath !== "/") {
+      extraItems.push({
+        label: (
+          <a
+            href="#"
+            onClick={() => {
+              setModalType("banner");
+              setOpenModal(true);
+            }}
+          >
+            Добавить баннер
+          </a>
+        ),
+        key: "addBanner",
+      });
+    }
+  }, [currentPath]);
 
   const handleBeforeUpload = (file: UploadFile) => {
     if (fileList.length < 2) {
@@ -160,12 +209,26 @@ const Banner: FC = () => {
     );
   };
 
+  const handleForm = async () => {
+    if (modalType === "banner") await handleAddBanner();
+    else {
+      const values = await form.validateFields();
+      setNewPath(currentPath + values.folder);
+    }
+
+    setOpenModal(false);
+    form.resetFields();
+  };
+
   const handleAddBanner = async () => {
     const values = await form.validateFields();
+    console.log(values);
     const data = new FormData();
 
     data.append("title", values.title);
-    values.type && data.append("type", "2");
+    data.append("path", currentPath);
+    values.link && data.append("link", values.link);
+    values.type && data.append("type", values.type);
     values.description && data.append("description", values.description);
     values.files.forEach((item) => {
       item.originFileObj &&
@@ -173,7 +236,6 @@ const Banner: FC = () => {
     });
 
     addBanner(data);
-    setOpenModal(false);
   };
 
   const handleCancel = () => {
@@ -183,8 +245,12 @@ const Banner: FC = () => {
   };
 
   // Navigation
-  const handleNavigation = (path: string) => {
-    setCurrent((oldCurrent) => oldCurrent + path);
+  const handleNavigation = (path: string, index?: number) => {
+    if (index)
+      setCurrentPath((oldCurrent) =>
+        oldCurrent.split("/").slice(0, index).join("/")
+      );
+    else setCurrentPath((oldCurrent) => oldCurrent + path);
   };
 
   // удаление дубликатов
@@ -199,14 +265,14 @@ const Banner: FC = () => {
   };
 
   const getFolder = () => {
-    const paths = uniquePaths(
+    let paths =
       data
-        ?.filter((item) => item.path.startsWith(current))
-        .map((item) => item.path.replace(`${current}`, "")) || []
-    );
+        ?.filter((item) => item.path.startsWith(currentPath))
+        .map((item) => item.path.replace(`${currentPath}`, "")) || [];
+    if (newPath) paths.push(newPath.replace(`${currentPath}`, ""));
 
-    return paths.map((path) => (
-      <div style={{ margin: "0px 10px 0px 10px" }}>
+    return uniquePaths(paths).map((path) => (
+      <div key={path} style={{ margin: "0px 10px 0px 10px" }}>
         <FolderOutlined
           style={{
             fontSize: "5rem",
@@ -238,7 +304,7 @@ const Banner: FC = () => {
           loading={isFetching || isUpdating}
           title={
             <Breadcrumb
-              items={`root${current}`
+              items={`root${currentPath}`
                 .split("/")
                 .filter((item) => item)
                 .map((item, index, paths) => ({
@@ -246,7 +312,10 @@ const Banner: FC = () => {
                     paths.length - 1 === index ? (
                       item
                     ) : (
-                      <a href="#" onClick={() => handleNavigation(item)}>
+                      <a
+                        href="#"
+                        onClick={() => handleNavigation(`/${item}`, index + 1)}
+                      >
                         {item}
                       </a>
                     ),
@@ -254,13 +323,15 @@ const Banner: FC = () => {
             />
           }
           extra={
-            <Button
-              type="primary"
+            <Dropdown
               disabled={isFetching}
-              onClick={() => setOpenModal(true)}
+              menu={{ items: extraItems }}
+              trigger={["click"]}
             >
-              <PlusOutlined />
-            </Button>
+              <Button type="primary">
+                <PlusOutlined />
+              </Button>
+            </Dropdown>
           }
         >
           <div style={{ display: "flex" }}>{getFolder()}</div>
@@ -275,7 +346,7 @@ const Banner: FC = () => {
                 >
                   <Space align="center" direction="vertical" size={32}>
                     {data
-                      ?.filter((banner) => current === banner.path)
+                      ?.filter((banner) => currentPath === banner.path)
                       .map((banner, index) =>
                         banner.type === "mobile" ? (
                           <DraggableBanner
@@ -303,49 +374,73 @@ const Banner: FC = () => {
       </Col>
 
       <Modal
-        title="Добавить новый баннер"
+        title={
+          modalType === "banner" ? "Добавить новый баннер" : "Создать папку"
+        }
         centered
         open={openModal}
-        okText="Добавить"
+        okText={modalType === "banner" ? "Добавить" : "Создать"}
         cancelText="Отменить"
-        onOk={handleAddBanner}
+        onOk={handleForm}
         onCancel={handleCancel}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="title" required>
-            <Input placeholder="Введите название баннера" />
-          </Form.Item>
-          <Form.Item name="description">
-            <Input.TextArea
-              rows={3}
-              placeholder="Описание для баннера (не обязательно)"
-            />
-          </Form.Item>
-          <Form.Item name="type" valuePropName="checked">
-            <Checkbox>Для мобильного</Checkbox>
-          </Form.Item>
-          <Form.Item
-            name="files"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
-          >
-            <Upload.Dragger
-              accept=".webp, .jpg, .jpeg"
-              listType="picture"
-              beforeUpload={handleBeforeUpload}
-              onRemove={handleRemove}
-              itemRender={customRender}
-              disabled={fileList.length > 1}
-            >
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Нажмите или перетащите файл</p>
-              <p className="ant-upload-hint">
-                Поддерживаемые форматы файла (webp, jpeg)
-              </p>
-            </Upload.Dragger>
-          </Form.Item>
+          {modalType === "banner" ? (
+            <>
+              <Form.Item name="title" required>
+                <Input placeholder="Введите название баннера" />
+              </Form.Item>
+              <Form.Item name="description">
+                <Input.TextArea
+                  rows={3}
+                  placeholder="Описание для баннера (не обязательно)"
+                />
+              </Form.Item>
+              {currentPath.includes("mobile") ? (
+                <Form.Item name="type" initialValue="mobile" hidden>
+                  <Input type="hidden" />
+                </Form.Item>
+              ) : (
+                <Form.Item name="type">
+                  <Select placeholder="Выберите тип баннера">
+                    <Select.Option value="main">Основной баннер</Select.Option>
+                    <Select.Option value="extra">
+                      Дополнительный баннер
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+              )}
+              <Form.Item name="link">
+                <Input placeholder="Укажите ссылку для баннера (не обязательно)" />
+              </Form.Item>
+              <Form.Item
+                name="files"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+              >
+                <Upload.Dragger
+                  accept=".webp, .jpg, .jpeg"
+                  listType="picture"
+                  beforeUpload={handleBeforeUpload}
+                  onRemove={handleRemove}
+                  itemRender={customRender}
+                  disabled={fileList.length > 1}
+                >
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">Нажмите или перетащите файл</p>
+                  <p className="ant-upload-hint">
+                    Поддерживаемые форматы файла (webp, jpeg)
+                  </p>
+                </Upload.Dragger>
+              </Form.Item>
+            </>
+          ) : (
+            <Form.Item name="folder" required>
+              <Input placeholder="Введите название папки" />
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     </Row>

@@ -17,13 +17,25 @@ class StoreController
         try {
             $path = $request->get('path', '/');
             $files = $request->file('files');
+
+            if (!Storage::exists(Banner::getPath($path)) && !Storage::makeDirectory(Banner::getPath($path))) {
+                throw new \DomainException(
+                    'Не удалось создать папку: ' . Banner::getPath($path),
+                    Response::HTTP_INSUFFICIENT_STORAGE
+                );
+            }
+
             do {
                 $fileName = Str::random() . '.' . strtolower($files['main']->getClientOriginalExtension());
             }
             while (Storage::exists(Banner::getPath($path, $fileName)));
 
-            if (!$files['main']->storeAs(Banner::getPath($path), $fileName))
-                throw new \DomainException('Не удалось сохранить фото: ' . Banner::getPath($path, $fileName), Response::HTTP_INSUFFICIENT_STORAGE);
+            if (!$files['main']->storeAs(Banner::getPath($path), $fileName)) {
+                throw new \DomainException(
+                    'Не удалось сохранить фото: ' . Banner::getPath($path, $fileName),
+                    Response::HTTP_INSUFFICIENT_STORAGE
+                );
+            }
 
             if (isset($files['mobile']))
                 $files['mobile']->storeAs(Banner::getPath($path), "mobile_{$fileName}");
@@ -35,7 +47,7 @@ class StoreController
                 'path' => $path,
                 'link' => $request->get('link'),
                 'type' => $request->get('type', BannerType::MAIN),
-                'sort' => Banner::query()->count()
+                'sort' => Banner::where('path', $path)->count()
             ]);
 
             $banner->creator()->associate($request->user());
