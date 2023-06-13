@@ -4,12 +4,12 @@ import { BaseQueryFn } from '@reduxjs/toolkit/query';
 export const API_URL = process.env.REACT_APP_API_URL || 'https://api.120на80.рф';
 
 const instance = axios.create({
-    baseURL: `${API_URL}/v1/panel`,
+    baseURL: API_URL,
     headers: {'X-Requested-With': 'XMLHttpRequest'},
     withCredentials: true
 });
 
-export const axiosBaseQuery = (): BaseQueryFn<
+export const axiosBaseQuery = (apiVersion: string = 'v1'): BaseQueryFn<
 {
     url: string
     method?: AxiosRequestConfig['method']
@@ -22,7 +22,7 @@ unknown,
 unknown
 > => async ({ url, method, headers, data, params, onProgress }) => {
     try {
-        const result = await instance({ url, method, headers, data, params, onUploadProgress: onProgress })
+        const result = await instance({ url: `${apiVersion}/panel/${url.replace(/^\//, '')}`, method, headers, data, params, onUploadProgress: onProgress })
         return { data: result.data }
     } catch (error) {
         if (axios.isAxiosError(error))

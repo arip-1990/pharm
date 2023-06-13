@@ -37,7 +37,7 @@ class Banner extends Model
     public static function getPath(string $path = '/', string $fileName = ''): string
     {
         if ($fileName) $fileName = "/{$fileName}";
-        return "banners{$path}" . $fileName;
+        return "banners" . rtrim($path, '/') . $fileName;
     }
 
     public function getUrl(bool $mobile = false): ?string

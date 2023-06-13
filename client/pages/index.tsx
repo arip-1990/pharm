@@ -3,15 +3,11 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
 import { wrapper } from "../store";
-import {
-  fetchPopularProducts,
-  getRunningQueriesThunk,
-  useFetchPopularProductsQuery,
-} from "../lib/catalogService";
 import Auth from "../components/auth";
 import { useCookie } from "../hooks/useCookie";
 import Layout from "../templates";
 import Card from "../components/card";
+import { fetchPopulars, getRunningQueriesThunk, useFetchPopularsQuery } from "../lib/productService";
 
 type AuthType = "login" | "register";
 
@@ -21,7 +17,7 @@ const Home: FC = () => {
     show: boolean;
   }>({ type: "login", show: false });
   const [city] = useCookie("city");
-  const { data, isFetching, refetch } = useFetchPopularProductsQuery();
+  const { data, isFetching, refetch } = useFetchPopularsQuery();
   const router = useRouter();
 
   useEffect(() => {
@@ -37,7 +33,7 @@ const Home: FC = () => {
   }, [city]);
 
   return (
-    <Layout banner title="Сеть аптек 120/80">
+    <Layout loading={isFetching} banner title="Сеть аптек 120/80">
       <div
         className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3 g-xl-4"
         itemScope
@@ -62,7 +58,7 @@ const Home: FC = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async () => {
-    store.dispatch(fetchPopularProducts.initiate());
+    store.dispatch(fetchPopulars.initiate());
 
     await Promise.all(store.dispatch(getRunningQueriesThunk()));
 

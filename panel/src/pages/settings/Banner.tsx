@@ -10,6 +10,7 @@ import {
   Input,
   Upload,
   Checkbox,
+  Breadcrumb,
 } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 import {
@@ -182,47 +183,50 @@ const Banner: FC = () => {
   };
 
   // Navigation
-  // function newTests(value: string, index: number) {
-  //   let str = current.split("/").filter((elem) => elem != "");
-  //   let result = str.splice(0, index);
+  const handleNavigation = (path: string) => {
+    setCurrent((oldCurrent) => oldCurrent + path);
+  };
 
-  //   setCurrent(`/${result.join("/")}`);
-  // }
-  //the end Navigation
+  // удаление дубликатов
+  const uniquePaths = (paths: string[]): string[] => {
+    return Array.from(
+      new Set(
+        paths.filter(
+          (path) => path.split("/").filter((path) => path).length === 1
+        )
+      )
+    );
+  };
 
-  // const b = testDatas.filter((item) => item.path.startsWith(current));
-  // const test = b.map((e) => e.path.replace(`${current}`, ""));
+  const getFolder = () => {
+    const paths = uniquePaths(
+      data
+        ?.filter((item) => item.path.startsWith(current))
+        .map((item) => item.path.replace(`${current}`, "")) || []
+    );
 
-  // // удаление дубликатов
-  // let p = test.filter(
-  //   (event) => event.split("/").filter((event) => event != "").length === 1
-  // );
-  // let newSetPath = new Set(p);
-  // let path = Array.from(newSetPath);
-  // .. конец удаления дубликатов
-
-  // let folder = path.map((event, index) => (
-  //   <div style={{ margin: "0px 10px 0px 10px" }}>
-  //     <FolderOutlined
-  //       style={{
-  //         fontSize: "5rem",
-  //         color: "rgba(0,0,0,0.65)",
-  //         cursor: "pointer",
-  //       }}
-  //       onDoubleClick={() => setCurrent(current + value)}
-  //     />
-  //     <div
-  //       style={{
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //       }}
-  //     >
-  //       <p>{event.replace("/", "")}</p>
-  //     </div>
-  //   </div>
-  // ));
-  //End Folder Gadjimurad
+    return paths.map((path) => (
+      <div style={{ margin: "0px 10px 0px 10px" }}>
+        <FolderOutlined
+          style={{
+            fontSize: "5rem",
+            color: "rgba(0,0,0,0.65)",
+            cursor: "pointer",
+          }}
+          onDoubleClick={() => handleNavigation(path)}
+        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <p>{path.replace("/", "")}</p>
+        </div>
+      </div>
+    ));
+  };
 
   return (
     <Row gutter={[16, 16]}>
@@ -233,77 +237,68 @@ const Banner: FC = () => {
         <Card
           loading={isFetching || isUpdating}
           title={
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              {/* <div style={{ display: "flex", cursor: "pointer" }}>
-                {current
-                  .split("/")
-                  .filter((item) => item != "")
-                  .map((item, index) => (
-                    <pre onClick={() => newTests(`/${item}`, index)}>
-                      {" "}
-                      {item} /{" "}
-                    </pre>
-                  ))}
-              </div> */}
-
-              {/*End button*/}
-
-              <span>Всего {data?.length || 0} записи</span>
-              <Button
-                type="primary"
-                disabled={isFetching}
-                onClick={() => setOpenModal(true)}
-              >
-                <PlusOutlined />
-              </Button>
-            </div>
+            <Breadcrumb
+              items={`root${current}`
+                .split("/")
+                .filter((item) => item)
+                .map((item, index, paths) => ({
+                  title:
+                    paths.length - 1 === index ? (
+                      item
+                    ) : (
+                      <a href="#" onClick={() => handleNavigation(item)}>
+                        {item}
+                      </a>
+                    ),
+                }))}
+            />
+          }
+          extra={
+            <Button
+              type="primary"
+              disabled={isFetching}
+              onClick={() => setOpenModal(true)}
+            >
+              <PlusOutlined />
+            </Button>
           }
         >
-          <div>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="droppable">
-                {(provided: any, snapshot: any) => (
-                  <div
-                    ref={provided.innerRef}
-                    style={getListStyle(snapshot.isDraggingOver)}
-                    {...provided.droppableProps}
-                  >
-                    <Space align="center" direction="vertical" size={32}>
-                      {/* <div style={{ display: "flex" }}>{folder}</div> */}
-                      {data
-                        ?.filter((banner) => {
-                          return true; /* current === banner.path */
-                        })
-                        .map((banner, index) =>
-                          current.startsWith("/mb") ? (
-                            banner.type == 2 ? (
-                              <DraggableBanner
-                                key={banner.id}
-                                index={index}
-                                banner={banner}
-                                onDelete={deleteBanner}
-                              />
-                            ) : (
-                              ""
-                            )
-                          ) : banner.type == 0 ? (
-                            <DraggableBanner
-                              key={banner.id}
-                              index={index}
-                              banner={banner}
-                              onDelete={deleteBanner}
-                            />
-                          ) : (
-                            ""
-                          )
-                        )}
-                    </Space>
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </div>
+          <div style={{ display: "flex" }}>{getFolder()}</div>
+
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable">
+              {(provided: any, snapshot: any) => (
+                <div
+                  ref={provided.innerRef}
+                  style={getListStyle(snapshot.isDraggingOver)}
+                  {...provided.droppableProps}
+                >
+                  <Space align="center" direction="vertical" size={32}>
+                    {data
+                      ?.filter((banner) => current === banner.path)
+                      .map((banner, index) =>
+                        banner.type === "mobile" ? (
+                          <DraggableBanner
+                            key={banner.id}
+                            index={index}
+                            banner={banner}
+                            onDelete={deleteBanner}
+                          />
+                        ) : (
+                          <DraggableBanner
+                            key={banner.id}
+                            index={index}
+                            banner={banner}
+                            onDelete={deleteBanner}
+                          />
+                        )
+                      )}
+                  </Space>
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </Card>
       </Col>
 

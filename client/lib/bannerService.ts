@@ -5,7 +5,7 @@ import { IBanner } from "../models/IBanner";
 
 export const bannerApi = createApi({
   reducerPath: "bannerApi",
-  baseQuery: apiBaseQuery(),
+  baseQuery: apiBaseQuery('v2'),
   endpoints: (builder) => ({
     fetchBanners: builder.query<IBanner[], void>({
       query: () => ({ url: "/settings/banners" }),

@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
-class StockController extends Controller
+class DiscountsController extends Controller
 {
     public function __invoke(Request $request): Response
     {
