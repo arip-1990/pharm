@@ -20,14 +20,14 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.120на80
 export const COOKIE_DOMAIN = process.env.NEXT_PUBLIC_COOKIE_DOMAIN || '.xn--12080-6ve4g.xn--p1ai';
 
 const instance = axios.create({
-    baseURL: `${API_URL}/v1`,
+    baseURL: `${API_URL}`,
     headers: { 'X-Requested-With': 'XMLHttpRequest' },
     withCredentials: true
 });
 
-export const apiBaseQuery = (): BaseQueryFn<Args, unknown, Error> => async ({ url, method, headers, data, params, onProgress }) => {
+export const apiBaseQuery = (apiVersion: string = 'v1'): BaseQueryFn<Args, unknown, Error> => async ({ url, method, headers, data, params, onProgress }) => {
     try {
-        const result = await instance({ url, method, headers, data, params, onUploadProgress: onProgress });
+        const result = await instance({ url: `${apiVersion}/${url}`, method, headers, data, params, onUploadProgress: onProgress });
         return { data: result.data }
     } catch (error) {
         if (axios.isAxiosError(error))

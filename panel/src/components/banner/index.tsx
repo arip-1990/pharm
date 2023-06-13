@@ -9,20 +9,14 @@ interface Props {
   onDelete: (id: number) => void;
 }
 
-
 const Banner: FC<Props> = ({ banner, onDelete }) => {
   const [visible, setVisible] = useState<boolean>(false);
-  console.log(banner)
   const handleDelete = () => {
     onDelete(banner.id);
   };
 
-
-  // console.log(banner.picture.main)
-
   return (
     <div key={banner.id} className="banner">
-
       <Image
         preview={{ visible: false }}
         alt={banner.title || ""}
@@ -52,8 +46,3 @@ const Banner: FC<Props> = ({ banner, onDelete }) => {
 };
 
 export { Banner };
-
-
-
-
-

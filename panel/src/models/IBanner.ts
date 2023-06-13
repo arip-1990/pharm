@@ -1,9 +1,10 @@
 export interface IBanner {
   id: number;
   title: string;
-  description: string | null;
-  picture: { main: string; mobile: string | null };
-  type: number;
+  description?: string;
+  picture: { main?: string; mobile?: string };
+  path: string;
+  link?: string;
+  type: 'main' | 'extra' | 'all' | 'mobile';
   sort: number;
-  path: string | null; // new
 }
