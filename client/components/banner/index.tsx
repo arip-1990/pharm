@@ -46,9 +46,14 @@ const Banner: FC = () => {
           />
           </SwiperSlide>
       ))}
+
     </Swiper>
   );
 };
 
-
 export default Banner;
+
+
+
+
+
