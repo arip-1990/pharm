@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Col, Row, Table, TablePaginationConfig } from "antd";
 import { SortOrder } from "antd/lib/table/interface";
@@ -11,19 +11,23 @@ interface StorageType {
   order: { field: string | null; direction: "asc" | "desc" };
   filters: { field: string; value: string }[];
   pagination: { current: number; pageSize: number };
-  platform: 'mobile' | 'ios' | 'android' | 'web';
+  platform: "mobile" | "ios" | "android" | "web";
 }
 
 const Order: React.FC = () => {
-  const [filters, setFilters] = useSessionStorage<StorageType>("MobileOrderFilters", {
-    order: { field: null, direction: "asc" },
-    pagination: { current: 1, pageSize: 50 },
-    filters: [],
-    platform: 'mobile'
-  });
+  const [filters, setFilters] = useSessionStorage<StorageType>(
+    "MobileOrderFilters",
+    {
+      order: { field: null, direction: "asc" },
+      pagination: { current: 1, pageSize: 50 },
+      filters: [],
+      platform: "mobile",
+    }
+  );
   const { data: users } = useFetchUsersQuery();
-  const { data: orders, isFetching: ordersLoading } =
-    useFetchOrdersQuery(filters);
+  const { data: orders, isFetching: ordersLoading } = useFetchOrdersQuery(
+    filters
+  );
   const navigate = useNavigate();
 
   const columns = [
@@ -39,7 +43,9 @@ const Order: React.FC = () => {
           : null,
       render: ([id, isTransfer]: any, record: any) => (
         <span>
-          {id}<br />{isTransfer ? 'Перемещение' : ''}
+          {id}
+          <br />
+          {isTransfer ? "Перемещение" : ""}
         </span>
       ),
     },
@@ -190,7 +196,7 @@ const Order: React.FC = () => {
             }}
             onRow={(record) => ({
               onClick: () =>
-                navigate(`/order/${record.id[0]}`, {
+                navigate(`/orders/${record.id[0]}`, {
                   state: { menuItem: ["order"] },
                 }),
             })}
@@ -199,6 +205,6 @@ const Order: React.FC = () => {
       </Col>
     </Row>
   );
-}
+};
 
-export default Order
+export default Order;

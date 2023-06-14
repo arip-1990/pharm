@@ -146,7 +146,7 @@ const Banner: FC = () => {
         key: "addBanner",
       });
     }
-  }, [currentPath]);
+  }, [currentPath, data]);
 
   const handleBeforeUpload = (file: UploadFile) => {
     if (fileList.length < 2) {
@@ -222,7 +222,6 @@ const Banner: FC = () => {
 
   const handleAddBanner = async () => {
     const values = await form.validateFields();
-    console.log(values);
     const data = new FormData();
 
     data.append("title", values.title);
@@ -246,11 +245,15 @@ const Banner: FC = () => {
 
   // Navigation
   const handleNavigation = (path: string, index?: number) => {
-    if (index)
-      setCurrentPath((oldCurrent) =>
-        oldCurrent.split("/").slice(0, index).join("/")
+    if (index) {
+      const newCurrentPath = currentPath.split("/").slice(0, index).join("/");
+      newCurrentPath.length > 0
+        ? setCurrentPath(newCurrentPath)
+        : setCurrentPath("/");
+    } else
+      setCurrentPath(
+        (oldCurrent) => oldCurrent.replace(/\/$/, "") + `/${path}`
       );
-    else setCurrentPath((oldCurrent) => oldCurrent + path);
   };
 
   // удаление дубликатов
@@ -314,7 +317,7 @@ const Banner: FC = () => {
                     ) : (
                       <a
                         href="#"
-                        onClick={() => handleNavigation(`/${item}`, index + 1)}
+                        onClick={() => handleNavigation(item, index + 1)}
                       >
                         {item}
                       </a>
