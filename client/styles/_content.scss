@@ -480,6 +480,10 @@ ul.list_item__dashed {
   }
 }
 
+.scale-1_5 > * {
+  transform: scale(1.5);
+}
+
 @media (min-width: 576px) {
   .page {
     padding: 2rem;
