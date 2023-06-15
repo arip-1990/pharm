@@ -7,7 +7,11 @@ import Auth from "../components/auth";
 import { useCookie } from "../hooks/useCookie";
 import Layout from "../templates";
 import Card from "../components/card";
-import { fetchPopulars, getRunningQueriesThunk, useFetchPopularsQuery } from "../lib/productService";
+import {
+  fetchPopulars,
+  getRunningQueriesThunk,
+  useFetchPopularsQuery,
+} from "../lib/productService";
 
 type AuthType = "login" | "register";
 

@@ -14,7 +14,6 @@ const Banner: FC<Props> = ({ banner, onDelete }) => {
   const handleDelete = () => {
     onDelete(banner.id);
   };
-
   return (
     <div key={banner.id} className="banner">
       <Image

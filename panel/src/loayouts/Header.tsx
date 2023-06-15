@@ -30,7 +30,7 @@ const Header: FC<PropsType> = ({ theme, collapsed, onCollapsed }) => {
           key: "profile",
           label:
             user.first_name +
-            (user.last_name ? user.last_name.charAt(0) + "." : ""),
+            (user.last_name ? ` ${user.last_name.charAt(0)}.` : ""),
           icon: <UserOutlined />,
           children: [
             {

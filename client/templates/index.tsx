@@ -10,9 +10,6 @@ import TopInfo from "./topInfo";
 import Banner from "../components/banner";
 import Loader from "../components/loader";
 
-import classes from "./banner/sliderStyle.module.scss";
-import Extra from "./banner/Extra";
-
 type Props = {
   title: string;
   description?: string;
@@ -77,19 +74,7 @@ const Layout: FC<Props> = ({
 
       <NotificationContainer />
 
-      {banner && (
-        <Container className="p-0">
-          <div className={classes.container}>
-            <div className={classes.col9}>
-              <div className={classes.content}>
-                <Banner />
-              </div>
-            </div>
-
-            <Extra />
-          </div>
-        </Container>
-      )}
+      {banner && <Banner />}
 
       <Container as="main" className="my-5">
         {children}
