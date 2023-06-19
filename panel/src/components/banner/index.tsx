@@ -31,7 +31,7 @@ const Banner: FC<Props> = ({ banner, onDelete }) => {
           {banner.picture.mobile && <Image src={banner.picture.mobile} />}
         </Image.PreviewGroup>
       </div>
-
+      
       <Popconfirm
         title="Вы уверены, что хотите удалить?"
         onConfirm={handleDelete}

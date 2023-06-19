@@ -33,8 +33,8 @@ const Banner: FC = () => {
     });
   }, [data]);
 
-<<<<<<< HEAD
-      {data?.filter(item => item.type !== 2).map((item) => (
+
+      {data?.filter(item => item.type !== 'main').map((item) => (
           <SwiperSlide key={item.id} >
           <div
             className={styles.banner}
@@ -48,8 +48,7 @@ const Banner: FC = () => {
           </SwiperSlide>
       ))}
 
-    </Swiper>
-=======
+
   return (
     <Container className="p-0">
       <Row style={{ rowGap: "1rem" }}>
@@ -85,7 +84,6 @@ const Banner: FC = () => {
         ) : null}
       </Row>
     </Container>
->>>>>>> origin/master
   );
 };
 

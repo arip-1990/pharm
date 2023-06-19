@@ -8,7 +8,7 @@ export interface IBanner {
   title: string;
   description?: string;
   picture: IBannerPicture;
-  type: "main" | "extra" | "all" | "mobile" | string | number;
+  type: "main" | "extra" | "all" | "mobile" ;
   path: string;
   link?: string;
   sort: number;
