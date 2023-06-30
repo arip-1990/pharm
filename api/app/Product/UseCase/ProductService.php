@@ -3,6 +3,9 @@
 namespace App\Product\UseCase;
 
 use App\Product\Entity\{Attribute, Category, Offer, Product, Value};
+use Cviebrock\EloquentSluggable\Services\SlugService;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -58,5 +61,65 @@ class ProductService
         }
 
         return $filters;
+    }
+
+    public function updateData(): void
+    {
+        $config = config('services.1c');
+        try {
+            $client = new Client([
+                'base_uri' => $config['base_url'],
+                'auth' => [$config['login'], $config['password']],
+                'verify' => false
+            ]);
+
+            $response = $client->get($config['urls'][0]);
+            $xml = simplexml_load_string($response->getBody()->getContents());
+            if ($xml === false)
+                throw new \DomainException('Ошибка парсинга xml');
+
+            $productFields = [];
+            $valueFields = [];
+            $i = 0;
+            foreach ($xml->goods->good as $item) {
+                $productFields[] = [
+                    'id' => (string) $item->uuid,
+                    'category_id' => (int) $item->category ?: null,
+                    'name' => (string) $item->name,
+                    'code' => (int) $item->code,
+                    'recipe' => (string) $item->recipe === 'true' ? true : (Product::find((string) $item->uuid)?->recipe ?? false),
+                    'marked' => (string) $item->is_marked === 'true',
+                ];
+
+                if ($vendor = (string) $item->vendor) {
+                    $valueFields[] = [
+                        'attribute_id' => 1,
+                        'product_id' => (string) $item->uuid,
+                        'value' => $vendor
+                    ];
+                }
+
+                $i++;
+
+                if ($i >= 1000) {
+                    Product::upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
+                    Value::upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
+                    $productFields = [];
+                    $valueFields = [];
+                    $i = 0;
+                }
+            }
+
+            if ($i) {
+                Product::upsert($productFields, 'code', ['id', 'category_id', 'name', 'marked', 'recipe']);
+                Value::upsert($valueFields, ['attribute_id', 'product_id'], ['product_id', 'value']);
+            }
+
+            foreach (Product::whereNull('slug')->get() as $product) {
+                $product->update(['slug' => SlugService::createSlug(Product::class, 'slug', $product->name)]);
+            }
+        } catch (\Exception | GuzzleException $e) {
+            throw new \DomainException($e->getMessage());
+        }
     }
 }

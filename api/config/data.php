@@ -4,20 +4,6 @@ return [
     'stock' => '6b7f2bb6-7d5e-11ea-80cb-ac1f6bd1d36d',
     'orderStartNumber' => 0, // стартовый номер заказа для 1c
     'infoEmail' => 'info@120на80.рф',
-    '1c' => [
-        'login' => 'webservice',
-        'password' => 'H5v-8Yt2S57',
-        'base_url' => 'http://1c.pharm36.ru/pharm36/hs/reserv/',
-        'urls' => [
-            'goods',
-            'goods/getChanges',
-            'pharmacies',
-            'pharmacyOffers',
-            'pharmacyOffers/getChanges',
-            'orders',
-            'offers'
-        ]
-    ],
     'pay' => [
         'sber' => [
             'prod' => [

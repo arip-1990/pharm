@@ -30,5 +30,20 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
+    
+    // other
+    '1c' => [
+        'login' => 'webservice',
+        'password' => 'H5v-8Yt2S57',
+        'base_url' => 'http://1c.pharm36.ru/pharm36/hs/reserv/',
+        'urls' => [
+            'goods',
+            'goods/getChanges',
+            'pharmacies',
+            'pharmacyOffers',
+            'pharmacyOffers/getChanges',
+            'orders',
+            'offers'
+        ]
+    ]
 ];

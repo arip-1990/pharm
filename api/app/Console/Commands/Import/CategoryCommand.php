@@ -2,41 +2,41 @@
 
 namespace App\Console\Commands\Import;
 
-use App\Product\Entity\Category;
+use App\Product\UseCase\CategoryService;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Redis;
 
 class CategoryCommand extends Command
 {
     protected $signature = 'import:category';
     protected $description = 'Import categories';
 
-    public function handle(): int
+    public function handle(CategoryService $service): int
     {
-        $this->startTime = Carbon::now();
-        try {
-            foreach ($this->getData()?->categories->category as $item) {
-                $attr = $item->attributes();
-                Category::updateOrCreate(
-                    ['id' => (int) $attr->id],
-                    ['name' => (string) $item, 'parent_id' => (int)$attr->parentId ? (int)$attr->parentId : null]
-                );
-            }
+        $startTime = Carbon::now();
+        $redis = Redis::connection('bot')->client();
 
-            $this->redis->publish('bot:import', json_encode([
+        try {
+            $service->updateData();
+
+            $redis->publish('bot:import', json_encode([
                 'success' => true,
                 'type' => 'category',
-                'message' => 'Категории успешно обновлены: ' . $this->startTime->diff(Carbon::now())->format('%iм %sс')
+                'message' => 'Категории успешно обновлены: ' . $startTime->diff(Carbon::now())->format('%iм %sс')
             ], JSON_UNESCAPED_UNICODE));
-        } catch (\Exception $e) {
-            $this->redis->publish('bot:import', json_encode([
+        } catch (\DomainException $e) {
+            $redis->publish('bot:import', json_encode([
                 'success' => false,
                 'type' => 'category',
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));
 
             return self::FAILURE;
+        } catch (\RedisException $e) {
+            return self::FAILURE;
         } finally {
-            $this->startTime = null;
+            $startTime = null;
         }
 
         return self::SUCCESS;

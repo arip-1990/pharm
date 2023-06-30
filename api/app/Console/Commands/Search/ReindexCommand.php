@@ -34,6 +34,7 @@ class ReindexCommand extends Command
                 'message' => 'Индексы товаров успешно обновлены: ' . $startTime->diff(Carbon::now())->format('%iм %sс')
             ], JSON_UNESCAPED_UNICODE));
 
+            $this->info('Индексы товаров успешно обновлены: ' . $startTime->diff(Carbon::now())->format('%iм %sс'));
             return self::SUCCESS;
         }
         catch (\Exception $e) {
@@ -43,6 +44,7 @@ class ReindexCommand extends Command
                 'message' => $e->getMessage()
             ], JSON_UNESCAPED_UNICODE));
 
+            $this->error($e->getMessage());
             return self::FAILURE;
         }
         finally {

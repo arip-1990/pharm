@@ -1,4 +1,5 @@
 import os
+import time
 import ujson
 import logging
 import asyncio
@@ -17,9 +18,10 @@ class SendData(TypedDict):
     user: types.User | None
     command: str | None
     message: str | None
+    time: float | None
 
 
-send_data: SendData = {'user': None, 'command': None, 'message': None}
+send_data: SendData = {'user': None, 'command': None, 'message': None, 'time': None}
 admin = 1195813156
 channel_notification = -1001619975317
 
@@ -30,22 +32,18 @@ async def send_welcome(message: types.Message) -> None:
     await message.reply(f'Привет {user_name}!')
 
 
-@dp.message_handler(commands=['id'])
-async def help(message: types.Message) -> None:
-    await message.answer(message.from_user.id)
-
-
 @dp.message_handler(commands=['import_category', 'import_product', 'import_store', 'import_offer', 'search_init', 'search_reindex'])
 async def send_api_data(message: types.Message) -> None:
     global send_data
 
-    if send_data['command']:
+    if send_data['command'] and (time.time() - send_data['time']) < 360:
         if send_data['user']:
             user_name = send_data['user'].first_name + (f" {send_data['user'].last_name}" if send_data['user'].last_name else '')
             await message.reply(f"Процесс не завершен: {send_data['message']}\nЗапущен пользователем: {user_name}")
         else:
             await message.reply(f"Процесс не завершен: {send_data['message']}")
     else:
+        send_data['time'] = time.time()
         [type_api, send_data['command']] = message.text.split(' ')[0].strip('/').split('_')
 
         if send_data['command'] == 'category':
@@ -94,14 +92,14 @@ async def handle_api_send_data(data: dict) -> None:
     else:
         senders = [admin]
 
-    if not data['success']:
+    if send_data['user'] and not data['success']:
         for sender in senders:
             await bot.send_message(sender, 'Не удалось выполнить ваш запрос!')
 
     for sender in senders:
         await bot.send_message(sender, data['message'])
 
-    send_data = {'user': None, 'command': None, 'message': None}
+    send_data = {'user': None, 'command': None, 'message': None, 'time': None}
 
 
 async def listen_messages():
