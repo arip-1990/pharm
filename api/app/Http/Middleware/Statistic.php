@@ -6,7 +6,6 @@ use App\Models\VisitStatistic;
 use App\Services\DaData\DaDataClient;
 use hisorange\BrowserDetect\Parser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class Statistic
@@ -31,7 +30,7 @@ class Statistic
                 if (!$visit->user and $user = $request->user())
                     $visit->user()->associate($user);
 
-                $visit->save();
+                $visit->touch();
             }
             else {
                 $details = $daData->ipLocate($ip);

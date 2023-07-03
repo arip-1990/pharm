@@ -49,7 +49,7 @@ class OrderSendListener implements ShouldQueue
     private function getSendInfo(Order $order): string
     {
         $service = new GenerateDataService($order);
-        $config = config('data.1c');
+        $config = config('services.1c');
 
         $client = new Client([
             'base_uri' => $config['base_url'],

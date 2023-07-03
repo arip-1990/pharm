@@ -1,7 +1,8 @@
 import { FC, MouseEvent, useState } from "react";
-import { SetCity } from "./SetCity";
 import { Container } from "react-bootstrap";
 import Link from "next/link";
+
+import { SetCity } from "./SetCity";
 import Auth from "../../components/auth";
 import DeliverySale from "./DeliverySale";
 import { useAuth } from "../../hooks/useAuth";

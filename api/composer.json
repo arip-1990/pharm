@@ -8,7 +8,6 @@
         "php": "^8.2",
         "ext-pdo": "*",
         "ext-curl": "*",
-        "ext-redis": "*",
         "ext-simplexml": "*",
         "cviebrock/eloquent-sluggable": "^10.0",
         "cviebrock/laravel-elasticsearch": "^10.0",

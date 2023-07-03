@@ -104,8 +104,6 @@ const Banner: FC = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [modalType, setModalType] = useState<"folder" | "banner">("folder");
   const { data, isFetching } = useFetchBannersQuery();
-  // console.log(fileList, 'dsfsdgsgfdgdfdfhfhdfh')
-  console.log(data)
   const [addBanner] = useAddBannerMutation();
   const [
     updateSortBanners,
