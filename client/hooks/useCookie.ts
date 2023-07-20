@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { useCookies } from 'react-cookie';
+
 import { COOKIE_DOMAIN } from '../lib/api';
 
-const useCookie = (cookieName: string): [string|null, (newValue: string) => void, () => void] => {
+const useCookie = (cookieName: string): [string, (newValue: string) => void, () => void] => {
     const [cookies, setCookie, removeCookie] = useCookies([cookieName]);
 
   const updateCookie = useCallback((newValue: string) => {

@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  *
- * @property City $parent
+ * @property ?City $parent
  * @property Collection<City> $children
  * @property Collection<Location> $locations
  */

@@ -7,12 +7,14 @@ import Auth from "../../components/auth";
 import DeliverySale from "./DeliverySale";
 import { useAuth } from "../../hooks/useAuth";
 import { useCookie } from "../../hooks/useCookie";
+import { useFetchCitiesQuery } from "../../lib/cityService";
 
 import styles from "./TopInfo.module.scss";
 
 const TopInfo: FC = () => {
   const { isAuth, user } = useAuth();
-  const [city, setCookie, removeCookie] = useCookie("city");
+  const [city, setCookie] = useCookie("city");
+  const { data: cities } = useFetchCitiesQuery();
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleSignIn = (e: MouseEvent) => {
@@ -20,15 +22,10 @@ const TopInfo: FC = () => {
     setShowModal(true);
   };
 
-  const setCity = (city: string) => {
-    removeCookie();
-    setCookie(city);
-  }
-
   return (
     <Container className="my-3">
       <div className={styles.topInfo}>
-        <SetCity city={city} setCity={setCity} />
+        {cities && <SetCity city={city || cities[0].name} cities={cities} setCity={setCookie} />}
 
         {city?.toLowerCase().includes('махачкала') && <DeliverySale />}
 

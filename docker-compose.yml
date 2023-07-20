@@ -211,8 +211,6 @@ services:
     networks:
       - traefik-public
       - default
-    ports:
-      - 6379:6379
 
 volumes:
   api-db:

@@ -27,8 +27,8 @@ class Statistic
                     $visit->city = "{$details['data']['postal_code']}, {$details['data']['city']}";
                 }
 
-                if (!$visit->user and $user = $request->user())
-                    $visit->user()->associate($user);
+                if (!$visit->user and $request->user())
+                    $visit->user()->associate($request->user());
 
                 $visit->touch();
             }
@@ -42,7 +42,7 @@ class Statistic
                     'referrer' => $request->header('referer')
                 ]);
 
-                if ($user = $request->user()) $visit->user()->associate($user);
+                $request->user() ? $visit->user()->associate($request->user()) : $visit->user()->disassociate();
 
                 $visit->save();
                 $request->session()->put('visitId', $visit->id);

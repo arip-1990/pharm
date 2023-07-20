@@ -1,23 +1,20 @@
 import { FC } from "react";
 import { Dropdown } from "react-bootstrap";
 
-import { useFetchCitiesQuery } from "../../lib/cityService";
+import { ICity } from "../../models/ICity";
 
 import styles from './TopInfo.module.scss';
 
 interface IProps {
-  city?: string;
+  city: string;
+  cities: ICity[];
   setCity: (city: string) => void;
 };
 
-const SetCity: FC<IProps> = ({ city, setCity }) => {
-  const { data } = useFetchCitiesQuery();
-
+const SetCity: FC<IProps> = ({ city, cities, setCity }) => {
   const handleSetCity = async (newCity: string) => {
     setCity(newCity);
   };
-
-  if (!data) return null;
 
   return (
     <div className={styles.chooseCity}>
@@ -29,11 +26,11 @@ const SetCity: FC<IProps> = ({ city, setCity }) => {
           as="a"
           style={{ cursor: "pointer" }}
         >
-          {city || data[0]?.name}
+          {city}
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          {data.map((item) => (
+          {cities.map((item) => (
             <Dropdown.Item
               key={item.id}
               href="#"
@@ -46,10 +43,10 @@ const SetCity: FC<IProps> = ({ city, setCity }) => {
         </Dropdown.Menu>
       </Dropdown>
       <div className="city-choose" style={city ? {} : { display: "flex" }}>
-        <h5 className="w-100 mb-3">Ваш город {data[0]?.name}?</h5>
+        <h5 className="w-100 mb-3">Ваш город {city}?</h5>
         <button
           className="btn btn-primary btn-sm"
-          onClick={() => handleSetCity(data[0]?.name)}
+          onClick={() => handleSetCity(city)}
         >
           Да, все верно
         </button>
