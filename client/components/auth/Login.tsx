@@ -109,7 +109,7 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
   const handleVerifyPhone = async (values: Values) =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("auth/verify/phone", { smsCode: values.smsCode });
+        await api.post("v1/auth/verify/phone", { smsCode: values.smsCode });
         return resolve();
       } catch (error) {
         return reject(error);
@@ -119,7 +119,7 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
   const handleSetPassword = async (values: Values) =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("auth/set-password", { password: values.password });
+        await api.post("v1/auth/set-password", { password: values.password });
         return resolve();
       } catch (error) {
         return reject(error);

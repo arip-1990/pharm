@@ -23,15 +23,23 @@ class LoginController extends Controller
         }
         catch (\DomainException $e) {
             $code = $e->getCode();
+            $message = $e->getMessage();
             $request->session()->put('loginData', $data);
+
             if ($code === 100033) {
-                $token = $this->verifyService->requestVerify($data['login']);
-                $request->session()->put('token', $token);
+                try {
+                    $token = $this->verifyService->requestVerify($data['login']);
+                    $request->session()->put('token', $token);
+                }
+                catch (\DomainException $e) {
+                    $code = $e->getCode();
+                    $message = $e->getMessage();
+                }
             }
 
             return new JsonResponse([
                 'code' => $code,
-                'message' => $e->getMessage()
+                'message' => $message
             ], 500);
         }
 

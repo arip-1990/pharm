@@ -92,7 +92,7 @@ const Checkout: FC = () => {
       }));
       try {
         const { data } = await api.post<{ id: number; paymentUrl?: string }>(
-          "order/checkout",
+          "v1/order/checkout",
           {
             ...values,
             store: slug,

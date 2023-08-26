@@ -16,9 +16,8 @@ class RegisterService extends LoyaltyService
 
     public function requestRegister(RegisterRequest $request): User
     {
-        $phone = $request->get('phone');
-        $data = $this->posService->getBalance($phone);
-        if (isset($data['contactID']))
+        $phone = $request->validated('phone');
+        if (isset($this->posService->getBalance($phone)['contactID']))
             throw new \DomainException('Существует контакт с таким телефоном', 111);
 
         $data = $request->validated();

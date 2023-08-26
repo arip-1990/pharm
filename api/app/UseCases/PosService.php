@@ -4,6 +4,7 @@ namespace App\UseCases;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\ArrayShape;
 
 class PosService extends LoyaltyService
@@ -100,6 +101,7 @@ class PosService extends LoyaltyService
               <Key>firstname</Key>
               <Value>' . $user->first_name . '</Value>
             </Attribute>';
+
         if ($user->last_name) {
             $data .= '<Attribute><Key>lastname</Key><Value>' . $user->last_name . '</Value></Attribute>';
         }
@@ -135,24 +137,18 @@ class PosService extends LoyaltyService
 
     private function buildXml(string $data): string
     {
-        $tmp = '<?xml version="1.0"?>
+        return '<?xml version="1.0"?>
             <soap:Envelope
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
             >
-            <soap:Body>
-            <ProcessRequest xmlns="http://loyalty.manzanagroup.ru/loyalty.xsd">
-            <request>';
-
-        $tmp .= $data;
-
-        $tmp .= '</request>
-            <orgName>' . $this->config['org_name'] . '</orgName>
-            </ProcessRequest>
-            </soap:Body>
+                <soap:Body>
+                    <ProcessRequest xmlns="http://loyalty.manzanagroup.ru/loyalty.xsd">
+                        <request>' . $data . '</request>
+                        <orgName>' . $this->config['org_name'] . '</orgName>
+                    </ProcessRequest>
+                </soap:Body>
             </soap:Envelope>';
-
-        return $tmp;
     }
 }

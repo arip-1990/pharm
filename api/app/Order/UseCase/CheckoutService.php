@@ -202,7 +202,7 @@ class CheckoutService
 
     private function checkOrderId(int $orderId): void
     {
-        if ($orderId > 2840 /* 4430 */) {
+        if ($orderId > 3980 /* 4430 */) {
             $redisClient = Redis::connection('bot')->client();
             $redisClient->publish('bot:info', "Необходимо обновить id заказов! Id текущего заказа: {$orderId}");
         }

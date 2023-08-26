@@ -1,5 +1,3 @@
-import Layout from "../templates";
-import Card from "../components/card";
 import { FC, useCallback, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -15,6 +13,8 @@ import {
 import { useCookie } from "../hooks/useCookie";
 import Breadcrumbs from "../components/breadcrumbs";
 import { ICategory } from "../models/ICategory";
+import Layout from "../templates";
+import Card from "../components/card";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -59,10 +59,16 @@ const Catalog: FC = () => {
     else refetch();
   }, [city]);
 
-  const getDefaultGenerator = useCallback(() => [{ href: '/catalog', text: "Наш ассортимент" }], []);
+  const getDefaultGenerator = useCallback(
+    () => [{ href: "/catalog", text: "Наш ассортимент" }],
+    []
+  );
 
   return (
-    <Layout title="Наш ассортимент - Сеть аптек 120/80" description="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой.">
+    <Layout
+      title="Наш ассортимент - Сеть аптек 120/80"
+      description="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой."
+    >
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">

@@ -100,7 +100,7 @@ const Register: FC<Props> = ({ switchAuthType }) => {
     new Promise<void>(async (resolve, reject) => {
       values.phone = values.phone.replace(/[^0-9]/g, "");
       try {
-        await api.post("auth/register", { ...values });
+        await api.post("v1/auth/register", { ...values });
         return resolve();
       } catch (error) {
         return reject(error);
@@ -110,7 +110,7 @@ const Register: FC<Props> = ({ switchAuthType }) => {
   const handleVerifyPhone = async (values: Values) =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("auth/verify/phone", { smsCode: values.smsCode });
+        await api.post("v1/auth/verify/phone", { smsCode: values.smsCode });
         return resolve();
       } catch (error) {
         return reject(error);

@@ -103,7 +103,7 @@ const ResetPassword: FC<Props> = ({ switchAuthType }) => {
   const handleRequestPassword = async (values: Values) =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.get("auth/reset/password", {
+        await api.get("v1/auth/reset/password", {
           params: { phone: values.phone.replace(/[^0-9]/g, "") },
         });
         return resolve();
@@ -115,7 +115,7 @@ const ResetPassword: FC<Props> = ({ switchAuthType }) => {
   const handleTempPassword = async (values: Values) =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("auth/reset/password/validate", {
+        await api.post("v1/auth/reset/password/validate", {
           password: values.password,
         });
         return resolve();
@@ -127,7 +127,7 @@ const ResetPassword: FC<Props> = ({ switchAuthType }) => {
   const handleChangePassword = async (values: Values) =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("auth/reset/password", { password: values.password });
+        await api.post("v1/auth/reset/password", { password: values.password });
         return resolve();
       } catch (error) {
         return reject(error);
@@ -137,7 +137,7 @@ const ResetPassword: FC<Props> = ({ switchAuthType }) => {
   const handleVerifyPhone = async (values: Values) =>
     new Promise<void>(async (resolve, reject) => {
       try {
-        await api.post("auth/verify/phone", { smsCode: values.smsCode });
+        await api.post("v1/auth/verify/phone", { smsCode: values.smsCode });
         return resolve();
       } catch (error) {
         return reject(error);

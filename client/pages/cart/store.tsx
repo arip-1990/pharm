@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import {FC, MouseEvent, useCallback, useEffect, useState} from "react";
+import { FC, MouseEvent, useCallback, useEffect, useState } from "react";
 import { useLocalStorage } from "react-use-storage";
 import api from "../../lib/api";
 import { ICart } from "../../models/ICart";
@@ -27,7 +27,9 @@ const Store: FC = () => {
         params[cart.product.id] = cart.quantity;
       });
       try {
-        const { data } = await api.post("/order/checkout/store", { ...params });
+        const { data } = await api.post("v1/order/checkout/store", {
+          ...params,
+        });
         setStores(data);
       } catch (error) {}
       setLoading(false);
@@ -36,10 +38,13 @@ const Store: FC = () => {
     fetchStores();
   }, [city]);
 
-  const getDefaultGenerator = useCallback(() => [
-    {href: '/cart', text: "Корзина"},
-    {href: '/cart/store', text: "Выбор аптеки"}
-  ], []);
+  const getDefaultGenerator = useCallback(
+    () => [
+      { href: "/cart", text: "Корзина" },
+      { href: "/cart/store", text: "Выбор аптеки" },
+    ],
+    []
+  );
 
   const handleStore = (e: MouseEvent<HTMLButtonElement>, storeId: string) => {
     e.stopPropagation();
