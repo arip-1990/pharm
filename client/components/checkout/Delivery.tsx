@@ -92,7 +92,9 @@ const Delivery: FC<Props> = ({
           <div className="col-10 col-lg-6 col-xl-5 col-xxl-4 offset-1 offset-lg-0 offset-xl-1">
             <Accordion.Header
               as="label"
-              className={classNames("radio-button", { active: value === 1 })}
+              className={classNames("radio-button", "disable", {
+                active: value === 1,
+              })}
             >
               <input
                 type="radio"

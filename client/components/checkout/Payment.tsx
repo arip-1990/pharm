@@ -34,7 +34,11 @@ const Payment: FC<Props> = ({ defaultValue = 0, onChange }) => {
         </label>
       </div>
       <div className="col-10 col-lg-5 col-xl-4 offset-1 offset-lg-0 offset-lg-2">
-        <label className={classNames("radio-button", { active: value === 1 })}>
+        <label
+          className={classNames("radio-button", "disable", {
+            active: value === 1,
+          })}
+        >
           <input
             type="radio"
             name="payment"
@@ -42,6 +46,7 @@ const Payment: FC<Props> = ({ defaultValue = 0, onChange }) => {
             value={1}
             checked={value === 1}
             onChange={handleChecked}
+            disabled
           />
           <p className="radio-button_text">
             Оплата картой

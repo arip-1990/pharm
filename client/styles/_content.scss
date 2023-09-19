@@ -408,7 +408,10 @@
     border-radius: 0.5rem;
     padding: 1rem;
     margin: 0.25rem 0;
-    cursor: pointer;
+
+    &:not(.active):not(.disable) {
+      cursor: pointer;
+    }
 
     &::after, &::before {
       content: none !important;

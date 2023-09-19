@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Redis;
 
 class SendCommand extends Command
 {
-    protected $signature = 'order:send {date=60m}';
+    protected $signature = 'order:send {date=5m}';
     protected $description = 'Sending orders {optional date: example 5m, 2d}';
 
     public function handle(): int
@@ -20,7 +20,7 @@ class SendCommand extends Command
         preg_match('/(\d+)?([m|d])?/i', $this->argument('date'), $matches);
         $redisClient = Redis::connection('bot')->client();
         try {
-            $number = (int)$matches[1] ?: 1;
+            $number = (int)$matches[1] ?: 5;
 
             $subDate = strtolower($matches[2] ?? 'm') === 'd' ? Carbon::now()->subDays($number) : Carbon::now()->subMinutes($number);
             $orders = Order::where('created_at', '>=', $subDate)->get();
