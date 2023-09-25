@@ -19,7 +19,9 @@ const Price: FC<Props> = ({ slug, totalOffers }) => {
   const handlePrice = useCallback(async (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
     try {
-      const { data } = await api.get<number>(`/catalog/product/${slug}/price`);
+      const { data } = await api.get<number>(
+        `/v1/catalog/product/${slug}/price`
+      );
       setPrice(data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
