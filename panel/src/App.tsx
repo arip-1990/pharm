@@ -31,7 +31,9 @@ const App: FC = () => {
         state: location.state,
       });
     else if (isAuth === false) navigate("/login");
-  }, [isAuth, location.pathname, location.state, navigate]);
+    }, [isAuth]);
+
+  // }, [isAuth, location.pathname, location.state, navigate]);
 
   return (
     <Suspense fallback={<Loader />}>
