@@ -3,17 +3,20 @@
 namespace App\Order\Listener;
 
 use App\Exceptions\OrderException;
+use App\Order\DataSender;
+use App\Order\GenerateOrderData;
 use Illuminate\Support\Facades\Redis;
-use App\Order\Entity\{Order, Payment};
+use App\Order\Entity\Payment;
 use App\Order\Entity\Status\{OrderState, OrderStatus};
 use App\Order\Event\OrderSend;
-use App\Order\UseCase\GenerateDataService;
-use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OrderSendListener implements ShouldQueue
 {
+    use DataSender;
+
+    public function __construct(private readonly GenerateOrderData $generator) {}
+
     public function handle(OrderSend $event): void
     {
         $queueClient = Redis::connection('bot')->client();
@@ -24,7 +27,7 @@ class OrderSendListener implements ShouldQueue
             return;
 
         try {
-            $response = simplexml_load_string($this->getSendInfo($order));
+            $response = simplexml_load_string($this->sendData($order));
 
             if(isset($response->errors->error->code))
                 throw new OrderException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");
@@ -44,20 +47,5 @@ class OrderSendListener implements ShouldQueue
         } finally {
             $order->save();
         }
-    }
-
-    private function getSendInfo(Order $order): string
-    {
-        $service = new GenerateDataService($order);
-        $config = config('services.1c');
-
-        $client = new Client([
-            'base_uri' => $config['base_url'],
-            'auth' => [$config['login'], $config['password']],
-            'verify' => false
-        ]);
-        $response = $client->post($config['urls'][5], ['body' => $service->generateSenData(Carbon::now())]);
-
-        return $response->getBody()->getContents();
     }
 }

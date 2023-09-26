@@ -204,7 +204,7 @@ class CheckoutService
     {
         if ($orderId > 3980 /* 4430 */) {
             $redisClient = Redis::connection('bot')->client();
-            $redisClient->publish('bot:info', "Необходимо обновить id заказов! Id текущего заказа: {$orderId}");
+            $redisClient->publish('bot:info', "Необходимо обновить идентификация заказов!\nНомер текущего заказа: {$orderId}\nНомер существующего заказа: 3988");
         }
     }
 }

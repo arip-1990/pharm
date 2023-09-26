@@ -198,8 +198,9 @@ services:
       POSTGRES_USERNAME: app
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: app
-      NAS_HOST: ${NAS_HOST}
-      RSYNC_PASSWORD: ${NAS_PASSWORD}
+      # NAS_HOST: ${NAS_HOST}
+      # RSYNC_PASSWORD: ${NAS_PASSWORD}
+      FTP_PASSWORD: ${FTP_PASSWORD}
     command: sh -c 'wait-for-it api-db:5432 -t 60 && backup'
     deploy:
       labels:

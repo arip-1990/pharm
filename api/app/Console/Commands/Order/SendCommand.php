@@ -2,18 +2,24 @@
 
 namespace App\Console\Commands\Order;
 
-use App\Order\UseCase\GenerateDataService;
+use App\Order\DataSender;
+use App\Order\GenerateOrderData;
 use App\Order\Entity\{Order, OrderGroup, OrderItem, Payment};
 use App\Order\Entity\Status\{OrderStatus, OrderState};
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Redis;
 
 class SendCommand extends Command
 {
+    use DataSender;
+
     protected $signature = 'order:send {date=5m}';
     protected $description = 'Sending orders {optional date: example 5m, 2d}';
+
+    public function __construct(private readonly GenerateOrderData $generator) {
+        parent::__construct();
+    }
 
     public function handle(): int
     {
@@ -55,7 +61,7 @@ class SendCommand extends Command
                 $group->orders()->saveMany([$order, $order2]);
 
                 try {
-                    $response = simplexml_load_string($this->orderSend($tmpOrder));
+                    $response = simplexml_load_string($this->sendData($tmpOrder));
 
                     if (isset($response->errors->error->code))
                         throw new \DomainException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");
@@ -108,21 +114,5 @@ class SendCommand extends Command
         $newOrder->cost += $bookingOrder->cost;
 
         return $newOrder;
-    }
-
-    private function orderSend(Order $order): string
-    {
-        $service = new GenerateDataService($order);
-        $config = config('data.1c');
-
-        $client = new Client([
-            'base_uri' => $config['base_url'],
-            'auth' => [$config['login'], $config['password']],
-            'verify' => false
-        ]);
-
-        $response = $client->post($config['urls'][5], ['body' => $service->generateSenData(Carbon::now())]);
-
-        return $response->getBody()->getContents();
     }
 }

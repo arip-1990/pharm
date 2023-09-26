@@ -1,5 +1,8 @@
 #!/bin/bash
 
+$HOST="ftp.pharm36.ru"
+$USER="Arip"
+
 set -o errexit
 set -o pipefail
 
@@ -19,8 +22,18 @@ pg_dump \
     --host="${POSTGRES_HOST:?}" \
     | gzip -9 > "$BACKUP_FILE"
 
-echo "Upload to Synology NAS"
+#echo "Upload to Synology NAS"
+#
+#rsync -av "$BACKUP_FILE" $USER@"${NAS_HOST:?}"::NetBackup/"$BACKUP_FILE"
 
-rsync -av "$BACKUP_FILE" Arip@"${NAS_HOST:?}"::NetBackup/"$BACKUP_FILE"
+echo "Send to ftp server"
+
+ftp -n $HOST <<EOF
+user $USER $FTP_PASSWORD
+binary
+cd pharm36
+put $BACKUP_FILE
+bye
+EOF
 
 unlink "$BACKUP_FILE"
