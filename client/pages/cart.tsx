@@ -70,7 +70,7 @@ const Cart: FC = () => {
                   <img
                     alt={cart.product.name}
                     style={{ width: "100%" }}
-                    src={cart.product.photos[0].url || defaultImage.src}
+                    src={cart.product.photos[0]?.url || defaultImage.src}
                   />
                 </div>
                 <div className="col-10 col-sm-7 col-md-5 product_title">
