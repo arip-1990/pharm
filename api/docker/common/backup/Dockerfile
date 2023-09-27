@@ -1,6 +1,6 @@
 FROM alpine:3.18
 
-RUN apk add --no-cache python3 py3-pip bash coreutils postgresql-client ftp \
+RUN apk add --no-cache python3 py3-pip bash coreutils postgresql-client lftp \
     && pip3 install --upgrade awscli
 
 COPY ./wait-for-it.sh /usr/local/bin/wait-for-it

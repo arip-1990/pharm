@@ -3,19 +3,16 @@
 namespace App\Order\Listener;
 
 use App\Exceptions\OrderException;
-use App\Order\DataSender;
-use App\Order\GenerateOrderData;
+use App\Order\SenderOrderData;
 use Illuminate\Support\Facades\Redis;
 use App\Order\Entity\Payment;
 use App\Order\Entity\Status\{OrderState, OrderStatus};
 use App\Order\Event\OrderSend;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class OrderSendListener implements ShouldQueue
+readonly class OrderSendListener implements ShouldQueue
 {
-    use DataSender;
-
-    public function __construct(private readonly GenerateOrderData $generator) {}
+    public function __construct(private SenderOrderData $sender) {}
 
     public function handle(OrderSend $event): void
     {
@@ -27,7 +24,7 @@ class OrderSendListener implements ShouldQueue
             return;
 
         try {
-            $response = simplexml_load_string($this->sendData($order));
+            $response = simplexml_load_string($this->sender->send($order));
 
             if(isset($response->errors->error->code))
                 throw new OrderException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");

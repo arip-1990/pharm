@@ -310,19 +310,19 @@ services:
   #     restart_policy:
   #       condition: none
 
-  bot:
-    image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}
-    environment:
-      APP_NAME: Сеть аптек 120/80
-      REDIS_HOST: redis
-      API_TOKEN: ${BOT_TOKEN}
-    command: sh -c 'wait-for-it redis:6379 -t 60 && python main.py'
-    deploy:
-      mode: replicated
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
+  # bot:
+  #   image: ${REGISTRY}/pharm-bot:${IMAGE_TAG}
+  #   environment:
+  #     APP_NAME: Сеть аптек 120/80
+  #     REDIS_HOST: redis
+  #     API_TOKEN: ${BOT_TOKEN}
+  #   command: sh -c 'wait-for-it redis:6379 -t 60 && python main.py'
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     update_config:
+  #       parallelism: 1
+  #       delay: 10s
 
   elastic:
     image: elasticsearch:8.7.1

@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands\Order;
 
-use App\Order\DataSender;
-use App\Order\GenerateOrderData;
+use App\Order\SenderOrderData;
 use App\Order\Entity\{Order, OrderGroup, OrderItem, Payment};
 use App\Order\Entity\Status\{OrderStatus, OrderState};
 use Carbon\Carbon;
@@ -12,16 +11,10 @@ use Illuminate\Support\Facades\Redis;
 
 class SendCommand extends Command
 {
-    use DataSender;
-
     protected $signature = 'order:send {date=5m}';
     protected $description = 'Sending orders {optional date: example 5m, 2d}';
 
-    public function __construct(private readonly GenerateOrderData $generator) {
-        parent::__construct();
-    }
-
-    public function handle(): int
+    public function handle(SenderOrderData $sender): int
     {
         preg_match('/(\d+)?([m|d])?/i', $this->argument('date'), $matches);
         $redisClient = Redis::connection('bot')->client();
@@ -61,7 +54,7 @@ class SendCommand extends Command
                 $group->orders()->saveMany([$order, $order2]);
 
                 try {
-                    $response = simplexml_load_string($this->sendData($tmpOrder));
+                    $response = simplexml_load_string($sender->send($tmpOrder));
 
                     if (isset($response->errors->error->code))
                         throw new \DomainException("Номер заказа: {$orderNumber}. {$response->errors->error->message}");

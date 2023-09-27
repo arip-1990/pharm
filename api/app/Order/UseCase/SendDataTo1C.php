@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Order;
+namespace App\Order\UseCase;
 
 use App\Order\Entity\Order;
+use App\Order\SenderOrderData;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 
-trait DataSender
+readonly class SendDataTo1C implements SenderOrderData
 {
-    private readonly GenerateOrderData $generator;
+    public function __construct(private GenerateOrderDataService $generator) {}
 
-    public function sendData(Order $order): string
+    public function send(Order $order): string
     {
         $config = config('services.1c');
         $client = new Client([
@@ -18,7 +19,7 @@ trait DataSender
             'auth' => [$config['login'], $config['password']],
             'verify' => false
         ]);
-        $response = $client->post($config['urls'][5], ['body' => $this->generator->generate($order, Carbon::now())]);
+        $response = $client->post($config['urls'][5], ['body' => $this->generator->generateFor1C($order, Carbon::now())]);
 
         return $response->getBody()->getContents();
     }
