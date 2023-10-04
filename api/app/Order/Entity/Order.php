@@ -269,4 +269,14 @@ class Order extends Model
     {
         return $this->belongsTo(OrderGroup::class, 'order_group_id');
     }
+
+    public static function getStatusLabel(Status $status): string
+    {
+        return match ($status->value) {
+            OrderStatus::STATUS_ASSEMBLED => 'Доставлен в аптеку',
+            OrderStatus::STATUS_RECEIVED => 'Получен клиентом',
+            OrderStatus::STATUS_CANCELLED, OrderStatus::STATUS_DISCREPANCY => 'Отменен',
+            default => 'В обработке',
+        };
+    }
 }

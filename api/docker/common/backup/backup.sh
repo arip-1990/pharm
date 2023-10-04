@@ -1,7 +1,7 @@
 #!/bin/bash
 
-$USER="Arip"
-$HOST="ftp.pharm36.ru"
+USER="Arip"
+HOST="ftp.pharm36.ru"
 
 set -o errexit
 set -o pipefail
@@ -28,7 +28,7 @@ pg_dump \
 
 echo "Send to ftp server"
 
-lftp -u $USER,$FTP_PASSWORD $HOST <<EOF
+lftp -u $USER,"$FTP_PASSWORD" $HOST <<EOF
 cd pharm36
 put $BACKUP_FILE
 bye

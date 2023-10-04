@@ -8,7 +8,7 @@ ini_set('memory_limit', -1);
 
 class TestCommand extends Command
 {
-    protected $signature = 'test';
+    protected $signature = 'test {date=5m}';
     protected $description = 'test';
 
     public function handle(): int

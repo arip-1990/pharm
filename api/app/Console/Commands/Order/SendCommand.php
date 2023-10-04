@@ -19,18 +19,17 @@ class SendCommand extends Command
         preg_match('/(\d+)?([m|d])?/i', $this->argument('date'), $matches);
         $redisClient = Redis::connection('bot')->client();
         try {
-            $number = (int)$matches[1] ?: 5;
-
+            $number = $matches[1] ?: 1;
             $subDate = strtolower($matches[2] ?? 'm') === 'd' ? Carbon::now()->subDays($number) : Carbon::now()->subMinutes($number);
-            $orders = Order::where('created_at', '>=', $subDate)->get();
-            /** @var Order $order */
+            $orders = Order::where('created_at', '>=', $subDate)->orderBy('created_at')->get();
+
+            $findOrders = [];
             foreach ($orders as $order) {
-                if ($order->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
+                if (in_array($order->id, $findOrders) or $order->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
                     continue;
 
-                /** @var Order $order2 */
                 if (!$order2 = $orders->first(fn(Order $item) => (
-                    $item->id !== $order->id and $item->phone === $order->phone and $item->store_id === $order->store_id
+                    $item->id > $order->id and $item->phone === $order->phone and $item->store_id === $order->store_id
                     and $item->delivery_id !== $order->delivery_id and $item->created_at->diffInMinutes($order->created_at) < 1
                 ))) {
                     if (Carbon::now()->diffInMinutes($order->created_at) >= 1) {
@@ -40,6 +39,7 @@ class SendCommand extends Command
                     continue;
                 }
 
+                $findOrders[] = $order2->id;
                 if ($order2->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order2->payment->isType(Payment::TYPE_CARD) and !$order2->isPay()))
                     continue;
 
