@@ -189,6 +189,7 @@ services:
       APP_NAME: Сеть аптек 120/80
       APP_ENV: local
       REDIS_HOST: redis
+      BOT_TOKEN: ${BOT_TOKEN}
     volumes:
       - ./bot:/app
 

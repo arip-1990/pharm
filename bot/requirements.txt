@@ -1,5 +1,5 @@
 redis
 ujson
-uvloop
+aiohttp
 aiogram
-aiohttp[speedups]
+charset-normalizer
