@@ -38,6 +38,9 @@ class RedisSubscribe extends Command
                         else
                             throw new \InvalidArgumentException('Неверная комманда для индексирования поиска!');
                         break;
+                    case 'export':
+                        if ($data['type'] == 'order') Artisan::call('export:sentOrders' . ($data['year'] ?? ''));
+                        break;
                     case 'send':
                         Artisan::call('order:send' . ($data['date'] ?? ''));
                         break;

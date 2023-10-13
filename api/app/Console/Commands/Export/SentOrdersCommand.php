@@ -8,18 +8,29 @@ use App\Order\Entity\Status\OrderStatus;
 use App\Order\Entity\Status\Status;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SentOrdersCommand extends Command
 {
-    protected $signature = 'export:sentOrders';
+    protected $signature = 'export:sentOrders {year?}';
     protected $description = 'Export sent orders to 1C';
 
+    /**
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
     public function handle(): int
     {
+        $client = Redis::connection('bot')->client();
+        $nowYear = Carbon::now()->startOfYear();
+        if ($year = (int)$this->argument('year') and $nowYear->year > $year and ($nowYear->year - 5) <= $year)
+            $nowYear->setYear($year);
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Заказы');
@@ -86,10 +97,9 @@ class SentOrdersCommand extends Command
         $sheet->getColumnDimension('I')->setAutoSize(true);
         $sheet->getColumnDimension('J')->setAutoSize(true);
 
-        $year = Carbon::now()->startOfYear();
         $groups = [];
         $i = 2;
-        Order::whereBetween('created_at', [$year, $year->clone()->endOfYear()])->orderBy('created_at')->each(function (Order $order) use ($sheet, &$groups, &$i) {
+        Order::whereBetween('created_at', [$nowYear, $nowYear->clone()->endOfYear()])->orderBy('created_at')->each(function (Order $order) use ($sheet, &$groups, &$i) {
             if (!$order->isSent() and !$order->inStatus(OrderStatus::STATUS_PROCESSING)) return;
 
             $cost = $order->cost;
@@ -115,9 +125,11 @@ class SentOrdersCommand extends Command
             $i++;
         });
 
-        $date = Carbon::now();
+        $fileName = "Список заказов за {$nowYear->year} год.xlsx";
         $writer = new Xlsx($spreadsheet);
-        $writer->save(Storage::path("Список заказов {$date->format('d-m-Y')}.xlsx"));
+        $writer->save(Storage::path($fileName));
+
+        $client->publish('bot:export', Storage::url($fileName));
 
         return self::SUCCESS;
     }

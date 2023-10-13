@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Order;
 
 use App\Order\SenderOrderData;
+use Illuminate\Support\Collection;
 use App\Order\Entity\{Order, OrderGroup, OrderItem, Payment};
 use App\Order\Entity\Status\{OrderStatus, OrderState};
 use Carbon\Carbon;
@@ -13,6 +14,7 @@ class SendCommand extends Command
 {
     protected $signature = 'order:send {date=5m}';
     protected $description = 'Sending orders {optional date: example 5m, 2d}';
+    protected ?Collection $orders = null;
 
     public function handle(SenderOrderData $sender): int
     {
@@ -21,26 +23,22 @@ class SendCommand extends Command
         try {
             $number = $matches[1] ?: 1;
             $subDate = strtolower($matches[2] ?? 'm') === 'd' ? Carbon::now()->subDays($number) : Carbon::now()->subMinutes($number);
-            $orders = Order::where('created_at', '>=', $subDate)->orderBy('created_at')->get();
+            $this->orders = Order::where('created_at', '>=', $subDate)->orderBy('created_at')->get();
 
-            $findOrders = [];
-            foreach ($orders as $order) {
-                if (in_array($order->id, $findOrders) or $order->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
+            while ($order = $this->orders->shift()) {
+                if ($order->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
                     continue;
 
-                if (!$order2 = $orders->first(fn(Order $item) => (
-                    $item->id > $order->id and $item->phone === $order->phone and $item->store_id === $order->store_id
-                    and $item->delivery_id !== $order->delivery_id and $item->created_at->diffInMinutes($order->created_at) < 1
-                ))) {
+                if (!$order2 = $this->findOrderGroup($order)) {
                     if (Carbon::now()->diffInMinutes($order->created_at) >= 1) {
                         $order->sent();
                         $order->save();
                     }
+
                     continue;
                 }
 
-                $findOrders[] = $order2->id;
-                if ($order2->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order2->payment->isType(Payment::TYPE_CARD) and !$order2->isPay()))
+                if ($order2->isSent() or $order2->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order2->payment->isType(Payment::TYPE_CARD) and !$order2->isPay()))
                     continue;
 
                 $tmpOrder = ($order->delivery_id === 2) ? $this->unionOrders($order, $order2) : $this->unionOrders($order2, $order);
@@ -107,5 +105,21 @@ class SendCommand extends Command
         $newOrder->cost += $bookingOrder->cost;
 
         return $newOrder;
+    }
+
+    private function findOrderGroup(Order $order): ?Order
+    {
+        if ($order2 = $this->orders->first(function (Order $item, int $index) use ($order) {
+            if ($item->id != $order->id and $item->phone === $order->phone and $item->store_id === $order->store_id and $item->created_at->diffInMinutes($order->created_at) < 1) {
+                $this->orders->forget($index);
+                return true;
+            }
+
+            return false;
+        })) {
+            return $order2;
+        }
+
+        return null;
     }
 }

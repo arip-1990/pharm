@@ -1,5 +1,7 @@
-redis
 ujson
 aiohttp
 aiogram
-charset-normalizer
+aioredis
+pydantic
+aiogram_dialog
+pydantic-settings
