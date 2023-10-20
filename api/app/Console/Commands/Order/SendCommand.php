@@ -25,8 +25,9 @@ class SendCommand extends Command
             $subDate = strtolower($matches[2] ?? 'm') === 'd' ? Carbon::now()->subDays($number) : Carbon::now()->subMinutes($number);
             $this->orders = Order::where('created_at', '>=', $subDate)->orderBy('created_at')->get();
 
+            $findOrders = [];
             while ($order = $this->orders->shift()) {
-                if ($order->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()))
+                if (in_array($order->id, $findOrders) or !$sender->check($order))
                     continue;
 
                 if (!$order2 = $this->findOrderGroup($order)) {
@@ -38,7 +39,8 @@ class SendCommand extends Command
                     continue;
                 }
 
-                if ($order2->isSent() or $order2->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order2->payment->isType(Payment::TYPE_CARD) and !$order2->isPay()))
+                $findOrders[] = $order2->id;
+                if (!$sender->check($order2))
                     continue;
 
                 $tmpOrder = ($order->delivery_id === 2) ? $this->unionOrders($order, $order2) : $this->unionOrders($order2, $order);
@@ -109,17 +111,9 @@ class SendCommand extends Command
 
     private function findOrderGroup(Order $order): ?Order
     {
-        if ($order2 = $this->orders->first(function (Order $item, int $index) use ($order) {
-            if ($item->id != $order->id and $item->phone === $order->phone and $item->store_id === $order->store_id and $item->created_at->diffInMinutes($order->created_at) < 1) {
-                $this->orders->forget($index);
-                return true;
-            }
-
-            return false;
-        })) {
-            return $order2;
-        }
-
-        return null;
+        return $this->orders->first(fn(Order $item) => (
+            $item->id != $order->id and $item->phone === $order->phone and $item->store_id === $order->store_id
+            and $item->created_at->diffInMinutes($order->created_at) < 1
+        ));
     }
 }

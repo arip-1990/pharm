@@ -17,6 +17,12 @@ async def start_handler(msg: Message):
     await msg.answer(text.greet.format(user_name=msg.from_user.full_name, user_id=msg.from_user.id), reply_markup=kb.main_menu)
 
 
+@dp.message(Command("start"))
+async def start(message: Message, dialog_manager: DialogManager):
+    # Important: always set `mode=StartMode.RESET_STACK` you don't want to stack dialogs
+    await dialog_manager.start(MySG.main, mode=StartMode.RESET_STACK)
+
+
 @router.message(F.text == "Меню")
 @router.message(F.text == "Выйти в меню")
 @router.message(F.text == "◀️ Выйти в меню")

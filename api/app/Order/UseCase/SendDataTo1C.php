@@ -3,6 +3,8 @@
 namespace App\Order\UseCase;
 
 use App\Order\Entity\Order;
+use App\Order\Entity\Payment;
+use App\Order\Entity\Status\OrderStatus;
 use App\Order\SenderOrderData;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -22,5 +24,10 @@ readonly class SendDataTo1C implements SenderOrderData
         $response = $client->post($config['urls'][5], ['body' => $this->generator->generateFor1C($order, Carbon::now())]);
 
         return $response->getBody()->getContents();
+    }
+
+    public function check(Order $order): bool
+    {
+        return !($order->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()));
     }
 }

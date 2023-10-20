@@ -5,7 +5,6 @@ namespace App\Order\Listener;
 use App\Exceptions\OrderException;
 use App\Order\SenderOrderData;
 use Illuminate\Support\Facades\Redis;
-use App\Order\Entity\Payment;
 use App\Order\Entity\Status\{OrderState, OrderStatus};
 use App\Order\Event\OrderSend;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,7 +19,7 @@ readonly class OrderSendListener implements ShouldQueue
         $order = $event->order;
         $orderNumber = config('data.orderStartNumber') + $order->id;
 
-        if ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay() or $order->isSent())
+        if (!$this->sender->check($order))
             return;
 
         try {
