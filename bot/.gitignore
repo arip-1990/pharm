@@ -2,3 +2,4 @@
 .env.backup
 docker-compose.override.yml
 .idea
+__pycache__

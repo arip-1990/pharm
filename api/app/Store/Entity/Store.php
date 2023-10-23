@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
  *
+ * @property ?Company $company
  * @property ?Location $location
  * @property Offer[] $offers
  */
@@ -82,5 +83,10 @@ class Store extends Model
     public function location(): BelongsTo
     {
         return $this->belongsTo(Location::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 }

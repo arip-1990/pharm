@@ -116,6 +116,11 @@ class Helper
 
     public static function trimPrefixCity(string $city): ?string
     {
-        return preg_replace('/^(г|пос|с)[. ]/', '', trim($city));
+        return preg_replace('/^(г|пос|мкр|пгт|с)[. ]+/', '', trim($city));
+    }
+
+    public static function trimPrefixStreet(string $street): ?string
+    {
+        return preg_replace('/^(пр|ул|д)[. ]+/', '', trim($street));
     }
 }

@@ -39,8 +39,6 @@ class StoreCommand extends Command
             $startTime = null;
         }
 
-
-
         return self::SUCCESS;
     }
 }

@@ -1,5 +1,6 @@
-from aiogram_dialog import Window
-from aiogram_dialog.widgets.kbd import Button
+from aiogram_dialog import Dialog, Window
+from aiogram_dialog.widgets.kbd import Button, Group
+from aiogram_dialog.widgets.text import Const, Format
 from aiogram.fsm.state import StatesGroup, State
 
 class MyState(StatesGroup):
@@ -8,8 +9,18 @@ class MyState(StatesGroup):
     search_prompt = State()
 
 
-main_window = Window(
-    Const("Hello, unknown person"),  # just a constant text
-    Button(Const("Useless button"), id="nothing"),  # button with text and id
-    state=MySG.main,  # state is used to identify window between dialogs
+group = Group(
+    Button(Const("Выгрузка данных на сайт"), id="import"),
+    Button(Const("Обновление индексов поиска"), id="search"),
+    width=2
+)
+
+
+dialog = Dialog(
+    Window(
+        Format("Привет, {event.from_user.full_name}!"),
+        Format("Ваш ID: {event.from_user.id}"),
+        group,
+        state=MyState.main
+    ),
 )

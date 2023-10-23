@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     CHANNEL: int = -1001619975317
     APP_ENV: Optional[str] = 'prod'
     BOT_TOKEN: SecretStr
-    REDIS_HOST: RedisDsn = 'redis://localhost'
+    REDIS_HOST: str = 'redis://localhost'
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
