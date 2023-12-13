@@ -15,11 +15,11 @@ readonly class OrderSendListener implements ShouldQueue
 
     public function handle(OrderSend $event): void
     {
-        $queueClient = Redis::connection('bot')->client();
+//        $queueClient = Redis::connection('bot')->client();
         $order = $event->order;
         $orderNumber = config('data.orderStartNumber') + $order->id;
 
-        if (!$this->sender->check($order))
+        if (!$this->sender->checkOrder($order))
             return;
 
         try {
@@ -34,10 +34,10 @@ readonly class OrderSendListener implements ShouldQueue
         catch (\Exception $e) {
             $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
 
-            $queueClient->publish('bot:error', json_encode([
-                'file' => self::class . ' (' . $e->getLine() . ')',
-                'message' => $e->getMessage()
-            ], JSON_UNESCAPED_UNICODE));
+//            $queueClient->publish('bot:error', json_encode([
+//                'file' => self::class . ' (' . $e->getLine() . ')',
+//                'message' => $e->getMessage()
+//            ], JSON_UNESCAPED_UNICODE));
 
             throw new OrderException($e->getMessage());
         } finally {

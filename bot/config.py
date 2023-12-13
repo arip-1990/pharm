@@ -1,6 +1,5 @@
 from typing import Optional
-
-from pydantic import SecretStr, RedisDsn
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 

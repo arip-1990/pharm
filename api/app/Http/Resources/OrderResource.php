@@ -9,22 +9,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
 {
+    public static array $orderGroups = [];
+
     public function toArray($request): array
     {
         /** @var Order $this */
-        if ($this->user) {
-            $customer = [
-                'name' => $this->user->first_name,
-                'phone' => Helper::formatPhone($this->user->phone, true),
-                'email' => $this->user->email
-            ];
-        }
-        else {
-            $customer = [
-                'name' => $this->name,
-                'phone' => Helper::formatPhone($this->phone, true),
-                'email' => $this->email
-            ];
+        $transfer = null;
+        if ($this->group and !in_array($this->order_group_id, self::$orderGroups)) {
+            self::$orderGroups[] = $this->order_group_id;
+            $transfer = new OrderResource($this->group->orders()->firstWhere('id', '!=', $this->id));
         }
 
         return [
@@ -37,7 +30,11 @@ class OrderResource extends JsonResource
             'cancel_reason' => $this->cancel_reason,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
-            'customer' => $customer,
+            'customer' => [
+                'name' => $this->user?->first_name ?? $this->name,
+                'phone' => Helper::formatPhone($this->user?->phone ?? $this->phone, true),
+                'email' => $this->user?->email ?? $this->email
+            ],
             'store' => new StoreResource($this->store),
             'statuses' => $this->statuses->map(fn(Status $status) => [
                 'value' => $status->value,
@@ -46,7 +43,9 @@ class OrderResource extends JsonResource
             ]),
             'platform' => $this->platform,
             'items' => OrderItemResource::collection($this->items),
-            'transfer' => ($this->group and $this->delivery_id == 2) ? new OrderResource($this->group->orders()->firstWhere('id', '!=', $this->id)) : null
+            'transfer' => $transfer,
+            'group_id' => $this->order_group_id,
+            'delivery_id' => $this->delivery_id
         ];
     }
 }

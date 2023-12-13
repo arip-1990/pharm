@@ -2,9 +2,10 @@
 
 namespace App\Console\Commands\Order;
 
+use App\Models\Status\Platform;
 use App\Order\SenderOrderData;
 use Illuminate\Support\Collection;
-use App\Order\Entity\{Order, OrderGroup, OrderItem, Payment};
+use App\Order\Entity\{Order, OrderGroup, OrderItem};
 use App\Order\Entity\Status\{OrderStatus, OrderState};
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -19,19 +20,19 @@ class SendCommand extends Command
     public function handle(SenderOrderData $sender): int
     {
         preg_match('/(\d+)?([m|d])?/i', $this->argument('date'), $matches);
-        $redisClient = Redis::connection('bot')->client();
+//        $redisClient = Redis::connection('bot')->client();
         try {
             $number = $matches[1] ?: 1;
             $subDate = strtolower($matches[2] ?? 'm') === 'd' ? Carbon::now()->subDays($number) : Carbon::now()->subMinutes($number);
-            $this->orders = Order::where('created_at', '>=', $subDate)->orderBy('created_at')->get();
+            $this->orders = Order::where('created_at', '>=', $subDate)->whereNot('platform', Platform::WEB)->orderBy('created_at')->get();
 
             $findOrders = [];
             while ($order = $this->orders->shift()) {
-                if (in_array($order->id, $findOrders) or !$sender->check($order))
+                if (in_array($order->id, $findOrders) or !$sender->checkOrder($order))
                     continue;
 
                 if (!$order2 = $this->findOrderGroup($order)) {
-                    if (Carbon::now()->diffInMinutes($order->created_at) >= 1) {
+                    if (Carbon::now()->diffInSeconds($order->created_at) >= 30) {
                         $order->sent();
                         $order->save();
                     }
@@ -40,7 +41,7 @@ class SendCommand extends Command
                 }
 
                 $findOrders[] = $order2->id;
-                if (!$sender->check($order2))
+                if (!$sender->checkOrder($order2))
                     continue;
 
                 $tmpOrder = ($order->delivery_id === 2) ? $this->unionOrders($order, $order2) : $this->unionOrders($order2, $order);
@@ -68,10 +69,10 @@ class SendCommand extends Command
                     $order->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
                     $order2->changeStatusState(OrderStatus::STATUS_SEND, OrderState::STATE_ERROR);
 
-                    $redisClient->publish('bot:error', json_encode([
-                        'file' => self::class . ' (' . $e->getLine() . ')',
-                        'message' => $e->getMessage()
-                    ], JSON_UNESCAPED_UNICODE));
+//                    $redisClient->publish('bot:error', json_encode([
+//                        'file' => self::class . ' (' . $e->getLine() . ')',
+//                        'message' => $e->getMessage()
+//                    ], JSON_UNESCAPED_UNICODE));
                 }
                 finally {
                     $order->save();
@@ -79,10 +80,10 @@ class SendCommand extends Command
                 }
             }
         } catch (\Exception $e) {
-            $redisClient->publish('bot:error', json_encode([
-                'file' => self::class . ' (' . $e->getLine() . ')',
-                'message' => $e->getMessage()
-            ], JSON_UNESCAPED_UNICODE));
+//            $redisClient->publish('bot:error', json_encode([
+//                'file' => self::class . ' (' . $e->getLine() . ')',
+//                'message' => $e->getMessage()
+//            ], JSON_UNESCAPED_UNICODE));
 
             return self::FAILURE;
         }
@@ -95,12 +96,10 @@ class SendCommand extends Command
         $newOrder = clone $pickupOrder;
         $newOrderItems = clone $pickupOrder->items;
         foreach ($bookingOrder->items as $item) {
-            if ($newItem = $newOrderItems->first(fn(OrderItem $item2) => $item2->product_id === $item->product_id)) {
+            if ($newItem = $newOrderItems->first(fn(OrderItem $item2) => $item2->product_id === $item->product_id))
                 $newItem->quantity += $item->quantity;
-            }
-            else {
+            else
                 $newOrderItems->add($item);
-            }
         }
 
         $newOrder->items = $newOrderItems;
@@ -112,8 +111,8 @@ class SendCommand extends Command
     private function findOrderGroup(Order $order): ?Order
     {
         return $this->orders->first(fn(Order $item) => (
-            $item->id != $order->id and $item->phone === $order->phone and $item->store_id === $order->store_id
-            and $item->created_at->diffInMinutes($order->created_at) < 1
+            $order->id != $item->id and $order->phone === $item->phone and $order->store_id === $item->store_id
+            and $order->created_at->diffInSeconds($item->created_at) < 10
         ));
     }
 }

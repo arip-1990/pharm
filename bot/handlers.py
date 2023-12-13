@@ -1,6 +1,50 @@
-import config
-import text
-import utils
+import logging
+
+from aiogram import Router, F
+from aiogram.types import Message, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.filters import Command, CommandStart
+from aiogram.fsm.context import FSMContext
+
+from aiogram_dialog import DialogManager, StartMode
+
+from states import Main, Update
+
+
+handlers_router = Router()
+
+
+@handlers_router.message(CommandStart())
+async def start(message: Message, dialog_manager: DialogManager):
+    await dialog_manager.start(Main.START, mode=StartMode.RESET_STACK)
+
+
+
+
+@handlers_router.message(Command("cancel"))
+@handlers_router.message(F.text.casefold() == "cancel")
+async def cancel_handler(message: Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state is None:
+        return
+
+    logging.info("Cancelling state %r", current_state)
+
+    await state.clear()
+    await message.answer("Cancelled.", reply_markup=ReplyKeyboardRemove())
+
+
+@handlers_router.message(F.text.casefold() == "обновление данных")
+async def update_handler(message: Message, dialog_manager: DialogManager):
+    logging.info(message.text)
+    logging.info(message.text.casefold())
+    await dialog_manager.start(Update.DATA)
+
+
+# @handlers_router.message(F.text.casefold() == "обновление индекса")
+async def search_handler(message: Message, dialog_manager: DialogManager):
+    logging.info(message.text)
+    logging.info(message.text.casefold())
+    # await dialog_manager.start(Update.SEARCH, mode=StartMode.RESET_STACK)
 
 
 # @router.callback_query(F.data == "import")

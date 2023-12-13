@@ -52,26 +52,20 @@ class UpdateController extends Controller
             $order1cId = (int)$xml->order->id;
             $status = OrderStatus::from((string)$xml->order->status);
             $order = $this->repository->getById($order1cId - config('data.orderStartNumber'));
+            $group = OrderGroup::where('order_1c_id', $order1cId)->first() ?? $order->group;
+            $order->delivery_id = 2;
 
             if (isset($xml->order_transfer->id)) {
-                if (!$group = OrderGroup::where('order_1c_id', $order1cId)->first()) {
+                if (!$group) {
                     $group = OrderGroup::create(['order_1c_id' => $order1cId]);
-                    $order->delivery_id = 2;
-
                     $order2 = $this->createNewOrder($order);
-
-                    $group->orders()->saveMany([$order, $order2]);
                 }
-                else {
-                    $order = $group->orders->firstWhere('delivery_id', 2) ?? $group->orders->first();
-                    if (!$order2 = $group->orders->firstWhere('id', '!=', $order->id)) {
-                        $order2 = $this->createNewOrder($order);
-                        $group->orders()->save($order2);
-                    }
-
-                    $order->update(['delivery_id' => 2]);
-                    $order2->update(['delivery_id' => 3]);
+                elseif (!$order2 = $group->orders->firstWhere('id', '!=', $order->id)) {
+                    $order2 = $this->createNewOrder($order);
                 }
+
+                $order2->delivery_id = 3;
+                $group->orders()->saveMany([$order, $order2]);
 
                 foreach ($xml->order_transfer->products as $item) {
                     $price = (float)$item->product->price;
@@ -90,6 +84,7 @@ class UpdateController extends Controller
                         }
 
                         $order2->items()->save($orderItem2);
+                        $orderItem2->save();
                     }
                     elseif ($quantity != $orderItem2->quantity) {
                         if ($orderItem) {
@@ -103,14 +98,27 @@ class UpdateController extends Controller
                     }
                 }
 
-                $order->refresh();
-                $order2->refresh();
-
                 $this->repository->addStatus($order2, OrderStatus::from((string)$xml->order_transfer->status));
                 $this->repository->changeState($order2);
 
                 $order2->recalculationCost();
+
+                $order->save();
                 $order2->save();
+            }
+            elseif ($group) {
+                if ($order2 = $group->orders->firstWhere('id', '!=', $order->id)) {
+                    foreach ($order2->items as $item) {
+                        if (!$orderItem = $order->items->firstWhere('product_id', $item->product_id))
+                            $order->items()->save($item);
+
+                        $orderItem->update(['quantity' => $orderItem->quantity + $item->quantity]);
+                    }
+
+                    $order->save();
+                    $order2->forceDelete();
+                    $group->delete();
+                }
             }
 
             try {

@@ -1,19 +1,17 @@
 import asyncio
 import logging
 
-from aiogram import Router, Bot, Dispatcher
-from aiogram.types import Message
-from aiogram.filters import CommandStart
-from aiogram.enums.parse_mode import ParseMode
+from aiogram import Bot, Dispatcher
+from aiogram.types import Message, ErrorEvent
+from aiogram.filters import CommandStart, ExceptionTypeFilter
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram_dialog import DialogManager, StartMode, setup_dialogs
 
+from aiogram_dialog import DialogManager, StartMode, ShowMode, setup_dialogs
+from aiogram_dialog.api.exceptions import UnknownIntent, UnknownState
+
+from dialogs import dialog
 from config import config
-from states import MyState, dialog
-
-
-bot = Bot(token=config.BOT_TOKEN.get_secret_value(), parse_mode=ParseMode.HTML)
-router = Router()
+from states import Main
 
 
 # async def listen_messages():
@@ -46,24 +44,41 @@ router = Router()
 #                 await bot.send_message(config.ADMIN_ID, e)
 
 
-
-@router.message(CommandStart())
 async def start(message: Message, dialog_manager: DialogManager):
-    # await message.answer(text.greet.format(user_name=message.from_user.full_name, user_id=message.from_user.id))
-    # Important: always set `mode=StartMode.RESET_STACK` you don't want to stack dialogs
-    await dialog_manager.start(MyState.main, mode=StartMode.RESET_STACK)
+    await dialog_manager.start(Main.START, mode=StartMode.RESET_STACK)
 
+
+async def on_unknown_intent(event: ErrorEvent, dialog_manager: DialogManager):
+    """Example of handling UnknownIntent Error and starting new dialog."""
+    logging.error("Restarting dialog: %s", event.exception)
+    await dialog_manager.start(Main.START, mode=StartMode.RESET_STACK, show_mode=ShowMode.SEND)
+
+
+async def on_unknown_state(event: ErrorEvent, dialog_manager: DialogManager):
+    """Example of handling UnknownState Error and starting new dialog."""
+    logging.error("Restarting dialog: %s", event.exception)
+    await dialog_manager.start(Main.START, mode=StartMode.RESET_STACK, show_mode=ShowMode.SEND)
+
+
+def setup_dp():
+    dp = Dispatcher(storage=MemoryStorage())
+    dp.message.register(start, CommandStart())
+    dp.errors.register(on_unknown_intent, ExceptionTypeFilter(UnknownIntent))
+    dp.errors.register(on_unknown_state, ExceptionTypeFilter(UnknownState))
+    dp.include_router(dialog)
+    setup_dialogs(dp)
+
+    return dp
 
 
 async def main():
-    dp = Dispatcher(storage=MemoryStorage())
-    dp.include_router(dialog)
-    dp.include_router(router)
-    setup_dialogs(dp)
+    logging.basicConfig(level=logging.INFO)
+    bot = Bot(token=config.BOT_TOKEN.get_secret_value())
+    dp = setup_dp()
+
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

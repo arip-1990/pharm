@@ -26,7 +26,7 @@ readonly class SendDataTo1C implements SenderOrderData
         return $response->getBody()->getContents();
     }
 
-    public function check(Order $order): bool
+    public function checkOrder(Order $order): bool
     {
         return !($order->isSent() or $order->isStatusSuccess(OrderStatus::STATUS_PROCESSING) or ($order->payment->isType(Payment::TYPE_CARD) and !$order->isPay()));
     }
