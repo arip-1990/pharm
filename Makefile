@@ -1,14 +1,14 @@
-init: init-ci panel-ready client-ready
-init-ci: docker-down-clear panel-clear client-clear api-clear-storage \
+init: docker-down-clear init-ci panel-ready client-ready
+
+init-ci: panel-clear client-clear api-clear \
 	docker-pull docker-build docker-up \
 	panel-init client-init api-init
+
 up: docker-up
 down: docker-down
 restart: down up
 
-rebuild: panel-clear client-clear api-clear docker-down \
-	docker-pull docker-build docker-up \
-	panel-init client-init api-init panel-ready client-ready
+rebuild: docker-down init-ci panel-ready client-ready
 
 update-deps: api-composer-update panel-yarn-upgrade client-yarn-upgrade restart
 
@@ -58,10 +58,8 @@ client-ready:
 	docker run --rm -v ${PWD}/client:/app -w /app alpine touch .ready
 
 
-api-clear: api-optimize api-clear-storage
-
-api-clear-storage:
-	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf storage/logs/*'
+api-clear:
+	docker run --rm -v ${PWD}/api:/app -w /app alpine sh -c 'rm -rf storage/framework/cache/data/* storage/framework/sessions/* storage/framework/testing/* storage/framework/views/* storage/logs/*'
 
 api-init: api-permissions api-composer-install api-wait-db api-migrations
 
@@ -82,9 +80,6 @@ api-migrations:
 
 api-backup:
 	docker compose run --rm api-postgres-backup
-
-api-optimize:
-	docker compose run --rm api-php-cli php artisan optimize:clear
 
 
 build: build-client build-panel build-bot build-api

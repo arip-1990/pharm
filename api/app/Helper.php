@@ -63,24 +63,16 @@ class Helper
         return $str;
     }
 
-    public static function formatPhone(?string $phone, bool $mobile = false): string
+    public static function formatPhone(?string $phone): ?string
     {
-        $tmp = '';
-        if ($phone) {
-            if ($mobile) {
-                $phone = substr_replace($phone, ') ' . substr($phone, 4), 4);
-                $phone = substr_replace($phone, ' (' . substr($phone, 1), 1);
-                $phone = substr_replace($phone, '-' . substr($phone, -4), -4);
-                $phone = substr_replace($phone, '-' . substr($phone, -2), -2);
-                $tmp = '+' . $phone;
-            }
-            else {
-                $phone = str_replace('8722', ' (8722) ', $phone);
-                $tmp = '+' . substr_replace($phone, '-' . substr($phone, -3), -3);
-            }
-        }
+        if (!$phone) return null;
 
-        return $tmp;
+        $phone = explode('|', $phone);
+        $patterns = ['/^7(\d{3})(\d{3})(\d{2})(\d{2})$/', '+7 ($1) $2-$3-$4'];
+        if (strpos($phone[0], '8722', 1) === 1) $patterns = ['/^7(8722)(\d{3})(\d{3})$/', '+7 ($1) $2-$3'];
+        if (!empty($phone[1])) $patterns[1] = $patterns[1] . ', доб.' . $phone[1];
+
+        return preg_replace($patterns[0], $patterns[1], $phone[0]);
     }
 
     #[ArrayShape(['lon' => "float", 'lat' => "float"])]

@@ -32,7 +32,7 @@ class OrderResource extends JsonResource
             'updatedAt' => $this->updated_at,
             'customer' => [
                 'name' => $this->user?->first_name ?? $this->name,
-                'phone' => Helper::formatPhone($this->user?->phone ?? $this->phone, true),
+                'phone' => Helper::formatPhone($this->user?->phone ?? $this->phone),
                 'email' => $this->user?->email ?? $this->email
             ],
             'store' => new StoreResource($this->store),

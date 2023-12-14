@@ -16,7 +16,7 @@ class UserResource extends JsonResource
             'lastName' => $this['LastName'],
             'middleName' => $this['MiddleName'],
             'email' => $this['EmailAddress'],
-            'phone' => Helper::formatPhone($this['MobilePhone'], true),
+            'phone' => Helper::formatPhone($this['MobilePhone']),
             'gender' => $this['GenderCode'],
             'birthDate' => Carbon::parse($this['BirthDate']),
             'emailVerified' => $this['EmailVerified'],

@@ -9,9 +9,9 @@ use App\UseCases\PosService;
 use Illuminate\Http\JsonResponse;
 use Ramsey\Uuid\Uuid;
 
-class AuthController
+readonly class AuthController
 {
-    public function __construct(private readonly PosService $posService) {}
+    public function __construct(private PosService $posService) {}
 
     public function handle(AuthRequest $request): JsonResponse
     {
@@ -53,7 +53,7 @@ class AuthController
 
         return new JsonResponse(['otp' => [
             'attemptsLeft' => 1,
-            'message' => 'На номер ' . Helper::formatPhone($user->phone, true) . ' отправлено сообщение с кодом'
+            'message' => 'На номер ' . Helper::formatPhone($user->phone) . ' отправлено сообщение с кодом'
         ]]);
     }
 }

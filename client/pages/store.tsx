@@ -28,14 +28,18 @@ const Store: FC = () => {
     else refetch();
   }, [city]);
 
-  const getDefaultGenerator = useCallback(() => [
-    { href: '/store', text: "Точки самовывоза" }
-  ], []);
+  const getDefaultGenerator = useCallback(
+    () => [{ href: "/store", text: "Точки самовывоза" }],
+    []
+  );
 
   let points = [];
 
   return (
-    <Layout title="Точки самовывоза - Сеть аптек 120/80" description="Точки самовывоза.">
+    <Layout
+      title="Точки самовывоза - Сеть аптек 120/80"
+      description="Точки самовывоза."
+    >
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Page title="Точки самовывоза">
@@ -57,10 +61,10 @@ const Store: FC = () => {
                 className="col-12 col-md-4 col-lg-3 text-center"
                 dangerouslySetInnerHTML={{ __html: item.schedule }}
               />
-              <div className="col-12 col-md-3 col-lg-2 text-center text-md-end">
+              <div className="col-12 col-md-3 col-lg-3 text-center">
                 {item.phone}
               </div>
-              <div className="col-12 col-lg-2 d-flex justify-content-end position-relative">
+              <div className="col-12 col-lg-1 d-flex justify-content-end position-relative">
                 <Link href={`/store/${item.slug}`}>
                   <a className="btn btn-sm btn-primary">Посмотреть</a>
                 </Link>
