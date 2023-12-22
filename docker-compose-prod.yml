@@ -211,6 +211,32 @@ services:
       restart_policy:
         condition: none
 
+  api-sender:
+    image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
+    environment:
+      APP_NAME: Сеть аптек 120/80
+      APP_URL: https://api.120на80.рф
+      DB_CONNECTION: pgsql
+      DB_HOST: api-db
+      DB_DATABASE: app
+      DB_USERNAME: app
+      DB_PASSWORD: ${DB_PASSWORD}
+      FILESYSTEM_DRIVER: public
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      ELASTICSEARCH_HOST: elastic
+    command: sh -c 'wait-for-it redis:6379 -t 60 && wait-for-it elastic:9200 -t 60 && php artisan order:send'
+    volumes:
+      - uploads:/app/storage/app/public
+    deploy:
+      labels:
+        - swarm.cronjob.enable=true
+        - swarm.cronjob.schedule=* * * * *
+        - swarm.cronjob.skip-running=true
+      replicas: 0
+      restart_policy:
+        condition: none
+
   api-scheduler:
     image: ${REGISTRY}/pharm-api-php-cli:${IMAGE_TAG}
     environment:

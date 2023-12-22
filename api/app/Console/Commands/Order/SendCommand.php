@@ -112,7 +112,7 @@ class SendCommand extends Command
     {
         return $this->orders->first(fn(Order $item) => (
             $order->id != $item->id and $order->phone === $item->phone and $order->store_id === $item->store_id
-            and $order->created_at->diffInSeconds($item->created_at) < 10
+            and $order->created_at->diffInSeconds($item->created_at) < 15
         ));
     }
 }

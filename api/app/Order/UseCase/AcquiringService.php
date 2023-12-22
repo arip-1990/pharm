@@ -7,9 +7,9 @@ use App\Order\Entity\OrderRepository;
 use GuzzleHttp\Client;
 use JetBrains\PhpStorm\ArrayShape;
 
-class AcquiringService
+readonly class AcquiringService
 {
-    public function __construct(private readonly Client $client, private readonly OrderRepository $repository) {}
+    public function __construct(private Client $client, private OrderRepository $repository) {}
 
     #[ArrayShape(['paymentId' => "string", 'paymentUrl' => "string"])]
     public function sberPay(int $orderId, string $successUrl = null, string $failUrl = null): array
