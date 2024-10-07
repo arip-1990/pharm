@@ -13,6 +13,7 @@ import { bonusApi } from "./lib/bonusService";
 import { couponApi } from "./lib/couponService";
 import { bannerApi } from "./lib/bannerService";
 import { productApi } from "./lib/productService";
+import {kidsPhotoApi} from "./lib/kidsPhotoService";
 
 const makeStore = () =>
   configureStore({
@@ -29,6 +30,7 @@ const makeStore = () =>
       [couponApi.reducerPath]: couponApi.reducer,
       [bannerApi.reducerPath]: bannerApi.reducer,
       [productApi.reducerPath]: productApi.reducer,
+      [kidsPhotoApi.reducerPath]: kidsPhotoApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ serializableCheck: false })
@@ -43,7 +45,8 @@ const makeStore = () =>
         .concat(bonusApi.middleware)
         .concat(couponApi.middleware)
         .concat(bannerApi.middleware)
-        .concat(productApi.middleware),
+        .concat(productApi.middleware)
+        .concat(kidsPhotoApi.middleware),
     devTools: true,
   });
 

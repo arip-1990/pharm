@@ -119,6 +119,14 @@ services:
       MAIL_FROM_NAME: Сеть аптек 120/80
       FILESYSTEM_DISK: public
       ELASTICSEARCH_HOST: elastic
+
+      AWS_ACCESS_KEY_ID: 49TVWG22M33V020AQGPL
+      AWS_SECRET_ACCESS_KEY: xRG2ZlM0fYNITpEjv0DqNiw1g8VpYPoFDLa1gJl2
+      AWS_DEFAULT_REGION: ru-1
+      AWS_BUCKET: b54c6f4d-e3a6020f-0124-4c05-9376-48c13c25210f
+      AWS_URL: AWS_URL=https://s3.timeweb.cloud/b54c6f4d-e3a6020f-0124-4c05-9376-48c13c25210f
+      AWS_ENDPOINT: https://s3.timeweb.cloud
+
     volumes:
       - ./api:/app
       - uploads:/app/storage/app/public
@@ -157,7 +165,7 @@ services:
     volumes:
       - api-db:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "5432:5432"
 
   mailer:
     image: mailhog/mailhog

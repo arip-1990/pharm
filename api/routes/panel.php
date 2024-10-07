@@ -14,6 +14,12 @@ Route::prefix('v1/panel')->group(function () {
     });
 
     Route::middleware(['auth', 'panel'])->group(function () {
+
+        Route::prefix('kids')->group(function (){
+            Route::get("/");
+        });
+
+
         Route::prefix('user')->group(function () {
             Route::get('/', [V1\Panel\User\IndexController::class, 'handle']);
             Route::get('/{user}', [V1\Panel\User\ShowController::class, 'handle']);

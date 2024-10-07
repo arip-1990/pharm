@@ -25,6 +25,21 @@ use Illuminate\Support\Facades\Route;
 //Route::get('/get-apk-link', fn() => new JsonResponse(Storage::url('files/120на80.apk')));
 
 Route::prefix('v1')->group(function () {
+
+    Route::prefix('kids')->group(function (){
+        Route::prefix('/photo')->group(function (){
+            Route::post('/add', [App\Http\Controllers\V1\PhotoKids\AddPhotoController::class, 'index']);
+            Route::get('/{age}', [App\Http\Controllers\V1\PhotoKids\GetPhotoController::class, 'index']);
+
+
+            Route::prefix('likes')->group(function (){
+                Route::post('/{photo}', [App\Http\Controllers\V1\PhotoKids\AddLikeController::class, 'index']);
+                Route::get('/{user}', [App\Http\Controllers\V1\PhotoKids\UserLikePhotoController::class, 'index']);
+
+            });
+        });
+    });
+
     Route::prefix('city')->group(function () {
         Route::get('/', [V1\City\IndexController::class, 'handle']);
         Route::post('/', [V1\City\StoreController::class, 'handle']);

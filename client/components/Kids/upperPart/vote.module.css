@@ -1,0 +1,68 @@
+.votingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 40px;
+    position: relative;
+    flex-direction: column;
+}
+
+.leftSide {
+    max-width: 100%; /* Левая часть занимает 40% ширины */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rightSide {
+    max-width: 25%; /* Правая часть занимает 55% ширины */
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.cloudImage {
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.textSection {
+    text-align: left;
+    min-width: 55%;
+}
+
+
+
+.participateButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 20px;
+}
+
+
+
+/* Адаптивные стили для маленьких экранов */
+@media (max-width: 768px) {
+    .votingContainer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .leftSide, .rightSide {
+        flex-direction: column;
+        max-width: 100%; /* Элементы занимают всю ширину */
+        padding: 0;
+    }
+
+
+
+    .participateButton {
+        width: 100%;
+    }
+}

@@ -89,6 +89,23 @@ const Navbar: FC = () => {
               </a>
             </Link>
           </Nav.Item>
+
+          <Nav.Item
+              className="text-md-center mx-2"
+              style={{ whiteSpace: "nowrap", overflowX: "hidden" }}
+          >
+            <Link href="/kids">
+              <a
+                  className={classNames("nav-link", {
+                    active: router.pathname.startsWith("/kids"),
+                  })}
+                  tabIndex={0}
+              >
+                <i className="icon-gift" /> Конкурс детского рисунка
+              </a>
+            </Link>
+          </Nav.Item>
+
         </Nav>
       </BaseNavbar.Collapse>
     </BaseNavbar>

@@ -17,6 +17,8 @@ import Moderation from "./pages/product/moderation";
 import MobileOrder from "./pages/mobile/Order";
 import Statistic from "./pages/product/Statistic";
 import Banner from "./pages/settings/Banner";
+import ActivePhoto from "./pages/kids/ActivePhoto";
+import NotActivePhoto from "./pages/kids/NotActivePhoto";
 
 const Loader = () => <Spin size="large" indicator={<LoadingOutlined spin />} />;
 
@@ -63,6 +65,12 @@ const App: FC = () => {
               {/*<Route index element={<Banner />} />*/}
               <Route path="banner" element={<Banner />} />
             </Route>
+
+            <Route path="kids">
+              <Route path="PhotoActive" element={<ActivePhoto />}/>
+              <Route path="PhotoNotActive" element={<NotActivePhoto />}/>
+            </Route>
+
           </Route>
         ) : (
           <Route path="/login" element={<Login />} />

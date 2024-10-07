@@ -1,0 +1,149 @@
+.firstImageContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.firstImage {
+    width: 80%;
+    display: flex;
+    justify-content: center;
+}
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px; /* Отступы между элементами */
+    margin: 20px 0;
+}
+
+.categoriesImg {
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    flex: 1 1 calc(25% - 20px); /* Ширина для 4 колонок на больших экранах */
+    text-align: center;
+    min-width: 150px;
+    max-width: 200px;
+    cursor: pointer;
+}
+
+
+.ParticipateYellow {
+    display: flex;
+    justify-content: center; /* Центровка по горизонтали */
+    align-items: center; /* Центровка по вертикали, если есть родительский контейнер с фиксированной высотой */
+    margin: 10px 0 50px 0; /* Отступы сверху и снизу */
+    width: 300px; /* Фиксированная ширина кнопки */
+    height: 50px; /* Фиксированная высота кнопки */
+    cursor: pointer;
+}
+
+.ParticipateYellow img {
+    max-width: 100%; /* Картинка подстраивается по ширине контейнера */
+    max-height: 100%; /* Картинка не выходит за границы контейнера */
+}
+
+/* этот блок принадлежит призам */
+
+
+.prizesContainer {
+    display: flex;
+    justify-content: space-between;
+    /*align-items: center;*/
+    flex-wrap: wrap; /* Чтобы элементы не выходили за пределы контейнера на маленьких экранах */
+    margin: 20px;
+    padding: 10px;
+}
+/* Левая часть с текстом и изображением призов */
+.leftSide {
+    display: flex;
+    flex-direction: column;
+    max-width: 30%; /* Занимает 60% ширины экрана на больших экранах */
+    padding-right: 20px;
+}
+
+.text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-top: 5px;
+    text-align: justify;
+}
+
+.text p {
+    margin: 2px 0 0 1px;
+    font-size: 1.1rem;
+}
+
+/* Правая часть с фото */
+.rightSide {
+    max-width: 65%; /* Занимает 35% ширины экрана на больших экранах */
+    text-align: center;
+}
+
+.rightSide img {
+    width: 100%;
+    height: auto;
+    max-width: 400px; /* Максимальная ширина изображения для больших экранов */
+}
+/* Адаптивные изображения */
+.imageContainer img {
+    width: 100%;
+    height: auto;
+    max-width: 500px; /* Максимальная ширина для больших экранов */
+}
+
+/*конец эблока призов */
+
+@media (max-width: 600px) {
+    .firstImage {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .categories {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .categoriesImg {
+        width: calc(50% - 10px); /* Две кнопки в строке, с учетом отступа */
+        margin-bottom: 10px;
+        padding: 0;
+    }
+
+    .ParticipateYellow img {
+        max-width: 100%; /* Картинка подстраивается по ширине контейнера */
+        max-height: 100%; /* Картинка не выходит за границы контейнера */
+    }
+
+
+
+
+}
+@media (max-width: 480px) {
+    .text {
+        font-size: 0.9rem; /* Еще меньший текст для мобильных устройств */
+    }
+
+    .rightSide img {
+        max-width: 100%; /* Изображение адаптируется под ширину экрана */
+    }
+}
+
+/* Адаптивная версия для средних экранов */
+@media (max-width: 768px) {
+    .prizesContainer {
+        flex-direction: column; /* Вертикальное расположение на маленьких экранах */
+    }
+
+    .leftSide, .rightSide {
+        max-width: 100%; /* Оба блока занимают всю ширину */
+        padding-right: 0;
+    }
+
+    .text {
+        font-size: 1rem; /* Уменьшаем размер текста для средних экранов */
+    }
+}

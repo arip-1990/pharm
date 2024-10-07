@@ -1,0 +1,37 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    max-width: 80%; /* Ограничиваем ширину модального окна */
+    max-height: 80%; /* Ограничиваем высоту модального окна */
+    overflow: auto; /* Включаем прокрутку, если контент превышает высоту */
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modalImage {
+    max-width: 50%;
+    height: auto;
+}

@@ -33,6 +33,7 @@ module.exports = {
       "api.pharm.test",
       "api.120на80.рф",
       "api.xn--12080-6ve4g.xn--p1ai",
+      "s3.timeweb.cloud"
     ],
     // formats: ['image/webp', 'image/jpeg', 'image/png', 'image/gif'],
   },

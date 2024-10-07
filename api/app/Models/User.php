@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -132,4 +133,15 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Grant::class);
     }
+
+    public function photo_kids():object
+    {
+        return $this->hasOne(PhotoKids::class, 'user_id', 'id');
+    }
+
+    public function likesPhoto(): BelongsToMany
+    {
+        return $this->belongsToMany(PhotoKids::class, 'likes', 'user_id', 'photo_id');
+    }
+
 }

@@ -116,6 +116,35 @@ const MenuItems: MenuProps["items"] = [
       },
     ],
   },
+  {
+    key: "kids",
+    label: "Рисунки детей",
+    icon: <SettingOutlined />,
+    children: [
+      {
+        key: "activePhoto",
+        label: (
+          <Link
+            to={{ pathname: "/kids/PhotoActive" }}
+            state={{ menuItem: "settingBanner" }}
+          >
+            Активные
+          </Link>
+        ),
+      },
+      {
+        key: "NotActivePhoto",
+        label: (
+          <Link
+            to={{ pathname: "/kids/PhotoNotActive" }}
+            state={{ menuItem: "settingBanner" }}
+          >
+            Неактивные
+          </Link>
+        ),
+      },
+    ],
+  },
 ];
 
 interface Props {
