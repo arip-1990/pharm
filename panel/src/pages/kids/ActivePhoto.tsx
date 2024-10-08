@@ -1,5 +1,6 @@
 import React from 'react';
 import {Card, Col, Row} from "antd";
+import KidsCard from "../../components/Kids/KidsCard";
 
 const ActivePhoto = () => {
 
@@ -14,7 +15,8 @@ const ActivePhoto = () => {
             <h3>Активные фотографии</h3>
           }
         >
-          <h1>Hello world</h1>
+          <KidsCard published={true} />
+
         </Card>
       </Col>
     </Row>

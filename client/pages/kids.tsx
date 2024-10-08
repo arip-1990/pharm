@@ -22,12 +22,12 @@ const Kids = () => {
 
 
     return (
-        <Layout title="Акции - Сеть аптек 120/80" description="Акции сайта.">
+        <Layout title="Конкурс детского рисунка 120на80" description="Конкурс">
             <Breadcrumbs getDefaultGenerator={getDefaultGenerator}/>
 
             <Top />
 
-            <Gallery photos={data} age={setAge}/>
+            <Gallery photos={data} setAge={setAge} age={age}/>
 
         </Layout>
     );

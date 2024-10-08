@@ -27,18 +27,24 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
 
     Route::prefix('kids')->group(function (){
+
         Route::prefix('/photo')->group(function (){
             Route::post('/add', [App\Http\Controllers\V1\PhotoKids\AddPhotoController::class, 'index']);
             Route::get('/{age}', [App\Http\Controllers\V1\PhotoKids\GetPhotoController::class, 'index']);
 
-
             Route::prefix('likes')->group(function (){
                 Route::post('/{photo}', [App\Http\Controllers\V1\PhotoKids\AddLikeController::class, 'index']);
                 Route::get('/{user}', [App\Http\Controllers\V1\PhotoKids\UserLikePhotoController::class, 'index']);
-
             });
         });
+
+        Route::prefix('user')->group(function (){
+            Route::get('/{id}', [App\Http\Controllers\V1\PhotoKids\UserPhotoController::class, 'index']);
+            Route::get('/count/children/{id}', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'index']);
+            Route::post('/add/children', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'show']);
+        });
     });
+
 
     Route::prefix('city')->group(function () {
         Route::get('/', [V1\City\IndexController::class, 'handle']);

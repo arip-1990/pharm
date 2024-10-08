@@ -34,8 +34,7 @@ const FormModal = ({ open }: any) => {
                         formData.append('birthdate', values.birthdate);
                         formData.append('first_name', values.first_name);
                         formData.append('last_name', values.last_name);
-                        formData.append('middle_name', values.middle_name);
-                        formData.append('user_id', 'ee374378-12eb-ed11-80cc-001dd8b75065');
+                        formData.append('user_id', '70277a84-013c-ed11-80cb-001dd8b75065');
 
                         try {
                             await uploadPhoto(formData).unwrap();
@@ -104,15 +103,7 @@ const FormModal = ({ open }: any) => {
                                 <label htmlFor="last_name">Фамилия</label>
                             </div>
 
-                            <div className={styles.formField}>
-                                <Field
-                                    id="middle_name"
-                                    name="middle_name"
-                                    placeholder=" "
-                                    className={styles.formikField}
-                                />
-                                <label htmlFor="middle_name">Отчество</label>
-                            </div>
+
 
                             <button type="submit" className={styles.submitButton}>
                                 Загрузить фото

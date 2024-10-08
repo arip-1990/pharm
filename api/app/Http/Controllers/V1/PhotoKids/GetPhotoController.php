@@ -11,6 +11,5 @@ class GetPhotoController extends Controller
     {
         return $age->photos()->with('UsersLikes')->with('age_category')->get();
 
-//        return $age->photos()->with('users_like')->get();
     }
 }

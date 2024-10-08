@@ -10,15 +10,26 @@ import categoryThree from "../../../assets/images/kids/Кнопка_от 3 до 
 import categorySix from "../../../assets/images/kids/Кнопка_от 6 до 8 белая.png"
 import categoryNine from "../../../assets/images/kids/Кнопка_от 9 до 11 белая.png"
 import categoryTwelve from "../../../assets/images/kids/Кнопка_от 12 до 14 белая.png"
-export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, age }) => {
+
+import categoryThreeColor from "../../../assets/images/kids/Кнопка_от 3 до 5 цвет.png"
+import categorySixColor from "../../../assets/images/kids/Кнопка_от 6 до 8 цвет.png"
+import categoryNineColor from "../../../assets/images/kids/Кнопка_от 9 до 11 цвет.png"
+import categoryTwelveColor from "../../../assets/images/kids/Кнопка_от 12 до 14 цвет.png"
+
+export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) => {
 
     const [addLike, {isLoading, error}] = useAddLikeMutation()
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState<{src: string, title: string, author: string, category: string} | null>(null);
     const [idCard, setIdCard] = useState<number | null>(null);
-    const { user } = useAuth();
+    const user = useAuth();
     const {data} = useFetchArrayIdPhotoQuery('ee374378-12eb-ed11-80cc-001dd8b75065')
     const [isOpen, setIsOpen] = useState(false);
+    const [myPhoto, setMyPhoto] = useState(false);
+
+    const category = () => {
+
+    }
 
     const openModal = (src: string, title: string, author: string, category: string) => {
         setSelectedImage({ src, title, author, category });
@@ -51,7 +62,8 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, age }) => {
         }
         if (ids.includes(photo_id)) return true
     }
-
+    //  вот тут не забудь добавить useAuth
+    const filteredPhotos = myPhoto ? photos?.filter((photo: IPhotoKids) => photo.user_id === '70277a84-013c-ed11-80cb-001dd8b75065') : photos;
 
     return (
         <div className={styles_.container}>
@@ -60,30 +72,39 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, age }) => {
             <div className={styles_.category}>
 
                 <div className={styles_.categoryImg}>
-                    <Image src={categoryThree} onClick={() => age(1)}/>
+                    {age == 1 ? <Image src={categoryThreeColor} onClick={() => setAge(1)}/> :
+                        <Image src={categoryThree} onClick={() => setAge(1)}/> }
                 </div>
 
                 <div className={styles_.categoryImg}>
-                    <Image src={categorySix} onClick={() => age(2)}/>
+                    {age == 2 ? <Image src={categorySixColor} onClick={() => setAge(2)}/> :
+                        <Image src={categorySix} onClick={() => setAge(2)}/> }
                 </div>
 
                 <div className={styles_.categoryImg}>
-                    <Image src={categoryNine} onClick={() => age(3)}/>
+                    {age == 3 ? <Image src={categoryNineColor} onClick={() => setAge(3)}/> :
+                        <Image src={categoryNine} onClick={() => setAge(3)}/> }
                 </div>
 
                 <div className={styles_.categoryImg}>
-                    <Image src={categoryTwelve} onClick={() => age(4)}/>
+                    {age == 4 ? <Image src={categoryTwelveColor} onClick={() => setAge(4)}/>:
+                        <Image src={categoryTwelve} onClick={() => setAge(4)}/>}
                 </div>
 
-                {/*<button className={styles_.ageButton} onClick={() => age(2)}>от 6 до 8</button>*/}
-                {/*<button className={styles_.ageButton} onClick={() => age(3)}>от 9 до 11</button>*/}
-                {/*<button className={styles_.ageButton} onClick={() => age(4)}>от 12 до 14</button>*/}
-                <button className={styles_.downloadButton} onClick={() => setIsOpen(true)}>Загрузить фотографию</button>
+                {'user.isAuth' ? myPhoto ?
+                    <button className={styles_.categoryMyPhotosActive}
+                       onClick={() => setMyPhoto(true)}>Мои рисунки</button>
+                    :
+                    <button className={styles_.categoryMyPhotosNotActive}
+                            onClick={() => setMyPhoto(true)}>Мои рисунки</button>
+                   : ''
+                }
+
             </div>
 
             <div className={styles_.grid}>
 
-                {photos?.length != 0 ? photos?.map((photo: IPhotoKids) => {
+                {filteredPhotos?.length !== 0 ? filteredPhotos?.map((photo: IPhotoKids) => {
                     return (
                         <div key={photo.id} className={styles_.card}>
                             <Image
@@ -125,12 +146,19 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, age }) => {
                             </div>
                         </div>
                     )
-                }): 'Фоток пока нет, Будьте первым'}
+                }): 'Фото отсутствует'}
 
             </div>
-
+            {myPhoto ?
+                <div>
+                    <button className={styles_.downloadButton} onClick={() => setIsOpen(true)}>Загрузить фотографию</button>
+                    <button className={styles_.downloadButton} onClick={() => setMyPhoto(false)}>покинуть мои рисунки</button>
+                </div>
+                :
+                ''
+            }
             {isOpen ?
-                <FormModal open={setIsOpen} />:''
+                <FormModal open={setIsOpen}/> : ''
             }
 
             {/* Модальное окно */}

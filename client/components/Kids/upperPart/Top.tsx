@@ -12,12 +12,17 @@ import priz from "../../../assets/images/kids/Призы.png"
 import voteStyle from "./vote.module.css"
 // import hippopotamusVote from "../../../assets/images/kids/Бегемот_голосование.png"
 import vote from "../../../assets/images/kids/Голосование.png"
-
+import FormModal from "../Cards/FormModal";
 
 import hippopotamusVote from "../../../assets/images/kids/бегемот с облаком.png"
+import {useAuth} from "../../../hooks/useAuth";
 const Top = () => {
 
     const [showMore, setShowMore] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
+
+    const auth = useAuth()
+
 
     const texts = [
         '"At vero eos et accusamus et iusto odio"',
@@ -66,14 +71,23 @@ const Top = () => {
             </div>
 
             <div style={{display: "flex", justifyContent: "center"}}>
-                <div className={style.ParticipateYellow}>
-                    <Image src={ParticipateYellow}/>
+                <div className={style.ParticipateYellow} >
+                    {auth.isAuth ?
+                        <>
+                            <Image src={ParticipateYellow} onClick={() => setOpenModal(true)}/>
+                        </>
+                        :
+                        <>
+                            <Image src={ParticipateYellow}/>
+                            <span className={style.tooltip}> Для участия необходимо войти в аккаунт </span>
+                        </>
+                    }
                 </div>
             </div>
 
 
             <div className={style.prizesContainer}>
-                <div className={style.leftSide}>
+            <div className={style.leftSide}>
                     <div>
                         <Image width={2000} height={1200} src={priz} alt="Призы"/>
                     </div>
@@ -106,7 +120,7 @@ const Top = () => {
             <div className={voteStyle.votingContainer}>
                 <div className={voteStyle.leftSide}>
                     <div>
-                        <Image src={hippopotamusVote} alt="Бегемот" />
+                        <Image src={hippopotamusVote} alt="Бегемот"/>
                     </div>
                     <div className={voteStyle.textSection}>
                         <p>Победители будут определены путём открытого голосования на сайте "Мой Любимый Дагестан" с 1
@@ -121,9 +135,20 @@ const Top = () => {
                     </div>
                 </div>
                 <div className={voteStyle.rightSide}>
-                    <Image src={ParticipateYellow} className={voteStyle.participateButton}/>
+                    { auth.isAuth ?
+                        <>
+                        <Image src={ParticipateYellow} onClick={() => setOpenModal(true)}/>
+                        </>
+                        :
+                        <>
+                            <Image src={ParticipateYellow}/>
+                            <span className={voteStyle.tooltip}> Для участия необходимо войти в аккаунт </span>
+                        </>
+                    }
                 </div>
             </div>
+
+            {openModal ? <FormModal open={setOpenModal}/> : ''}
 
         </div>
     );

@@ -136,12 +136,17 @@ class User extends Authenticatable
 
     public function photo_kids():object
     {
-        return $this->hasOne(PhotoKids::class, 'user_id', 'id');
+        return $this->hasMany(PhotoKids::class, 'user_id', 'id');
     }
 
     public function likesPhoto(): BelongsToMany
     {
         return $this->belongsToMany(PhotoKids::class, 'likes', 'user_id', 'photo_id');
+    }
+
+    public function numberOfChildrens(): HasOne
+    {
+        return $this->hasOne(numberOfChildren::class);
     }
 
 }

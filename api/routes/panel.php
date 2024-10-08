@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{V1, V2};
+use App\Http\Controllers\{V1, V2, V3};
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1/panel')->group(function () {
@@ -72,5 +72,14 @@ Route::prefix('v2/panel')->group(function () {
             Route::patch('/', V2\Setting\Banner\UpdateSortController::class);
             Route::delete('/{banner}', V2\Setting\Banner\DeleteController::class);
         });
+    });
+});
+
+
+Route::prefix('v3/panel')->group(function (){
+    Route::prefix('kids')->group(function () {
+        Route::get('/', [V3\PhotoKids\IndexController::class, 'index']);
+        Route::post('/', [V3\PhotoKids\UpdateController::class, 'index']);
+        Route::delete('/{id}', [V3\PhotoKids\DeleteController::class, 'index']);
     });
 });
