@@ -51,3 +51,7 @@ export interface IPhotoKids {
 export interface ArrayPhotoId {
     id: number
 }
+
+export interface UserPhotoCount {
+    count: number
+}

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {MouseEvent, useState} from 'react';
 import Image from "next/image";
 import photo1 from "../../../assets/images/kids/1.png";
 import photo2 from "../../../assets/images/kids/2.png";
@@ -17,6 +17,7 @@ import FormModal from "../Cards/FormModal";
 import hippopotamusVote from "../../../assets/images/kids/бегемот с облаком.png"
 import {useAuth} from "../../../hooks/useAuth";
 import AddChildrenModal from "./modalAddChildren";
+import Auth from "../../auth";
 const Top = () => {
     const [showModal, setShowModal] = useState(false);
 
@@ -48,7 +49,10 @@ const Top = () => {
     ];
 
     const visibleTexts = showMore ? texts : texts.slice(0, 5);
-
+    const handleSignIn = (e: MouseEvent) => {
+        e.preventDefault();
+        setOpenModal(true);
+    };
     return (
         <div>
 
@@ -81,8 +85,9 @@ const Top = () => {
                         </>
                         :
                         <>
-                            <Image src={ParticipateYellow}/>
-                            <span className={style.tooltip}> Для участия необходимо войти в аккаунт </span>
+                            <a href="#" onClick={handleSignIn}>
+                                <Image src={ParticipateYellow}/>
+                            </a>
                         </>
                     }
                 </div>
@@ -139,15 +144,16 @@ const Top = () => {
                         </>
                         :
                         <>
-                            <Image src={ParticipateYellow}/>
-                            <span className={voteStyle.tooltip}> Для участия необходимо войти в аккаунт </span>
+                            <a href="#" onClick={handleSignIn}>
+                                <Image src={ParticipateYellow}/>
+                            </a>
                         </>
                     }
                 </div>
             </div>
             <AddChildrenModal show={showModal} handleClose={handleClose} />
             {/*{openModal ? <FormModal open={setOpenModal}/> : ''}*/}
-
+            <Auth show={openModal} onHide={() => setOpenModal(false)} />
         </div>
     );
 };

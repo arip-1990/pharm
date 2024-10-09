@@ -6,28 +6,38 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\V1\Auth\RegisterController;
 use App\Models\numberOfChildren;
 use App\Models\User;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use PHPUnit\Framework\Error;
 
 
 class ChildrenController extends Controller
 {
     public function index()
     {
-//        $user = Auth::user();
-        $user = User::query()->where('id', 'ee374378-12eb-ed11-80cc-001dd8b75065')->first();
-        return $user->numberOfChildrens->children;
+        $user = Auth::user();
+        try {
+//            $user = User::query()->where('id', 'f2897002-33e0-4d1e-81b8-041e4b0cd98c')->first();
+            return $user->numberOfChildrens->children;
+        }catch (\Exception $e){
+            return response()->json(0, 200);
+        }
+
     }
 
     public function show(Request $request)
     {
-        $id = Auth::id();
-        $children = numberOfChildren::query()->create([
-            "children" => $request->get('count'),
-            "user_id" => "ad97bf84-eb1d-4399-9c9b-d72eb5b72c27"
-        ]);
-        $children->save();
-
+        try {
+            $id = Auth::id();
+            $children = numberOfChildren::query()->create([
+                "children" => $request->get('count'),
+                "user_id" => $id
+            ]);
+            $children->save();
+        }catch (\Exception $e){
+            return response()->json(['message' => "Уже указали" ], 200);
+        }
     }
 }

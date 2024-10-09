@@ -39,7 +39,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::prefix('user')->group(function (){
-//            Route::get('/{id}', [App\Http\Controllers\V1\PhotoKids\UserPhotoController::class, 'index']);
+            Route::get('/photo', [App\Http\Controllers\V1\PhotoKids\UserPhotoController::class, 'index']);
             Route::get('/count/children', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'index']);
             Route::post('/add/children', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'show']);
         });

@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 // import { ICard } from '../models/ICard';
-import {ArrayPhotoId, IPhotoKids} from '../models/IPhotoKids'
+import {ArrayPhotoId, IPhotoKids, UserPhotoCount} from '../models/IPhotoKids'
 import { apiBaseQuery } from './api';
 import moment from 'moment';
 import {any} from "prop-types";
@@ -21,7 +21,7 @@ export const kidsPhotoApi = createApi({
             }),
             invalidatesTags: ['kidsPhoto'],
         }),
-        fetchArrayIdPhoto: builder.query<ArrayPhotoId[], string>({
+        fetchArrayIdPhoto: builder.query<ArrayPhotoId[], void>({
             query: () => ({url: `/kids/photo/likes/myLike`}),
             providesTags: ['kidsPhoto'],
         }),
@@ -49,6 +49,11 @@ export const kidsPhotoApi = createApi({
             invalidatesTags: ['kidsPhoto'],
         }),
 
+        fetchArrayUserChildrenPhotos: builder.query<UserPhotoCount, void>({
+            query: () => ({url: `/kids/user/photo`}),
+            providesTags: ['kidsPhoto'],
+        }),
+
     }),
 })
 
@@ -58,5 +63,6 @@ export const {
     useFetchArrayIdPhotoQuery,
     useUploadPhotoMutation,
     useFetchArrayChildrenCountQuery,
-    useAddChildrenMutation
+    useAddChildrenMutation,
+    useFetchArrayUserChildrenPhotosQuery
 } = kidsPhotoApi;

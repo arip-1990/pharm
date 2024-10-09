@@ -1,5 +1,5 @@
 import styles_ from './gallery.module.css';
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Modal from './Modal';
 import Image from "next/image";
 import {IPhotoKids} from '../../../models/IPhotoKids'
@@ -7,7 +7,7 @@ import {
     useAddLikeMutation,
     useFetchArrayChildrenCountQuery,
     useFetchArrayIdPhotoQuery,
-    useUploadPhotoMutation
+    useFetchArrayUserChildrenPhotosQuery
 } from "../../../lib/kidsPhotoService";
 import {useAuth} from "../../../hooks/useAuth";
 import FormModal from "./FormModal"
@@ -21,6 +21,7 @@ import categorySixColor from "../../../assets/images/kids/Кнопка_от 6 д
 import categoryNineColor from "../../../assets/images/kids/Кнопка_от 9 до 11 цвет.png"
 import categoryTwelveColor from "../../../assets/images/kids/Кнопка_от 12 до 14 цвет.png"
 import AddChildrenModal from "../upperPart/modalAddChildren";
+import {Button} from "react-bootstrap";
 
 export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) => {
     const [showModal, setShowModal] = useState(false);
@@ -36,8 +37,8 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
 
     const [isOpen, setIsOpen] = useState(false);
     const [myPhoto, setMyPhoto] = useState(false);
-    const {data:childrenCount} = useFetchArrayChildrenCountQuery();
-
+    const {data:childrenCount, isLoading:loadingCountChildren} = useFetchArrayChildrenCountQuery();
+    const {data:userChildrenPhoto, isLoading:loadingCountPhoto} = useFetchArrayUserChildrenPhotosQuery()
 
 
     const openModal = (src: string, title: string, author: string, category: string) => {
@@ -79,6 +80,18 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
             setIsOpen(true)
         } else {
             handleOpen()
+        }
+    }
+
+    const checked = () => {
+        if (childrenCount !== undefined && userChildrenPhoto !== undefined) {
+            return childrenCount <= userChildrenPhoto.count
+        }
+    }
+
+    const cals = () => {
+        if (childrenCount !== undefined && userChildrenPhoto !== undefined) {
+            return childrenCount - userChildrenPhoto.count
         }
     }
 
@@ -167,10 +180,29 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
 
             </div>
             {myPhoto ?
-                <div>
-                    <button className={styles_.downloadButton} onClick={howOpenModal}>Загрузить фотографию</button>
-                    <button className={styles_.downloadButton} onClick={() => setMyPhoto(false)}>покинуть мои рисунки</button>
-                </div>
+                <>
+                    <div>{checked() ? <h5>достигнут лимит рисунков</h5> :
+                        <h5>вы можете загрузить еще {cals()}рис.</h5>}</div>
+                    <div style={{display: "flex", justifyContent: "center"}}>
+
+                        <Button
+                            onClick={howOpenModal}
+                            disabled={checked()}
+                            style={{marginTop: '20px'}}
+                        >
+                            Загрузить фотографию
+                        </Button>
+
+                        <div style={{marginRight: '10px', marginLeft: '10px'}}></div>
+
+                        <Button
+                            onClick={() => setMyPhoto(false)}
+                            style={{marginTop: '20px'}}
+                        >
+                            Выйти из "мои рисунки"
+                        </Button>
+                    </div>
+                </>
                 :
                 ''
             }
