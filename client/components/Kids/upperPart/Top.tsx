@@ -16,32 +16,35 @@ import FormModal from "../Cards/FormModal";
 
 import hippopotamusVote from "../../../assets/images/kids/бегемот с облаком.png"
 import {useAuth} from "../../../hooks/useAuth";
+import AddChildrenModal from "./modalAddChildren";
 const Top = () => {
+    const [showModal, setShowModal] = useState(false);
+
+    const handleOpen = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
 
     const [showMore, setShowMore] = useState(false);
     const [openModal, setOpenModal] = useState(false);
 
     const auth = useAuth()
 
-
     const texts = [
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
-        '"At vero eos et accusamus et iusto odio"',
+        '1. 2000 ББ на карты лояльности',
+        '2. Рюкзак  и зубная паста ТМ Лава Лава от блогера Влада А4',
+        '3. Электрическая Зубная  щетка ТМ CS Medica',
+        '4. Витамины для детей ТМ  Gummies Maxler',
+        '5. Детская косметика  ТМ ЛА КРИ (гель и шампунь)',
+        '6. Витамины для детей ТМ GLS',
+        '7. БАД ТМ  Бифицин Бэйби',
+        '8. Набор пластырей детских – 2 уп.',
+        '9. БАД Омевит кидс',
+        '10. БАД Флорбиолакт+ Флораброн сироп',
+        '11. Книга - раскраска  Доктор Иммуно (+наклейки)',
+        '12. Витамины для детей ТМ Барсукор («Мультивитамины» для детей и взрослых без ароматизатора №10, барсучий жир с витамином Д3 капсулы, 0,2 г, №100, таблетки с лизоцимом при дискомфорте в горле №30)',
+        '13. Леденцы Чупа-Флю №10',
+        '14. Помада гигиеническаяv',
+        '15. Карандаши цветные',
+        '16. Набор сладостей',
     ];
 
     const visibleTexts = showMore ? texts : texts.slice(0, 5);
@@ -74,7 +77,7 @@ const Top = () => {
                 <div className={style.ParticipateYellow} >
                     {auth.isAuth ?
                         <>
-                            <Image src={ParticipateYellow} onClick={() => setOpenModal(true)}/>
+                            <Image src={ParticipateYellow} onClick={handleOpen}/>
                         </>
                         :
                         <>
@@ -123,21 +126,16 @@ const Top = () => {
                         <Image src={hippopotamusVote} alt="Бегемот"/>
                     </div>
                     <div className={voteStyle.textSection}>
-                        <p>Победители будут определены путём открытого голосования на сайте "Мой Любимый Дагестан" с 1
+                        <p>Победители будут определены путём открытого голосования на сайте "Мой Любимый Дагестан" с 10
                             октября по 30 декабря 2024 года.</p>
                         <p>Принять участие может каждый зарегистрированный пользователь сайта. Для участия вам
                             необходимо зарегистрироваться, а затем отдать свой голос за понравившуюся работу.</p>
-                        <p>Принять участие может каждый зарегистрированный пользователь сайта. Для участия вам
-                            необходимо зарегистрироваться, а затем отдать свой голос за понравившуюся работу.</p>
-                        <p>Принять участие может каждый зарегистрированный пользователь сайта. Для участия вам
-                            необходимо зарегистрироваться, а затем отдать свой голос за понравившуюся работу.</p>
-
                     </div>
                 </div>
                 <div className={voteStyle.rightSide}>
                     { auth.isAuth ?
                         <>
-                        <Image src={ParticipateYellow} onClick={() => setOpenModal(true)}/>
+                        <Image src={ParticipateYellow} onClick={handleOpen}/>
                         </>
                         :
                         <>
@@ -147,8 +145,8 @@ const Top = () => {
                     }
                 </div>
             </div>
-
-            {openModal ? <FormModal open={setOpenModal}/> : ''}
+            <AddChildrenModal show={showModal} handleClose={handleClose} />
+            {/*{openModal ? <FormModal open={setOpenModal}/> : ''}*/}
 
         </div>
     );

@@ -22,7 +22,7 @@ export const kidsPhotoApi = createApi({
             invalidatesTags: ['kidsPhoto'],
         }),
         fetchArrayIdPhoto: builder.query<ArrayPhotoId[], string>({
-            query: (user_id) => ({url: `/kids/photo/likes/${user_id}`}),
+            query: () => ({url: `/kids/photo/likes/myLike`}),
             providesTags: ['kidsPhoto'],
         }),
 
@@ -35,6 +35,20 @@ export const kidsPhotoApi = createApi({
             invalidatesTags: ['kidsPhoto'],
         }),
 
+        fetchArrayChildrenCount: builder.query<number, void>({
+            query: () => ({url: `/kids/user/count/children`}),
+            providesTags: ['kidsPhoto'],
+        }),
+
+        addChildren: builder.mutation<any, any>({
+            query: (count) => ({
+                url: `/kids/user/add/children`,
+                method: 'POST',
+                data: count
+            }),
+            invalidatesTags: ['kidsPhoto'],
+        }),
+
     }),
 })
 
@@ -42,5 +56,7 @@ export const {
     useFetchCardsQuery,
     useAddLikeMutation,
     useFetchArrayIdPhotoQuery,
-    useUploadPhotoMutation
+    useUploadPhotoMutation,
+    useFetchArrayChildrenCountQuery,
+    useAddChildrenMutation
 } = kidsPhotoApi;

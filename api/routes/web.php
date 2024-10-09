@@ -34,13 +34,13 @@ Route::prefix('v1')->group(function () {
 
             Route::prefix('likes')->group(function (){
                 Route::post('/{photo}', [App\Http\Controllers\V1\PhotoKids\AddLikeController::class, 'index']);
-                Route::get('/{user}', [App\Http\Controllers\V1\PhotoKids\UserLikePhotoController::class, 'index']);
+                Route::get('/myLike', [App\Http\Controllers\V1\PhotoKids\UserLikePhotoController::class, 'index']);
             });
         });
 
         Route::prefix('user')->group(function (){
-            Route::get('/{id}', [App\Http\Controllers\V1\PhotoKids\UserPhotoController::class, 'index']);
-            Route::get('/count/children/{id}', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'index']);
+//            Route::get('/{id}', [App\Http\Controllers\V1\PhotoKids\UserPhotoController::class, 'index']);
+            Route::get('/count/children', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'index']);
             Route::post('/add/children', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'show']);
         });
     });

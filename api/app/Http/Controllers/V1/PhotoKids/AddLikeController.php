@@ -19,15 +19,13 @@ class AddLikeController extends Controller
         try {
             $like = Likes::query()->create([
                 "photo_id" => $photo->id,
-                "user_id" => "ee374378-12eb-ed11-80cc-001dd8b75065"
-    //            "user_id" => $user_id,
-
+                "user_id" => $user_id
             ]);
             $like->save();
 
         } catch (\Exception $e) {
             DB::table('likes')
-                ->where('user_id', 'ee374378-12eb-ed11-80cc-001dd8b75065')
+                ->where('user_id', $user_id)
                 ->where('photo_id', $photo->id)
                 ->delete();
         }

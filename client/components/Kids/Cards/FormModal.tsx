@@ -2,10 +2,12 @@ import React, {useState} from 'react';
 import { Formik, Form, Field } from 'formik';
 import { useUploadPhotoMutation } from '../../../lib/kidsPhotoService';
 import styles from './formModal.module.css';
+import {useAuth} from "../../../hooks/useAuth";
 
 const FormModal = ({ open }: any) => {
     const [uploadPhoto] = useUploadPhotoMutation();
     const [fileName, setFileName] = useState('Файл не выбран');
+    const user = useAuth();
 
     if (!open) return null;
 
@@ -34,7 +36,7 @@ const FormModal = ({ open }: any) => {
                         formData.append('birthdate', values.birthdate);
                         formData.append('first_name', values.first_name);
                         formData.append('last_name', values.last_name);
-                        formData.append('user_id', '70277a84-013c-ed11-80cb-001dd8b75065');
+                        formData.append('user_id', user.user.id);
 
                         try {
                             await uploadPhoto(formData).unwrap();

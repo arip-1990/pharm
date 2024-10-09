@@ -3,7 +3,12 @@ import React, { useState } from "react";
 import Modal from './Modal';
 import Image from "next/image";
 import {IPhotoKids} from '../../../models/IPhotoKids'
-import {useAddLikeMutation, useFetchArrayIdPhotoQuery, useUploadPhotoMutation} from "../../../lib/kidsPhotoService";
+import {
+    useAddLikeMutation,
+    useFetchArrayChildrenCountQuery,
+    useFetchArrayIdPhotoQuery,
+    useUploadPhotoMutation
+} from "../../../lib/kidsPhotoService";
 import {useAuth} from "../../../hooks/useAuth";
 import FormModal from "./FormModal"
 import categoryThree from "../../../assets/images/kids/Кнопка_от 3 до 5 белая.png"
@@ -15,21 +20,25 @@ import categoryThreeColor from "../../../assets/images/kids/Кнопка_от 3 
 import categorySixColor from "../../../assets/images/kids/Кнопка_от 6 до 8 цвет.png"
 import categoryNineColor from "../../../assets/images/kids/Кнопка_от 9 до 11 цвет.png"
 import categoryTwelveColor from "../../../assets/images/kids/Кнопка_от 12 до 14 цвет.png"
+import AddChildrenModal from "../upperPart/modalAddChildren";
 
 export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) => {
+    const [showModal, setShowModal] = useState(false);
+    const handleOpen = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
 
     const [addLike, {isLoading, error}] = useAddLikeMutation()
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState<{src: string, title: string, author: string, category: string} | null>(null);
     const [idCard, setIdCard] = useState<number | null>(null);
     const user = useAuth();
-    const {data} = useFetchArrayIdPhotoQuery('ee374378-12eb-ed11-80cc-001dd8b75065')
+    const {data} = useFetchArrayIdPhotoQuery()
+
     const [isOpen, setIsOpen] = useState(false);
     const [myPhoto, setMyPhoto] = useState(false);
+    const {data:childrenCount} = useFetchArrayChildrenCountQuery();
 
-    const category = () => {
 
-    }
 
     const openModal = (src: string, title: string, author: string, category: string) => {
         setSelectedImage({ src, title, author, category });
@@ -63,7 +72,15 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
         if (ids.includes(photo_id)) return true
     }
     //  вот тут не забудь добавить useAuth
-    const filteredPhotos = myPhoto ? photos?.filter((photo: IPhotoKids) => photo.user_id === '70277a84-013c-ed11-80cb-001dd8b75065') : photos;
+    const filteredPhotos = myPhoto ? photos?.filter((photo: IPhotoKids) => photo.user_id === user.user.id) : photos;
+
+    const howOpenModal = () => {
+        if (childrenCount != 0){
+            setIsOpen(true)
+        } else {
+            handleOpen()
+        }
+    }
 
     return (
         <div className={styles_.container}>
@@ -91,7 +108,7 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
                         <Image src={categoryTwelve} onClick={() => setAge(4)}/>}
                 </div>
 
-                {'user.isAuth' ? myPhoto ?
+                {user.isAuth ? myPhoto ?
                     <button className={styles_.categoryMyPhotosActive}
                        onClick={() => setMyPhoto(true)}>Мои рисунки</button>
                     :
@@ -151,14 +168,14 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
             </div>
             {myPhoto ?
                 <div>
-                    <button className={styles_.downloadButton} onClick={() => setIsOpen(true)}>Загрузить фотографию</button>
+                    <button className={styles_.downloadButton} onClick={howOpenModal}>Загрузить фотографию</button>
                     <button className={styles_.downloadButton} onClick={() => setMyPhoto(false)}>покинуть мои рисунки</button>
                 </div>
                 :
                 ''
             }
-            {isOpen ?
-                <FormModal open={setIsOpen}/> : ''
+            {isOpen && childrenCount !== 0 ?
+                <FormModal open={setIsOpen}/> : <AddChildrenModal show={showModal} handleClose={handleClose} />
             }
 
             {/* Модальное окно */}

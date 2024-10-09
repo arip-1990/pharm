@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\PhotoKids;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -41,18 +40,6 @@ class AddPhotoController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-
-//        $validatedData = $request->validate([
-//            'photo_name' => 'required|string|max:255',
-//            'birthdate' => 'nullable|date',
-//            'first_name' => 'nullable|string|max:255',
-//            'last_name' => 'nullable|string|max:255',
-//            'middle_name' => 'nullable|string|max:255',
-//            'user_id' => 'nullable|string|max:255',
-//            'file' => 'required|file|mimes:jpg,jpeg,png|max:2048'
-//        ]);
-
-        $user_id = Auth::id();
 
         $data = explode( separator: "-",  string: $request->get('birthdate'));
         $today_data = explode( separator: "-",  string: date('Y-m-d'));;
