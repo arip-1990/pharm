@@ -181,8 +181,11 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age, chi
             </div>
             {myPhoto ?
                 <>
-                    <div>{checked() ? <h5>достигнут лимит рисунков</h5> :
-                        <h5>вы можете загрузить еще {cals()} рис.</h5>}</div>
+                    <div>
+                        {checked() ? <h5>достигнут лимит рисунков</h5> :
+                        <h5>вы можете загрузить еще {cals()} рис.</h5>}
+                        <h3>Фото будет опубликовано на сайт в течение двух рабочих дней</h3>
+                    </div>
                     <div style={{display: "flex", justifyContent: "center"}}>
 
                         <Button
