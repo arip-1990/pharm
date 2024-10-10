@@ -15,9 +15,10 @@ use PHPUnit\Framework\Error;
 
 class ChildrenController extends Controller
 {
-    public function index()
+    public function index(User $id)
     {
         $user = Auth::user();
+
         try {
 //            $user = User::query()->where('id', 'f2897002-33e0-4d1e-81b8-041e4b0cd98c')->first();
             return $user->numberOfChildrens->children;

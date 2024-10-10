@@ -9,11 +9,12 @@ import photo2 from "../assets/images/kids/2.png"
 
 import {Gallery} from "../components/Kids/Cards/Gallery";
 import {Button} from "react-bootstrap";
-import {useFetchCardsQuery} from "../lib/kidsPhotoService"
+import {useFetchArrayChildrenCountQuery, useFetchCardsQuery} from "../lib/kidsPhotoService"
 import Top from "../components/Kids/upperPart/Top";
 const Kids = () => {
     const [age, setAge] = useState(1);
     const { data, } = useFetchCardsQuery(age);
+    const { data:children } = useFetchArrayChildrenCountQuery();
 
     const getDefaultGenerator = useCallback(
         () => [{ href: "/kids", text: "Конкурс детского рисунка" }],
@@ -27,7 +28,7 @@ const Kids = () => {
 
             <Top />
 
-            <Gallery photos={data} setAge={setAge} age={age}/>
+            <Gallery photos={data} setAge={setAge} age={age} children={children}/>
 
         </Layout>
     );

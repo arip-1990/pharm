@@ -9,7 +9,7 @@ class GetPhotoController extends Controller
 {
     public function index(AgeCategoryModel $age)
     {
-        return $age->photos()->with('UsersLikes')->with('age_category')->get();
+        return $age->photos()->where('published', true)->with('UsersLikes')->with('age_category')->get();
 
     }
 }

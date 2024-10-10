@@ -38,8 +38,6 @@ const AddChildrenModal: React.FC<AddChildrenModalProps> = ({ show, handleClose }
                             <div>
                                 <p>Что бы загрузить фото зайдите в раздел "мои рисунки" </p>
                             </div>
-
-
                             :
                             <>
                                 <Form.Label>Добро пожаловать !</Form.Label>

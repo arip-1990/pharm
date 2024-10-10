@@ -35,7 +35,7 @@ export const kidsPhotoApi = createApi({
             invalidatesTags: ['kidsPhoto'],
         }),
 
-        fetchArrayChildrenCount: builder.query<number, void>({
+        fetchArrayChildrenCount: builder.query<any, void>({
             query: () => ({url: `/kids/user/count/children`}),
             providesTags: ['kidsPhoto'],
         }),

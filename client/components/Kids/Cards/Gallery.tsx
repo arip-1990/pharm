@@ -23,7 +23,7 @@ import categoryTwelveColor from "../../../assets/images/kids/Кнопка_от 1
 import AddChildrenModal from "../upperPart/modalAddChildren";
 import {Button} from "react-bootstrap";
 
-export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) => {
+export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age, children }) => {
     const [showModal, setShowModal] = useState(false);
     const handleOpen = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
@@ -37,7 +37,7 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
 
     const [isOpen, setIsOpen] = useState(false);
     const [myPhoto, setMyPhoto] = useState(false);
-    const {data:childrenCount, isLoading:loadingCountChildren} = useFetchArrayChildrenCountQuery();
+    // const {data:children, isLoading:loadingCountChildren} = useFetchArrayChildrenCountQuery();
     const {data:userChildrenPhoto, isLoading:loadingCountPhoto} = useFetchArrayUserChildrenPhotosQuery()
 
 
@@ -76,7 +76,7 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
     const filteredPhotos = myPhoto ? photos?.filter((photo: IPhotoKids) => photo.user_id === user.user.id) : photos;
 
     const howOpenModal = () => {
-        if (childrenCount != 0){
+        if (children != 0){
             setIsOpen(true)
         } else {
             handleOpen()
@@ -84,14 +84,14 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
     }
 
     const checked = () => {
-        if (childrenCount !== undefined && userChildrenPhoto !== undefined) {
-            return childrenCount <= userChildrenPhoto.count
+        if (children !== undefined && userChildrenPhoto !== undefined) {
+            return children <= userChildrenPhoto.count
         }
     }
 
     const cals = () => {
-        if (childrenCount !== undefined && userChildrenPhoto !== undefined) {
-            return childrenCount - userChildrenPhoto.count
+        if (children !== undefined && userChildrenPhoto !== undefined) {
+            return children - userChildrenPhoto.count
         }
     }
 
@@ -182,7 +182,7 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
             {myPhoto ?
                 <>
                     <div>{checked() ? <h5>достигнут лимит рисунков</h5> :
-                        <h5>вы можете загрузить еще {cals()}рис.</h5>}</div>
+                        <h5>вы можете загрузить еще {cals()} рис.</h5>}</div>
                     <div style={{display: "flex", justifyContent: "center"}}>
 
                         <Button
@@ -206,7 +206,7 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age }) =
                 :
                 ''
             }
-            {isOpen && childrenCount !== 0 ?
+            {isOpen && children !== 0 ?
                 <FormModal open={setIsOpen}/> : <AddChildrenModal show={showModal} handleClose={handleClose} />
             }
 
