@@ -7,6 +7,7 @@ init-ci: panel-clear client-clear api-clear \
 up: docker-up
 down: docker-down
 restart: down up
+clear: api-clear client-clear panel-clear
 
 rebuild: docker-down init-ci panel-ready client-ready
 

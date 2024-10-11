@@ -24,24 +24,22 @@ use Illuminate\Support\Facades\Route;
 
 //Route::get('/get-apk-link', fn() => new JsonResponse(Storage::url('files/120на80.apk')));
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->group(function() {
 
-    Route::prefix('kids')->group(function (){
-
-        Route::prefix('/photo')->group(function (){
-            Route::post('/add', [App\Http\Controllers\V1\PhotoKids\AddPhotoController::class, 'index']);
-            Route::get('/{age}', [App\Http\Controllers\V1\PhotoKids\GetPhotoController::class, 'index']);
+    Route::group(['prefix' => 'kids'], function() {
+        Route::prefix('photo')->group(function() {
+            Route::prefix('user')->group(function () {
+                Route::get('/', [App\Http\Controllers\V1\PhotoKids\UserPhotoController::class, 'index']);
+                Route::post('/', [App\Http\Controllers\V1\PhotoKids\UserPhotoController::class, 'store']);
+            });
 
             Route::prefix('likes')->group(function (){
                 Route::post('/{photo}', [App\Http\Controllers\V1\PhotoKids\AddLikeController::class, 'index']);
                 Route::get('/myLike', [App\Http\Controllers\V1\PhotoKids\UserLikePhotoController::class, 'index']);
             });
-        });
 
-        Route::prefix('user')->group(function (){
-            Route::get('/photo', [App\Http\Controllers\V1\PhotoKids\UserPhotoController::class, 'index']);
-            Route::get('/count/children', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'index']);
-            Route::post('/add/children', [App\Http\Controllers\V1\PhotoKids\ChildrenController::class, 'show']);
+            Route::post('/add', [App\Http\Controllers\V1\PhotoKids\AddPhotoController::class, 'index']);
+            Route::get('/{age}', [App\Http\Controllers\V1\PhotoKids\GetPhotoController::class, 'index']);
         });
     });
 

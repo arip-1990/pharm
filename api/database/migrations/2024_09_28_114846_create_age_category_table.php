@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('number_of_childrens', function (Blueprint $table) {
+        Schema::create('age_category', function (Blueprint $table) {
             $table->id();
-            $table->integer('children')->default(0);
-            $table->foreignUuid('user_id')->unique()->constrained()->cascadeOnDelete();        });
+            $table->timestamps();
+            $table->string('Age');
+        });
     }
 
     /**
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('number_of_childrens');
+        Schema::dropIfExists('age_category');
     }
 };

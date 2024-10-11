@@ -1,4 +1,4 @@
-import { FC } from "react";
+import {FC} from "react";
 import Link from "next/link";
 import { Nav, Navbar as BaseNavbar } from "react-bootstrap";
 import classNames from "classnames";
@@ -94,7 +94,7 @@ const Navbar: FC = () => {
               className="text-md-center mx-2"
               style={{ whiteSpace: "nowrap", overflowX: "hidden" }}
           >
-            <Link href="/kids">
+            <Link href="/kids" >
               <a
                   className={classNames("nav-link", {
                     active: router.pathname.startsWith("/kids"),

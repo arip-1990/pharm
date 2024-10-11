@@ -1,9 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-// import { ICard } from '../models/ICard';
-import {ArrayPhotoId, IPhotoKids, UserPhotoCount} from '../models/IPhotoKids'
+import {ArrayPhotoId, IPhotoKids} from '../models/IPhotoKids'
 import { apiBaseQuery } from './api';
-import moment from 'moment';
-import {any} from "prop-types";
 
 export const kidsPhotoApi = createApi({
     reducerPath: 'kidsPhotoApi',
@@ -34,23 +31,17 @@ export const kidsPhotoApi = createApi({
             }),
             invalidatesTags: ['kidsPhoto'],
         }),
-
-        fetchArrayChildrenCount: builder.query<any, void>({
-            query: () => ({url: `/kids/user/count/children`}),
-            providesTags: ['kidsPhoto'],
-        }),
-
-        addChildren: builder.mutation<any, any>({
-            query: (count) => ({
-                url: `/kids/user/add/children`,
+        addChildren: builder.mutation<void, { count: number }>({
+            query: ({count}) => ({
+                url: `/kids/photo/user`,
                 method: 'POST',
-                data: count
+                data: {userChildren: count}
             }),
             invalidatesTags: ['kidsPhoto'],
         }),
 
-        fetchArrayUserChildrenPhotos: builder.query<UserPhotoCount, void>({
-            query: () => ({url: `/kids/user/photo`}),
+        fetchArrayUserChildrenPhotos: builder.query<IPhotoKids[], void>({
+            query: () => ({url: `/kids/photo/user`}),
             providesTags: ['kidsPhoto'],
         }),
 
@@ -62,7 +53,6 @@ export const {
     useAddLikeMutation,
     useFetchArrayIdPhotoQuery,
     useUploadPhotoMutation,
-    useFetchArrayChildrenCountQuery,
     useAddChildrenMutation,
     useFetchArrayUserChildrenPhotosQuery
 } = kidsPhotoApi;

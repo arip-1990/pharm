@@ -23,17 +23,17 @@ class PhotoKids extends Model
         "age_category_id"
     ];
 
-    public function users(): object {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
-
 
     public function age_category(): BelongsTo
     {
-        return $this->belongsTo(AgeCategoryModel::class, 'age_category_id');
+        return $this->belongsTo(AgeCategory::class);
     }
 
-    public function UsersLikes(): BelongsToMany
+    public function user_likes(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'likes', 'photo_id', 'user_id');
     }

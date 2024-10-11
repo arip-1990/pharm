@@ -25,6 +25,7 @@ class IndexController extends Controller
             $data['cardNumber'] = $balance['cardNumber'];
             $data['cardChargedBonus'] = $balance['cardChargedBonus'];
             $data['cardWriteoffBonus'] = $balance['cardWriteoffBonus'];
+            $data['childrenCount'] = $user->children_count;
         }
         catch (\DomainException $e) {
             return new JsonResponse([

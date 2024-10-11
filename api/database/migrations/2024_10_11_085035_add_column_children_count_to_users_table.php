@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('age_category', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('Age');
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedSmallInteger('children_count')->default(0)->after('token');
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('age_category_models');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('children_count');
+        });
     }
 };

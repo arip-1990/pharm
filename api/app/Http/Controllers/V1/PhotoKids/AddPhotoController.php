@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class AddPhotoController extends Controller
 {
 
-    private function date_in_category($data, $today_data):int
+    private function date_in_category($data, $today_data): int
     {
         [$year, $mouth, $day] = $data;
         [$today_year, $today_mouth, $today_day] = $today_data;
@@ -41,8 +41,8 @@ class AddPhotoController extends Controller
     public function index(Request $request): JsonResponse
     {
 
-        $data = explode( separator: "-",  string: $request->get('birthdate'));
-        $today_data = explode( separator: "-",  string: date('Y-m-d'));;
+        $data = explode("-", $request->get('birthdate'));
+        $today_data = explode("-", date('Y-m-d'));;
         $categoryAge = $this->date_in_category($data, $today_data);
 
         if (!$categoryAge){
@@ -52,10 +52,10 @@ class AddPhotoController extends Controller
         $file = $request->file('file');
         $path = Storage::disk('s3')->putFile('KidsPhotos', $file);
         $url_key = Storage::disk('s3')->url($path);
-        $url = explode(separator: "=", string: $url_key);
+        $url = explode("=", $url_key);
 
-        $photo = PhotoKids::query()->create([
-            "link" => $url[1],
+        $photo = new PhotoKids([
+            "link" => array_pop($url),
             "photo_name" => $request->get("photo_name"),
             "birthdate" => $request->get("birthdate"),
             "first_name" => $request->get('first_name'),
@@ -67,7 +67,7 @@ class AddPhotoController extends Controller
 
         $photo->save();
 
-        return response()->json(["message" => "Success"], 200);
+        return response()->json(["message" => "Success"]);
     }
 
 }

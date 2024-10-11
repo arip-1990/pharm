@@ -7,7 +7,7 @@ import {useAuth} from "../../../hooks/useAuth";
 const FormModal = ({ open }: any) => {
     const [uploadPhoto] = useUploadPhotoMutation();
     const [fileName, setFileName] = useState('Файл не выбран');
-    const user = useAuth();
+    const {user} = useAuth();
 
     if (!open) return null;
 
@@ -36,7 +36,7 @@ const FormModal = ({ open }: any) => {
                         formData.append('birthdate', values.birthdate);
                         formData.append('first_name', values.first_name);
                         formData.append('last_name', values.last_name);
-                        formData.append('user_id', user.user.id);
+                        formData.append('user_id', user.id);
 
                         try {
                             await uploadPhoto(formData).unwrap();
@@ -53,11 +53,13 @@ const FormModal = ({ open }: any) => {
                                     id="file"
                                     name="file"
                                     type="file"
+                                    required={true}
                                     onChange={(event) => {
                                         const file = event.currentTarget.files[0];
                                         setFieldValue('file', file);
                                         setFileName(file ? file.name : 'Файл не выбран');
                                     }}
+
                                 />
                                 <span className={styles.customFileLabel}>
                                     {fileName}
@@ -70,6 +72,7 @@ const FormModal = ({ open }: any) => {
                                     name="photo_name"
                                     placeholder=" "
                                     className={styles.formikField}
+                                    required={true}
                                 />
                                 <label htmlFor="photo_name">Название фото</label>
                             </div>
@@ -81,6 +84,7 @@ const FormModal = ({ open }: any) => {
                                     type="date"
                                     placeholder=" "
                                     className={styles.formikField}
+                                    required={true}
                                 />
                                 <label htmlFor="birthdate">Дата рождения</label>
                             </div>
@@ -91,6 +95,7 @@ const FormModal = ({ open }: any) => {
                                     name="first_name"
                                     placeholder=" "
                                     className={styles.formikField}
+                                    required={true}
                                 />
                                 <label htmlFor="first_name">Имя</label>
                             </div>
@@ -101,6 +106,7 @@ const FormModal = ({ open }: any) => {
                                     name="last_name"
                                     placeholder=" "
                                     className={styles.formikField}
+                                    required={true}
                                 />
                                 <label htmlFor="last_name">Фамилия</label>
                             </div>

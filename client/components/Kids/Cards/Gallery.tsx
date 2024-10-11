@@ -1,14 +1,8 @@
 import styles_ from './gallery.module.css';
-import React, {useState} from "react";
-import Modal from './Modal';
+import React, {useEffect, useState} from "react";
 import Image from "next/image";
 import {IPhotoKids} from '../../../models/IPhotoKids'
-import {
-    useAddLikeMutation,
-    useFetchArrayChildrenCountQuery,
-    useFetchArrayIdPhotoQuery,
-    useFetchArrayUserChildrenPhotosQuery
-} from "../../../lib/kidsPhotoService";
+import { useFetchArrayUserChildrenPhotosQuery } from "../../../lib/kidsPhotoService";
 import {useAuth} from "../../../hooks/useAuth";
 import FormModal from "./FormModal"
 import categoryThree from "../../../assets/images/kids/Кнопка_от 3 до 5 белая.png"
@@ -22,78 +16,36 @@ import categoryNineColor from "../../../assets/images/kids/Кнопка_от 9 �
 import categoryTwelveColor from "../../../assets/images/kids/Кнопка_от 12 до 14 цвет.png"
 import AddChildrenModal from "../upperPart/modalAddChildren";
 import {Button} from "react-bootstrap";
+import {Photo} from "./Photo";
 
-export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age, children }) => {
+interface IPropsKids {
+    photos: IPhotoKids[];
+    age: number;
+    setAge: (age: number) => void;
+}
+
+export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
     const [showModal, setShowModal] = useState(false);
-    const handleOpen = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
-
-    const [addLike, {isLoading, error}] = useAddLikeMutation()
-    const [isModalOpen, setModalOpen] = useState(false);
-    const [selectedImage, setSelectedImage] = useState<{src: string, title: string, author: string, category: string} | null>(null);
-    const [idCard, setIdCard] = useState<number | null>(null);
-    const user = useAuth();
-    const {data} = useFetchArrayIdPhotoQuery()
-
+    const {user} = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [myPhoto, setMyPhoto] = useState(false);
-    // const {data:children, isLoading:loadingCountChildren} = useFetchArrayChildrenCountQuery();
-    const {data:userChildrenPhoto, isLoading:loadingCountPhoto} = useFetchArrayUserChildrenPhotosQuery()
+    const [filteredPhotos, setFilteredPhotos] = useState<IPhotoKids[]>(photos);
+    const {data: userChildrenPhotos, isLoading:loadingCountPhoto} = useFetchArrayUserChildrenPhotosQuery()
 
-
-    const openModal = (src: string, title: string, author: string, category: string) => {
-        setSelectedImage({ src, title, author, category });
-        setModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setModalOpen(false);
-        setSelectedImage(null);
-    };
-
-
-    const handleLike = async (photo_id: number) => {
-        try {
-            setIdCard(photo_id);
-            await addLike({ photo_id }).unwrap();
-
-        } catch (error: any) {
-            console.log(error)
-        }
-    };
-
-
-
-    const checkLike = (photo_id:number) => {
-        if (!data) return false
-        const ids = [];
-        for (let i = 0; i < data.length; i++) {
-            ids.push(data[i].id);
-        }
-        if (ids.includes(photo_id)) return true
-    }
-    //  вот тут не забудь добавить useAuth
-    const filteredPhotos = myPhoto ? photos?.filter((photo: IPhotoKids) => photo.user_id === user.user.id) : photos;
+    useEffect(() => {
+        if (myPhoto) setFilteredPhotos(photos?.filter((photo: IPhotoKids) => photo.user_id == user.id));
+        else setFilteredPhotos(photos);
+    }, [photos, myPhoto]);
 
     const howOpenModal = () => {
-        if (children != 0){
-            setIsOpen(true)
-        } else {
-            handleOpen()
-        }
+        user?.childrenCount ? setIsOpen(true) : setShowModal(true);
     }
 
     const checked = () => {
-        if (children !== undefined && userChildrenPhoto !== undefined) {
-            return children <= userChildrenPhoto.count
-        }
+        return user?.childrenCount <= userChildrenPhotos?.length
     }
 
-    const cals = () => {
-        if (children !== undefined && userChildrenPhoto !== undefined) {
-            return children - userChildrenPhoto.count
-        }
-    }
+    const cals = () => user?.childrenCount ? user?.childrenCount - userChildrenPhotos?.length : 0;
 
     return (
         <div className={styles_.container}>
@@ -121,9 +73,9 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age, chi
                         <Image src={categoryTwelve} onClick={() => setAge(4)}/>}
                 </div>
 
-                {user.isAuth ? myPhoto ?
+                {user ? myPhoto ?
                     <button className={styles_.categoryMyPhotosActive}
-                       onClick={() => setMyPhoto(true)}>Мои рисунки</button>
+                       onClick={() => setMyPhoto(false)}>Мои рисунки</button>
                     :
                     <button className={styles_.categoryMyPhotosNotActive}
                             onClick={() => setMyPhoto(true)}>Мои рисунки</button>
@@ -134,49 +86,7 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age, chi
 
             <div className={styles_.grid}>
 
-                {filteredPhotos?.length !== 0 ? filteredPhotos?.map((photo: IPhotoKids) => {
-                    return (
-                        <div key={photo.id} className={styles_.card}>
-                            <Image
-                                src={photo.link}
-                                width={300}
-                                height={220}
-                                alt={'sss'}
-                                className={styles_.image}
-                                onClick={() => openModal(
-                                    photo.link,
-                                    photo.photo_name,
-                                    photo.first_name,
-                                    photo.age_category.Age
-                                )}
-                            />
-
-                            <div className={styles_.cardContent}>
-                                <h5>{photo.photo_name}</h5>
-                                <p>Автор: {photo.first_name} {photo.last_name}</p>
-                                <p>Категория: {photo.age_category.Age} лет</p>
-                                <h5 style={{color:"#c39020"}}><b>Количество голосов {photo.users_likes.length}</b></h5>
-
-                                {checkLike(photo.id) ?
-                                    <button
-                                        className={styles_.voteButtonLikes}
-                                        onClick={() => handleLike(photo.id)}
-                                    >
-                                        {photo.id == idCard && isLoading ? "Загрузка ..." : 'Проголосованно'}
-                                    </button>
-                                    :
-                                    <button
-                                        className={styles_.voteButton}
-                                        onClick={() => handleLike(photo.id)}
-                                    >
-                                        {photo.id == idCard && isLoading ? "Загрузка ..." : 'Проголосовать'}
-                                    </button>
-                                }
-
-                            </div>
-                        </div>
-                    )
-                }): 'Фото отсутствует'}
+                {filteredPhotos.length ? filteredPhotos.map((photo) => <Photo key={photo.id} photo={photo} />) : 'Фото отсутствует'}
 
             </div>
             {myPhoto ?
@@ -209,21 +119,9 @@ export const Gallery: React.FC<IPhotoKids[] | any> = ({ photos, setAge, age, chi
                 :
                 ''
             }
-            {isOpen && children !== 0 ?
-                <FormModal open={setIsOpen}/> : <AddChildrenModal show={showModal} handleClose={handleClose} />
+            {isOpen && user?.childrenCount ?
+                <FormModal open={setIsOpen}/> : <AddChildrenModal show={showModal} handleClose={() => setShowModal(false)} />
             }
-
-            {/* Модальное окно */}
-            {selectedImage && (
-                <Modal
-                    isOpen={isModalOpen}
-                    onClose={closeModal}
-                    imageSrc={selectedImage.src}
-                    title={selectedImage.title}
-                    author={selectedImage.author}
-                    category={selectedImage.category}
-                />
-            )}
         </div>
     );
 };

@@ -1,5 +1,3 @@
-import moment from "moment";
-
 interface user_likes {
     "id": string,
     "username": null | undefined | string,
@@ -44,14 +42,10 @@ export interface IPhotoKids {
     "user_id": string,
     "age_category_id": number,
     "age_category": age_category
-    "users_likes": user_likes[]
+    "user_likes_count": number;
 }
 
 
 export interface ArrayPhotoId {
     id: number
-}
-
-export interface UserPhotoCount {
-    count: number
 }

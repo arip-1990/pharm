@@ -30,6 +30,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property ?Carbon $phone_verified_at
  * @property ?Carbon $email_verified_at
  * @property ?string $token
+ * @property int $children_count
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  * @property ?Carbon $deleted_at
@@ -134,19 +135,13 @@ class User extends Authenticatable
         return $this->belongsTo(Grant::class);
     }
 
-    public function photo_kids():object
+    public function photo_kids(): HasMany
     {
-        return $this->hasMany(PhotoKids::class, 'user_id', 'id');
+        return $this->hasMany(PhotoKids::class, 'user_id');
     }
 
-    public function likesPhoto(): BelongsToMany
+    public function likes_photo(): BelongsToMany
     {
         return $this->belongsToMany(PhotoKids::class, 'likes', 'user_id', 'photo_id');
     }
-
-    public function numberOfChildrens(): HasOne
-    {
-        return $this->hasOne(numberOfChildren::class);
-    }
-
 }

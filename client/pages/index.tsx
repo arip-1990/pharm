@@ -24,8 +24,6 @@ const Home: FC = () => {
   const { data, isFetching, refetch } = useFetchPopularsQuery();
   const router = useRouter();
 
-  console.log(data);
-
   useEffect(() => {
     const path = router.asPath.split("#");
     if (path.length > 1 && ["login", "register"].includes(path[1])) {

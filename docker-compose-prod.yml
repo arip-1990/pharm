@@ -145,8 +145,16 @@ services:
       MAIL_FROM_ADDRESS: info@120-na-80.ru
       MAIL_FROM_NAME: Сеть аптек 120/80
       ELASTICSEARCH_HOST: elastic
-      DADATA_TOKEN: ${DADATA_TOKEN}
-      DADATA_SECRET: ${DADATA_SECRET}
+#      DADATA_TOKEN: ${DADATA_TOKEN}
+#      DADATA_SECRET: ${DADATA_SECRET}
+
+      AWS_ACCESS_KEY_ID: 49TVWG22M33V020AQGPL
+      AWS_SECRET_ACCESS_KEY: xRG2ZlM0fYNITpEjv0DqNiw1g8VpYPoFDLa1gJl2
+      AWS_DEFAULT_REGION: ru-1
+      AWS_BUCKET: b54c6f4d-e3a6020f-0124-4c05-9376-48c13c25210f
+      AWS_URL: AWS_URL=https://s3.timeweb.cloud/b54c6f4d-e3a6020f-0124-4c05-9376-48c13c25210f
+      AWS_ENDPOINT: https://s3.timeweb.cloud
+
     volumes:
       - uploads:/app/storage/app/public
     deploy:

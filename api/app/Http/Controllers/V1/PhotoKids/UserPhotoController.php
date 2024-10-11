@@ -3,16 +3,27 @@
 namespace App\Http\Controllers\V1\PhotoKids;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class UserPhotoController extends Controller
 {
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        $user = Auth::user();
-        $count = count($user->photo_kids);
-        return response()->json(['count' => $count]);
+        try {
+            return new JsonResponse($request->user()?->photo_kids ?? []);
+        }
+        catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $user->children_count = $request->get('userChildren', 0);
+        $user->save();
+
+        return new JsonResponse(status: 201);
     }
 }

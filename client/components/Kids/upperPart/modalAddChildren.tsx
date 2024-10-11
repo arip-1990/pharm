@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import {useAddChildrenMutation, useFetchArrayChildrenCountQuery} from "../../../lib/kidsPhotoService";
+import {useAuth} from "../../../hooks/useAuth";
+import {useAddChildrenMutation} from "../../../lib/kidsPhotoService";
 
 interface AddChildrenModalProps {
     show: boolean;
@@ -8,17 +9,18 @@ interface AddChildrenModalProps {
 }
 
 const AddChildrenModal: React.FC<AddChildrenModalProps> = ({ show, handleClose }) => {
+    const {user} = useAuth();
     const [childrenCount, setChildrenCount] = useState<number>(0);
-
     // RTK Query мутация
-    const [addChildren,] = useAddChildrenMutation()
-    const {data:children} = useFetchArrayChildrenCountQuery()
+    const [addChildren] = useAddChildrenMutation();
 
     // Обработчик отправки формы
     const handleSave = async () => {
         try {
             await addChildren({ count: childrenCount }).unwrap();
             handleClose(); // Закрытие модалки при успешном добавлении
+            location.reload();
+
         } catch (err) {
             console.error('Ошибка при отправке данных:', err);
         }
@@ -34,7 +36,7 @@ const AddChildrenModal: React.FC<AddChildrenModalProps> = ({ show, handleClose }
                 <Form>
                     <Form.Group controlId="childrenCount">
 
-                        {children ?
+                        {user?.childrenCount ?
                             <div>
                                 <p>Что бы загрузить фото зайдите в раздел "мои рисунки" </p>
                             </div>
@@ -42,7 +44,7 @@ const AddChildrenModal: React.FC<AddChildrenModalProps> = ({ show, handleClose }
                             <>
                                 <Form.Label>Добро пожаловать !</Form.Label>
                                 <Form.Label>Для участия необходимо указать количество ваших детей</Form.Label>
-                                <Form.Label>Учавствовать может каждый ребенок, необходимо загрузить фотографии ребенка</Form.Label>
+                                <Form.Label>Участвовать может каждый ребенок, необходимо загрузить фотографии ребенка</Form.Label>
                                 <Form.Label>Каждый ребенок может загрузить по одной фотографии</Form.Label>
                                 <Form.Label>Желаем успехов !</Form.Label>
                                 <p></p>
@@ -65,7 +67,7 @@ const AddChildrenModal: React.FC<AddChildrenModalProps> = ({ show, handleClose }
                 <Button variant="secondary" onClick={handleClose}>
                     Отмена
                 </Button>
-                {children ? '' :<Button
+                {user?.childrenCount ? '' :<Button
                     variant="primary"
                     onClick={handleSave}
                     // disabled={isLoading}

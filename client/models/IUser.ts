@@ -30,4 +30,5 @@ export interface IUser {
     registrationDate: moment.Moment | null;
     card: Card;
     isAuth: boolean;
+    childrenCount: number;
 }

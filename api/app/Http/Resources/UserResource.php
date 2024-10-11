@@ -38,7 +38,8 @@ class UserResource extends JsonResource
                 'number' => $this['cardNumber'],
                 'chargedBonus' => $this['cardChargedBonus'],
                 'writeoffBonus' => $this['cardWriteoffBonus']
-            ]
+            ],
+            'childrenCount' => $this['childrenCount']
         ];
     }
 }
