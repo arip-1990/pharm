@@ -6,7 +6,7 @@ import {useAuth} from "../../../hooks/useAuth";
 
 const FormModal = ({ open }: any) => {
     const [uploadPhoto] = useUploadPhotoMutation();
-    const [fileName, setFileName] = useState('Файл не выбран');
+    const [fileName, setFileName] = useState('Файл не выбран, максимальный размер файла 15мб');
     const {user} = useAuth();
 
     if (!open) return null;
@@ -57,7 +57,7 @@ const FormModal = ({ open }: any) => {
                                     onChange={(event) => {
                                         const file = event.currentTarget.files[0];
                                         setFieldValue('file', file);
-                                        setFileName(file ? file.name : 'Файл не выбран');
+                                        setFileName(file ? file.name : 'Файл не выбран, максимальный размер файла 15мб');
                                     }}
 
                                 />

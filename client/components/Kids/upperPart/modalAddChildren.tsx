@@ -38,7 +38,7 @@ const AddChildrenModal: React.FC<AddChildrenModalProps> = ({ show, handleClose }
 
                         {user?.childrenCount ?
                             <div>
-                                <p>Что бы загрузить фото зайдите в раздел "мои рисунки" </p>
+                                <p>Что бы загрузить фото пролистайте вниз и нажмите на раздел "мои рисунки"</p>
                             </div>
                             :
                             <>

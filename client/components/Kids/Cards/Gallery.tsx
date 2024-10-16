@@ -50,6 +50,7 @@ export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
     return (
         <div className={styles_.container}>
             <h1 className={styles_.title}>ГАЛЕРЕЯ</h1>
+            <h6>Выберите возрастную категорию и проголосуйте за понравившийся рисунок</h6>
 
             <div className={styles_.category}>
 

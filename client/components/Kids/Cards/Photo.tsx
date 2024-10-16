@@ -81,14 +81,14 @@ const Photo: FC<IPhotoProps> = ({photo}) => {
                 <h5>{photo.photo_name}</h5>
                 <p>Автор: {photo.first_name} {photo.last_name}</p>
                 <p>Категория: {photo.age_category?.Age} лет</p>
-                <h5 style={{color: "#c39020"}}><b>Количество голосов {photo.user_likes_count}</b></h5>
+                <h5 style={{color: "#f21b00"}}><b>Количество голосов {photo.user_likes_count}</b></h5>
 
                 {checkLike(photo.id) ?
                     <button
                         className={styles_.voteButtonLikes}
                         onClick={() => handleLike(photo.id)}
                     >
-                        {photo.id == idCard && isLoading ? "Загрузка ..." : 'Проголосованно'}
+                        {photo.id == idCard && isLoading ? "Загрузка ..." : 'Проголосовано'}
                     </button>
                     :
                     <button

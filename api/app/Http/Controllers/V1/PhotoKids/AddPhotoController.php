@@ -51,6 +51,8 @@ class AddPhotoController extends Controller
 
         $file = $request->file('file');
         $path = Storage::disk('s3')->putFile('KidsPhotos', $file);
+//        $path = Storage::disk('s3')->putFile('Test', $file);
+
         $url_key = Storage::disk('s3')->url($path);
         $url = explode("=", $url_key);
 

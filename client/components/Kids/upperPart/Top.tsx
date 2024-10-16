@@ -7,7 +7,9 @@ import categoryThree from "../../../assets/images/kids/Кнопка_от 3 до 
 import categorySix from "../../../assets/images/kids/Кнопка_от 6 до 8 белая.png"
 import categoryNine from "../../../assets/images/kids/Кнопка_от 9 до 11 белая.png"
 import categoryTwelve from "../../../assets/images/kids/Кнопка_от 12 до 14 белая.png"
-import ParticipateYellow from "../../../assets/images/kids/Кнопка_участовать_желтый_фон.png"
+// import ParticipateYellow from "../../../assets/images/kids/Кнопка_участовать_желтый_фон.png"
+import ParticipateYellow from "../../../assets/images/kids/Кнопка_участовать_красная_желтый_фон.png"
+
 import priz from "../../../assets/images/kids/Призы.png"
 import voteStyle from "./vote.module.css"
 // import hippopotamusVote from "../../../assets/images/kids/Бегемот_голосование.png"
