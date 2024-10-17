@@ -5,7 +5,7 @@ import styles from './formModal.module.css';
 import {useAuth} from "../../../hooks/useAuth";
 
 const FormModal = ({ open }: any) => {
-    const [uploadPhoto] = useUploadPhotoMutation();
+    const [uploadPhoto, {isLoading}] = useUploadPhotoMutation();
     const [fileName, setFileName] = useState('Файл не выбран, максимальный размер файла 15мб');
     const {user} = useAuth();
 
@@ -28,6 +28,7 @@ const FormModal = ({ open }: any) => {
                         last_name: '',
                         middle_name: '',
                         user_id: '',
+                        agreement: null,
                     }}
                     onSubmit={async (values) => {
                         const formData = new FormData();
@@ -37,6 +38,7 @@ const FormModal = ({ open }: any) => {
                         formData.append('first_name', values.first_name);
                         formData.append('last_name', values.last_name);
                         formData.append('user_id', user.id);
+                        formData.append('agreement', values.agreement);
 
                         try {
                             await uploadPhoto(formData).unwrap();
@@ -111,10 +113,31 @@ const FormModal = ({ open }: any) => {
                                 <label htmlFor="last_name">Фамилия</label>
                             </div>
 
+                            <label>
 
+                                <div>
+                                    <a
+                                        href='https://drive.google.com/file/d/1dztrQwRkCTkIw05nQvYp8qqauFTx3MPq/view'
+                                    >
+                                        https://gclnk.com/qiPM7uF3
+                                    </a>
+                                    <div style={{display:"flex"}}>
+                                        <Field
+                                            id='agreement'
+                                            type="radio"
+                                            name="agreement"
+                                            value='Согласен(а) на обработку данных'
+                                            required={true}
+                                        />
+                                        Я выражаю согласие на использование и публикацию произведений в соответствии с
+                                        условиями (см. ссылку).
+                                    </div>
+                                </div>
+
+                            </label>
 
                             <button type="submit" className={styles.submitButton}>
-                                Загрузить фото
+                                {isLoading ? 'Загрузка...': 'Загрузить фото'}
                             </button>
                         </Form>
                     )}

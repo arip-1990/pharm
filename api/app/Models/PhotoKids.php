@@ -20,7 +20,8 @@ class PhotoKids extends Model
         "middle_name",
         "published",
         "user_id",
-        "age_category_id"
+        "age_category_id",
+        "agreement"
     ];
 
     public function user(): BelongsTo

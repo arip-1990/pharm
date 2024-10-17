@@ -64,7 +64,8 @@ class AddPhotoController extends Controller
             "last_name" => $request->get('last_name'),
             "middle_name" => $request->get('middle_name'),
             "user_id" => $request->get("user_id"),
-            "age_category_id" => $categoryAge
+            "age_category_id" => $categoryAge,
+            "agreement" => $request->get('agreement')
         ]);
 
         $photo->save();
