@@ -65,4 +65,9 @@ class IndexController extends Controller
             ], 500);
         }
     }
+
+    public function exportOrder(): string
+    {
+        return 'Hello world';
+    }
 }

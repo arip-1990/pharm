@@ -1,19 +1,21 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Col, Row, Table, TablePaginationConfig } from "antd";
+import {Button, Card, Col, Input, Modal, Row, Table, TablePaginationConfig} from "antd";
 import { useFetchOrdersQuery } from "../../services/OrderService";
 import StatusStep from "./StatusStep";
 import { useSessionStorage } from "react-use-storage";
 import { SortOrder } from "antd/lib/table/interface";
 import { useFetchUsersQuery } from "../../services/UserService";
 import {FileExcelOutlined} from "@ant-design/icons";
-
+import {API_URL} from "../../services/api"
+import FormExport from "./FormExport";
 
 interface StorageType {
   order: { field: string | null; direction: "asc" | "desc" };
   filters: { field: string; value: string }[];
   pagination: { current: number; pageSize: number };
 }
+
 
 const Order: React.FC = () => {
   const [filters, setFilters] = useSessionStorage<StorageType>("orderFilters", {
@@ -26,6 +28,7 @@ const Order: React.FC = () => {
     filters
   );
   const navigate = useNavigate();
+  const [openExportModal, setOpenExportModal] = React.useState<boolean>(false);
 
   const columns = [
     {
@@ -157,7 +160,13 @@ const Order: React.FC = () => {
                 Всего {orders?.meta.total.toLocaleString("ru") || 0} записи
               </span>
               <div>
-              <Button type="default" icon={<FileExcelOutlined />}></Button>
+
+              <Button
+                type="default"
+                icon={<FileExcelOutlined />}
+                style={{marginRight:"10px"}}
+                onClick={() => setOpenExportModal(true)}
+              />
 
               <Button type="primary" onClick={resetFilters}>
                 Сбросить фильтр
@@ -201,6 +210,21 @@ const Order: React.FC = () => {
                 }),
             })}
           />
+          <Modal
+            title={<p>Loading Modal</p>}
+            footer={
+              <a href={API_URL + '/v1/panel/order/export'}>
+                <Button type="primary" onClick={() => setOpenExportModal(false)}>
+                  Reload
+                </Button>
+              </a>
+            }
+            open={openExportModal}
+            onCancel={() => setOpenExportModal(false)}
+          >
+            <FormExport />
+          </Modal>
+
         </Card>
       </Col>
     </Row>
