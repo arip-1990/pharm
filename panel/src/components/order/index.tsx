@@ -6,6 +6,8 @@ import StatusStep from "./StatusStep";
 import { useSessionStorage } from "react-use-storage";
 import { SortOrder } from "antd/lib/table/interface";
 import { useFetchUsersQuery } from "../../services/UserService";
+import {FileExcelOutlined} from "@ant-design/icons";
+
 
 interface StorageType {
   order: { field: string | null; direction: "asc" | "desc" };
@@ -154,9 +156,13 @@ const Order: React.FC = () => {
               <span>
                 Всего {orders?.meta.total.toLocaleString("ru") || 0} записи
               </span>
+              <div>
+              <Button type="default" icon={<FileExcelOutlined />}></Button>
+
               <Button type="primary" onClick={resetFilters}>
                 Сбросить фильтр
               </Button>
+              </div>
             </div>
           }
         >
