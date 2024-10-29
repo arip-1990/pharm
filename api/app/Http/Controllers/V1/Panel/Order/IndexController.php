@@ -66,8 +66,12 @@ class IndexController extends Controller
         }
     }
 
-    public function exportOrder(): string
+    public function exportOrder(Request $request): string
     {
-        return 'Hello world';
+        dump($request->get('firstDate'));
+        if (!$request->get('firstDate')) {
+            return 'No data';
+        }
+        return 'Hello world' . ' ' . $request->get('platform');
     }
 }

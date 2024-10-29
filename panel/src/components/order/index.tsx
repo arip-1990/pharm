@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, {useCallback, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import {Button, Card, Col, Input, Modal, Row, Table, TablePaginationConfig} from "antd";
 import { useFetchOrdersQuery } from "../../services/OrderService";
@@ -16,6 +16,10 @@ interface StorageType {
   pagination: { current: number; pageSize: number };
 }
 
+interface FormData {
+  one:string,
+  two:string,
+}
 
 const Order: React.FC = () => {
   const [filters, setFilters] = useSessionStorage<StorageType>("orderFilters", {
@@ -29,6 +33,9 @@ const Order: React.FC = () => {
   );
   const navigate = useNavigate();
   const [openExportModal, setOpenExportModal] = React.useState<boolean>(false);
+
+  const [formDate, setFormDate] = useState<FormData[]>([]);
+  const [platform, setPlatform] = useState<string>('all')
 
   const columns = [
     {
@@ -213,7 +220,7 @@ const Order: React.FC = () => {
           <Modal
             title={<p>Loading Modal</p>}
             footer={
-              <a href={API_URL + '/v1/panel/order/export'}>
+              <a href={API_URL + '/v1/panel/order/export' + `?platform=${platform}` + `&firstDate=${formDate[0]?.one}` + `&lastDate=${formDate[0]?.two}`}>
                 <Button type="primary" onClick={() => setOpenExportModal(false)}>
                   Reload
                 </Button>
@@ -221,8 +228,9 @@ const Order: React.FC = () => {
             }
             open={openExportModal}
             onCancel={() => setOpenExportModal(false)}
+            // formData={setFormData}
           >
-            <FormExport />
+            <FormExport setFormDate={setFormDate} setPlatform={setPlatform} />
           </Modal>
 
         </Card>
