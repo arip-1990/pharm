@@ -66,12 +66,48 @@ class IndexController extends Controller
         }
     }
 
-    public function exportOrder(Request $request): string
+    public function exportOrder(Request $request)
     {
         dump($request->get('firstDate'));
         if (!$request->get('firstDate')) {
-            return 'No data';
+            return 'No date';
         }
-        return 'Hello world' . ' ' . $request->get('platform');
+//        return 'Hello world' . ' ' . $request->get('platform');
+
+        try {
+            $query = Order::select('orders.*');
+            if ($platform = $request->get('platform')) {
+                if ($platform == 'mobile') $query->whereIn('platform', ['android', 'ios']);
+                else $query->where('platform', $platform);
+            }
+
+            if ($user = $request->get('userName')) $query->where('user_id', $user);
+
+            $query->orderByDesc('created_at');
+
+            $page = $request->get('page', 1);
+            $pageSize = $request->get('pageSize', 10);
+            $total = $query->count();
+            $missed = [];
+            $orders = $query->offset(($page - 1) * $pageSize)->take($pageSize)->get()->filter(function (Order $item) use (&$missed) {
+                if ($item->order_group_id and $item->delivery_id == 3 and !in_array($item->order_group_id, $missed)) {
+                    $missed[] = $item->order_group_id;
+                    return false;
+                }
+
+                return true;
+            });
+
+            return OrderResource::collection(new LengthAwarePaginator($orders, $total, $pageSize));
+        }
+        catch (\Exception $exception) {
+            return new JsonResponse([
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage()
+            ], 500);
+        }
+
+
+
     }
 }
