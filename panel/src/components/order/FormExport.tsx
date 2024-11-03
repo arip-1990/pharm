@@ -1,13 +1,15 @@
 import React, {FC, useState} from 'react';
-import {DatePicker, Space, Radio} from "antd";
+import {DatePicker, Space, Radio, Input} from "antd";
 const { RangePicker } = DatePicker;
 
 interface FormExportProps{
   setFormDate:any
   setPlatform:any
+  setValue:any
+  value:any
 }
 
-const FormExport: FC<FormExportProps> = ({setFormDate, setPlatform}) => {
+const FormExport: FC<FormExportProps> = ({setFormDate, setPlatform, setValue, value}) => {
 
 
   const options = [
@@ -23,6 +25,13 @@ const FormExport: FC<FormExportProps> = ({setFormDate, setPlatform}) => {
 
   const getPlatforms = (event: any) => {
     setPlatform(event.target.value)
+  }
+
+  const handleChange = (event:any) => {
+    const inputValue = event.target.value;
+    if (/^\d*$/.test(inputValue)) {
+      setValue(inputValue);
+    }
   }
 
   return (
@@ -46,6 +55,19 @@ const FormExport: FC<FormExportProps> = ({setFormDate, setPlatform}) => {
         optionType="button"
         buttonStyle="solid"
         onChange={getPlatforms}
+      />
+
+      <h5
+        style={{marginTop: "25px",}}
+      >
+        Введите количество записей!
+      </h5>
+      <Input
+        value={value}
+        onChange={handleChange}
+        placeholder="Введите только цифры"
+        size='middle'
+        style={{width: 290}}
       />
 
     </div>

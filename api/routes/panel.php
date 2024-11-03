@@ -52,7 +52,6 @@ Route::prefix('v1/panel')->group(function () {
             Route::get('/{order}', [V1\Panel\Order\ShowController::class, 'handle']);
             Route::get('/{order}/items', [V1\Panel\Order\ShowItemsController::class, 'handle']);
             Route::get('/{order}/send-data', [V1\Panel\Order\SendDataController::class, 'handle']);
-
         });
 
         Route::prefix('offer')->group(function () {

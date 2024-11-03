@@ -36,6 +36,7 @@ const Order: React.FC = () => {
 
   const [formDate, setFormDate] = useState<FormData[]>([]);
   const [platform, setPlatform] = useState<string>('all')
+  const [value, setValue] = useState(10)
 
   const columns = [
     {
@@ -220,7 +221,13 @@ const Order: React.FC = () => {
           <Modal
             title={<p>Loading Modal</p>}
             footer={
-              <a href={API_URL + '/v1/panel/order/export' + `?platform=${platform}` + `&firstDate=${formDate[0]?.one}` + `&lastDate=${formDate[0]?.two}`}>
+              <a href={API_URL
+                + '/v1/panel/order/export'
+                + `?platform=${platform}`
+                + `&firstDate=${formDate[0]?.one}`
+                + `&lastDate=${formDate[0]?.two}`
+                + `&size=${value}`}
+              >
                 <Button type="primary" onClick={() => setOpenExportModal(false)}>
                   Reload
                 </Button>
@@ -230,7 +237,7 @@ const Order: React.FC = () => {
             onCancel={() => setOpenExportModal(false)}
             // formData={setFormData}
           >
-            <FormExport setFormDate={setFormDate} setPlatform={setPlatform} />
+            <FormExport setFormDate={setFormDate} setPlatform={setPlatform} setValue={setValue} value={value}/>
           </Modal>
 
         </Card>
