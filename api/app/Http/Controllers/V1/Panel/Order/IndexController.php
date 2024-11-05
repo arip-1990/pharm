@@ -144,26 +144,23 @@ class IndexController extends Controller
                     'S' => '-', // Отправка почты
                     'H' => '-', // Отправка в 1с
                     'F' => '-', // Заказ собран
-                    'R' => '-', // Заказ получен
                 ];
 
                 foreach ($statuses as $status) {
                     switch ($status->value->value) {
                         case 'M':
-                            $statusValues['M'] = 'Принят';
+                            $statusValues['M'] = ' Отправлено';
                             break;
                         case 'S':
-                            $statusValues['S'] = 'Отправлено';
+                            $statusValues['S'] = 'отправка в 1с';
                             break;
                         case 'H':
-                            $statusValues['H'] = 'В 1С';
+                            $statusValues['H'] = 'Собран';
                             break;
                         case 'F':
-                            $statusValues['F'] = 'Собран';
+                            $statusValues['F'] = 'Получен';
                             break;
-                        case 'R':
-                            $statusValues['R'] = 'Получен';
-                            break;
+
                     }
                 }
 
@@ -173,11 +170,11 @@ class IndexController extends Controller
                 $activeWorksheet->setCellValue("C$line", $phone);
                 $activeWorksheet->setCellValue("D$line", $storeName);
                 $activeWorksheet->setCellValue("E$line", $platform);
-                $activeWorksheet->setCellValue("F$line", $statusValues['M']); // Заказ принят
-                $activeWorksheet->setCellValue("G$line", $statusValues['S']); // Отправка почты
-                $activeWorksheet->setCellValue("H$line", $statusValues['H']); // Отправка в 1с
-                $activeWorksheet->setCellValue("I$line", $statusValues['F']); // Заказ собран
-                $activeWorksheet->setCellValue("J$line", $statusValues['R']); // Заказ получен
+                $activeWorksheet->setCellValue("F$line", "Принят"); // Заказ принят
+                $activeWorksheet->setCellValue("G$line", $statusValues['M']); // Отправка почты
+                $activeWorksheet->setCellValue("H$line", $statusValues['S']); // Отправка в 1с
+                $activeWorksheet->setCellValue("I$line", $statusValues['H']); // Заказ собран
+                $activeWorksheet->setCellValue("J$line", $statusValues['F']); // Заказ получен
                 $activeWorksheet->setCellValue("K$line", $date); // Дата
                 $activeWorksheet->setCellValue("L$line", $cost); // Сумма заказа
 
