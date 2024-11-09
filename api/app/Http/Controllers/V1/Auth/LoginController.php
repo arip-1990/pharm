@@ -26,6 +26,17 @@ class LoginController extends Controller
             $message = $e->getMessage();
             $request->session()->put('loginData', $data);
 
+            if ($code === 0){
+                try {
+                    $token = $this->verifyService->requestVerify($data['login']);
+                    $request->session()->put('token', $token);
+                }
+                catch (\DomainException $e) {
+                    $code = $e->getCode();
+                    $message = $e->getMessage();
+                }
+            }
+
             if ($code === 100033) {
                 try {
                     $token = $this->verifyService->requestVerify($data['login']);

@@ -74,6 +74,7 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
         onHide();
       } catch (error) {
         if (axios.isAxiosError(error)) {
+          if (error.response.data.code === 0) setType("verifyPhone");
           if (error.response.data.code === 100033) setType("verifyPhone");
           else if (error.response.data.code === 100023) setType("setPassword");
 
