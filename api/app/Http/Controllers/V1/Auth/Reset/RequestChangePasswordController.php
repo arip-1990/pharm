@@ -20,6 +20,11 @@ class RequestChangePasswordController extends Controller
         }
         catch (\DomainException $e) {
             $code = $e->getCode();
+            if ($code === 0) {
+                $request->session()->put('phone', $phone);
+                $request->session()->put('token', $this->verifyService->requestVerify($phone));
+            }
+
             if ($code === 100033) {
                 $request->session()->put('phone', $phone);
                 $request->session()->put('token', $this->verifyService->requestVerify($phone));

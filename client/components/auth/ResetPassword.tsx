@@ -75,6 +75,7 @@ const ResetPassword: FC<Props> = ({ switchAuthType }) => {
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
+          if (error.response.data.code === 0) setType("verifyPhone");
           if (error.response.data.code === 100033) setType("verifyPhone");
           notification("error", error.response.data.message);
         }
