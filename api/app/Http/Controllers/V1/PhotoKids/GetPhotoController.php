@@ -15,6 +15,7 @@ class GetPhotoController extends Controller
                 ->where('published', true)
                 ->with('age_category')
                 ->withCount('user_likes')
+                ->orderBy('user_likes_count', 'desc')
                 ->get()
         );
 

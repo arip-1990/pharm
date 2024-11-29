@@ -50,7 +50,7 @@ export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
     return (
         <div className={styles_.container}>
             <h1 className={styles_.title}>ГАЛЕРЕЯ</h1>
-            <h6>Выберите возрастную категорию и проголосуйте за понравившийся рисунок</h6>
+            <h6>Выберите возрастную категорию</h6>
 
             <div className={styles_.category}>
 
@@ -87,21 +87,21 @@ export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
 
             <div className={styles_.grid}>
 
-                {filteredPhotos.length ? filteredPhotos.map((photo) => <Photo key={photo.id} photo={photo} />) : 'Фото отсутствует'}
+                {filteredPhotos.length ? filteredPhotos.map((photo, index) => <Photo index={index} photo={photo} />) : 'Фото отсутствует'}
 
             </div>
             {myPhoto ?
                 <>
-                    <div>
+                    {/* <div>
                         {checked() ? <h5>достигнут лимит рисунков</h5> :
                         <h5>вы можете загрузить еще {cals()} рис.</h5>}
                         <h3>Фото будет опубликовано на сайт в течение двух рабочих дней</h3>
-                    </div>
+                    </div> */}
                     <div style={{display: "flex", justifyContent: "center"}}>
 
                         <Button
                             onClick={howOpenModal}
-                            disabled={checked()}
+                            disabled={true}
                             style={{marginTop: '20px'}}
                         >
                             Загрузить фотографию
@@ -126,3 +126,4 @@ export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
         </div>
     );
 };
+

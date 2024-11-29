@@ -23,6 +23,7 @@ const Kids = () => {
 
     return (
         <Layout title="Конкурс детского рисунка 120на80" description="Конкурс">
+            
             <Breadcrumbs getDefaultGenerator={getDefaultGenerator}/>
 
             <Top />

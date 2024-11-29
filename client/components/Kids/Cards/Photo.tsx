@@ -8,12 +8,14 @@ import Auth from "../../auth";
 import {useAuth} from "../../../hooks/useAuth";
 import Modal from 'react-bootstrap/Modal';
 import styles from "./modal.module.css";
+import { Badge } from 'react-bootstrap';
 
 interface IPhotoProps {
     photo: IPhotoKids;
+    index: number;
 }
 
-const Photo: FC<IPhotoProps> = ({photo}) => {
+const Photo: FC<IPhotoProps> = ({photo, index}) => {
     const {isAuth} = useAuth();
     const [addLike, {isLoading, error}] = useAddLikeMutation();
     const [idCard, setIdCard] = useState<number | null>(null);
@@ -63,6 +65,7 @@ const Photo: FC<IPhotoProps> = ({photo}) => {
 
     return (
         <div key={photo.id} className={styles_.card}>
+
             <Image
                 src={photo.link}
                 width={300}
@@ -76,14 +79,16 @@ const Photo: FC<IPhotoProps> = ({photo}) => {
                     photo.age_category?.Age
                 )}
             />
-
+            
+            
             <div className={styles_.cardContent}>
+                {index in [1, 2, 3] ? <h4><Badge bg="danger">{index + 1} место</Badge> </h4> : ''}
                 <h5>{photo.photo_name}</h5>
                 <p>Автор: {photo.first_name} {photo.last_name}</p>
                 <p>Категория: {photo.age_category?.Age} лет</p>
                 <h5 style={{color: "#f21b00"}}><b>Количество голосов {photo.user_likes_count}</b></h5>
 
-                {checkLike(photo.id) ?
+                {/* {checkLike(photo.id) ?
                     <button
                         className={styles_.voteButtonLikes}
                         onClick={() => handleLike(photo.id)}
@@ -97,7 +102,7 @@ const Photo: FC<IPhotoProps> = ({photo}) => {
                     >
                         {photo.id == idCard && isLoading ? "Загрузка ..." : 'Проголосовать'}
                     </button>
-                }
+                } */}
 
             </div>
 

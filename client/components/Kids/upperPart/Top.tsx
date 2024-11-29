@@ -9,6 +9,7 @@ import categoryNine from "../../../assets/images/kids/Кнопка_от 9 до 1
 import categoryTwelve from "../../../assets/images/kids/Кнопка_от 12 до 14 белая.png"
 // import ParticipateYellow from "../../../assets/images/kids/Кнопка_участовать_желтый_фон.png"
 import ParticipateYellow from "../../../assets/images/kids/Кнопка_участовать_красная_желтый_фон.png"
+import resultTests from "../../../assets/images/kids/Кнопка_посмотреть_победителей.png"
 
 import priz from "../../../assets/images/kids/Призы.png"
 import voteStyle from "./vote.module.css"
@@ -55,6 +56,14 @@ const Top = () => {
         e.preventDefault();
         setOpenModal(true);
     };
+
+    const handleScroll = () => {
+        window.scrollBy({
+            top: 950,
+            behavior: "smooth",
+        })
+    }
+
     return (
         <div>
 
@@ -83,13 +92,14 @@ const Top = () => {
                 <div className={style.ParticipateYellow} >
                     {auth.isAuth ?
                         <>
-                            <Image src={ParticipateYellow} onClick={handleOpen}/>
+                            <Image src={resultTests} onClick={handleScroll}/>
                         </>
                         :
                         <>
-                            <a href="#" onClick={handleSignIn}>
+                            {/* <a href="#" onClick={handleSignIn}>
                                 <Image src={ParticipateYellow}/>
-                            </a>
+                            </a> */}
+                            <Image src={resultTests} onClick={handleScroll}/>
                         </>
                     }
                 </div>
@@ -127,7 +137,7 @@ const Top = () => {
 
             {/*Голосование*/}
 
-            <div className={voteStyle.votingContainer}>
+            {/* <div className={voteStyle.votingContainer}>
                 <div className={voteStyle.leftSide}>
                     <div>
                         <Image src={hippopotamusVote} alt="Бегемот"/>
@@ -142,17 +152,20 @@ const Top = () => {
                 <div className={voteStyle.rightSide}>
                     { auth.isAuth ?
                         <>
-                        <Image src={ParticipateYellow} onClick={handleOpen}/>
+                        <Image src={resultTests} onClick={handleOpen}/>
                         </>
                         :
                         <>
                             <a href="#" onClick={handleSignIn}>
                                 <Image src={ParticipateYellow}/>
                             </a>
+                            <Image src={resultTests} onClick={handleOpen}/>
                         </>
                     }
                 </div>
-            </div>
+            </div> */}
+
+            
             <AddChildrenModal show={showModal} handleClose={handleClose} />
             {/*{openModal ? <FormModal open={setOpenModal}/> : ''}*/}
             <Auth show={openModal} onHide={() => setOpenModal(false)} />
