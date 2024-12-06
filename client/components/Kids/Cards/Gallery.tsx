@@ -99,13 +99,13 @@ export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
                     </div>
                     <div style={{display: "flex", justifyContent: "center"}}>
 
-                        <Button
-                            onClick={howOpenModal}
-                            disabled={checked()}
-                            style={{marginTop: '20px'}}
-                        >
-                            Загрузить фотографию
-                        </Button>
+                        {/*<Button*/}
+                        {/*    onClick={howOpenModal}*/}
+                        {/*    disabled={checked()}*/}
+                        {/*    style={{marginTop: '20px'}}*/}
+                        {/*>*/}
+                        {/*    Загрузить фотографию*/}
+                        {/*</Button>*/}
 
                         <div style={{marginRight: '10px', marginLeft: '10px'}}></div>
 
