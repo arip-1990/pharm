@@ -48,7 +48,7 @@ class CalcOrderRequest extends FormRequest
 
             'user' => 'nullable|array',
             'user.name' => 'required|string',
-            'user.email' => 'required|string',
+            'user.email' => 'string|nullable',
             'user.phone' => 'required|string',
 
             'promoGroup' => 'nullable|array',

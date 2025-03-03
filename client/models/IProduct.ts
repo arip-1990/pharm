@@ -27,4 +27,6 @@ export interface IProduct {
   attributes: IAttribute[];
   minPrice: number;
   totalOffers: number;
+  rubles: number|null;
+  quantity: number|null;
 }

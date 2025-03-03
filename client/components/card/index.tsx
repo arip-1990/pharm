@@ -10,13 +10,7 @@ import { ICart } from "../../models/ICart";
 import Recipe from "./Recipe";
 import Favorite from "./Favorite";
 import Price from "./Price";
-import neww50 from "../../assets/images/neww50.png"
-import neww30 from "../../assets/images/neww30.png"
-import neww15 from "../../assets/images/neww30.png"
-import neww300 from "../../assets/images/neww300.jpg"
-import neww700 from "../../assets/images/neww700.png"
-import neww120 from "../../assets/images/neww120.png"
-import neww250 from "../../assets/images/neww250.png"
+
 
 import styles from "./Card.module.scss";
 
@@ -41,23 +35,6 @@ const Card: FC<Props> = ({ product }) => {
     }
   };
 
-  const discountModel = (disc: number):any => {
-    if ( disc == 50) {
-      return <Image src={neww50}/>
-    }else if (disc == 30){
-      return <Image src={neww30}/>
-    }else if (disc == 15){
-      return <Image src={neww15}/>
-    } else if (disc == 300){
-      return <Image src={neww300}/>
-    }else if (disc == 700){
-      return <Image src={neww700}/>
-    } else if (disc == 120){
-    return <Image src={neww120}/>
-    }else if (disc == 250){
-      return <Image src={neww250}/>
-    }
-  }
 
   return (
     <div
@@ -81,7 +58,28 @@ const Card: FC<Props> = ({ product }) => {
 
 
         {product.discount &&
-          discountModel(Number(product.discount))
+          // discountModel(Number(product.discount))
+            <div style={{
+              border:"solid",
+              color:"white",
+              backgroundColor:"red",
+              position:"absolute",
+              left:"-2px",
+              height: "40px",
+              borderRadius:"7px"
+            }}>
+              <p
+                  style={{
+                    marginLeft:"20px",
+                    marginRight:"20px",
+                    fontSize:"23px"}}
+              >
+                -{product.discount != 0 ?
+                  `${product.discount}%`:
+                  `${product.rubles}р за ${product.quantity} уп`}
+              </p>
+
+            </div>
           // <div
           //   className={classNames(styles.card_discount, {
           //     [styles.card_discount__50]: Number(product.discount) === 50,

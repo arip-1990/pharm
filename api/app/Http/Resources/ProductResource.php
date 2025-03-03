@@ -32,6 +32,8 @@ class ProductResource extends JsonResource
                 'value' => $value->value,
             ]),
             'discount' => $this->discounts->first()?->percent,
+            'rubles' => $this->discounts->first()?->rubles,
+            'quantity' => $this->discounts->first()?->quantity,
             'offers' => OfferResource::collection($this->offers),
             'minPrice' => $this->getPrice(),
             'totalOffers' => $this->getCountByCity($request->cookie('city', City::find(1)?->name)),
