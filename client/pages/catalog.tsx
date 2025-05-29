@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from "react";
+import React, { FC, useCallback, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import Breadcrumbs from "../components/breadcrumbs";
 import { ICategory } from "../models/ICategory";
 import Layout from "../templates";
 import Card from "../components/card";
+import AdFoxBanner from "../components/addFoxBanner/AddFoxBanner";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -69,6 +70,11 @@ const Catalog: FC = () => {
       title="Наш ассортимент - Сеть аптек 120/80"
       description="Вы можете совершить покупку и забрать свой заказ самостоятельно, приехав в аптеку. Оплата при получении наличными или картой."
     >
+      <AdFoxBanner
+          containerId="adfox_174055479330049080"
+          params={{p1: 'dghxk', p2: 'ixfw'}}
+      />
+
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
@@ -81,8 +87,14 @@ const Catalog: FC = () => {
               </a>
             </li> */}
             {data?.categories.map((item) => generateCategory(item))}
+
           </ul>
+          <AdFoxBanner
+              containerId="adfox_174055481423249080"
+              params={{p1: 'dghxl', p2: 'ixfw'}}
+          />
         </nav>
+
 
         <div className="col-md-9 mt-3 mt-md-0">
           {data?.products.length ? (
@@ -114,6 +126,10 @@ const Catalog: FC = () => {
           )}
         </div>
       </div>
+      <AdFoxBanner
+          containerId="adfox_174055484512479080"
+          params={{p1: 'dghxm', p2: 'ixfw'}}
+      />
     </Layout>
   );
 };

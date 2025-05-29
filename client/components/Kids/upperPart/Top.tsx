@@ -1,7 +1,8 @@
 import React, {MouseEvent, useState} from 'react';
 import Image from "next/image";
-import photo1 from "../../../assets/images/kids/1.png";
-import photo2 from "../../../assets/images/kids/2.png";
+import end_1 from "../../../assets/images/kids/end_1.jpeg"
+import end_test from "../../../assets/images/kids/END_CONCURSE.png"
+
 import style from "./top.module.css";
 import categoryThree from "../../../assets/images/kids/Кнопка_от 3 до 5 белая.png"
 import categorySix from "../../../assets/images/kids/Кнопка_от 6 до 8 белая.png"
@@ -9,7 +10,6 @@ import categoryNine from "../../../assets/images/kids/Кнопка_от 9 до 1
 import categoryTwelve from "../../../assets/images/kids/Кнопка_от 12 до 14 белая.png"
 // import ParticipateYellow from "../../../assets/images/kids/Кнопка_участовать_желтый_фон.png"
 import ParticipateYellow from "../../../assets/images/kids/Кнопка_участовать_красная_желтый_фон.png"
-
 import priz from "../../../assets/images/kids/Призы.png"
 import voteStyle from "./vote.module.css"
 // import hippopotamusVote from "../../../assets/images/kids/Бегемот_голосование.png"
@@ -60,98 +60,98 @@ const Top = () => {
 
             <div className={style.firstImageContainer}>
                 <div className={style.firstImage}>
-                    <Image src={photo1} alt={"not found"}/>
+                    <Image src={end_1} alt={"not found"}/>
                 </div>
             </div>
 
-            <div className={style.categories}>
-                <div className={style.categoriesImg}>
-                    <Image src={categoryThree}/>
-                </div>
-                <div className={style.categoriesImg}>
-                    <Image src={categorySix}/>
-                </div>
-                <div className={style.categoriesImg}>
-                    <Image src={categoryNine}/>
-                </div>
-                <div className={style.categoriesImg}>
-                    <Image src={categoryTwelve}/>
-                </div>
-            </div>
+            {/*<div className={style.categories}>*/}
+            {/*    <div className={style.categoriesImg}>*/}
+            {/*        <Image src={categoryThree}/>*/}
+            {/*    </div>*/}
+            {/*    <div className={style.categoriesImg}>*/}
+            {/*        <Image src={categorySix}/>*/}
+            {/*    </div>*/}
+            {/*    <div className={style.categoriesImg}>*/}
+            {/*        <Image src={categoryNine}/>*/}
+            {/*    </div>*/}
+            {/*    <div className={style.categoriesImg}>*/}
+            {/*        <Image src={categoryTwelve}/>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
 
-            <div style={{display: "flex", justifyContent: "center"}}>
-                <div className={style.ParticipateYellow} >
-                    {auth.isAuth ?
-                        <>
-                            <Image src={ParticipateYellow} onClick={handleOpen}/>
-                        </>
-                        :
-                        <>
-                            <a href="#" onClick={handleSignIn}>
-                                <Image src={ParticipateYellow}/>
-                            </a>
-                        </>
-                    }
-                </div>
-            </div>
-
-
-            <div className={style.prizesContainer}>
-            <div className={style.leftSide}>
-                    <div>
-                        <Image width={2000} height={1200} src={priz} alt="Призы"/>
-                    </div>
-                    <div className={style.text}>
-                        {visibleTexts.map((text, index) => (
-                            <p key={index}>{text}</p>
-                        ))}
-                    </div>
-                    <button
-                        style={{
-                            backgroundColor: "#27bfc1",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "55px"
-                        }}
-                        onClick={() => setShowMore(!showMore)}
-                    >
-                        {showMore ? "Показать меньше" : "Показать больше"}
-                    </button>
-                </div>
-
-                <div className={style.rightSide}>
-                    <Image src={photo2} alt="photo2"/>
-                </div>
-            </div>
+            {/*<div style={{display: "flex", justifyContent: "center"}}>*/}
+            {/*    <div className={style.ParticipateYellow} >*/}
+            {/*        {auth.isAuth ?*/}
+            {/*            <>*/}
+            {/*                <Image src={ParticipateYellow} onClick={handleOpen}/>*/}
+            {/*            </>*/}
+            {/*            :*/}
+            {/*            <>*/}
+            {/*                <a href="#" onClick={handleSignIn}>*/}
+            {/*                    <Image src={ParticipateYellow}/>*/}
+            {/*                </a>*/}
+            {/*            </>*/}
+            {/*        }*/}
+            {/*    </div>*/}
+            {/*</div>*/}
 
 
-            {/*Голосование*/}
+            {/*<div className={style.prizesContainer}>*/}
+            {/*<div className={style.leftSide}>*/}
+            {/*        <div>*/}
+            {/*            <Image width={2000} height={1200} src={priz} alt="Призы"/>*/}
+            {/*        </div>*/}
+            {/*        <div className={style.text}>*/}
+            {/*            {visibleTexts.map((text, index) => (*/}
+            {/*                <p key={index}>{text}</p>*/}
+            {/*            ))}*/}
+            {/*        </div>*/}
+            {/*        <button*/}
+            {/*            style={{*/}
+            {/*                backgroundColor: "#27bfc1",*/}
+            {/*                color: "white",*/}
+            {/*                border: "none",*/}
+            {/*                borderRadius: "55px"*/}
+            {/*            }}*/}
+            {/*            onClick={() => setShowMore(!showMore)}*/}
+            {/*        >*/}
+            {/*            {showMore ? "Показать меньше" : "Показать больше"}*/}
+            {/*        </button>*/}
+            {/*    </div>*/}
+
+            {/*    <div className={style.rightSide}>*/}
+            {/*        <Image src={photo2} alt="photo2"/>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+
+
+            {/*Голосование/конец глосования*/}
 
             <div className={voteStyle.votingContainer}>
                 <div className={voteStyle.leftSide}>
                     <div>
-                        <Image src={hippopotamusVote} alt="Бегемот"/>
+                        <Image src={end_test} alt="Бегемот"/>
                     </div>
                     <div className={voteStyle.textSection}>
-                        <p>Победители будут определены путём открытого голосования на сайте "Мой Любимый Дагестан" с 10
-                            октября по 30 ноября 2024 года.</p>
-                        <p>Принять участие в голосовании может каждый зарегистрированный пользователь сайта. Для участия вам
-                            необходимо зарегистрироваться, а затем отдать свой голос за понравившуюся работу.</p>
+                        <p>30 ноября 2024 года завершился конкурс детского рисунка «Мой Любимый Дагестан».
+                        </p>
+                        <p>После подведения итогов мы  поздравили победителей и вручили им памятные подарки. </p>
+                        <p>Мы благодарны всем, кто принял участие в нашем конкурсе.</p>
                     </div>
                 </div>
-                <div className={voteStyle.rightSide}>
-                    { auth.isAuth ?
-                        <>
-                        <Image src={ParticipateYellow} onClick={handleOpen}/>
-                        </>
-                        :
-                        <>
-                            <a href="#" onClick={handleSignIn}>
-                                <Image src={ParticipateYellow}/>
-                            </a>
-                        </>
-                    }
-                </div>
+                {/*<div className={voteStyle.rightSide}>*/}
+                {/*    { auth.isAuth ?*/}
+                {/*        <>*/}
+                {/*        <Image src={ParticipateYellow} onClick={handleOpen}/>*/}
+                {/*        </>*/}
+                {/*        :*/}
+                {/*        <>*/}
+                {/*            <a href="#" onClick={handleSignIn}>*/}
+                {/*                <Image src={ParticipateYellow}/>*/}
+                {/*            </a>*/}
+                {/*        </>*/}
+                {/*    }*/}
+                {/*</div>*/}
             </div>
             <AddChildrenModal show={showModal} handleClose={handleClose} />
             {/*{openModal ? <FormModal open={setOpenModal}/> : ''}*/}

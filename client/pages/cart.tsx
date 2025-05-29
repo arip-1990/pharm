@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState, MouseEvent } from "react";
+import React, { FC, useCallback, useEffect, useState, MouseEvent } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useLocalStorage } from "react-use-storage";
@@ -12,6 +12,7 @@ import { useNotification } from "../hooks/useNotification";
 import { useMounted } from "../hooks/useMounted";
 import Breadcrumbs from "../components/breadcrumbs";
 import { useAuth } from "../hooks/useAuth";
+import AdFoxBanner from "../components/addFoxBanner/AddFoxBanner";
 
 const Cart: FC = () => {
   const { isAuth } = useAuth();
@@ -47,6 +48,10 @@ const Cart: FC = () => {
 
   return (
     <Layout title="Корзина - Сеть аптек 120/80">
+      <AdFoxBanner
+          containerId="adfox_174055528392179080"
+          params={{p1: 'dghxq', p2: 'ixfw'}}
+      />
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
@@ -124,6 +129,10 @@ const Cart: FC = () => {
       </div>
 
       <Auth show={openModal} onHide={() => setOpenModal(false)} />
+      <AdFoxBanner
+          containerId="adfox_174055530359499080"
+          params={{p1: 'dghxr', p2: 'ixfw'}}
+      />
     </Layout>
   );
 };

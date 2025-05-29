@@ -49,8 +49,7 @@ export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
 
     return (
         <div className={styles_.container}>
-            <h1 className={styles_.title}>ГАЛЕРЕЯ</h1>
-            <h6>Выберите возрастную категорию и проголосуйте за понравившийся рисунок</h6>
+            <h1 className={styles_.title}>Победители конкурса</h1>
 
             <div className={styles_.category}>
 
@@ -74,14 +73,14 @@ export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
                         <Image src={categoryTwelve} onClick={() => setAge(4)}/>}
                 </div>
 
-                {user ? myPhoto ?
-                    <button className={styles_.categoryMyPhotosActive}
-                       onClick={() => setMyPhoto(false)}>Мои рисунки</button>
-                    :
-                    <button className={styles_.categoryMyPhotosNotActive}
-                            onClick={() => setMyPhoto(true)}>Мои рисунки</button>
-                   : ''
-                }
+                {/*{user ? myPhoto ?*/}
+                {/*    <button className={styles_.categoryMyPhotosActive}*/}
+                {/*       onClick={() => setMyPhoto(false)}>Мои рисунки</button>*/}
+                {/*    :*/}
+                {/*    <button className={styles_.categoryMyPhotosNotActive}*/}
+                {/*            onClick={() => setMyPhoto(true)}>Мои рисунки</button>*/}
+                {/*   : ''*/}
+                {/*}*/}
 
             </div>
 
@@ -99,13 +98,13 @@ export const Gallery: React.FC<IPropsKids> = ({ photos, setAge, age }) => {
                     </div>
                     <div style={{display: "flex", justifyContent: "center"}}>
 
-                        {/*<Button*/}
-                        {/*    onClick={howOpenModal}*/}
-                        {/*    disabled={checked()}*/}
-                        {/*    style={{marginTop: '20px'}}*/}
-                        {/*>*/}
-                        {/*    Загрузить фотографию*/}
-                        {/*</Button>*/}
+                        <Button
+                            onClick={howOpenModal}
+                            disabled={checked()}
+                            style={{marginTop: '20px'}}
+                        >
+                            Загрузить фотографию
+                        </Button>
 
                         <div style={{marginRight: '10px', marginLeft: '10px'}}></div>
 

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,6 +18,7 @@ import { useCookie } from "../../hooks/useCookie";
 import Breadcrumbs from "../../components/breadcrumbs";
 import { getCategoryBySlug, getTreeCategories } from "../../helpers";
 import { useFetchCategoriesQuery } from "../../lib/categoryService";
+import AdFoxBanner from "../../components/addFoxBanner/AddFoxBanner";
 
 const generateCategory = (category: ICategory) => {
   return (
@@ -96,6 +97,10 @@ const Catalog: FC = () => {
       }
       loading={isFetching}
     >
+      <AdFoxBanner
+          containerId="adfox_174055479330049080"
+          params={{p1: 'dghxk', p2: 'ixfw'}}
+      />
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
@@ -109,6 +114,10 @@ const Catalog: FC = () => {
             </li> */}
             {data?.categories.map((item) => generateCategory(item))}
           </ul>
+          <AdFoxBanner
+              containerId="adfox_174055481423249080"
+              params={{p1: 'dghxl', p2: 'ixfw'}}
+          />
         </nav>
 
         <div className="col-md-9 mt-3 mt-md-0">
@@ -141,6 +150,10 @@ const Catalog: FC = () => {
           )}
         </div>
       </div>
+      <AdFoxBanner
+          containerId="adfox_174055484512479080"
+          params={{p1: 'dghxm', p2: 'ixfw'}}
+      />
     </Layout>
   );
 };

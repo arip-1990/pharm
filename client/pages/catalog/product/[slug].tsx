@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useLocalStorage } from "react-use-storage";
@@ -19,6 +19,7 @@ import { Carousel } from "../../../components/carousel";
 import Breadcrumbs from "../../../components/breadcrumbs";
 
 import defaultImage from "../../../assets/images/default.png";
+import AdFoxBanner from "../../../components/addFoxBanner/AddFoxBanner";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -83,6 +84,10 @@ const Product: FC = () => {
       }
       description={data?.product.description}
     >
+      <AdFoxBanner
+          containerId="adfox_174055509370619080"
+          params={{p1: 'dghxn', p2: 'ixfw'}}
+      />
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Accordion>
@@ -283,6 +288,10 @@ const Product: FC = () => {
         show={showCarousel}
         onHide={() => setShowCarousel(false)}
         data={data?.product.photos.filter((item) => item.url)}
+      />
+      <AdFoxBanner
+          containerId="adfox_174055511903099080"
+          params={{p1: 'dghxo', p2: 'ixfw'}}
       />
     </Layout>
   );
