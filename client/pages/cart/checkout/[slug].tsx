@@ -50,14 +50,24 @@ const Checkout: FC = () => {
   const [recipe, setRecipe] = useState<boolean>(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const { slug } = router.query;
+  const [totalDiscountPrice, setDiscount] = useState(0)
+
 
   useEffect(() => {
-    let tmp = { recipe: false, totalPrice: 0 };
+    let tmp = { recipe: false, totalPrice: 0, discountPrice:0 };
     carts.forEach((item) => {
       if (item.product.recipe) tmp.recipe = true;
+
+      if (item.discountStorePrice != 0){
+        tmp.discountPrice += item.quantity * item.discountStorePrice
+      }else{
+        tmp.discountPrice += item.quantity * item.price
+      }
+
       tmp.totalPrice += item.quantity * item.price;
     });
 
+    setDiscount(tmp.discountPrice)
     setRecipe(tmp.recipe);
     setTotalPrice(tmp.totalPrice);
   }, [slug]);
@@ -87,16 +97,20 @@ const Checkout: FC = () => {
     onSubmit: async (values: Values, actions: FormikHelpers<Values>) => {
       const items = carts.map((item) => ({
         id: item.product.id,
-        price: item.price,
+        price: item.discountStorePrice != 0 ? item.discountStorePrice : item.price,
         quantity: item.quantity,
       }));
       try {
+        // console.log(values, "VALUESSSS")
+        // console.log(slug, "Store")
+        // console.log(totalDiscountPrice, "Price")
+        // console.log(items, "Price")
         const { data } = await api.post<{ id: number; paymentUrl?: string }>(
           "v1/order/checkout",
           {
             ...values,
             store: slug,
-            price: totalPrice,
+            price: totalDiscountPrice,
             items,
           }
         );
@@ -187,7 +201,12 @@ const Checkout: FC = () => {
                   </Link>
                 </div>
                 <div className="col-4 col-md-4 text-end">
-                  {item.product.minPrice}&#8381;{" "}
+                  {item.discountStorePrice != 0 ?
+                      <span style={{textDecoration: 'line-through', color: 'red'}}>{item.price}&#8381;  </span>
+                  :
+                      ""
+                  }
+                  {item.discountStorePrice != 0 ? item.discountStorePrice : item.price}&#8381;
                   <span className="text-muted">x {item.quantity}</span>
                 </div>
               </div>
@@ -201,7 +220,7 @@ const Checkout: FC = () => {
               Стоимость:
             </div>
             <div className="col-5 col-md-6 col-lg-4 text-end">
-              {totalPrice}&#8381;
+              {totalDiscountPrice}&#8381;
             </div>
           </div>
           <div className="row">
@@ -219,7 +238,7 @@ const Checkout: FC = () => {
               Итого:
             </h5>
             <h5 className="col-5 col-md-6 col-lg-4 text-end">
-              {totalPrice}&#8381;
+              {totalDiscountPrice}&#8381;
             </h5>
           </div>
 

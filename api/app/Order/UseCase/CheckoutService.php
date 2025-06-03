@@ -167,14 +167,17 @@ class CheckoutService
             throw new OrderException('Нет товаров в корзине!');
 
         $stores = [];
+
         Offer::whereIn('product_id', $carts->keys())->whereCity($city)
             ->each(function (Offer $offer) use ($carts, &$stores) {
                 $cartQuantity = (int)$carts[$offer->product_id];
                 $stores[$offer->store_id]['store'] = new StoreResource($offer->store);
+                $discountStorePrice = $offer->product->getDiscountPrice($offer->price);
                 $stores[$offer->store_id]['products'][] = [
                     'price' => $offer->price,
                     'quantity' => min($cartQuantity, $offer->quantity),
-                    'product' => new ProductResource($offer->product)
+                    'product' => new ProductResource($offer->product),
+                    'discountStorePrice' => $discountStorePrice
                 ];
             });
 

@@ -13,6 +13,7 @@ import { useMounted } from "../hooks/useMounted";
 import Breadcrumbs from "../components/breadcrumbs";
 import { useAuth } from "../hooks/useAuth";
 import AdFoxBanner from "../components/addFoxBanner/AddFoxBanner";
+import products from "./products";
 
 const Cart: FC = () => {
   const { isAuth } = useAuth();
@@ -22,12 +23,23 @@ const Cart: FC = () => {
   const notification = useNotification();
   const isMounted = useMounted();
   const router = useRouter();
+  const [allDiscount, setAllDiscount] = useState(0);
 
   useEffect(() => {
     let tmp = 0;
-    carts.forEach((cart) => (tmp += cart.product.minPrice * cart.quantity));
+    let allDiscount = 0;
+    carts.forEach((cart) => {
+      if (cart.product.discountPrice != 0) {
+        allDiscount += cart.product.minPrice - cart.product.discountPrice
+        tmp += cart.product.discountPrice * cart.quantity
+      }else{
+        tmp += cart.product.minPrice * cart.quantity
+      }
+    });
+    setAllDiscount(allDiscount)
     setTotalAmount(tmp);
   }, [carts]);
+
 
   const handleCheckout = useCallback(
     (e: MouseEvent) => {
@@ -86,13 +98,32 @@ const Cart: FC = () => {
                   </p>
                   {/* <p>{{ $item->product->getValue(5) /*?? $product->getValue(38) }}</p> */}
                 </div>
-                <div className="col-5 col-sm-6 col-md-2 offset-1 offset-sm-0 order-4 order-md-0 text-md-center product_price">
-                  <span>от {cart.product.minPrice} &#8381;</span>
+
+                <div
+                    className="col-5 col-sm-6 col-md-2 offset-1 offset-sm-0 order-4 order-md-0 text-md-center product_price">
+                  <p>{
+                    cart.product.discount > 0 ?
+                        `скидка ${cart.product.discount}%`
+                        : cart.product.discountPrice > 0 ?
+                            `Скидка ${cart.product.minPrice - cart.product.discountPrice}р за ${cart.product.quantity} шт `
+                            : ""
+                  }</p>
+                  <span
+                      style={
+                        cart.product.discountPrice
+                            ? {textDecoration: 'line-through', color: 'red'}
+                            : {}
+                      }
+                  >
+                    {cart.product.minPrice} &#8381;
+                  </span>
+
+                  {cart.product.discountPrice > 0 ? <span> от {cart.product.discountPrice} </span> : ""}
                 </div>
                 <div className="col-5 col-sm-6 col-md-2 order-5 order-md-0">
                   <BaseCart
-                    product={cart.product}
-                    style={{ marginLeft: "auto" }}
+                      product={cart.product}
+                      style={{ marginLeft: "auto" }}
                   />
                 </div>
                 {/* <span className="col-2 col-md-1 cart-remove" /> */}
@@ -103,18 +134,26 @@ const Cart: FC = () => {
             <p className="col-12 col-md-8">
               В процессе оформления заказа цена может незначительно измениться в
               зависимости от выбранной аптеки.
-              <br />
+              <br/>
               Цены на сайте отличаются от цен в аптеках и действуют только при
               оформлении заказа с помощью сайта.
             </p>
-            <p className="col-12 col-md-4 text-center text-md-end fs-4 fw-bold">
+            <p className="col-12 col-md-4 text-center text-md-end fs-4 fw-bold"
+               style={{padding: 0}}
+            >
               Итого: от <span id="total-price">{totalAmount}</span> &#8381;
+            </p>
+            <p
+                className="col-12 col-md-12 text-center text-md-end fs-4"
+                style={{padding: 0, fontWeight: 'bold', color: 'red'}}
+            >
+              скидка: <span id="total-price">{allDiscount} </span> &#8381;
             </p>
           </div>
 
           <div className="row align-items-center mt-3">
             <div className="col-12 col-sm-6 order-sm-1 text-center text-md-end">
-              <a href="#" className="btn btn-primary" onClick={handleCheckout}>
+            <a href="#" className="btn btn-primary" onClick={handleCheckout}>
                 Оформить заказ
               </a>
             </div>

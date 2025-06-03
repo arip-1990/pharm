@@ -9,6 +9,7 @@ import Accordion from "../../components/accordion";
 import { useCookie } from "../../hooks/useCookie";
 import Loader from "../../components/loader";
 import Breadcrumbs from "../../components/breadcrumbs";
+import products from "../products";
 
 const Store: FC = () => {
   const [city] = useCookie("city");
@@ -56,6 +57,7 @@ const Store: FC = () => {
           product: product.product,
           quantity: product.quantity,
           price: product.price,
+          discountStorePrice: product.discountStorePrice
         }));
       }
     });
@@ -77,8 +79,16 @@ const Store: FC = () => {
           {loading && <Loader />}
           {stores.map((store) => {
             let price = 0;
+            let discountPrice = 0;
             store.products.forEach((product: any) => {
+              if (product.discountStorePrice != 0) {
+                 discountPrice += product.discountStorePrice * product.quantity
+              }else{
+                discountPrice += product.quantity * product.price
+              }
+
               price += product.quantity * product.price;
+
             });
 
             return (
@@ -92,7 +102,8 @@ const Store: FC = () => {
                   <p className="col-2 text-center text-primary">
                     {store.products.length} из {carts.length} товаров
                   </p>
-                  <p className="col-1 text-end">{price} &#8381;</p>
+                  <p className="col-1 text-end" style={{textDecoration: 'line-through', color: 'red'}}>{price}&#8381;</p>
+                  <p className="col-1 text-center">{discountPrice} &#8381;</p>
                   <p className="col-2 text-end">
                     <button
                       className="btn btn-primary"
@@ -115,9 +126,14 @@ const Store: FC = () => {
                           alt={product.product.name}
                         />
                         <div className="col-6">{product.product.name}</div>
-                        <div className="col-2 text-center">
+                        <div style={product.discountStorePrice != 0 ?{textDecoration: 'line-through', color: 'red'}:{}} className="col-2 text-center">
                           {product.price} &#8381; x {product.quantity}
                         </div>
+
+                        {product.discountStorePrice != 0 ?
+                            <div className="col-2 text-center">
+                              Цена с учетом скидки: {product.discountStorePrice}
+                            </div>: ""}
                         <div className="col-3"></div>
                       </div>
                     ))}

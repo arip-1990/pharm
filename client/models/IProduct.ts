@@ -29,4 +29,5 @@ export interface IProduct {
   totalOffers: number;
   rubles: number|null;
   quantity: number|null;
+  discountPrice: number|null;
 }

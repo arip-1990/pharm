@@ -166,4 +166,21 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'editor_id');
     }
+
+    public function getDiscountPrice(float $price): float
+    {
+        $discount = $this->discounts->first();
+
+        if (!$discount) return 0;
+
+        if ($discount->rubles && $discount->rubles > 0) {
+            return $price - $discount->rubles;
+        }
+
+        if ($discount->percent && $discount->percent > 0) {
+            return $price - ($price * ($discount->percent / 100));
+        }
+
+        return $price;
+    }
 }

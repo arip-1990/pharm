@@ -9,10 +9,17 @@ class OfferResource extends JsonResource
 {
     public function toArray($request): array
     {
+
         /** @var Offer $this */
+        $price = $this->price;
+        if (isset($this->discount_rubles) && $this->discount_rubles > 0) {
+            $price -= $this->discount_rubles;
+        } elseif (isset($this->discount_percent) && $this->discount_percent > 0) {
+            $price -= ($price * ($this->discount_percent / 100));
+        }
         return [
             'id' => $this->id,
-            'price' => $this->price,
+            'price' => round($price, 2),
             'quantity' => $this->quantity,
             'store' => new StoreResource($this->store)
         ];
