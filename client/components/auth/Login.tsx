@@ -13,10 +13,18 @@ import styles from "./Auth.module.scss";
 
 type LoginType = "login" | "verifyPhone" | "setPassword";
 
+// interface Values {
+//   login: string;
+//   password: string;
+//   smsCode: string;
+// }
+
 interface Values {
   login: string;
   password: string;
   smsCode: string;
+  subscribeEmail: boolean;
+  subscribeSMS: boolean;
 }
 
 interface Props {
@@ -58,7 +66,13 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
   }, []);
 
   const formik = useFormik({
-    initialValues: { login: "", password: "", smsCode: "" },
+    initialValues: {
+      login: "",
+      password: "",
+      smsCode: "",
+      subscribeEmail: false,
+      subscribeSMS: false
+    },
     onSubmit: async (values: Values, actions: FormikHelpers<Values>) => {
       try {
         if (type === "login") await handleLogin(values);
@@ -100,7 +114,12 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
     new Promise<void>(async (resolve, reject) => {
       values.login = values.login.replace(/[^0-9]/g, "");
       try {
-        await login(values.login, values.password);
+        await login(values.login, values.password, values.subscribeSMS, values.subscribeEmail);
+        await api.post('v1/auth/subscribe', {
+          phone:values.login,
+          subscribeSms:values.subscribeSMS,
+          subscribeEmail: values.subscribeEmail
+        })
         return resolve();
       } catch (error) {
         return reject(error);
@@ -191,15 +210,42 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
           </div>,
           <div key="password" className="mb-3">
             <input
-              name="password"
-              type="password"
-              placeholder="*Пароль"
-              className="form-control"
-              onChange={formik.handleChange}
-              value={formik.values.password}
-              required
+                name="password"
+                type="password"
+                placeholder="*Пароль"
+                className="form-control"
+                onChange={formik.handleChange}
+                value={formik.values.password}
+                required
             />
-            <ErrorField name="password" errors={formik.errors} />
+            <ErrorField name="password" errors={formik.errors}/>
+
+            <div style={{marginTop:"10px"}}>
+              <a href={'https://xn--12080-6ve4g.xn--p1ai/privacy-policy'}>Подписаться на рассылку</a>
+              <div style={{display: "flex"}}>
+
+                <div style={{display: "flex", alignItems: "baseline"}}>
+                  <input
+                      type={"checkbox"}
+                      name="subscribeEmail"
+                      checked={formik.values.subscribeEmail}
+                      onChange={formik.handleChange}
+                  ></input>
+                  <p style={{marginLeft: "3px"}}>Email</p>
+                </div>
+
+                <div style={{display: "flex", alignItems: "baseline", marginLeft: "20px"}}>
+                  <input
+                      type={"checkbox"}
+                      name="subscribeSMS"
+                      checked={formik.values.subscribeSMS}
+                      onChange={formik.handleChange}
+                  ></input>
+                  <p style={{marginLeft: "3px"}}>CMC</p>
+                </div>
+              </div>
+            </div>
+
           </div>,
         ];
     }
@@ -214,26 +260,27 @@ const Login: FC<Props> = ({ switchAuthType, onHide }) => {
   const handleUp = useCallback(() => setActive(false), []);
 
   return (
-    <div>
-      <h5 className="text-center mb-4">{getTitle()}</h5>
-      <form onSubmit={formik.handleSubmit}>
-        {generateForm()}
+      <div>
+        <h5 className="text-center mb-4">{getTitle()}</h5>
+        <form onSubmit={formik.handleSubmit}>
+          {generateForm()}
 
-        {type === "login" ? (
-          <div className="col-7">
-            <a href="#" onClick={() => switchAuthType("resetPassword")}>
-              Забыли пароль?
-            </a>
-          </div>
-        ) : null}
+          {type === "login" ? (
+              <div className="col-7">
+                <a href="#" onClick={() => switchAuthType("resetPassword")}>
+                  Забыли пароль?
+                </a>
+              </div>
+          ) : null}
+
 
         <div className="text-center mt-4">
           <button
-            type="submit"
-            data-text={type === "login" ? "Войти" : "Отправить"}
-            className={classNames(styles.button, { [styles.active]: active })}
-            onMouseDown={handleDown}
-            disabled={formik.isSubmitting}
+              type="submit"
+              data-text={type === "login" ? "Войти" : "Отправить"}
+              className={classNames(styles.button, {[styles.active]: active})}
+              onMouseDown={handleDown}
+              disabled={formik.isSubmitting}
           />
         </div>
       </form>

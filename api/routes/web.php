@@ -26,6 +26,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function() {
 
+    Route::group(["prefix" => "cart"], function (){
+        Route::get('/{user}', [App\Http\Controllers\V1\Cart\CartController::class, "show"]);
+        Route::post("/add", [App\Http\Controllers\V1\Cart\CartController::class, "addToCart"]);
+        Route::delete("/delete", [App\Http\Controllers\V1\Cart\CartController::class, "removeFromCart"]);
+    });
+
+    Route::post("/calculate-discount", [App\Http\Controllers\V1\Cart\CalculateDiscount::class, "index"]);
+
     Route::group(['prefix' => 'kids'], function() {
         Route::prefix('photo')->group(function() {
             Route::prefix('user')->group(function () {
@@ -75,6 +83,7 @@ Route::prefix('v1')->group(function() {
     });
 
     Route::prefix('auth')->group(function () {
+        Route::post("/subscribe", [V1\Auth\SubscribeController::class, 'index']);
         Route::post('/login', [V1\Auth\LoginController::class, 'handle']);
         Route::post('/register', [V1\Auth\RegisterController::class, 'handle']);
         Route::post('/set-password', [V1\Auth\SetPasswordController::class, 'handle']);

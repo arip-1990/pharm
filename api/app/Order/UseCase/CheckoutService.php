@@ -18,6 +18,14 @@ use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
+
+    protected DiscountService $discountService;
+
+    public function __construct(DiscountService $discountService)
+    {
+        $this->discountService = $discountService;
+    }
+
     public function checkoutWeb(Requests\Order\CheckoutRequest $request): Order
     {
         $data = $request->validated();
@@ -172,7 +180,8 @@ class CheckoutService
             ->each(function (Offer $offer) use ($carts, &$stores) {
                 $cartQuantity = (int)$carts[$offer->product_id];
                 $stores[$offer->store_id]['store'] = new StoreResource($offer->store);
-                $discountStorePrice = $offer->product->getDiscountPrice($offer->price);
+                //$discountStorePrice = $offer->product->getDiscountPrice($offer->price);
+                $discountStorePrice = $this->discountService->getDiscountStore($offer->price, $offer->product, min($cartQuantity, $offer->quantity));
                 $stores[$offer->store_id]['products'][] = [
                     'price' => $offer->price,
                     'quantity' => min($cartQuantity, $offer->quantity),

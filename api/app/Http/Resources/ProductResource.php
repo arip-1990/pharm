@@ -68,7 +68,8 @@ class ProductResource extends JsonResource
             'totalOffers' => $this->getCountByCity($request->cookie('city', City::find(1)?->name)),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
-            'discountPrice' => $discount_price,
+            'discountPrice' => $this->getDiscountPrice($this->getPrice()),
+            'typeDiscount' => $this->discounts->first()?->type
         ];
     }
 }

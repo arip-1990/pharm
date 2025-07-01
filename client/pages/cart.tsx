@@ -14,11 +14,18 @@ import Breadcrumbs from "../components/breadcrumbs";
 import { useAuth } from "../hooks/useAuth";
 import AdFoxBanner from "../components/addFoxBanner/AddFoxBanner";
 import products from "./products";
+import axios from "axios";
+import api from "../lib/api";
 
 const Cart: FC = () => {
   const { isAuth } = useAuth();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [carts] = useLocalStorage<ICart[]>("cart", []);
+  const [calculateCarts, setCalculateCarts] = useState<ICart[]>();
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [totalDiscountPrice, setTotalDiscountPrice] = useState(0);
+
+
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const notification = useNotification();
   const isMounted = useMounted();
@@ -28,15 +35,38 @@ const Cart: FC = () => {
   useEffect(() => {
     let tmp = 0;
     let allDiscount = 0;
-    carts.forEach((cart) => {
-      if (cart.product.discountPrice != 0) {
-        allDiscount += cart.product.minPrice - cart.product.discountPrice
-        tmp += cart.product.discountPrice * cart.quantity
-      }else{
-        tmp += cart.product.minPrice * cart.quantity
+
+    const fetchData = async () => {
+      try {
+        const response = await api.post<{ id: number; paymentUrl?: string }>(
+            "/v1/calculate-discount",
+             carts,
+            { headers: { "Content-Type": "application/json" } }
+        );
+        console.log(response.data, "ответ от calculate-discount");
+        setCalculateCarts(response.data.data)
+        setTotalPrice(response.data.totalPrice)
+        setTotalDiscountPrice(response.data.totalDiscountPrice)
+        return response.data
+
+      } catch (error) {
+        console.error("Ошибка при расчёте скидки:", error);
+        return {'message':error}
+      }
+    };
+    fetchData();
+
+
+    calculateCarts?.forEach((cart) => {
+      if (cart.product.discountPrice !== 0) {
+        allDiscount += cart.product.minPrice - cart.product.discountPrice;
+        tmp += cart.product.discountPrice * cart.quantity;
+      } else {
+        tmp += cart.product.minPrice * cart.quantity;
       }
     });
-    setAllDiscount(allDiscount)
+
+    setAllDiscount(allDiscount);
     setTotalAmount(tmp);
   }, [carts]);
 
@@ -50,7 +80,7 @@ const Cart: FC = () => {
         notification("error", "Авторизуйтесь для оформления заказа");
       }
     },
-    [isAuth]
+    [isAuth, calculateCarts]
   );
 
   const getDefaultGenerator = useCallback(
@@ -78,7 +108,7 @@ const Cart: FC = () => {
             <div className="col-1 text-center" />
           </div>
           {isMounted() &&
-            carts.map((cart) => (
+              calculateCarts?.map((cart) => (
               <div
                 key={cart.product.id}
                 className="row align-items-center product"
@@ -105,7 +135,7 @@ const Cart: FC = () => {
                     cart.product.discount > 0 ?
                         `скидка ${cart.product.discount}%`
                         : cart.product.discountPrice > 0 ?
-                            `Скидка ${cart.product.minPrice - cart.product.discountPrice}р за ${cart.product.quantity} шт `
+                            `Скидка ${cart.product.rubles}р за ${cart.product.quantity} шт `
                             : ""
                   }</p>
                   <span
@@ -115,10 +145,10 @@ const Cart: FC = () => {
                             : {}
                       }
                   >
-                    {cart.product.minPrice} &#8381;
+                    {cart.product.minPrice != cart.product.discountPrice && cart.product.discountPrice != 0 ? <> {cart.product.minPrice} &#8381;</>: ''}
                   </span>
 
-                  {cart.product.discountPrice > 0 ? <span> от {cart.product.discountPrice} </span> : ""}
+                  {cart.product.discountPrice > 0 && cart.product.discountPrice != cart.product.minPrice ? <span> от {cart.product.discountPrice} &#8381; </span> : <span> от {cart.product.minPrice} &#8381; </span>}
                 </div>
                 <div className="col-5 col-sm-6 col-md-2 order-5 order-md-0">
                   <BaseCart
@@ -141,13 +171,13 @@ const Cart: FC = () => {
             <p className="col-12 col-md-4 text-center text-md-end fs-4 fw-bold"
                style={{padding: 0}}
             >
-              Итого: от <span id="total-price">{totalAmount}</span> &#8381;
+              Итого: от <span id="total-price">{totalPrice}</span> &#8381;
             </p>
             <p
                 className="col-12 col-md-12 text-center text-md-end fs-4"
                 style={{padding: 0, fontWeight: 'bold', color: 'red'}}
             >
-              скидка: <span id="total-price">{allDiscount} </span> &#8381;
+              скидка: <span id="total-price">{totalDiscountPrice} </span> &#8381;
             </p>
           </div>
 

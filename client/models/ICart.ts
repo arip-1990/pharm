@@ -6,3 +6,12 @@ export interface ICart {
   price?: number;
   discountStorePrice?: number|null;
 }
+
+
+export interface ICartNew {
+
+  data : ICart;
+  totalPrice: number|null;
+  totalDiscountPrice: number|null;
+
+}

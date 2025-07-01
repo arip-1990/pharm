@@ -63,7 +63,9 @@ class User extends Authenticatable
         'password',
         'phone_verified_at',
         'email_verified_at',
-        'token'
+        'token',
+        'SMS_distribution',
+        'Email_distribution'
     ];
     protected $hidden = ['password'];
     protected $casts = [
@@ -143,5 +145,10 @@ class User extends Authenticatable
     public function likes_photo(): BelongsToMany
     {
         return $this->belongsToMany(PhotoKids::class, 'likes', 'user_id', 'photo_id');
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
     }
 }

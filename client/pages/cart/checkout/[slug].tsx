@@ -51,26 +51,36 @@ const Checkout: FC = () => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const { slug } = router.query;
   const [totalDiscountPrice, setDiscount] = useState(0)
+  const [finalTotalDiscountPrice, setFinalTotalDiscountPrice] = useState(0)
 
 
   useEffect(() => {
     let tmp = { recipe: false, totalPrice: 0, discountPrice:0 };
+    let f = 0
     carts.forEach((item) => {
       if (item.product.recipe) tmp.recipe = true;
 
       if (item.discountStorePrice != 0){
         tmp.discountPrice += item.quantity * item.discountStorePrice
+        if (item.product.typeDiscount == true) {
+          f += item.quantity * item.discountStorePrice
+        }else{
+          f += item.quantity * item.price
+        }
       }else{
         tmp.discountPrice += item.quantity * item.price
+        f += item.quantity * item.price
       }
 
       tmp.totalPrice += item.quantity * item.price;
     });
 
+    setFinalTotalDiscountPrice(f)
     setDiscount(tmp.discountPrice)
     setRecipe(tmp.recipe);
     setTotalPrice(tmp.totalPrice);
   }, [slug]);
+
 
   const getDefaultGenerator = useCallback(
     () => [
@@ -95,22 +105,29 @@ const Checkout: FC = () => {
       rule: false,
     },
     onSubmit: async (values: Values, actions: FormikHelpers<Values>) => {
+      const DisCount = (price, discountPrice, type) => {
+        if (discountPrice != 0){
+          return type == true ? discountPrice : price
+        }
+        return price
+      }
+
       const items = carts.map((item) => ({
         id: item.product.id,
-        price: item.discountStorePrice != 0 ? item.discountStorePrice : item.price,
+        price: DisCount(item.price, item.discountStorePrice, item.product.typeDiscount),
         quantity: item.quantity,
       }));
       try {
         // console.log(values, "VALUESSSS")
         // console.log(slug, "Store")
-        // console.log(totalDiscountPrice, "Price")
-        // console.log(items, "Price")
+        // console.log(totalDiscountPrice, "Total Price")
+        // console.log(items, "Items Price")
         const { data } = await api.post<{ id: number; paymentUrl?: string }>(
           "v1/order/checkout",
           {
             ...values,
             store: slug,
-            price: totalDiscountPrice,
+            price: finalTotalDiscountPrice,
             items,
           }
         );
@@ -201,7 +218,7 @@ const Checkout: FC = () => {
                   </Link>
                 </div>
                 <div className="col-4 col-md-4 text-end">
-                  {item.discountStorePrice != 0 ?
+                  {item.discountStorePrice != 0 && item.price != item.discountStorePrice ?
                       <span style={{textDecoration: 'line-through', color: 'red'}}>{item.price}&#8381;  </span>
                   :
                       ""

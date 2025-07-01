@@ -6,7 +6,13 @@ import { IUser } from "../models/IUser";
 type AuthReturn = {
   user: IUser | null;
   isAuth: boolean | null;
-  login: (username: string, password: string, remember?: boolean) => Promise<{ twoFactor: boolean; signedIn: boolean }>;
+  login: (
+      username: string,
+      password: string,
+      subscribeSMS: boolean,
+      subscribeEmail: boolean,
+      remember?: boolean,
+      ) => Promise<{ twoFactor: boolean; signedIn: boolean }>;
   logout: () => Promise<void>;
 }
 

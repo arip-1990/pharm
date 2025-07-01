@@ -31,10 +31,13 @@ const Store: FC = () => {
         const { data } = await api.post("v1/order/checkout/store", {
           ...params,
         });
+        console.log(params)
         setStores(data);
       } catch (error) {}
       setLoading(false);
     };
+
+    console.log(stores, "storesss")
 
     fetchStores();
   }, [city]);
@@ -46,7 +49,7 @@ const Store: FC = () => {
     ],
     []
   );
-
+  console.log(stores, 'storessss')
   const handleStore = (e: MouseEvent<HTMLButtonElement>, storeId: string) => {
     e.stopPropagation();
 
@@ -102,7 +105,8 @@ const Store: FC = () => {
                   <p className="col-2 text-center text-primary">
                     {store.products.length} из {carts.length} товаров
                   </p>
-                  <p className="col-1 text-end" style={{textDecoration: 'line-through', color: 'red'}}>{price}&#8381;</p>
+                  {price != discountPrice ? <p className="col-1 text-end"
+                      style={{textDecoration: 'line-through', color: 'red'}}>{price}&#8381;</p>: ''}
                   <p className="col-1 text-center">{discountPrice} &#8381;</p>
                   <p className="col-2 text-end">
                     <button
@@ -126,11 +130,11 @@ const Store: FC = () => {
                           alt={product.product.name}
                         />
                         <div className="col-6">{product.product.name}</div>
-                        <div style={product.discountStorePrice != 0 ?{textDecoration: 'line-through', color: 'red'}:{}} className="col-2 text-center">
+                        <div style={product.discountStorePrice != 0 && product.discountStorePrice != product.price ?{textDecoration: 'line-through', color: 'red'}:{}} className="col-2 text-center">
                           {product.price} &#8381; x {product.quantity}
                         </div>
 
-                        {product.discountStorePrice != 0 ?
+                        {product.discountStorePrice != 0 && product.discountStorePrice != product.price ?
                             <div className="col-2 text-center">
                               Цена с учетом скидки: {product.discountStorePrice}
                             </div>: ""}

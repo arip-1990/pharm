@@ -39,17 +39,17 @@ const Auth: FC<Props> = ({ show, onHide, type = "login" }) => {
       onHide={handleClose}
       centered
     >
-      <Modal.Body style={{ padding: "3rem" }}>
+      <Modal.Body style={{padding: "3rem"}}>
         {authType === "register" ? (
-          <Register switchAuthType={setAuthType} />
+            <Register switchAuthType={setAuthType}/>
         ) : authType === "resetPassword" ? (
-          <ResetPassword switchAuthType={setAuthType} />
+            <ResetPassword switchAuthType={setAuthType}/>
         ) : (
-          <Login switchAuthType={setAuthType} onHide={handleClose} />
+            <Login switchAuthType={setAuthType} onHide={handleClose}/>
         )}
       </Modal.Body>
       {["login", "register"].includes(authType) ? (
-        <Modal.Footer className="justify-content-center">
+          <Modal.Footer className="justify-content-center">
           <a href="#" className="text-primary" onClick={handleSwitchAuth}>
             {authType === "login" ? "Зарегистрироваться" : "Войти"}
           </a>

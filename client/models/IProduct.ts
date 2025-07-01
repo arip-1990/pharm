@@ -30,4 +30,5 @@ export interface IProduct {
   rubles: number|null;
   quantity: number|null;
   discountPrice: number|null;
+  typeDiscount: boolean|null;
 }

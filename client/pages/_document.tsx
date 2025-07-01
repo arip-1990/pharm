@@ -158,6 +158,7 @@ class MyDocument extends Document {
 
         </Head>
         <body>
+        <div dangerouslySetInnerHTML={{__html: '<!-- Логин в Метрике -->'}}/>
         <Main/>
         <NextScript/>
         </body>
