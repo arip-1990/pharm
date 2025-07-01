@@ -38,7 +38,11 @@ const Cart: FC = () => {
 
     const fetchData = async () => {
       try {
-        const response = await api.post<{ id: number; paymentUrl?: string }>(
+        const response = await api.post<{
+          data: ICart[];
+          totalPrice: number;
+          totalDiscountPrice: number;
+        }>(
             "/v1/calculate-discount",
              carts,
             { headers: { "Content-Type": "application/json" } }
