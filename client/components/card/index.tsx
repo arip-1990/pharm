@@ -35,6 +35,19 @@ const Card: FC<Props> = ({ product }) => {
     }
   };
 
+  const getTextForDiscounts = (product) => {
+    if (product.bonus_loyalty != 0) {
+      return `бонусы x${product.bonus_loyalty}`
+    }else if (product.discount != 0) {
+      return `-${product.discount}%`
+    }else if (product.rubles != 0 ) {
+      return `-${product.rubles}р за ${product.quantity} уп`
+    }else if (product.discountDescription != null) {
+      return product.discountDescription
+    }
+
+  }
+
 
   return (
     <div
@@ -74,9 +87,9 @@ const Card: FC<Props> = ({ product }) => {
                     marginRight:"20px",
                     fontSize:"23px"}}
               >
-                -{product.discount != 0 ?
-                  `${product.discount}%`:
-                  `${product.rubles}р за ${product.quantity} уп`}
+                {
+                  getTextForDiscounts(product)
+                }
               </p>
 
             </div>

@@ -31,4 +31,6 @@ export interface IProduct {
   quantity: number|null;
   discountPrice: number|null;
   typeDiscount: boolean|null;
+  bonus_loyalty: number;
+  discountDescription: string|null;
 }

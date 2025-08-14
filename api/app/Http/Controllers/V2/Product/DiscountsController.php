@@ -19,7 +19,7 @@ class DiscountsController extends Controller
         Carbon::setLocale('ru');
         $data = Product::active($request->cookie('city', City::find(1)?->name))
             ->whereHas('discounts', function (Builder $query) {
-                $query->where('active', true)->where('expired_at', '>', Carbon::now());
+                //$query->where('active', true)->where('expired_at', '>', Carbon::now());
 //                $query->where('active', true);
 
             })

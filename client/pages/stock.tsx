@@ -31,7 +31,7 @@ const Stock: FC = () => {
     <Layout loading={isFetching} title="Акции - Сеть аптек 120/80" description="Акции сайта.">
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
-      <h5 className="text-center">{data?.title}</h5>
+      {/*<h5 className="text-center">{data?.title}</h5>*/}
       <div className="row">
         {!isFetching && data?.data.length ? (
           <>

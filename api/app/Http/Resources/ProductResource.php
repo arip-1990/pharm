@@ -69,7 +69,9 @@ class ProductResource extends JsonResource
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
             'discountPrice' => $this->getDiscountPrice($this->getPrice()),
-            'typeDiscount' => $this->discounts->first()?->type
+            'typeDiscount' => $this->discounts->first()?->type,
+            'bonus_loyalty' => $this->discounts->first()?->bonus_loyalty,
+            'discountDescription' => $this->discounts->first()?->description
         ];
     }
 }
