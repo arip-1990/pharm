@@ -44,6 +44,7 @@ Route::prefix('v1/panel')->group(function () {
             Route::put('/attributes/{product}', [V1\Panel\Product\UpdateAttributesController::class, 'handle']);
             Route::put('/description/{product}', [V1\Panel\Product\UpdateDescriptionController::class, 'handle']);
             Route::put('/{product}', [V1\Panel\Product\UpdateController::class, 'handle']);
+            Route::get('/export/product/not-photo', [V1\Panel\Product\IndexController::class, 'exportWithoutPhotos']);
         });
 
         Route::prefix('order')->group(function () {

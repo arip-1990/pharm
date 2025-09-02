@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -10,13 +10,14 @@ import {
   Tag,
   Row,
   Col,
-  Typography,
+  Typography, Modal, InputNumber,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import {FileExcelOutlined, SearchOutlined} from "@ant-design/icons";
 import { useSessionStorage } from "react-use-storage";
 import { useFetchProductsQuery } from "../../services/ProductService";
 import { Table } from "..";
 import { SortOrder } from "antd/lib/table/interface";
+import {API_URL} from "../../services/api";
 
 interface StorageType {
   search: { column: string; text: string };
@@ -274,21 +275,67 @@ const Product: React.FC = () => {
     });
   };
 
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState<number|null|string>()
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    const url = `${API_URL}/v1/panel/product/export/product/not-photo?page=${page}`;
+    // Формируем ссылку
+    if (page == null) {
+      alert("Введите только цифры")
+    }else {
+      // Создаём скрытую ссылку и кликаем по ней
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `products_without_photos_page_${page}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
         <h2>Товары</h2>
       </Col>
       <Col span={24}>
+        <Modal title="Выгрузка товаров без фото в Exel"
+               open={isModalOpen}
+               onOk={handleOk}
+               onCancel={handleCancel}
+        >
+          <p>Введите номер страницы(число) одна страница содержит 1000 уникальных записей </p>
+          <InputNumber
+            min={1}
+            style={{ width: "100%" }}
+            value={page}
+            onChange={(value) => setPage(value)}
+          />
+        </Modal>
         <Card
           title={
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span>
                 Всего {products?.meta.total.toLocaleString("ru") || 0} записи
               </span>
-              <Button type="primary" onClick={resetFilters}>
-                Сбросить фильтр
-              </Button>
+              <div>
+                <Button type="primary" onClick={resetFilters} >
+                  Сбросить фильтр
+                </Button>
+                <FileExcelOutlined style={{cursor:"pointer"}} onClick={showModal} />
+              </div>
             </div>
           }
         >
