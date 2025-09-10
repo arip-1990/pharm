@@ -144,6 +144,7 @@ Route::prefix('v2')->group(function () {
         Route::get('/search', V2\Product\SearchController::class);
         Route::get('/populars', V2\Product\PopularsController::class);
         Route::get('/discounts', V2\Product\DiscountsController::class);
+        Route::get('/special-offer', V2\Product\SpecialOfferController::class);
 
         Route::prefix('{product}')->group(function () {
             Route::get('/', V2\Product\ShowController::class);

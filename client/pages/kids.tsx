@@ -25,9 +25,9 @@ const Kids = () => {
         <Layout title="Конкурс детского рисунка 120на80" description="Конкурс">
             <Breadcrumbs getDefaultGenerator={getDefaultGenerator}/>
 
-            <Top />
+            {/*<Top />*/}
 
-            <Gallery photos={data || []} setAge={setAge} age={age} />
+            {/*<Gallery photos={data || []} setAge={setAge} age={age} />*/}
 
         </Layout>
     );
