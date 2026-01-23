@@ -38,7 +38,7 @@ const Footer: FC = () => {
           <div className={styles.info_phone}>
             <h5>Единая справочная сети</h5>
             <p>+7 (8722) 606-366</p>
-            <p className={styles.times}>ежедневно с 9:00 до 21:00</p>
+            <p className={styles.times}>ежедневно с 9:00 до 20:00</p>
           </div>
         </Col>
         <Col

@@ -18,7 +18,7 @@ type Props = {
 
 const Favorite: FC = () => {
   const [favorites] = useLocalStorage<IProduct[]>("favorites", []);
-  console.log(...favorites)
+  //console.log(...favorites)
 
 
   const isMounted = useMounted();

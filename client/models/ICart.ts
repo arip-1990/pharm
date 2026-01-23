@@ -5,6 +5,12 @@ export interface ICart {
   quantity: number;
   price?: number;
   discountStorePrice?: number|null;
+  isComboValid?: null|IsComboValid
+}
+
+export interface IsComboValid {
+  key:string;
+  value:boolean;
 }
 
 

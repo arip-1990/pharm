@@ -1,6 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import React from "react";
-
+import Script from 'next/script'
 class MyDocument extends Document {
   render() {
     return (
@@ -153,14 +153,22 @@ class MyDocument extends Document {
             </div>
           </noscript>
 
-          <script>window.yaContextCb = window.yaContextCb || []</script>
-          <script src="https://yandex.ru/ads/system/context.js" async></script>
+
+          <script async type="text/javascript" src="https://static.xoalt.com/engine/engine.js"></script>
+
+          {/*<script>window.yaContextCb = window.yaContextCb || []</script>*/}
+          {/*<script src="https://yandex.ru/ads/system/context.js" async></script>*/}
+
 
         </Head>
         <body>
         <div dangerouslySetInnerHTML={{__html: '<!-- Логин в Метрике -->'}}/>
         <Main/>
         <NextScript/>
+        <script type="text/javascript">(adsbyxoalt = window.adsbyxoalt || []
+        ).
+        push({})
+        ;</script>
         </body>
       </Html>
     );

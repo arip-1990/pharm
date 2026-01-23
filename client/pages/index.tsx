@@ -13,6 +13,7 @@ import {
   useFetchPopularsQuery,
 } from "../lib/productService";
 import AdFoxBanner from "../components/addFoxBanner/AddFoxBanner";
+import {XoaltBanner} from "../components/addFoxBanner/UpdSimbad";
 
 type AuthType = "login" | "register";
 
@@ -57,10 +58,11 @@ const Home: FC = () => {
         type={authModal.type}
         onHide={() => setAuthModal((item) => ({ ...item, show: false }))}
       />
-        <AdFoxBanner
-            containerId="adfox_174055461168529080"
-            params={{p1: 'dghxj', p2: 'ixfw'}}
-        />
+        {/*<AdFoxBanner*/}
+        {/*    containerId="adfox_174055461168529080"*/}
+        {/*    params={{p1: 'dghxj', p2: 'ixfw'}}*/}
+        {/*/>*/}
+        <XoaltBanner spotId={35516} />
     </Layout>
   );
 };

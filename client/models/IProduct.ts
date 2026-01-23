@@ -33,4 +33,6 @@ export interface IProduct {
   typeDiscount: boolean|null;
   bonus_loyalty: number;
   discountDescription: string|null;
+  combo: any|null;
+  discountObject : any|null;
 }

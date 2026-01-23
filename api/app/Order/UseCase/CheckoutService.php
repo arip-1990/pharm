@@ -165,53 +165,196 @@ class CheckoutService
         return $orderItems;
     }
 
+//    public function getStores(Request $request): array
+//    {
+//        if (!$city = $request->cookie('city', City::find(1)?->name))
+//            throw new OrderException('Не указан город!');
+//
+//        $carts = $request->collect();
+//        if (!$carts->count())
+//            throw new OrderException('Нет товаров в корзине!');
+//
+//        $validComboProducts = [];
+//
+//        foreach ($carts as $item) {
+//            if (!is_null($item['combo'])) {
+//                $comboKey = $item['combo']; // оставляем строку как есть: "["11"]"
+//                $validComboProducts[$comboKey][] = $item['prod_id'];
+//            }
+//        }
+//
+//        //dd($carts, $validComboProduct);
+//
+//        $stores = [];
+//
+//        Offer::whereIn('product_id', $carts->keys())->whereCity($city)
+//            ->each(function (Offer $offer) use ($carts, &$stores, $validComboProducts) {
+//                $cartQuantity = (int)$carts[$offer->product_id];
+//                $stores[$offer->store_id]['store'] = new StoreResource($offer->store);
+//                //$discountStorePrice = $offer->product->getDiscountPrice($offer->price);
+//                $discountStorePrice = $this->discountService->getDiscountStore($validComboProducts, $offer->store_id, $offer->price, $offer->product, min($cartQuantity, $offer->quantity));
+//                $stores[$offer->store_id]['products'][] = [
+//                    'price' => $offer->price,
+//                    'quantity' => min($cartQuantity, $offer->quantity),
+//                    'product' => new ProductResource($offer->product),
+//                    'discountStorePrice' => $discountStorePrice
+//                ];
+//            });
+//
+//        usort($stores, function ($a, $b) {
+//            $res = count($b['products']) - count($a['products']);
+//            if ($res) return $res;
+//            else {
+//                $price_a = 0;
+//                $price_b = 0;
+//                $quantity_a = 0;
+//                $quantity_b = 0;
+//                for ($i = 0; $i < count($a['products']); $i++) {
+//                    $quantity_a = $a['products'][$i]['quantity'];
+//                    $quantity_b = $b['products'][$i]['quantity'];
+//                    $price_a += $quantity_a * $a['products'][$i]['price'];
+//                    $price_b += $quantity_b * $b['products'][$i]['price'];
+//                }
+//                $res = $quantity_b - $quantity_a;
+//                return $res ?: $price_a - $price_b;
+//            }
+//        });
+//
+//        $res = $this->discountService->uniqueValidCombo();
+//
+//        foreach ($res as $r) {
+//            //dump($r);
+//            foreach ($stores as &$store) {
+//                if ($store['store']['id'] == $r['store_id']) {
+//                    $minCount = min($r['products'][0]['quantity'], $r['products'][1]['quantity']);
+//
+//                    $checker = [$r['products'][0]['id'], $r['products'][1]['id']];
+//
+//                    foreach ($store['products'] as &$products) {
+//                        if (in_array($products['product']['id'], $checker)) {
+//                            $products['discountStorePrice'] -= $products['price'] * $r['percent'] /100;
+//                            if ($minCount > 1) {
+//                                for ($i = 1; $i < $minCount; $i++) {
+//                                    $products['discountStorePrice'] -= $products['discountStorePrice'] * $r['percent'] /100;
+//                                }
+//                            }
+//                        }
+//                        //dump($products);
+//                    }
+//                    break;
+//                }
+//            }
+//        }
+//
+////        dd($res, $stores);
+////
+//////        foreach ($stores as $store) {
+//////
+//////        }
+//
+//
+//        return $stores;
+//    }
     public function getStores(Request $request): array
     {
-        if (!$city = $request->cookie('city', City::find(1)?->name))
+        // 1️⃣ Проверка города
+        $city = $request->cookie('city', City::find(1)?->name);
+        if (!$city) {
             throw new OrderException('Не указан город!');
+        }
 
-        $carts = $request->collect();
-        if (!$carts->count())
+        // 2️⃣ Проверка корзины
+        $carts = collect($request->all());
+        if ($carts->isEmpty()) {
             throw new OrderException('Нет товаров в корзине!');
+        }
 
+        // 3️⃣ Подготовка combo-продуктов
+        $validComboProducts = [];
+        foreach ($carts as $item) {
+            if (!empty($item['combo'])) {
+                $comboKey = (string)$item['combo']; // сохраняем строковое значение
+                $validComboProducts[$comboKey][] = $item['prod_id'];
+            }
+        }
+
+        // 4️⃣ Получаем ID товаров
+        $productIds = $carts->pluck('prod_id')->all();
+
+        // 5️⃣ Формируем список магазинов
         $stores = [];
+        $offers = Offer::whereIn('product_id', $productIds)
+            ->whereCity($city)
+            ->with(['store', 'product']) // чтобы избежать N+1 запросов
+            ->get();
 
-        Offer::whereIn('product_id', $carts->keys())->whereCity($city)
-            ->each(function (Offer $offer) use ($carts, &$stores) {
-                $cartQuantity = (int)$carts[$offer->product_id];
-                $stores[$offer->store_id]['store'] = new StoreResource($offer->store);
-                //$discountStorePrice = $offer->product->getDiscountPrice($offer->price);
-                $discountStorePrice = $this->discountService->getDiscountStore($offer->price, $offer->product, min($cartQuantity, $offer->quantity));
-                $stores[$offer->store_id]['products'][] = [
-                    'price' => $offer->price,
-                    'quantity' => min($cartQuantity, $offer->quantity),
-                    'product' => new ProductResource($offer->product),
-                    'discountStorePrice' => $discountStorePrice
-                ];
-            });
+        foreach ($offers as $offer) {
+            $cartItem = $carts->firstWhere('prod_id', $offer->product_id);
+            $cartQuantity = (int) ($cartItem['quantity'] ?? 1);
+            $availableQuantity = min($cartQuantity, $offer->quantity);
+
+            $discountStorePrice = $this->discountService->getDiscountStore(
+                $validComboProducts,
+                $offer->store_id,
+                $offer->price,
+                $offer->product,
+                $availableQuantity
+            );
+
+            $storeId = $offer->store_id;
+            if (!isset($stores[$storeId])) {
+                $stores[$storeId]['store'] = new StoreResource($offer->store);
+                $stores[$storeId]['products'] = [];
+            }
+
+            $stores[$storeId]['products'][] = [
+                'price' => $offer->price,
+                'quantity' => $availableQuantity,
+                'product' => new ProductResource($offer->product),
+                'discountStorePrice' => $discountStorePrice,
+            ];
+        }
+
+        // 6️⃣ Сортируем магазины
+        $stores = array_values($stores); // сбрасываем ключи
 
         usort($stores, function ($a, $b) {
-            $res = count($b['products']) - count($a['products']);
-            if ($res) return $res;
-            else {
-                $price_a = 0;
-                $price_b = 0;
-                $quantity_a = 0;
-                $quantity_b = 0;
-                for ($i = 0; $i < count($a['products']); $i++) {
-                    $quantity_a = $a['products'][$i]['quantity'];
-                    $quantity_b = $b['products'][$i]['quantity'];
-                    $price_a += $quantity_a * $a['products'][$i]['price'];
-                    $price_b += $quantity_b * $b['products'][$i]['price'];
-                }
-                $res = $quantity_b - $quantity_a;
-                return $res ?: $price_a - $price_b;
-            }
+            $countDiff = count($b['products']) - count($a['products']);
+            if ($countDiff !== 0) return $countDiff;
+
+            $sumA = collect($a['products'])->sum(fn($p) => $p['price'] * $p['quantity']);
+            $sumB = collect($b['products'])->sum(fn($p) => $p['price'] * $p['quantity']);
+
+            // сначала по количеству (desc), потом по цене (asc)
+            return $sumA <=> $sumB;
         });
+
+        // 7️⃣ Применяем скидки для уникальных combo
+        $combos = $this->discountService->uniqueValidCombo();
+        foreach ($combos as $combo) {
+            $storeId = $combo['store_id'] ?? null;
+            if (!$storeId || !isset($stores)) continue;
+
+            foreach ($stores as &$store) {
+                if ($store['store']['id'] != $storeId) continue;
+
+                if (count($combo['products']) < 2) continue;
+
+                $ids = array_column($combo['products'], 'id');
+                $quantities = array_column($combo['products'], 'quantity');
+                $minCount = min($quantities);
+
+                foreach ($store['products'] as &$product) {
+                    if (in_array($product['product']['id'], $ids)) {
+                        $discount = $product['price'] * $combo['percent'] / 100 * $minCount;
+                        $product['discountStorePrice'] -= $discount;
+                    }
+                }
+            }
+        }
 
         return $stores;
     }
-
     private function checkOrderId(int $orderId): void
     {
         if ($orderId > 3980 /* 4430 */) {

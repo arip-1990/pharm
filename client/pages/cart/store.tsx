@@ -25,7 +25,8 @@ const Store: FC = () => {
       setLoading(true);
       let params = {};
       carts.forEach((cart) => {
-        params[cart.product.id] = cart.quantity;
+        console.log(cart, 'cartttt')
+        params[cart.product.id] = {"quantity": cart.quantity, "prod_id" :cart.product.id,  "combo":cart.product.combo};
       });
       try {
         const { data } = await api.post("v1/order/checkout/store", {
@@ -50,6 +51,7 @@ const Store: FC = () => {
     []
   );
   console.log(stores, 'storessss')
+
   const handleStore = (e: MouseEvent<HTMLButtonElement>, storeId: string) => {
     e.stopPropagation();
 

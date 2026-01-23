@@ -20,6 +20,7 @@ import Breadcrumbs from "../../../components/breadcrumbs";
 
 import defaultImage from "../../../assets/images/default.png";
 import AdFoxBanner from "../../../components/addFoxBanner/AddFoxBanner";
+import {XoaltBanner} from "../../../components/addFoxBanner/UpdSimbad";
 
 const isFavorite = (id: string) => {
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -84,10 +85,12 @@ const Product: FC = () => {
       }
       description={data?.product.description}
     >
-      <AdFoxBanner
-          containerId="adfox_174055509370619080"
-          params={{p1: 'dghxn', p2: 'ixfw'}}
-      />
+      {/*<AdFoxBanner*/}
+      {/*    containerId="adfox_174055509370619080"*/}
+      {/*    params={{p1: 'dghxn', p2: 'ixfw'}}*/}
+      {/*/>*/}
+      <XoaltBanner spotId={35512} />
+
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <Accordion>
@@ -289,10 +292,11 @@ const Product: FC = () => {
         onHide={() => setShowCarousel(false)}
         data={data?.product.photos.filter((item) => item.url)}
       />
-      <AdFoxBanner
-          containerId="adfox_174055511903099080"
-          params={{p1: 'dghxo', p2: 'ixfw'}}
-      />
+      {/*<AdFoxBanner*/}
+      {/*    containerId="adfox_174055511903099080"*/}
+      {/*    params={{p1: 'dghxo', p2: 'ixfw'}}*/}
+      {/*/>*/}
+      <XoaltBanner spotId={35511} />
     </Layout>
   );
 };

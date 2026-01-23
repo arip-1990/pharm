@@ -6,7 +6,7 @@ import { useLocalStorage } from "react-use-storage";
 import Layout from "../templates";
 import defaultImage from "../assets/images/default.png";
 import BaseCart from "../components/cart";
-import { ICart } from "../models/ICart";
+import {ICart, IsComboValid} from "../models/ICart";
 import Auth from "../components/auth";
 import { useNotification } from "../hooks/useNotification";
 import { useMounted } from "../hooks/useMounted";
@@ -16,15 +16,19 @@ import AdFoxBanner from "../components/addFoxBanner/AddFoxBanner";
 import products from "./products";
 import axios from "axios";
 import api from "../lib/api";
+import getTextDiscount from "../components/discounts/discounts";
+import {useSanctum} from "react-sanctum";
+import {object} from "prop-types";
+import {XoaltBanner} from "../components/addFoxBanner/UpdSimbad";
 
 const Cart: FC = () => {
   const { isAuth } = useAuth();
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [carts] = useLocalStorage<ICart[]>("cart", []);
+  const [carts, setCarts] = useLocalStorage<ICart[]>("cart", []);
   const [calculateCarts, setCalculateCarts] = useState<ICart[]>();
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalDiscountPrice, setTotalDiscountPrice] = useState(0);
-
+  const [isComboValid, setIsComboValid] = useState<IsComboValid | null>(null);
 
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const notification = useNotification();
@@ -42,15 +46,18 @@ const Cart: FC = () => {
           data: ICart[];
           totalPrice: number;
           totalDiscountPrice: number;
+          isComboValid: null|IsComboValid
         }>(
             "/v1/calculate-discount",
              carts,
             { headers: { "Content-Type": "application/json" } }
         );
         console.log(response.data, "ответ от calculate-discount");
+        setIsComboValid(response.data.isComboValid)
         setCalculateCarts(response.data.data)
         setTotalPrice(response.data.totalPrice)
         setTotalDiscountPrice(response.data.totalDiscountPrice)
+        //setCarts(response.data.data);
         return response.data
 
       } catch (error) {
@@ -77,6 +84,7 @@ const Cart: FC = () => {
 
   const handleCheckout = useCallback(
     (e: MouseEvent) => {
+      setCarts(calculateCarts);
       e.preventDefault();
       if (isAuth) router.push("/cart/store");
       else {
@@ -94,10 +102,11 @@ const Cart: FC = () => {
 
   return (
     <Layout title="Корзина - Сеть аптек 120/80">
-      <AdFoxBanner
-          containerId="adfox_174055528392179080"
-          params={{p1: 'dghxq', p2: 'ixfw'}}
-      />
+      {/*<AdFoxBanner*/}
+      {/*    containerId="adfox_174055528392179080"*/}
+      {/*    params={{p1: 'dghxq', p2: 'ixfw'}}*/}
+      {/*/>*/}
+      <XoaltBanner spotId={35510} />
       <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
 
       <div className="row">
@@ -135,24 +144,18 @@ const Cart: FC = () => {
 
                 <div
                     className="col-5 col-sm-6 col-md-2 offset-1 offset-sm-0 order-4 order-md-0 text-md-center product_price">
-                  <p>{
-                    cart.product.discount > 0 ?
-                        `скидка ${cart.product.discount}%`
-                        : cart.product.discountPrice > 0 ?
-                            `Скидка ${cart.product.rubles}р за ${cart.product.quantity} шт `
-                            : ""
-                  }</p>
+                  <p>{getTextDiscount(cart, "topDiscount", isComboValid)}</p>
+
                   <span
                       style={
-                        cart.product.discountPrice
-                            ? {textDecoration: 'line-through', color: 'red'}
-                            : {}
+                        getTextDiscount(cart,"oldPriceStyle", isComboValid)
                       }
                   >
-                    {cart.product.minPrice != cart.product.discountPrice && cart.product.discountPrice != 0 ? <> {cart.product.minPrice} &#8381;</>: ''}
+                    {getTextDiscount(cart, "oldPrice", isComboValid)}
                   </span>
 
-                  {cart.product.discountPrice > 0 && cart.product.discountPrice != cart.product.minPrice ? <span> от {cart.product.discountPrice} &#8381; </span> : <span> от {cart.product.minPrice} &#8381; </span>}
+                  {getTextDiscount(cart, "currentPriceWithDiscount", isComboValid)}
+
                 </div>
                 <div className="col-5 col-sm-6 col-md-2 order-5 order-md-0">
                   <BaseCart
@@ -202,10 +205,11 @@ const Cart: FC = () => {
       </div>
 
       <Auth show={openModal} onHide={() => setOpenModal(false)} />
-      <AdFoxBanner
-          containerId="adfox_174055530359499080"
-          params={{p1: 'dghxr', p2: 'ixfw'}}
-      />
+      {/*<AdFoxBanner*/}
+      {/*    containerId="adfox_174055530359499080"*/}
+      {/*    params={{p1: 'dghxr', p2: 'ixfw'}}*/}
+      {/*/>*/}
+      <XoaltBanner spotId={35509} />
     </Layout>
   );
 };

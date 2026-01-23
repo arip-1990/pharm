@@ -9,6 +9,7 @@ import Breadcrumbs from "../../../components/breadcrumbs";
 const SpecialOffer = () => {
     const router = useRouter();
     const { id } = router.query;
+    const [combo, setCombo] = useState();
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -40,14 +41,20 @@ const SpecialOffer = () => {
 
         fetchProducts();
     }, [id]);
+
     const getDefaultGenerator = useCallback(
-        () => [{ href: "/special-offer", text: "Специальные предложения" }],
+        () => [{ href: "/combo", text: "Комбо акция" }],
         []
     );
+
     return (
-        <Layout title="Спец предложения" description="">
+        <Layout title="Комбо акция" description="">
             <Breadcrumbs getDefaultGenerator={getDefaultGenerator} />
-            <h1 className={styles_.title}>Специальные предложения</h1>
+            <h1 className={styles_.title}>ВРЕМЯ ЗАЩИТИТЬСЯ ОТ ПРОСТУДЫ!</h1>
+
+            <p>Период акции с 1 по 31 декабря.</p>
+            <p>При покупке 2 РАЗНЫХ позиций из списка получите скидку -25% на комплект.</p>
+            <p>*Акция «Время защититься от простуды» действует с 01.12.2025 г. по 31.12.2025 г. Скидки по акции не суммируются с другими скидками и акциями на товары. Представленная информация о товарах, их стоимости, характеристиках, фото ни при каких условиях не является публичной офертой. Количество акционного товара ограничено. Внешний вид упаковки может отличаться от изображения на рекламном макете. Организатор акции — ООО "Социальная аптека" (367010, РД, г. Махачкала, пр. Гамидова, д.48; ИНН 0571008484; ОГРН 1160571061353). Организатор вправе в одностороннем порядке изменить условия акции. Реклама.</p>
 
             {loading ? (
                 <p>Загрузка...</p>
@@ -65,3 +72,10 @@ const SpecialOffer = () => {
 };
 
 export default SpecialOffer;
+
+
+
+
+
+
+

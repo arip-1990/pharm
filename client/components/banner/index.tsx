@@ -63,28 +63,34 @@ const Banner: FC = () => {
             {data
               ?.filter((item) => ["main", "all"].includes(item.type))
               .map((item) => (
-                <SwiperSlide key={item.id}>
-                  <div
-                    className={styles.banner}
-                    style={{
-                      backgroundImage:
-                        isMobile && item.picture.mobile
-                          ? `url(${item.picture.mobile})`
-                          : `url(${item.picture.main})`,
-                    }}
-                  />
-                </SwiperSlide>
-              ))}
+                  <SwiperSlide key={item.id}>
+                      <a
+                          href={item.link} // ← уникальная ссылка из item
+                          target="_blank" // откроется в новой вкладке
+                          rel="noopener noreferrer"
+                      >
+                          <div
+                              className={styles.banner}
+                              style={{
+                                  backgroundImage:
+                                      isMobile && item.picture.mobile
+                                          ? `url(${item.picture.mobile})`
+                                          : `url(${item.picture.main})`,
+                              }}
+                          />
+                      </a>
+                  </SwiperSlide>
+                ))}
           </Swiper>
         </Col>
-        {existsExtra ? (
-          <Col xs={12} lg={3}>
-            <Extra data={data?.filter((item) => item.type === "extra")} />
-          </Col>
-        ) : null}
+          {existsExtra ? (
+              <Col xs={12} lg={3}>
+                  <Extra data={data?.filter((item) => item.type === "extra")}/>
+              </Col>
+          ) : null}
       </Row>
     </Container>
-  );
+);
 };
 
 export default Banner;
